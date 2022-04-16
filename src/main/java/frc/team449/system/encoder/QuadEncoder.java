@@ -25,7 +25,7 @@ public class QuadEncoder extends Encoder {
       int encoderCPR,
       double unitPerRotation,
       double gearing) {
-    return (__, config) -> {
+    return (motor, config) -> {
       encoder.setReverseDirection(config.isInverted());
       return new QuadEncoder(config.getEncName(), encoder, encoderCPR, unitPerRotation, gearing);
     };

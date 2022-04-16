@@ -22,7 +22,7 @@ public final class TalonEncoder extends Encoder {
 
   public static <T extends MotorController> EncoderCreator<T> creator(
       @NotNull TalonSRX talon, int encoderCPR, double unitPerRotation, double gearing) {
-    return (__, config) ->
+    return (motor, config) ->
         new TalonEncoder(config.getEncName(), talon, encoderCPR, unitPerRotation, gearing);
   }
 
