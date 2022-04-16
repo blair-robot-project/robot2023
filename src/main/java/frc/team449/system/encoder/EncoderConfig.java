@@ -7,8 +7,11 @@ public final class EncoderConfig {
 
   /**
    * Configuration for an encoder
-   * @param gearing The factor to multiply output by after the encoder measurement, e.g. this would be 70 if there is a 70:1 gearing after the encoder
-   * @param unitPerRotation How many units it travels per rotation, e.g. this would be about 2pi*r for a wheel
+   *
+   * @param gearing The factor to multiply output by after the encoder measurement, e.g. this would
+   *     be 70 if there is a 70:1 gearing after the encoder
+   * @param unitPerRotation How many units it travels per rotation, e.g. this would be about 2pi*r
+   *     for a wheel
    * @param encoderCPR Counts per rotation of the encoder
    */
   public EncoderConfig(double gearing, double unitPerRotation, int encoderCPR) {
@@ -17,9 +20,7 @@ public final class EncoderConfig {
     this.encoderCPR = encoderCPR;
   }
 
-  /**
-   * Convert encoder units to meters or another unit we want
-   */
+  /** Convert encoder units to meters or another unit we want */
   public double encoderToUnit(double revs) {
     return revs * unitPerRotation * gearing / encoderCPR;
   }

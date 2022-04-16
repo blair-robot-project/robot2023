@@ -1,11 +1,9 @@
 package frc.team449.system.encoder;
 
-import org.jetbrains.annotations.NotNull;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * An external quadrature encoder
- */
+/** An external quadrature encoder */
 public class QuadEncoder extends Encoder {
   private final edu.wpi.first.wpilibj.Encoder encoder;
 
@@ -29,8 +27,7 @@ public class QuadEncoder extends Encoder {
       double gearing) {
     return (__, config) -> {
       encoder.setReverseDirection(config.isInverted());
-      return new QuadEncoder(
-          config.getEncName(), encoder, encoderCPR, unitPerRotation, gearing);
+      return new QuadEncoder(config.getEncName(), encoder, encoderCPR, unitPerRotation, gearing);
     };
   }
 

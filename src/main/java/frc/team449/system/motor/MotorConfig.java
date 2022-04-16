@@ -1,21 +1,18 @@
 package frc.team449.system.motor;
 
-import java.util.function.Function;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import frc.team449.system.encoder.Encoder;
 import frc.team449.system.encoder.EncoderCreator;
 import frc.team449.system.encoder.SimEncoder;
 import io.github.oblarg.logexample.Robot;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * todo find a better way to do this than F-bounds
- * 
- * The constructor for SmartMotors was hell so this will help resolve that.
  *
- * <p>
- * You can set config options in this then pass it to various constructors.
+ * <p>The constructor for SmartMotors was hell so this will help resolve that.
+ *
+ * <p>You can set config options in this then pass it to various constructors.
  *
  * @param <Self> The type of the "current" subclass of {@link MotorConfig}
  * @param <R> The type of the created motor
@@ -42,10 +39,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
     return (Self) this;
   }
 
-  /**
-   * The name that the encoder for this motor uses. The motor's name itself should
-   * be set first.
-   */
+  /** The name that the encoder for this motor uses. The motor's name itself should be set first. */
   public String getEncName() {
     return this.getName() + "Enc";
   }
@@ -122,9 +116,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
     return (Self) this;
   }
 
-  /**
-   * Set the function used to create an encoder once the motor controller is made
-   */
+  /** Set the function used to create an encoder once the motor controller is made */
   public Self setEncoderCreator(EncoderCreator<R> encoderCreator) {
     this.encoderCreator = encoderCreator;
     return (Self) this;
@@ -144,15 +136,13 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
         .setEncoderCreator(encoderCreator);
   }
 
-  /**
-   * Create only the underlying motor controller, not the encoder.
-   */
+  /** Create only the underlying motor controller, not the encoder. */
   @NotNull
   protected abstract R createMotor();
 
   /**
-   * Create a WrappedMotor with all the properties configured previously. Make
-   * sure that all required properties have been set before calling this method.
+   * Create a WrappedMotor with all the properties configured previously. Make sure that all
+   * required properties have been set before calling this method.
    */
   @NotNull
   public final WrappedMotor build() {

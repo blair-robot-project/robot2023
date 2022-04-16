@@ -11,8 +11,8 @@ public final class WrappedMotor implements MotorController, Loggable {
   private final @NotNull MotorController motor;
   /** Name for logging */
   private final @NotNull String name;
-  @Log
-  private double voltage;
+
+  @Log private double voltage;
 
   public WrappedMotor(
       @NotNull String name, @NotNull MotorController motor, @NotNull Encoder encoder) {
@@ -76,4 +76,3 @@ public final class WrappedMotor implements MotorController, Loggable {
     return this.name;
   }
 }
-

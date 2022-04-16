@@ -1,17 +1,19 @@
 package frc.team449.system.encoder;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import org.jetbrains.annotations.NotNull;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * An encoder plugged into a TalonSRX
- */
+/** An encoder plugged into a TalonSRX */
 public final class TalonEncoder extends Encoder {
   private final TalonSRX talon;
 
-  private TalonEncoder(@NotNull String name, @NotNull TalonSRX talon, int encoderCPR,
-      double unitPerRotation, double gearing) {
+  private TalonEncoder(
+      @NotNull String name,
+      @NotNull TalonSRX talon,
+      int encoderCPR,
+      double unitPerRotation,
+      double gearing) {
     // The Talon multiplies its encoder count by 4
     super(name, encoderCPR * 4, unitPerRotation, gearing);
     this.talon = talon;
@@ -19,12 +21,9 @@ public final class TalonEncoder extends Encoder {
   }
 
   public static <T extends MotorController> EncoderCreator<T> creator(
-      @NotNull TalonSRX talon,
-      int encoderCPR,
-      double unitPerRotation,
-      double gearing) {
-    return (__, config) -> new TalonEncoder(
-        config.getEncName(), talon, encoderCPR, unitPerRotation, gearing);
+      @NotNull TalonSRX talon, int encoderCPR, double unitPerRotation, double gearing) {
+    return (__, config) ->
+        new TalonEncoder(config.getEncName(), talon, encoderCPR, unitPerRotation, gearing);
   }
 
   @Override

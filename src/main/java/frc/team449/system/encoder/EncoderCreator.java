@@ -5,7 +5,7 @@ import frc.team449.system.motor.MotorConfig;
 
 /**
  * Create an encoder given a motor controller and its configuration
- * 
+ *
  * @param <M> The type of the motor controller
  */
 @FunctionalInterface

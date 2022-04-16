@@ -12,8 +12,7 @@ public class DriveConstants {
       LEFT_FOLLOWER_2_PORT = 3;
 
   /** External encoder ports */
-  public static final int
-      LEFT_EXTERNAL_FWD_PORT = 6,
+  public static final int LEFT_EXTERNAL_FWD_PORT = 6,
       LEFT_EXTERNAL_REV_PORT = 7,
       RIGHT_EXTERNAL_FWD_PORT = 4,
       RIGHT_EXTERNAL_REV_PORT = 5;
@@ -32,8 +31,8 @@ public class DriveConstants {
       DRIVE_FF_KA = 0.44982;
   // todo characterize again to get better angular gains
   public static final double DRIVE_ANGLE_FF_KS = 0.20112,
-      DRIVE_ANGLE_FF_KV = 2.05, //171.58,
-      DRIVE_ANGLE_FF_KA = 0.505, //22.755,
+      DRIVE_ANGLE_FF_KV = 2.05, // 171.58,
+      DRIVE_ANGLE_FF_KA = 0.505, // 22.755,
       DRIVE_ANGLE_KP = 0.006, // 221.18
       DRIVE_ANGLE_KI = 0,
       DRIVE_ANGLE_KD = 0.03;

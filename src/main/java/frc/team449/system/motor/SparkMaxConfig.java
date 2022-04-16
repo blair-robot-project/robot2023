@@ -4,13 +4,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.REVLibError;
 import com.revrobotics.SparkMaxLimitSwitch;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import frc.team449.system.encoder.EncoderConfig;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Motor controller configuration, along with some Spark-specific stuff */
 public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMax> {

@@ -1,13 +1,10 @@
 package frc.team449.system.encoder;
 
-import java.util.function.Function;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * A NEO integrated encoder plugged into a Spark
- */
+/** A NEO integrated encoder plugged into a Spark */
 public final class NEOEncoder extends Encoder {
   public static final int NEO_ENCODER_CPR = 1;
 
@@ -22,10 +19,9 @@ public final class NEOEncoder extends Encoder {
     this.enc = enc;
   }
 
-  public static EncoderCreator<CANSparkMax> creator(
-      double unitPerRotation, double gearing) {
+  public static EncoderCreator<CANSparkMax> creator(double unitPerRotation, double gearing) {
     return (motor, config) ->
-      new NEOEncoder(config.getEncName(), motor.getEncoder(), unitPerRotation, gearing);
+        new NEOEncoder(config.getEncName(), motor.getEncoder(), unitPerRotation, gearing);
   }
 
   @Override
