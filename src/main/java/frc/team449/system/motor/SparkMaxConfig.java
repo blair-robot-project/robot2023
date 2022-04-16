@@ -91,7 +91,6 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
 
     this.getStatusFrameRatesMillis().forEach(motor::setPeriodicFramePeriod);
 
-    // todo handle limit switches
     if (this.getFwdLimitSwitchNormallyOpen() == null) {
       motor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false);
     }

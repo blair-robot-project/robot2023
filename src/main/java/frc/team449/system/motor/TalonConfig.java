@@ -233,10 +233,7 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     motor.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_10Ms);
     motor.configVelocityMeasurementWindow(10);
 
-    // todo figure out how to get fwdPeakOutputVoltage and friends here
     // Set max voltage
-    // motor.configPeakOutputForward(this.currentGearSettings.fwdPeakOutputVoltage / 12., 0);
-    // motor.configPeakOutputReverse(this.currentGearSettings.revPeakOutputVoltage / 12., 0);
     motor.configPeakOutputForward(1.0, 0);
     motor.configPeakOutputReverse(1.0, 0);
 
