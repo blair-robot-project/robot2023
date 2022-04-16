@@ -1,3 +1,6 @@
 Important TODOs:
 ---------------------------------------------------------------------------------------------------------
 Non-important TODOs:
+./src/main/java/frc/team449/robot2022/drive/DriveConstants.java: 32: // todo characterize again to get better angular gains
+./src/main/java/frc/team449/system/motor/SparkMaxConfig.java: 94: // todo handle limit switches
+./src/main/java/frc/team449/system/motor/TalonConfig.java: 236: // todo figure out how to get fwdPeakOutputVoltage and friends here
