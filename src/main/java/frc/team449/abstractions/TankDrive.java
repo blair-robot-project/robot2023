@@ -8,7 +8,7 @@ public class TankDrive implements DriveSubsystem {
   @Override
   public void set(ChassisSpeeds desiredSpeeds) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -26,7 +26,6 @@ public class TankDrive implements DriveSubsystem {
   @Override
   public void stop() {
     // TODO Auto-generated method stub
-    
+
   }
-  
 }

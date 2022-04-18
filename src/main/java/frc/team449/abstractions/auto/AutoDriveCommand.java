@@ -24,8 +24,7 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
   /**
    * @param drivetrain Drivetrain to execute command on
    * @param trajectory Trajectory to follow
-   * @param resetPose Whether to reset odometry to initial pose of trajectory when
-   *        initialized
+   * @param resetPose Whether to reset odometry to initial pose of trajectory when initialized
    */
   public AutoDriveCommand(
       @NotNull T drivetrain,
@@ -51,11 +50,12 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
     return new AutoDriveCommand<>(
         drivetrain,
         trajectory,
-        (currentPose, desiredState, time) -> controller.calculate(
-            currentPose,
-            desiredState,
-            Rotation2d.fromDegrees(
-                MathUtil.interpolate(startHeading, endHeading, time / totalTime))),
+        (currentPose, desiredState, time) ->
+            controller.calculate(
+                currentPose,
+                desiredState,
+                Rotation2d.fromDegrees(
+                    MathUtil.interpolate(startHeading, endHeading, time / totalTime))),
         resetPose);
   }
 
@@ -69,15 +69,11 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
     return new AutoDriveCommand<>(
         drivetrain,
         trajectory,
-        (currentPose, desiredState, time) -> controller.calculate(
-            currentPose,
-            desiredState),
+        (currentPose, desiredState, time) -> controller.calculate(currentPose, desiredState),
         resetPose);
   }
 
-  /**
-   * The time required for the trajectory to complete
-   */
+  /** The time required for the trajectory to complete */
   public double getTotalTime() {
     return trajectory.getTotalTimeSeconds();
   }
