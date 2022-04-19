@@ -18,14 +18,16 @@ public class SwerveDrive extends SubsystemBase implements DriveSubsystem {
   private final AHRS ahrs;
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
-  public final double maxSpeed;
+  public final double maxLinearSpeed;
+  public final double maxRotSpeed;
 
   private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
-  public SwerveDrive(SwerveModule[] modules, AHRS ahrs, double maxSpeed) {
+  public SwerveDrive(SwerveModule[] modules, AHRS ahrs, double maxLinearSpeed, double maxRotSpeed) {
     this.modules = modules;
     this.ahrs = ahrs;
-    this.maxSpeed = maxSpeed;
+    this.maxLinearSpeed = maxLinearSpeed;
+    this.maxRotSpeed = maxRotSpeed;
     this.kinematics =
         new SwerveDriveKinematics(
             Arrays.stream(this.modules)
@@ -81,7 +83,7 @@ public class SwerveDrive extends SubsystemBase implements DriveSubsystem {
         Arrays.stream(this.modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new));
 
     var desiredModuleStates = this.kinematics.toSwerveModuleStates(this.desiredSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, this.maxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, this.maxLinearSpeed);
 
     for (int i = 0; i < this.modules.length; i++) {
       this.modules[i].set(desiredModuleStates[i]);
