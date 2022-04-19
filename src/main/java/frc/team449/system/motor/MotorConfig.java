@@ -10,11 +10,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The constructor for SmartMotors was hell so this will help resolve that.
  *
- * <p>
- * You can set config options in this then pass it to various constructors.
+ * <p>You can set config options in this then pass it to various constructors.
  *
  * @param <Self> The type of the "current" subclass of {@link MotorConfig}
- * @param <R>    The type of the created motor
+ * @param <R> The type of the created motor
  * @see WrappedMotor
  */
 public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends MotorController> {
@@ -30,8 +29,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
   private EncoderCreator<R> encoderCreator;
 
   /**
-   * A method for subclasses to return this. This exists only to get rid of
-   * unchecked cast warnings.
+   * A method for subclasses to return this. This exists only to get rid of unchecked cast warnings.
    */
   protected abstract Self self();
 
@@ -44,10 +42,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
     return self();
   }
 
-  /**
-   * The name that the encoder for this motor uses. The motor's name itself should
-   * be set first.
-   */
+  /** The name that the encoder for this motor uses. The motor's name itself should be set first. */
   public String getEncName() {
     return this.getName() + "Enc";
   }
@@ -124,9 +119,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
     return self();
   }
 
-  /**
-   * Set the function used to create an encoder once the motor controller is made
-   */
+  /** Set the function used to create an encoder once the motor controller is made */
   public Self setEncoderCreator(EncoderCreator<R> encoderCreator) {
     this.encoderCreator = encoderCreator;
     return self();
@@ -151,14 +144,14 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
   protected abstract R createMotor();
 
   /**
-   * Create a WrappedMotor with all the properties configured previously. Make
-   * sure that all
+   * Create a WrappedMotor with all the properties configured previously. Make sure that all
    * required properties have been set before calling this method.
    */
   @NotNull
   public final WrappedMotor build() {
     var motor = this.createMotor();
-    var encoder = Robot.isReal() ? encoderCreator.create(motor, this) : new SimEncoder(getEncName());
+    var encoder =
+        Robot.isReal() ? encoderCreator.create(motor, this) : new SimEncoder(getEncName());
     return new WrappedMotor(name, motor, encoder);
   }
 }
