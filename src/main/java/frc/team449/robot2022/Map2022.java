@@ -15,10 +15,6 @@ public final class Map2022 {
   public static final int CARGO_JOYSTICK_PORT = 0,
       DRIVE_JOYSTICK_PORT = 1,
       CLIMBER_JOYSTICK_PORT = 2;
-  // Limelight
-  public static final int DRIVER_PIPELINE = 0, BLUE_PIPELINE = 1, RED_PIPELINE = 2;
-  /** Control loop time */
-  public static final double LOOP_TIME = 0.02;
 
   private Map2022() {}
 
