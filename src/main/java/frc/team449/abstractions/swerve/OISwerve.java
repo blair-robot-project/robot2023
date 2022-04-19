@@ -1,10 +1,9 @@
 package frc.team449.abstractions.swerve;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class OISwerve implements Supplier<ChassisSpeeds> {
 
