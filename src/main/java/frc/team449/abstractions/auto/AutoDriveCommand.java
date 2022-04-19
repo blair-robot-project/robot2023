@@ -14,9 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team449.abstractions.DriveSubsystem;
 import frc.team449.abstractions.SwerveDrive;
 import frc.team449.abstractions.TankDrive;
-
 import java.util.function.BiFunction;
-
 import org.jetbrains.annotations.NotNull;
 
 public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
@@ -29,10 +27,9 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
   /**
    * @param drivetrain Drivetrain to execute command on
    * @param trajectory Trajectory to follow
-   * @param controller A controller that outputs the next ChassisSpeeds given the
-   *                   current pose and the next desired State
-   * @param resetPose  Whether to reset pose to initial pose of trajectory
-   *                   when initialized
+   * @param controller A controller that outputs the next ChassisSpeeds given the current pose and
+   *     the next desired State
+   * @param resetPose Whether to reset pose to initial pose of trajectory when initialized
    */
   public AutoDriveCommand(
       @NotNull T drivetrain,
@@ -58,11 +55,13 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
     return new AutoDriveCommand<>(
         drivetrain,
         trajectory,
-        (currentPose, desiredState) -> controller.calculate(
-            currentPose,
-            desiredState,
-            Rotation2d.fromDegrees(
-                MathUtil.interpolate(startHeading, endHeading, desiredState.timeSeconds / totalTime))),
+        (currentPose, desiredState) ->
+            controller.calculate(
+                currentPose,
+                desiredState,
+                Rotation2d.fromDegrees(
+                    MathUtil.interpolate(
+                        startHeading, endHeading, desiredState.timeSeconds / totalTime))),
         resetPose);
   }
 
@@ -73,11 +72,7 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
       double endHeading,
       boolean resetPose) {
     var controller = new RamseteController();
-    return new AutoDriveCommand<>(
-        drivetrain,
-        trajectory,
-        controller::calculate,
-        resetPose);
+    return new AutoDriveCommand<>(drivetrain, trajectory, controller::calculate, resetPose);
   }
 
   /** The time required for the trajectory to complete */
@@ -96,9 +91,7 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
   @Override
   public void execute() {
     drivetrain.set(
-        this.controller.apply(
-            drivetrain.getPose(),
-            trajectory.sample(Timer.getFPGATimestamp())));
+        this.controller.apply(drivetrain.getPose(), trajectory.sample(Timer.getFPGATimestamp())));
   }
 
   @Override
