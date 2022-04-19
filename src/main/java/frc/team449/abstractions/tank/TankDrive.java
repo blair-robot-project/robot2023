@@ -12,15 +12,17 @@ import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
 
 public class TankDrive implements DriveSubsystem {
-  /** The left side of the tank drive*/
+  /** The left side of the tank drive */
   private final WrappedMotor leftLeader;
-  /** The right side of the tank drive*/
+  /** The right side of the tank drive */
   private final WrappedMotor rightLeader;
-  /** The gyro used for the robot*/
+  /** The gyro used for the robot */
   private final AHRS ahrs;
-  /** the kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}*/
+  /**
+   * the kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}
+   */
   private final DifferentialDriveKinematics driveKinematics;
-  /** odometer that keeps track of where the robot is*/
+  /** odometer that keeps track of where the robot is */
   private final DifferentialDriveOdometry odometry;
   /** Feedforward calculator */
   public final SimpleMotorFeedforward feedforward;
@@ -31,8 +33,7 @@ public class TankDrive implements DriveSubsystem {
   /** The track width of the robot/distance between left and right wheels in meters */
   public final double trackWidth;
 
-  public TankDrive(WrappedMotor leftLeader, WrappedMotor rightLeader,
-                   AHRS ahrs){ //TODO
+  public TankDrive(WrappedMotor leftLeader, WrappedMotor rightLeader, AHRS ahrs) { // TODO
     driveKinematics = new DifferentialDriveKinematics();
   }
 
