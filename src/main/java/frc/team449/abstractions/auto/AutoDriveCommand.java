@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team449.abstractions.DriveSubsystem;
-import frc.team449.abstractions.SwerveDrive;
-import frc.team449.abstractions.TankDrive;
+import frc.team449.abstractions.swerve.SwerveDrive;
+import frc.team449.abstractions.tank.TankDrive;
 import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 
