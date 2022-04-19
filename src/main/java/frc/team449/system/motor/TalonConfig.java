@@ -31,6 +31,11 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
   private @Nullable FeedbackDevice feedbackDevice;
   private boolean reverseSensor = false;
 
+  @Override
+  protected TalonConfig self() {
+    return this;
+  }
+
   @NotNull
   public Map<ControlFrame, Integer> getControlFrameRatesMillis() {
     return new HashMap<>(this.controlFrameRatesMillis);

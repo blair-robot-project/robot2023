@@ -15,6 +15,11 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
   private final @NotNull Map<CANSparkMax, Boolean> slaveSparks = new HashMap<>();
   private @Nullable Integer controlFrameRateMillis;
 
+  @Override
+  protected SparkMaxConfig self() {
+    return this;
+  }
+
   @Nullable
   public Integer getControlFrameRateMillis() {
     return this.controlFrameRateMillis;

@@ -8,14 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * todo find a better way to do this than F-bounds
+ * The constructor for SmartMotors was hell so this will help resolve that.
  *
- * <p>The constructor for SmartMotors was hell so this will help resolve that.
- *
- * <p>You can set config options in this then pass it to various constructors.
+ * <p>
+ * You can set config options in this then pass it to various constructors.
  *
  * @param <Self> The type of the "current" subclass of {@link MotorConfig}
- * @param <R> The type of the created motor
+ * @param <R>    The type of the created motor
  * @see WrappedMotor
  */
 public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends MotorController> {
@@ -30,16 +29,25 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
   private boolean enableVoltageComp;
   private EncoderCreator<R> encoderCreator;
 
+  /**
+   * A method for subclasses to return this. This exists only to get rid of
+   * unchecked cast warnings.
+   */
+  protected abstract Self self();
+
   public String getName() {
     return name;
   }
 
   public Self setName(String name) {
     this.name = name;
-    return (Self) this;
+    return self();
   }
 
-  /** The name that the encoder for this motor uses. The motor's name itself should be set first. */
+  /**
+   * The name that the encoder for this motor uses. The motor's name itself should
+   * be set first.
+   */
   public String getEncName() {
     return this.getName() + "Enc";
   }
@@ -50,7 +58,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setPort(int port) {
     this.port = port;
-    return (Self) this;
+    return self();
   }
 
   public boolean isEnableBrakeMode() {
@@ -59,7 +67,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setEnableBrakeMode(boolean enableBrakeMode) {
     this.enableBrakeMode = enableBrakeMode;
-    return (Self) this;
+    return self();
   }
 
   public boolean isInverted() {
@@ -68,7 +76,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setInverted(boolean inverted) {
     this.inverted = inverted;
-    return (Self) this;
+    return self();
   }
 
   public @Nullable Boolean getFwdLimitSwitchNormallyOpen() {
@@ -77,7 +85,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setFwdLimitSwitchNormallyOpen(Boolean fwdLimitSwitchNormallyOpen) {
     this.fwdLimitSwitchNormallyOpen = fwdLimitSwitchNormallyOpen;
-    return (Self) this;
+    return self();
   }
 
   public @Nullable Boolean getRevLimitSwitchNormallyOpen() {
@@ -86,7 +94,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setRevLimitSwitchNormallyOpen(Boolean revLimitSwitchNormallyOpen) {
     this.revLimitSwitchNormallyOpen = revLimitSwitchNormallyOpen;
-    return (Self) this;
+    return self();
   }
 
   public @Nullable Integer getRemoteLimitSwitchID() {
@@ -95,7 +103,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setRemoteLimitSwitchID(Integer remoteLimitSwitchID) {
     this.remoteLimitSwitchID = remoteLimitSwitchID;
-    return (Self) this;
+    return self();
   }
 
   public @Nullable Integer getCurrentLimit() {
@@ -104,7 +112,7 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setCurrentLimit(Integer currentLimit) {
     this.currentLimit = currentLimit;
-    return (Self) this;
+    return self();
   }
 
   public boolean isEnableVoltageComp() {
@@ -113,13 +121,15 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
 
   public Self setEnableVoltageComp(boolean enableVoltageComp) {
     this.enableVoltageComp = enableVoltageComp;
-    return (Self) this;
+    return self();
   }
 
-  /** Set the function used to create an encoder once the motor controller is made */
+  /**
+   * Set the function used to create an encoder once the motor controller is made
+   */
   public Self setEncoderCreator(EncoderCreator<R> encoderCreator) {
     this.encoderCreator = encoderCreator;
-    return (Self) this;
+    return self();
   }
 
   /** Copy properties from this config to another config */
@@ -141,14 +151,14 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
   protected abstract R createMotor();
 
   /**
-   * Create a WrappedMotor with all the properties configured previously. Make sure that all
+   * Create a WrappedMotor with all the properties configured previously. Make
+   * sure that all
    * required properties have been set before calling this method.
    */
   @NotNull
   public final WrappedMotor build() {
     var motor = this.createMotor();
-    var encoder =
-        Robot.isReal() ? encoderCreator.create(motor, this) : new SimEncoder(getEncName());
+    var encoder = Robot.isReal() ? encoderCreator.create(motor, this) : new SimEncoder(getEncName());
     return new WrappedMotor(name, motor, encoder);
   }
 }
