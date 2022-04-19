@@ -45,12 +45,13 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
   }
 
   /**
-   * Add a slave spark
+   * Add a follower spark
    *
+   * @param port     The follower's CAN ID
    * @param inverted Whether or not it's inverted
    */
-  public SparkMaxConfig addSlaveSpark(@NotNull CANSparkMax slaveSpark, boolean inverted) {
-    this.slaveSparks.put(slaveSpark, inverted);
+  public SparkMaxConfig addSlaveSpark(int port, boolean inverted) {
+    this.slaveSparks.put(createFollowerSpark(port), inverted);
     return this;
   }
 
@@ -81,8 +82,7 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
 
     motor.restoreFactoryDefaults();
 
-    var brakeMode =
-        this.isEnableBrakeMode() ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast;
+    var brakeMode = this.isEnableBrakeMode() ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast;
 
     motor.setInverted(this.isInverted());
     // Set brake mode
@@ -128,5 +128,28 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
     motor.burnFlash();
 
     return motor;
+  }
+
+  /**
+   * Create a Spark that will follow another Spark
+   * 
+   * @param port The follower's CAN ID
+   */
+  @NotNull
+  private static CANSparkMax createFollowerSpark(int port) {
+    var follower = new CANSparkMax(port, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+    follower
+        .getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen)
+        .enableLimitSwitch(false);
+    follower
+        .getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen)
+        .enableLimitSwitch(false);
+
+    follower.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100);
+    follower.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 100);
+    follower.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 100);
+
+    return follower;
   }
 }
