@@ -11,31 +11,37 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Motor controller configuration, along with Talon-specific stuff */
-public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
+/** Configuration for a WPI_TalonSRX or WPI_TalonFX */
+public class TalonConfig<T extends BaseTalon & MotorController> extends MotorConfig<TalonConfig<T>, T> {
+  private T motor;
   private final Map<ControlFrame, Integer> controlFrameRatesMillis = new HashMap<>();
   private final Map<StatusFrameEnhanced, Integer> statusFrameRatesMillis = new HashMap<>();
-  private final List<TalonSRX> slaveTalons = new ArrayList<>();
+  private final List<BaseTalon> slaveTalons = new ArrayList<>();
   private final List<VictorSPX> slaveVictors = new ArrayList<>();
   private int voltageCompSamples = 32;
   private @Nullable FeedbackDevice feedbackDevice;
   private boolean reverseSensor = false;
 
   @Override
-  protected TalonConfig self() {
+  protected TalonConfig<T> self() {
+    return this;
+  }
+
+  public TalonConfig<T> setMotor(@NotNull T motor) {
+    this.motor = motor;
     return this;
   }
 
@@ -44,7 +50,7 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     return new HashMap<>(this.controlFrameRatesMillis);
   }
 
-  public TalonConfig addControlFrameRateMillis(@NotNull ControlFrame controlFrame, int updateRate) {
+  public TalonConfig<T> addControlFrameRateMillis(@NotNull ControlFrame controlFrame, int updateRate) {
     this.controlFrameRatesMillis.put(controlFrame, updateRate);
     return this;
   }
@@ -54,7 +60,7 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     return new HashMap<>(this.statusFrameRatesMillis);
   }
 
-  public TalonConfig addStatusFrameRateMillis(
+  public TalonConfig<T> addStatusFrameRateMillis(
       @NotNull StatusFrameEnhanced statusFrame, int updateRate) {
     this.statusFrameRatesMillis.put(statusFrame, updateRate);
     return this;
@@ -64,7 +70,7 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     return this.voltageCompSamples;
   }
 
-  public TalonConfig setVoltageCompSamples(int voltageCompSamples) {
+  public TalonConfig<T> setVoltageCompSamples(int voltageCompSamples) {
     this.voltageCompSamples = voltageCompSamples;
     return this;
   }
@@ -74,7 +80,7 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     return feedbackDevice;
   }
 
-  public TalonConfig setFeedbackDevice(@NotNull FeedbackDevice feedbackDevice) {
+  public TalonConfig<T> setFeedbackDevice(@NotNull FeedbackDevice feedbackDevice) {
     this.feedbackDevice = feedbackDevice;
     return this;
   }
@@ -83,48 +89,46 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     return reverseSensor;
   }
 
-  public TalonConfig setReverseSensor(boolean reverseSensor) {
+  public TalonConfig<T> setReverseSensor(boolean reverseSensor) {
     this.reverseSensor = reverseSensor;
     return this;
   }
 
   @NotNull
-  public List<TalonSRX> getSlaveTalons() {
+  public List<BaseTalon> getSlaveTalons() {
     return new ArrayList<>(slaveTalons);
   }
 
   /** @param port The follower's CAN ID */
-  public TalonConfig addSlaveTalon(int port, @NotNull InvertType invertType) {
-    var talonSRX = new TalonSRX(port);
-
+  public TalonConfig<T> addSlaveTalon(@NotNull BaseTalon slaveTalon, @NotNull InvertType invertType) {
     // Turn off features we don't want a slave to have
-    talonSRX.setInverted(invertType);
-    talonSRX.configForwardLimitSwitchSource(
+    slaveTalon.setInverted(invertType);
+    slaveTalon.configForwardLimitSwitchSource(
         LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0);
-    talonSRX.configReverseLimitSwitchSource(
+    slaveTalon.configReverseLimitSwitchSource(
         LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0);
-    talonSRX.configForwardSoftLimitEnable(false, 0);
-    talonSRX.configReverseSoftLimitEnable(false, 0);
-    talonSRX.configPeakOutputForward(1, 0);
-    talonSRX.enableVoltageCompensation(true);
-    talonSRX.configVoltageCompSaturation(12, 0);
-    talonSRX.configVoltageMeasurementFilter(32, 0);
+    slaveTalon.configForwardSoftLimitEnable(false, 0);
+    slaveTalon.configReverseSoftLimitEnable(false, 0);
+    slaveTalon.configPeakOutputForward(1, 0);
+    slaveTalon.enableVoltageCompensation(true);
+    slaveTalon.configVoltageCompSaturation(12, 0);
+    slaveTalon.configVoltageMeasurementFilter(32, 0);
 
     // Slow down frames so we don't overload the CAN bus
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmwareApiStatus, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 100, 0);
-    talonSRX.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmwareApiStatus, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 100, 0);
+    slaveTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 100, 0);
 
-    this.slaveTalons.add(talonSRX);
+    this.slaveTalons.add(slaveTalon);
     return this;
   }
 
@@ -136,11 +140,12 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
   /**
    * Add a Victor to follow this Talon.
    *
-   * @param port The CAN ID of this Victor SPX.
-   * @param invertType Whether to invert this relative to the master. Defaults to not inverting
-   *     relative to master.
+   * @param port       The CAN ID of this Victor SPX.
+   * @param invertType Whether to invert this relative to the master. Defaults to
+   *                   not inverting
+   *                   relative to master.
    */
-  public TalonConfig addSlaveVictor(int port, @NotNull InvertType invertType) {
+  public TalonConfig<T> addSlaveVictor(int port, @NotNull InvertType invertType) {
     var victorSPX = new VictorSPX(port);
     victorSPX.setInverted(invertType == null ? InvertType.FollowMaster : invertType);
     victorSPX.configPeakOutputForward(1, 0);
@@ -162,11 +167,10 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     return this;
   }
 
-  public TalonConfig copy() {
-    var copy =
-        new TalonConfig()
-            .setReverseSensor(this.getReverseSensor())
-            .setVoltageCompSamples(this.getVoltageCompSamples());
+  public TalonConfig<T> copy() {
+    var copy = new TalonConfig<T>()
+        .setReverseSensor(this.getReverseSensor())
+        .setVoltageCompSamples(this.getVoltageCompSamples());
     if (this.getFeedbackDevice() != null) {
       copy.setFeedbackDevice(this.getFeedbackDevice());
     }
@@ -180,12 +184,9 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     return copy;
   }
 
-  @Contract("-> new")
   @NotNull
   @Override
-  public WPI_TalonSRX createMotor() {
-    var motor = new WPI_TalonSRX(this.getPort());
-
+  public T createMotor() {
     motor.setInverted(this.isInverted());
     // Set brake mode
     motor.setNeutralMode(this.isEnableBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
@@ -257,13 +258,12 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
 
     // Set the current limit if it was given
     if (this.getCurrentLimit() != null) {
-      motor.configContinuousCurrentLimit(this.getCurrentLimit(), 0);
-      motor.configPeakCurrentDuration(0, 0);
-      motor.configPeakCurrentLimit(0, 0); // No duration
-      motor.enableCurrentLimit(true);
+      motor.configSupplyCurrentLimit(
+          new SupplyCurrentLimitConfiguration(true, this.getCurrentLimit(), 0, 0),
+          0);
     } else {
       // If we don't have a current limit, disable current limiting.
-      motor.enableCurrentLimit(false);
+      motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(), 0);
     }
 
     // Enable or disable voltage comp
@@ -276,11 +276,12 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
     // Use slot 0
     motor.selectProfileSlot(0, 0);
 
+    var port = this.motor.getDeviceID();
     // Set up slaves.
     for (var slave : this.getSlaveTalons()) {
       setMasterForTalon(
           slave,
-          this.getPort(),
+          port,
           this.isEnableBrakeMode(),
           this.getCurrentLimit(),
           this.isEnableVoltageComp() ? this.getVoltageCompSamples() : null);
@@ -315,53 +316,57 @@ public class TalonConfig extends MotorConfig<TalonConfig, WPI_TalonSRX> {
   /**
    * Set this Talon to follow another CAN device.
    *
-   * @param port The CAN ID of the device to follow.
-   * @param brakeMode Whether this Talon should be in brake mode or coast mode.
-   * @param currentLimit The current limit for this Talon. Can be null for no current limit.
-   * @param voltageCompSamples The number of voltage compensation samples to use, or null to not
-   *     compensate voltage.
+   * @param port               The CAN ID of the device to follow.
+   * @param brakeMode          Whether this Talon should be in brake mode or coast
+   *                           mode.
+   * @param currentLimit       The current limit for this Talon. Can be null for
+   *                           no current limit.
+   * @param voltageCompSamples The number of voltage compensation samples to use,
+   *                           or null to not
+   *                           compensate voltage.
    */
   private static void setMasterForTalon(
-      @NotNull TalonSRX talonSRX,
+      @NotNull BaseTalon slaveTalon,
       final int port,
       final boolean brakeMode,
       @Nullable final Integer currentLimit,
       @Nullable final Integer voltageCompSamples) {
     // Brake mode doesn't automatically follow master
-    talonSRX.setNeutralMode(brakeMode ? NeutralMode.Brake : NeutralMode.Coast);
+    slaveTalon.setNeutralMode(brakeMode ? NeutralMode.Brake : NeutralMode.Coast);
 
     // Current limiting might not automatically follow master, set it just to be
     // safe
     if (currentLimit != null) {
-      talonSRX.configContinuousCurrentLimit(currentLimit, 0);
-      talonSRX.configPeakCurrentDuration(0, 0);
-      talonSRX.configPeakCurrentLimit(0, 0); // No duration
-      talonSRX.enableCurrentLimit(true);
+      slaveTalon.configSupplyCurrentLimit(
+          new SupplyCurrentLimitConfiguration(true, currentLimit, 0, 0),
+          0);
     } else {
       // If we don't have a current limit, disable current limiting.
-      talonSRX.enableCurrentLimit(false);
+      slaveTalon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(), 0);
     }
 
     // Voltage comp might not follow master either
     if (voltageCompSamples != null) {
-      talonSRX.enableVoltageCompensation(true);
-      talonSRX.configVoltageCompSaturation(12, 0);
-      talonSRX.configVoltageMeasurementFilter(voltageCompSamples, 0);
+      slaveTalon.enableVoltageCompensation(true);
+      slaveTalon.configVoltageCompSaturation(12, 0);
+      slaveTalon.configVoltageMeasurementFilter(voltageCompSamples, 0);
     } else {
-      talonSRX.enableVoltageCompensation(false);
+      slaveTalon.enableVoltageCompensation(false);
     }
 
     // Follow the leader
-    talonSRX.set(ControlMode.Follower, port);
+    slaveTalon.set(ControlMode.Follower, port);
   }
 
   /**
    * Set this Victor to follow another CAN device.
    *
-   * @param toFollow The motor controller to follow.
-   * @param brakeMode Whether this Talon should be in brake mode or coast mode.
-   * @param voltageCompSamples The number of voltage compensation samples to use, or null to not
-   *     compensate voltage.
+   * @param toFollow           The motor controller to follow.
+   * @param brakeMode          Whether this Talon should be in brake mode or coast
+   *                           mode.
+   * @param voltageCompSamples The number of voltage compensation samples to use,
+   *                           or null to not
+   *                           compensate voltage.
    */
   private static void setMasterForVictor(
       @NotNull VictorSPX victorSPX,
