@@ -28,12 +28,9 @@ public class DriveConstants {
   /** CPR of external encoders on driving motors */
   public static final int DRIVE_EXT_ENC_CPR = 256;
 
-  /**
-   * Location of the front left module
-   */
-  public static final Translation2d FRONT_LEFT_LOC = new Translation2d(
-      Units.inchesToMeters(25) / 2,
-      Units.inchesToMeters(25) / 2);
+  /** Location of the front left module */
+  public static final Translation2d FRONT_LEFT_LOC =
+      new Translation2d(Units.inchesToMeters(25) / 2, Units.inchesToMeters(25) / 2);
 
   public static final int DRIVE_CURRENT_LIM = 40;
   public static final double DRIVE_ENC_VEL_THRESHOLD = 0.1;

@@ -41,7 +41,8 @@ public class SwerveModule {
     turnController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  public SwerveModule create(@NotNull WrappedMotor drivingMotor,
+  public SwerveModule create(
+      @NotNull WrappedMotor drivingMotor,
       @NotNull WrappedMotor turningMotor,
       @NotNull PIDController driveController,
       @NotNull ProfiledPIDController turnController,
@@ -67,7 +68,6 @@ public class SwerveModule {
           turnFeedforward,
           location);
     }
-
   }
 
   public SwerveModuleState getState() {
@@ -78,9 +78,11 @@ public class SwerveModule {
   /** Set the desired state for this module */
   void set(SwerveModuleState desiredState) {
     // Ensure the module doesn't turn the long way around
-    var state = SwerveModuleState.optimize(desiredState, new Rotation2d(turningMotor.getPosition()));
+    var state =
+        SwerveModuleState.optimize(desiredState, new Rotation2d(turningMotor.getPosition()));
 
-    var drivePid = driveController.calculate(drivingMotor.getVelocity(), state.speedMetersPerSecond);
+    var drivePid =
+        driveController.calculate(drivingMotor.getVelocity(), state.speedMetersPerSecond);
     var driveFF = driveFeedforward.calculate(state.speedMetersPerSecond);
     drivingMotor.setVoltage(drivePid + driveFF);
 
@@ -90,8 +92,8 @@ public class SwerveModule {
   }
 
   /**
-   * A "simulated" swerve module that just pretends it immediately got to whatever
-   * desired state was given
+   * A "simulated" swerve module that just pretends it immediately got to whatever desired state was
+   * given
    */
   public static final class SwerveModuleSim extends SwerveModule {
 

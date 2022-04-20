@@ -1,15 +1,13 @@
 package frc.team449.robot2022;
 
-import java.util.function.Function;
 
 import com.revrobotics.CANSparkMax;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,23 +45,20 @@ public final class RobotContainer2022 implements Loggable {
 
   private static EncoderCreator<CANSparkMax> driveEnc(Encoder wpiEnc) {
     return BackupEncoder.creator(
-        QuadEncoder.creator(
-            wpiEnc,
-            DriveConstants.DRIVE_EXT_ENC_CPR,
-            DriveConstants.DRIVE_UPR,
-            1),
+        QuadEncoder.creator(wpiEnc, DriveConstants.DRIVE_EXT_ENC_CPR, DriveConstants.DRIVE_UPR, 1),
         NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING),
         DriveConstants.DRIVE_ENC_VEL_THRESHOLD);
   }
 
   private SwerveDrive createDrivetrain() {
-    var frontLeftDrive = new SparkMaxConfig()
-        .setPort(DriveConstants.FRONT_LEFT_DRIVE)
-        .setName("FrontLeftDrive")
-        .setEnableBrakeMode(true)
-        .setInverted(false)
-        .setEncoderCreator(driveEnc(DriveConstants.FRONT_LEFT_DRIVE_ENC))
-        .build();
+    var frontLeftDrive =
+        new SparkMaxConfig()
+            .setPort(DriveConstants.FRONT_LEFT_DRIVE)
+            .setName("FrontLeftDrive")
+            .setEnableBrakeMode(true)
+            .setInverted(false)
+            .setEncoderCreator(driveEnc(DriveConstants.FRONT_LEFT_DRIVE_ENC))
+            .build();
 
     // todo actually make the modules
     return SwerveDrive.squareDrive(
