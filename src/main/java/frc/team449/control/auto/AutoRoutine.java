@@ -1,4 +1,4 @@
-package frc.team449.abstractions.auto;
+package frc.team449.control.auto;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 

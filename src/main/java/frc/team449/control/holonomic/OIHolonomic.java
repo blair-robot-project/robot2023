@@ -1,4 +1,4 @@
-package frc.team449.abstractions.swerve;
+package frc.team449.control.holonomic;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-public class OISwerve implements Supplier<ChassisSpeeds> {
+public class OIHolonomic implements Supplier<ChassisSpeeds> {
 
   private final DoubleSupplier xThrottle;
   private final DoubleSupplier yThrottle;
@@ -20,7 +20,7 @@ public class OISwerve implements Supplier<ChassisSpeeds> {
   private double prevY;
   private double prevTime;
 
-  public OISwerve(
+  public OIHolonomic(
       DoubleSupplier xThrottle,
       DoubleSupplier yThrottle,
       DoubleSupplier rotThrottle,

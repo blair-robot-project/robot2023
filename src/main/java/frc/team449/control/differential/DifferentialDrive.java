@@ -1,4 +1,4 @@
-package frc.team449.abstractions.tank;
+package frc.team449.control.differential;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -8,12 +8,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import frc.team449.abstractions.DriveSubsystem;
+import frc.team449.control.DriveSubsystem;
 import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
 
-/** A tank drive with closed-loop velocity control using PID */
-public class TankDrive implements DriveSubsystem {
+/** A differential drive with closed-loop velocity control using PID */
+public class DifferentialDrive implements DriveSubsystem {
   /** The left side of the tank drive */
   private final WrappedMotor leftLeader;
   /** The right side of the tank drive */
@@ -37,7 +37,7 @@ public class TankDrive implements DriveSubsystem {
 
   private DifferentialDriveWheelSpeeds desiredSpeeds;
 
-  public TankDrive(
+  public DifferentialDrive(
       WrappedMotor leftLeader,
       WrappedMotor rightLeader,
       AHRS ahrs,

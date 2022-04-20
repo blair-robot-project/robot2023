@@ -1,4 +1,4 @@
-package frc.team449.abstractions.auto;
+package frc.team449.control.auto;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -11,9 +11,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.team449.abstractions.DriveSubsystem;
-import frc.team449.abstractions.swerve.SwerveDrive;
-import frc.team449.abstractions.tank.TankDrive;
+import frc.team449.control.DriveSubsystem;
+import frc.team449.control.differential.DifferentialDrive;
+import frc.team449.control.holonomic.SwerveDrive;
+
 import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,8 +66,8 @@ public class AutoDriveCommand<T extends DriveSubsystem> extends CommandBase {
         resetPose);
   }
 
-  public static AutoDriveCommand<TankDrive> tankDriveCommand(
-      TankDrive drivetrain,
+  public static AutoDriveCommand<DifferentialDrive> tankDriveCommand(
+      DifferentialDrive drivetrain,
       @NotNull Trajectory trajectory,
       double startHeading,
       double endHeading,
