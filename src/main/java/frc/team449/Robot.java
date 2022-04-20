@@ -1,42 +1,67 @@
 package frc.team449;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.team449.robot2022.RobotContainer2022;
 
-/** The main class of the robot, constructs all the subsystems and initializes default commands. */
+/**
+ * The main class of the robot, constructs all the subsystems and initializes
+ * default commands.
+ */
 public class Robot extends TimedRobot {
-  @Override
-  public void robotInit() {}
+  private final RobotContainer2022 robotContainer = new RobotContainer2022();
 
   @Override
-  public void robotPeriodic() {}
+  public void robotInit() {
+  }
 
   @Override
-  public void autonomousInit() {}
+  public void robotPeriodic() {
+    robotContainer.robotPeriodic();
+  }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousInit() {
+    var routine = robotContainer.autoChooser.getSelected();
+    robotContainer.field
+        .getObject(routine.getName())
+        .setTrajectory(routine.getTrajectory());
+  }
 
   @Override
-  public void teleopInit() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopInit() {
+    robotContainer.teleopInit();
+  }
 
   @Override
-  public void disabledInit() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void testInit() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void testPeriodic() {}
+  public void testInit() {
+  }
 
   @Override
-  public void simulationInit() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationInit() {
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    robotContainer.simulationPeriodic();
+  }
 }
