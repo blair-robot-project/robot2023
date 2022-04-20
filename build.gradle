@@ -120,9 +120,6 @@ spotless {
     endWithNewline()
   }
   java {
-    // don't need to set target, it is inferred from java
-
-    // apply a specific flavor of google-java-format
-    googleJavaFormat().reflowLongStrings()
+    prettier(['prettier-plugin-java': '1.6.1']).configFile("./.prettierrc")
   }
 }

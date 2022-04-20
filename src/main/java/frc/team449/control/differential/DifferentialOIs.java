@@ -13,6 +13,7 @@ import java.util.function.Supplier;
  * or tank)
  */
 public final class DifferentialOIs {
+
   private DifferentialOIs() {}
 
   /**
@@ -26,18 +27,24 @@ public final class DifferentialOIs {
    * @param rotRamp Used for limiting rotational acceleration
    */
   public static Supplier<ChassisSpeeds> createArcade(
-      DifferentialDrive drive,
-      DoubleSupplier xThrottle,
-      DoubleSupplier rotThrottle,
-      SlewRateLimiter xRamp,
-      SlewRateLimiter rotRamp) {
-    return () -> scaleAndApplyRamping(
+    DifferentialDrive drive,
+    DoubleSupplier xThrottle,
+    DoubleSupplier rotThrottle,
+    SlewRateLimiter xRamp,
+    SlewRateLimiter rotRamp
+  ) {
+    return () ->
+      scaleAndApplyRamping(
         edu.wpi.first.wpilibj.drive.DifferentialDrive.arcadeDriveIK(
-            xThrottle.getAsDouble(), rotThrottle.getAsDouble(), false),
+          xThrottle.getAsDouble(),
+          rotThrottle.getAsDouble(),
+          false
+        ),
         drive.kinematics,
         drive.maxLinearSpeed,
         xRamp,
-        rotRamp);
+        rotRamp
+      );
   }
 
   /**
@@ -54,19 +61,25 @@ public final class DifferentialOIs {
    *        like a car
    */
   public static Supplier<ChassisSpeeds> createCurvature(
-      DifferentialDrive drive,
-      DoubleSupplier xThrottle,
-      DoubleSupplier rotThrottle,
-      SlewRateLimiter xRamp,
-      SlewRateLimiter rotRamp,
-      BooleanSupplier turnInPlace) {
-    return () -> scaleAndApplyRamping(
+    DifferentialDrive drive,
+    DoubleSupplier xThrottle,
+    DoubleSupplier rotThrottle,
+    SlewRateLimiter xRamp,
+    SlewRateLimiter rotRamp,
+    BooleanSupplier turnInPlace
+  ) {
+    return () ->
+      scaleAndApplyRamping(
         edu.wpi.first.wpilibj.drive.DifferentialDrive.curvatureDriveIK(
-            xThrottle.getAsDouble(), rotThrottle.getAsDouble(), turnInPlace.getAsBoolean()),
+          xThrottle.getAsDouble(),
+          rotThrottle.getAsDouble(),
+          turnInPlace.getAsBoolean()
+        ),
         drive.kinematics,
         drive.maxLinearSpeed,
         xRamp,
-        rotRamp);
+        rotRamp
+      );
   }
 
   /**
@@ -83,15 +96,21 @@ public final class DifferentialOIs {
    * @param rightRamp Used for limiting the right side's acceleration
    */
   public static Supplier<ChassisSpeeds> createTank(
-      DifferentialDrive drive,
-      DoubleSupplier leftThrottle,
-      DoubleSupplier rightThrottle,
-      SlewRateLimiter leftRamp,
-      SlewRateLimiter rightRamp) {
-    return () -> drive.kinematics.toChassisSpeeds(
+    DifferentialDrive drive,
+    DoubleSupplier leftThrottle,
+    DoubleSupplier rightThrottle,
+    SlewRateLimiter leftRamp,
+    SlewRateLimiter rightRamp
+  ) {
+    return () ->
+      drive.kinematics.toChassisSpeeds(
         new DifferentialDriveWheelSpeeds(
-            leftRamp.calculate(leftThrottle.getAsDouble() * drive.maxLinearSpeed),
-            rightRamp.calculate(rightThrottle.getAsDouble() * drive.maxLinearSpeed)));
+          leftRamp.calculate(leftThrottle.getAsDouble() * drive.maxLinearSpeed),
+          rightRamp.calculate(
+            rightThrottle.getAsDouble() * drive.maxLinearSpeed
+          )
+        )
+      );
   }
 
   /**
@@ -112,18 +131,21 @@ public final class DifferentialOIs {
    * @return
    */
   private static ChassisSpeeds scaleAndApplyRamping(
-      edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds wheelSpeeds,
-      DifferentialDriveKinematics kinematics,
-      double maxSpeed,
-      SlewRateLimiter xRamp,
-      SlewRateLimiter rotRamp) {
+    edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds wheelSpeeds,
+    DifferentialDriveKinematics kinematics,
+    double maxSpeed,
+    SlewRateLimiter xRamp,
+    SlewRateLimiter rotRamp
+  ) {
     var leftVel = wheelSpeeds.left * maxSpeed;
     var rightVel = wheelSpeeds.right * maxSpeed;
-    var chassisSpeeds =
-        kinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(leftVel, rightVel));
+    var chassisSpeeds = kinematics.toChassisSpeeds(
+      new DifferentialDriveWheelSpeeds(leftVel, rightVel)
+    );
     return new ChassisSpeeds(
-        xRamp.calculate(chassisSpeeds.vxMetersPerSecond),
-        0,
-        rotRamp.calculate(chassisSpeeds.omegaRadiansPerSecond));
+      xRamp.calculate(chassisSpeeds.vxMetersPerSecond),
+      0,
+      rotRamp.calculate(chassisSpeeds.omegaRadiansPerSecond)
+    );
   }
 }
