@@ -25,6 +25,7 @@ jobs:
       run: ./gradlew spotlessApply
     - name: Commit if needed
       run: |
+        git config user.name "github-actions[bot]"
         git config user.email "<>"
         if git status --porcelain
         then git commit -am "Format with spotless"
