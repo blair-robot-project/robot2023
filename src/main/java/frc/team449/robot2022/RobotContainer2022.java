@@ -1,6 +1,5 @@
 package frc.team449.robot2022;
 
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -16,7 +15,6 @@ import frc.team449.abstractions.swerve.SwerveDrive;
 import frc.team449.robot2022.drive.DriveConstants;
 import frc.team449.system.AHRS;
 import frc.team449.system.encoder.BackupEncoder;
-import frc.team449.system.encoder.EncoderCreator;
 import frc.team449.system.encoder.NEOEncoder;
 import frc.team449.system.encoder.QuadEncoder;
 import frc.team449.system.motor.SparkMaxConfig;
