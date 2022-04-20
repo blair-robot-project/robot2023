@@ -23,13 +23,6 @@ jobs:
         distribution: 'temurin'
     - name: Format using spotless
       run: ./gradlew spotlessApply
-    - name: Commit if needed
-      run: |
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "$GITHUB_ACTOR"
-        git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
-        git pull github ${GITHUB_REF} --ff-only
-        if ! git diff --exit-code
-        then git commit -am "Format with spotless"
-        fi
-        git push github HEAD:${GITHUB_REF}
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Format with spotless
