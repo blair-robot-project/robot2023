@@ -20,8 +20,7 @@ public class TankDrive implements DriveSubsystem {
   /** The gyro used for the robot */
   private final AHRS ahrs;
   /**
-   * the kinematics used to convert {@link DifferentialDriveWheelSpeeds} to
-   * {@link ChassisSpeeds}
+   * the kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}
    */
   private final DifferentialDriveKinematics driveKinematics;
   /** odometer that keeps track of where the robot is */
@@ -30,9 +29,7 @@ public class TankDrive implements DriveSubsystem {
   public final SimpleMotorFeedforward feedforward;
   /** Velocity PID controller for both sides */
   public final PIDController velPID;
-  /**
-   * The track width of the robot/distance between left and right wheels in meters
-   */
+  /** The track width of the robot/distance between left and right wheels in meters */
   public final double trackWidth;
 
   private DifferentialDriveWheelSpeeds desiredSpeeds;
@@ -55,8 +52,7 @@ public class TankDrive implements DriveSubsystem {
   }
 
   /**
-   * Convert from x, y, rotation to left and right speeds apply feedforward to
-   * each desired speed,
+   * Convert from x, y, rotation to left and right speeds apply feedforward to each desired speed,
    * then set the voltage
    *
    * @param desiredSpeeds The {@link ChassisSpeeds} desired for the drive
