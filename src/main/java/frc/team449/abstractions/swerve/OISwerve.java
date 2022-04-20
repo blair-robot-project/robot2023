@@ -3,7 +3,6 @@ package frc.team449.abstractions.swerve;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
-
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -39,10 +38,7 @@ public class OISwerve implements Supplier<ChassisSpeeds> {
     this.prevTime = Timer.getFPGATimestamp();
   }
 
-  /**
-   * @return The {@link ChassisSpeeds} for the given x, y and rotation input from
-   *         the joystick
-   */
+  /** @return The {@link ChassisSpeeds} for the given x, y and rotation input from the joystick */
   @Override
   public ChassisSpeeds get() {
     var currTime = Timer.getFPGATimestamp();

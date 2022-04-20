@@ -1,7 +1,5 @@
 package frc.team449.abstractions.tank;
 
-import org.jetbrains.annotations.NotNull;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,6 +9,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import frc.team449.abstractions.DriveSubsystem;
 import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
+import org.jetbrains.annotations.NotNull;
 
 public class TankDrive implements DriveSubsystem {
   /** The left side of the tank drive */
@@ -20,8 +19,7 @@ public class TankDrive implements DriveSubsystem {
   /** The gyro used for the robot */
   private final AHRS ahrs;
   /**
-   * the kinematics used to convert {@link ChassisSpeeds} to
-   * {@link DifferentialDriveWheelSpeeds}
+   * the kinematics used to convert {@link ChassisSpeeds} to {@link DifferentialDriveWheelSpeeds}
    */
   private final DifferentialDriveKinematics kinematics;
   /** Odometry to keeps track of where the robot is */
