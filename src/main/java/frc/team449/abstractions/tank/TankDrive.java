@@ -12,6 +12,9 @@ import frc.team449.abstractions.DriveSubsystem;
 import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
 
+/**
+ * A tank drive with closed-loop velocity control using PID
+ */
 public class TankDrive implements DriveSubsystem {
   /** The left side of the tank drive */
   private final WrappedMotor leftLeader;
@@ -20,19 +23,18 @@ public class TankDrive implements DriveSubsystem {
   /** The gyro used for the robot */
   private final AHRS ahrs;
   /**
-   * the kinematics used to convert {@link DifferentialDriveWheelSpeeds} to
-   * {@link ChassisSpeeds}
+   * The kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}
    */
-  private final DifferentialDriveKinematics driveKinematics;
+  private final DifferentialDriveKinematics kinematics;
   /** odometer that keeps track of where the robot is */
   private final DifferentialDriveOdometry odometry;
   /** Feedforward calculator */
-  public final SimpleMotorFeedforward feedforward;
-  /** Velocity PID controller for both sides */
-  public final PIDController velPID;
-  /**
-   * The track width of the robot/distance between left and right wheels in meters
-   */
+  private final SimpleMotorFeedforward feedforward;
+  /** Velocity PID controller for left side */
+  private final PIDController leftPID;
+  /** Velocity PID controller for right side */
+  private final PIDController rightPID;
+  /** The track width of the robot/distance between left and right wheels in meters */
   public final double trackWidth;
 
   private DifferentialDriveWheelSpeeds desiredSpeeds;
@@ -40,43 +42,34 @@ public class TankDrive implements DriveSubsystem {
   public TankDrive(
       WrappedMotor leftLeader,
       WrappedMotor rightLeader,
+      AHRS ahrs,
       SimpleMotorFeedforward feedforward,
       PIDController velPID,
-      AHRS ahrs,
-      double trackWidth) { // TODO
-    this.trackWidth = trackWidth;
-    driveKinematics = new DifferentialDriveKinematics(trackWidth);
-    this.ahrs = ahrs;
-    this.velPID = velPID;
-    this.feedforward = feedforward;
+      double trackWidth) {
     this.leftLeader = leftLeader;
     this.rightLeader = rightLeader;
-    odometry = new DifferentialDriveOdometry(ahrs.getHeading());
+    this.ahrs = ahrs;
+    this.leftPID = new PIDController(velPID.getP(), velPID.getI(), velPID.getD());
+    this.rightPID = new PIDController(velPID.getP(), velPID.getI(), velPID.getD());
+    this.feedforward = feedforward;
+    this.trackWidth = trackWidth;
+    this.kinematics = new DifferentialDriveKinematics(trackWidth);
+    this.odometry = new DifferentialDriveOdometry(ahrs.getHeading());
   }
 
   /**
-   * Convert from x, y, rotation to left and right speeds apply feedforward to
-   * each desired speed,
-   * then set the voltage
+   * Convert from x, y, rotation to left and right speeds
    *
    * @param desiredSpeeds The {@link ChassisSpeeds} desired for the drive
    */
   @Override
   public void set(ChassisSpeeds desiredSpeeds) {
-    this.desiredSpeeds = driveKinematics.toWheelSpeeds(desiredSpeeds);
+    this.desiredSpeeds = kinematics.toWheelSpeeds(desiredSpeeds);
   }
 
   @Override
   public Rotation2d getHeading() {
     return ahrs.getHeading();
-  }
-
-  public PIDController getVelPID() {
-    return velPID;
-  }
-
-  public SimpleMotorFeedforward getFeedforward() {
-    return feedforward;
   }
 
   public DifferentialDriveOdometry getOdometry() {
@@ -91,22 +84,15 @@ public class TankDrive implements DriveSubsystem {
   /** Reset odometry tracker to current robot pose */
   @Override
   public void setPose(Pose2d pose) {
-    resetEncoders();
+    leftLeader.encoder.resetPosition(0);
+    rightLeader.encoder.resetPosition(0);
     ahrs.setHeading(pose.getRotation());
     this.odometry.resetPosition(pose, ahrs.getHeading());
   }
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
-    leftLeader.set(0);
-    rightLeader.set(0);
-  }
-
-  /** Reset the position of the drive if it has encoders. */
-  public void resetEncoders() {
-    leftLeader.encoder.resetPosition(0);
-    rightLeader.encoder.resetPosition(0);
+    this.desiredSpeeds = new DifferentialDriveWheelSpeeds(0, 0);
   }
 
   /** Periodically update the odometry */
@@ -114,9 +100,13 @@ public class TankDrive implements DriveSubsystem {
   public void periodic() {
     var leftPosition = this.leftLeader.getPosition();
     var rightPosition = this.rightLeader.getPosition();
-    this.odometry.update(this.ahrs.getHeading(), leftPosition, rightPosition);
+    this.odometry.update(this.getHeading(), leftPosition, rightPosition);
 
-    leftLeader.setVoltage(feedforward.calculate(desiredSpeeds.leftMetersPerSecond));
-    rightLeader.setVoltage(feedforward.calculate(desiredSpeeds.rightMetersPerSecond));
+    var leftVel = desiredSpeeds.leftMetersPerSecond;
+    var rightVel = desiredSpeeds.rightMetersPerSecond;
+    leftLeader.setVoltage(
+        feedforward.calculate(leftVel) + leftPID.calculate(leftLeader.getVelocity(), leftVel));
+    rightLeader.setVoltage(
+        feedforward.calculate(rightVel) + rightPID.calculate(rightLeader.getVelocity(), rightVel));
   }
 }
