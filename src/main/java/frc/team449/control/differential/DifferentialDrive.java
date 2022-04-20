@@ -23,8 +23,8 @@ public class DifferentialDrive implements DriveSubsystem {
   /**
    * The kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}
    */
-  private final DifferentialDriveKinematics kinematics;
-  /** odometer that keeps track of where the robot is */
+  public final DifferentialDriveKinematics kinematics;
+  /** Odometry to keep track of where the robot is */
   private final DifferentialDriveOdometry odometry;
   /** Feedforward calculator */
   private final SimpleMotorFeedforward feedforward;
@@ -34,6 +34,10 @@ public class DifferentialDrive implements DriveSubsystem {
   private final PIDController rightPID;
   /** The track width of the robot/distance between left and right wheels in meters */
   public final double trackWidth;
+  /** Max speed going straight (m/s) */
+  public final double maxLinearSpeed;
+  /** Max speed when rotating (rad/s) */
+  public final double maxRotSpeed;
 
   private DifferentialDriveWheelSpeeds desiredSpeeds;
 
@@ -43,7 +47,8 @@ public class DifferentialDrive implements DriveSubsystem {
       AHRS ahrs,
       SimpleMotorFeedforward feedforward,
       PIDController velPID,
-      double trackWidth) {
+      double trackWidth,
+      double maxLinearSpeed) {
     this.leftLeader = leftLeader;
     this.rightLeader = rightLeader;
     this.ahrs = ahrs;
@@ -51,6 +56,9 @@ public class DifferentialDrive implements DriveSubsystem {
     this.rightPID = new PIDController(velPID.getP(), velPID.getI(), velPID.getD());
     this.feedforward = feedforward;
     this.trackWidth = trackWidth;
+    this.maxLinearSpeed = maxLinearSpeed;
+    // todo check this!
+    this.maxRotSpeed = 2 * maxLinearSpeed / trackWidth;
     this.kinematics = new DifferentialDriveKinematics(trackWidth);
     this.odometry = new DifferentialDriveOdometry(ahrs.getHeading());
   }
@@ -100,6 +108,7 @@ public class DifferentialDrive implements DriveSubsystem {
     var rightPosition = this.rightLeader.getPosition();
     this.odometry.update(this.getHeading(), leftPosition, rightPosition);
 
+    desiredSpeeds.desaturate(this.maxLinearSpeed);
     var leftVel = desiredSpeeds.leftMetersPerSecond;
     var rightVel = desiredSpeeds.rightMetersPerSecond;
     leftLeader.setVoltage(
