@@ -12,9 +12,7 @@ import frc.team449.abstractions.DriveSubsystem;
 import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
 
-/**
- * A tank drive with closed-loop velocity control using PID
- */
+/** A tank drive with closed-loop velocity control using PID */
 public class TankDrive implements DriveSubsystem {
   /** The left side of the tank drive */
   private final WrappedMotor leftLeader;
