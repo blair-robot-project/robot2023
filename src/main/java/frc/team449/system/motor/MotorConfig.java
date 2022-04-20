@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends MotorController> {
   private String name;
   private boolean enableBrakeMode;
-  private int port = -1;
   private boolean inverted;
   private @Nullable Boolean fwdLimitSwitchNormallyOpen;
   private @Nullable Boolean revLimitSwitchNormallyOpen;
@@ -45,15 +44,6 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
   /** The name that the encoder for this motor uses. The motor's name itself should be set first. */
   public String getEncName() {
     return this.getName() + "Enc";
-  }
-
-  public int getPort() {
-    return port;
-  }
-
-  public Self setPort(int port) {
-    this.port = port;
-    return self();
   }
 
   public boolean isEnableBrakeMode() {

@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.team449.Robot;
 import frc.team449.system.motor.WrappedMotor;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +22,7 @@ public class SwerveModule {
   /** The location of the module relative to the center */
   public final Translation2d location;
 
-  public SwerveModule(
+  private SwerveModule(
       @NotNull WrappedMotor drivingMotor,
       @NotNull WrappedMotor turningMotor,
       @NotNull PIDController driveController,
@@ -38,6 +39,35 @@ public class SwerveModule {
     this.location = location;
 
     turnController.enableContinuousInput(-Math.PI, Math.PI);
+  }
+
+  public SwerveModule create(
+      @NotNull WrappedMotor drivingMotor,
+      @NotNull WrappedMotor turningMotor,
+      @NotNull PIDController driveController,
+      @NotNull ProfiledPIDController turnController,
+      @NotNull SimpleMotorFeedforward driveFeedforward,
+      @NotNull SimpleMotorFeedforward turnFeedforward,
+      @NotNull Translation2d location) {
+    if (Robot.isReal()) {
+      return new SwerveModule(
+          drivingMotor,
+          turningMotor,
+          driveController,
+          turnController,
+          driveFeedforward,
+          turnFeedforward,
+          location);
+    } else {
+      return new SwerveModuleSim(
+          drivingMotor,
+          turningMotor,
+          driveController,
+          turnController,
+          driveFeedforward,
+          turnFeedforward,
+          location);
+    }
   }
 
   public SwerveModuleState getState() {
@@ -59,5 +89,42 @@ public class SwerveModule {
     var turnPid = turnController.calculate(turningMotor.getVelocity(), state.angle.getRadians());
     var turnFF = turnFeedforward.calculate(turnController.getSetpoint().velocity);
     turningMotor.setVoltage(turnPid + turnFF);
+  }
+
+  /**
+   * A "simulated" swerve module that just pretends it immediately got to whatever desired state was
+   * given
+   */
+  public static final class SwerveModuleSim extends SwerveModule {
+
+    private SwerveModuleState state = new SwerveModuleState();
+
+    public SwerveModuleSim(
+        @NotNull WrappedMotor drivingMotor,
+        @NotNull WrappedMotor turningMotor,
+        @NotNull PIDController driveController,
+        @NotNull ProfiledPIDController turnController,
+        @NotNull SimpleMotorFeedforward driveFeedforward,
+        @NotNull SimpleMotorFeedforward turnFeedforward,
+        @NotNull Translation2d location) {
+      super(
+          drivingMotor,
+          turningMotor,
+          driveController,
+          turnController,
+          driveFeedforward,
+          turnFeedforward,
+          location);
+    }
+
+    @Override
+    public SwerveModuleState getState() {
+      return this.state;
+    }
+
+    @Override
+    void set(SwerveModuleState desiredState) {
+      this.state = desiredState;
+    }
   }
 }

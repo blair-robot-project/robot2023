@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 /** Motor controller configuration, along with some Spark-specific stuff */
 public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMax> {
+  private int port = -1;
   private final Map<CANSparkMax.PeriodicFrame, Integer> statusFrameRatesMillis = new HashMap<>();
   private final @NotNull Map<CANSparkMax, Boolean> slaveSparks = new HashMap<>();
   private @Nullable Integer controlFrameRateMillis;
@@ -18,6 +19,15 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
   @Override
   protected SparkMaxConfig self() {
     return this;
+  }
+
+  public int getPort() {
+    return port;
+  }
+
+  public SparkMaxConfig setPort(int port) {
+    this.port = port;
+    return self();
   }
 
   @Nullable
