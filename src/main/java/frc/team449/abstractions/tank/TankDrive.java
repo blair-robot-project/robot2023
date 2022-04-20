@@ -32,12 +32,13 @@ public class TankDrive implements DriveSubsystem {
   /** The track width of the robot/distance between left and right wheels in meters */
   public final double trackWidth;
 
-  public TankDrive(WrappedMotor leftLeader,
-                   WrappedMotor rightLeader,
-                   SimpleMotorFeedforward feedforward,
-                   PIDController velPID,
-                   AHRS ahrs,
-                   double trackWidth) { // TODO
+  public TankDrive(
+      WrappedMotor leftLeader,
+      WrappedMotor rightLeader,
+      SimpleMotorFeedforward feedforward,
+      PIDController velPID,
+      AHRS ahrs,
+      double trackWidth) { // TODO
     this.trackWidth = trackWidth;
     driveKinematics = new DifferentialDriveKinematics(trackWidth);
     this.ahrs = ahrs;
@@ -49,8 +50,9 @@ public class TankDrive implements DriveSubsystem {
   }
 
   /**
-   * convert from x, y, rotation to left and right speeds
-   * apply feedforward to each desired speed, then set the voltage
+   * convert from x, y, rotation to left and right speeds apply feedforward to each desired speed,
+   * then set the voltage
+   *
    * @param desiredSpeeds the {@link ChassisSpeeds} desired for the drive
    */
   @Override
@@ -104,16 +106,13 @@ public class TankDrive implements DriveSubsystem {
   }
 
   /** Reset the position of the drive if it has encoders. */
-
-  public void resetEncoders(){
+  public void resetEncoders() {
     leftLeader.encoder.resetPosition(0);
     rightLeader.encoder.resetPosition(0);
   }
-  /**
-   * Periodically update the odometry
-   */
+  /** Periodically update the odometry */
   @Override
-  public void periodic(){
+  public void periodic() {
     var leftPosition = this.leftLeader.getPosition();
     var rightPosition = this.rightLeader.getPosition();
     this.odometry.update(this.ahrs.getHeading(), leftPosition, rightPosition);
