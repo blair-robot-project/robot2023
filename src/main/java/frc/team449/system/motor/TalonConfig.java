@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +23,9 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-
 /** Configuration for a WPI_TalonSRX or WPI_TalonFX */
-public class TalonConfig<T extends BaseTalon & MotorController> extends MotorConfig<TalonConfig<T>, T> {
+public class TalonConfig<T extends BaseTalon & MotorController>
+    extends MotorConfig<TalonConfig<T>, T> {
   private T motor;
   private final Map<ControlFrame, Integer> controlFrameRatesMillis = new HashMap<>();
   private final Map<StatusFrameEnhanced, Integer> statusFrameRatesMillis = new HashMap<>();
@@ -50,7 +50,8 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
     return new HashMap<>(this.controlFrameRatesMillis);
   }
 
-  public TalonConfig<T> addControlFrameRateMillis(@NotNull ControlFrame controlFrame, int updateRate) {
+  public TalonConfig<T> addControlFrameRateMillis(
+      @NotNull ControlFrame controlFrame, int updateRate) {
     this.controlFrameRatesMillis.put(controlFrame, updateRate);
     return this;
   }
@@ -100,7 +101,8 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
   }
 
   /** @param port The follower's CAN ID */
-  public TalonConfig<T> addSlaveTalon(@NotNull BaseTalon slaveTalon, @NotNull InvertType invertType) {
+  public TalonConfig<T> addSlaveTalon(
+      @NotNull BaseTalon slaveTalon, @NotNull InvertType invertType) {
     // Turn off features we don't want a slave to have
     slaveTalon.setInverted(invertType);
     slaveTalon.configForwardLimitSwitchSource(
@@ -140,10 +142,9 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
   /**
    * Add a Victor to follow this Talon.
    *
-   * @param port       The CAN ID of this Victor SPX.
-   * @param invertType Whether to invert this relative to the master. Defaults to
-   *                   not inverting
-   *                   relative to master.
+   * @param port The CAN ID of this Victor SPX.
+   * @param invertType Whether to invert this relative to the master. Defaults to not inverting
+   *     relative to master.
    */
   public TalonConfig<T> addSlaveVictor(int port, @NotNull InvertType invertType) {
     var victorSPX = new VictorSPX(port);
@@ -168,9 +169,10 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
   }
 
   public TalonConfig<T> copy() {
-    var copy = new TalonConfig<T>()
-        .setReverseSensor(this.getReverseSensor())
-        .setVoltageCompSamples(this.getVoltageCompSamples());
+    var copy =
+        new TalonConfig<T>()
+            .setReverseSensor(this.getReverseSensor())
+            .setVoltageCompSamples(this.getVoltageCompSamples());
     if (this.getFeedbackDevice() != null) {
       copy.setFeedbackDevice(this.getFeedbackDevice());
     }
@@ -259,8 +261,7 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
     // Set the current limit if it was given
     if (this.getCurrentLimit() != null) {
       motor.configSupplyCurrentLimit(
-          new SupplyCurrentLimitConfiguration(true, this.getCurrentLimit(), 0, 0),
-          0);
+          new SupplyCurrentLimitConfiguration(true, this.getCurrentLimit(), 0, 0), 0);
     } else {
       // If we don't have a current limit, disable current limiting.
       motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(), 0);
@@ -316,14 +317,11 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
   /**
    * Set this Talon to follow another CAN device.
    *
-   * @param port               The CAN ID of the device to follow.
-   * @param brakeMode          Whether this Talon should be in brake mode or coast
-   *                           mode.
-   * @param currentLimit       The current limit for this Talon. Can be null for
-   *                           no current limit.
-   * @param voltageCompSamples The number of voltage compensation samples to use,
-   *                           or null to not
-   *                           compensate voltage.
+   * @param port The CAN ID of the device to follow.
+   * @param brakeMode Whether this Talon should be in brake mode or coast mode.
+   * @param currentLimit The current limit for this Talon. Can be null for no current limit.
+   * @param voltageCompSamples The number of voltage compensation samples to use, or null to not
+   *     compensate voltage.
    */
   private static void setMasterForTalon(
       @NotNull BaseTalon slaveTalon,
@@ -338,8 +336,7 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
     // safe
     if (currentLimit != null) {
       slaveTalon.configSupplyCurrentLimit(
-          new SupplyCurrentLimitConfiguration(true, currentLimit, 0, 0),
-          0);
+          new SupplyCurrentLimitConfiguration(true, currentLimit, 0, 0), 0);
     } else {
       // If we don't have a current limit, disable current limiting.
       slaveTalon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(), 0);
@@ -361,12 +358,10 @@ public class TalonConfig<T extends BaseTalon & MotorController> extends MotorCon
   /**
    * Set this Victor to follow another CAN device.
    *
-   * @param toFollow           The motor controller to follow.
-   * @param brakeMode          Whether this Talon should be in brake mode or coast
-   *                           mode.
-   * @param voltageCompSamples The number of voltage compensation samples to use,
-   *                           or null to not
-   *                           compensate voltage.
+   * @param toFollow The motor controller to follow.
+   * @param brakeMode Whether this Talon should be in brake mode or coast mode.
+   * @param voltageCompSamples The number of voltage compensation samples to use, or null to not
+   *     compensate voltage.
    */
   private static void setMasterForVictor(
       @NotNull VictorSPX victorSPX,
