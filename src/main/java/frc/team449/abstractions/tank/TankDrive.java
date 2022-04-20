@@ -20,7 +20,8 @@ public class TankDrive implements DriveSubsystem {
   /** The gyro used for the robot */
   private final AHRS ahrs;
   /**
-   * the kinematics used to convert {@link ChassisSpeeds} to {@link DifferentialDriveWheelSpeeds}
+   * the kinematics used to convert {@link ChassisSpeeds} to
+   * {@link DifferentialDriveWheelSpeeds}
    */
   private final DifferentialDriveKinematics kinematics;
   /** Odometry to keeps track of where the robot is */
@@ -50,10 +51,18 @@ public class TankDrive implements DriveSubsystem {
     this.odometry = new DifferentialDriveOdometry(ahrs.getHeading());
   }
 
+  /**
+   * Set the desired speeds for the left and right side
+   * @see TankDrive#set(ChassisSpeeds)
+   */
+  public void set(double leftVel, double rightVel) {
+
+  }
+
   @Override
   public void set(ChassisSpeeds desiredSpeeds) {
-    // TODO Auto-generated method stub
-
+    // todo convert to DifferentialDriveSpeeds using DifferentialDriveKinematics
+    // then call set(leftVel, rightVel)
   }
 
   @Override
@@ -77,5 +86,12 @@ public class TankDrive implements DriveSubsystem {
   public void stop() {
     // TODO Auto-generated method stub
 
+  }
+
+  @Override
+  public void periodic() {
+    // todo update odometry
+
+    // todo use pid and ff for vel control
   }
 }
