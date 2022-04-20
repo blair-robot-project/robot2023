@@ -41,19 +41,18 @@ public final class RobotContainer2022 implements Loggable {
   }
 
   private static WrappedMotor makeDrivingMotor(
-      String name,
-      int port,
-      boolean inverted,
-      Encoder wpiEnc) {
+      String name, int port, boolean inverted, Encoder wpiEnc) {
     return new SparkMaxConfig()
         .setName(name + "Drive")
         .setPort(port)
         .setEnableBrakeMode(true)
         .setInverted(inverted)
-        .setEncoderCreator(BackupEncoder.creator(
-            QuadEncoder.creator(wpiEnc, DriveConstants.DRIVE_EXT_ENC_CPR, DriveConstants.DRIVE_UPR, 1),
-            NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING),
-            DriveConstants.DRIVE_ENC_VEL_THRESHOLD))
+        .setEncoderCreator(
+            BackupEncoder.creator(
+                QuadEncoder.creator(
+                    wpiEnc, DriveConstants.DRIVE_EXT_ENC_CPR, DriveConstants.DRIVE_UPR, 1),
+                NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING),
+                DriveConstants.DRIVE_ENC_VEL_THRESHOLD))
         .build();
   }
 
@@ -64,10 +63,7 @@ public final class RobotContainer2022 implements Loggable {
         DriveConstants.MAX_LINEAR_SPEED,
         DriveConstants.MAX_ROT_SPEED,
         makeDrivingMotor(
-            "FL",
-            DriveConstants.FRONT_LEFT_DRIVE,
-            false,
-            DriveConstants.FRONT_LEFT_DRIVE_ENC),
+            "FL", DriveConstants.FRONT_LEFT_DRIVE, false, DriveConstants.FRONT_LEFT_DRIVE_ENC),
         null,
         null,
         null,
@@ -77,11 +73,7 @@ public final class RobotContainer2022 implements Loggable {
         null,
         DriveConstants.FRONT_LEFT_LOC,
         () -> new PIDController(0, 0, 0),
-        () -> new ProfiledPIDController(
-            0,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(0, 0)),
+        () -> new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0)),
         new SimpleMotorFeedforward(0, 0, 0),
         new SimpleMotorFeedforward(0, 0, 0));
   }
