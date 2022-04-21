@@ -23,6 +23,8 @@ jobs:
         distribution: 'temurin'
     - name: Format using spotless
       run: ./gradlew spotlessApply
+    - name: Stage all changes
+      run: git add .
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: Format with spotless
