@@ -10,23 +10,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Motor controller configuration, along with some Spark-specific stuff */
-public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMax> {
-  private int port = -1;
+public final class SparkMaxConfig
+  extends MotorConfig<SparkMaxConfig, CANSparkMax> {
+
+  private int id = -1;
   private final Map<CANSparkMax.PeriodicFrame, Integer> statusFrameRatesMillis = new HashMap<>();
-  private final @NotNull Map<CANSparkMax, Boolean> slaveSparks = new HashMap<>();
-  private @Nullable Integer controlFrameRateMillis;
+
+  @NotNull
+  private final Map<CANSparkMax, Boolean> slaveSparks = new HashMap<>();
+
+  @Nullable
+  private Integer controlFrameRateMillis;
 
   @Override
   protected SparkMaxConfig self() {
     return this;
   }
 
-  public int getPort() {
-    return port;
+  public int getId() {
+    return id;
   }
 
-  public SparkMaxConfig setPort(int port) {
-    this.port = port;
+  /** Set the motor's CAN ID */
+  public SparkMaxConfig setId(int id) {
+    this.id = id;
     return self();
   }
 
@@ -45,7 +52,9 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
   }
 
   public SparkMaxConfig addStatusFrameRateMillis(
-      CANSparkMaxLowLevel.PeriodicFrame frame, int rate) {
+    CANSparkMaxLowLevel.PeriodicFrame frame,
+    int rate
+  ) {
     this.statusFrameRatesMillis.put(frame, rate);
     return this;
   }
@@ -81,19 +90,24 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
   @NotNull
   @Override
   public CANSparkMax createMotor() {
-    var motor = new CANSparkMax(this.getPort(), CANSparkMaxLowLevel.MotorType.kBrushless);
+    var motor = new CANSparkMax(
+      this.getId(),
+      CANSparkMaxLowLevel.MotorType.kBrushless
+    );
     if (motor.getLastError() != REVLibError.kOk) {
       System.out.println(
-          "Motor could not be constructed on port "
-              + this.getPort()
-              + " due to error "
-              + motor.getLastError());
+        "Motor could not be constructed on port " +
+        this.getId() +
+        " due to error " +
+        motor.getLastError()
+      );
     }
 
     motor.restoreFactoryDefaults();
 
-    var brakeMode =
-        this.isEnableBrakeMode() ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast;
+    var brakeMode = this.isEnableBrakeMode()
+      ? CANSparkMax.IdleMode.kBrake
+      : CANSparkMax.IdleMode.kCoast;
 
     motor.setInverted(this.isInverted());
     // Set brake mode
@@ -108,10 +122,14 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
     this.getStatusFrameRatesMillis().forEach(motor::setPeriodicFramePeriod);
 
     if (this.getFwdLimitSwitchNormallyOpen() == null) {
-      motor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false);
+      motor
+        .getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen)
+        .enableLimitSwitch(false);
     }
     if (this.getRevLimitSwitchNormallyOpen() == null) {
-      motor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false);
+      motor
+        .getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen)
+        .enableLimitSwitch(false);
     }
 
     // Set the current limit if it was given
@@ -125,16 +143,15 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
       motor.disableVoltageCompensation();
     }
 
-    this.slaveSparks.forEach(
-        (slave, inverted) -> {
-          slave.restoreFactoryDefaults();
-          slave.follow(motor, inverted);
-          slave.setIdleMode(brakeMode);
-          if (this.getCurrentLimit() != null) {
-            slave.setSmartCurrentLimit(this.getCurrentLimit());
-          }
-          slave.burnFlash();
-        });
+    this.slaveSparks.forEach((slave, inverted) -> {
+        slave.restoreFactoryDefaults();
+        slave.follow(motor, inverted);
+        slave.setIdleMode(brakeMode);
+        if (this.getCurrentLimit() != null) {
+          slave.setSmartCurrentLimit(this.getCurrentLimit());
+        }
+        slave.burnFlash();
+      });
 
     motor.burnFlash();
 
@@ -148,14 +165,30 @@ public final class SparkMaxConfig extends MotorConfig<SparkMaxConfig, CANSparkMa
    */
   @NotNull
   private static CANSparkMax createFollowerSpark(int port) {
-    var follower = new CANSparkMax(port, CANSparkMaxLowLevel.MotorType.kBrushless);
+    var follower = new CANSparkMax(
+      port,
+      CANSparkMaxLowLevel.MotorType.kBrushless
+    );
 
-    follower.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false);
-    follower.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(false);
+    follower
+      .getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen)
+      .enableLimitSwitch(false);
+    follower
+      .getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen)
+      .enableLimitSwitch(false);
 
-    follower.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100);
-    follower.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 100);
-    follower.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 100);
+    follower.setPeriodicFramePeriod(
+      CANSparkMaxLowLevel.PeriodicFrame.kStatus0,
+      100
+    );
+    follower.setPeriodicFramePeriod(
+      CANSparkMaxLowLevel.PeriodicFrame.kStatus1,
+      100
+    );
+    follower.setPeriodicFramePeriod(
+      CANSparkMaxLowLevel.PeriodicFrame.kStatus2,
+      100
+    );
 
     return follower;
   }

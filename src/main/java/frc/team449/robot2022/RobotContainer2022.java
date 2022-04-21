@@ -14,6 +14,7 @@ import frc.team449.control.auto.AutoRoutine;
 import frc.team449.control.holonomic.SwerveDrive;
 import frc.team449.robot2022.drive.DriveConstants;
 import frc.team449.system.AHRS;
+import frc.team449.system.encoder.AbsoluteEncoder;
 import frc.team449.system.encoder.BackupEncoder;
 import frc.team449.system.encoder.NEOEncoder;
 import frc.team449.system.encoder.QuadEncoder;
@@ -22,6 +23,7 @@ import frc.team449.system.motor.WrappedMotor;
 import io.github.oblarg.oblog.Loggable;
 
 public final class RobotContainer2022 implements Loggable {
+
   // Other CAN IDs
   public static final int PDP_CAN = 1, PCM_MODULE = 0;
 
@@ -40,42 +42,131 @@ public final class RobotContainer2022 implements Loggable {
     this.drive = createDrivetrain();
   }
 
+  /** Helper to make turning motors for swerve */
   private static WrappedMotor makeDrivingMotor(
-      String name, int port, boolean inverted, Encoder wpiEnc) {
+    String name,
+    int motorId,
+    boolean inverted,
+    Encoder wpiEnc
+  ) {
     return new SparkMaxConfig()
-        .setName(name + "Drive")
-        .setPort(port)
-        .setEnableBrakeMode(true)
-        .setInverted(inverted)
-        .setEncoderCreator(
-            BackupEncoder.creator(
-                QuadEncoder.creator(
-                    wpiEnc, DriveConstants.DRIVE_EXT_ENC_CPR, DriveConstants.DRIVE_UPR, 1),
-                NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING),
-                DriveConstants.DRIVE_ENC_VEL_THRESHOLD))
-        .build();
+      .setName(name + "Drive")
+      .setId(motorId)
+      .setEnableBrakeMode(true)
+      .setInverted(inverted)
+      .setEncoderCreator(
+        BackupEncoder.creator(
+          QuadEncoder.creator(
+            wpiEnc,
+            DriveConstants.DRIVE_EXT_ENC_CPR,
+            DriveConstants.DRIVE_UPR,
+            1
+          ),
+          NEOEncoder.creator(
+            DriveConstants.DRIVE_UPR,
+            DriveConstants.DRIVE_GEARING
+          ),
+          DriveConstants.DRIVE_ENC_VEL_THRESHOLD
+        )
+      )
+      .build();
+  }
+
+  /** Helper to make turning motors for swerve */
+  private static WrappedMotor makeTurningMotor(
+    String name,
+    int motorId,
+    boolean inverted,
+    int encoderChannel,
+    double offset
+  ) {
+    return new SparkMaxConfig()
+      .setName(name + "Turn")
+      .setId(motorId)
+      .setEnableBrakeMode(true)
+      .setInverted(inverted)
+      .setEncoderCreator(
+        AbsoluteEncoder.creator(
+          encoderChannel,
+          2 * Math.PI,
+          offset,
+          DriveConstants.TURN_UPR,
+          DriveConstants.TURN_GEARING
+        )
+      )
+      .build();
   }
 
   private SwerveDrive createDrivetrain() {
     // todo actually make the modules
     return SwerveDrive.squareDrive(
-        ahrs,
-        DriveConstants.MAX_LINEAR_SPEED,
-        DriveConstants.MAX_ROT_SPEED,
-        makeDrivingMotor(
-            "FL", DriveConstants.FRONT_LEFT_DRIVE, false, DriveConstants.FRONT_LEFT_DRIVE_ENC),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        DriveConstants.FRONT_LEFT_LOC,
-        () -> new PIDController(0, 0, 0),
-        () -> new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0)),
-        new SimpleMotorFeedforward(0, 0, 0),
-        new SimpleMotorFeedforward(0, 0, 0));
+      ahrs,
+      DriveConstants.MAX_LINEAR_SPEED,
+      DriveConstants.MAX_ROT_SPEED,
+      makeDrivingMotor(
+        "FL",
+        DriveConstants.FRONT_LEFT_DRIVE,
+        false,
+        DriveConstants.DRIVE_ENC_FL
+      ),
+      makeDrivingMotor(
+        "FR",
+        DriveConstants.FRONT_RIGHT_DRIVE,
+        false,
+        DriveConstants.DRIVE_ENC_FR
+      ),
+      makeDrivingMotor(
+        "BL",
+        DriveConstants.BACK_LEFT_DRIVE,
+        false,
+        DriveConstants.DRIVE_ENC_BL
+      ),
+      makeDrivingMotor(
+        "BR",
+        DriveConstants.BACK_RIGHT_DRIVE,
+        false,
+        DriveConstants.DRIVE_ENC_BR
+      ),
+      makeTurningMotor(
+        "FL",
+        DriveConstants.FRONT_LEFT_TURN,
+        false,
+        DriveConstants.TURN_ENC_CHAN_FL,
+        DriveConstants.TURN_ENC_OFFSET_FL
+      ),
+      makeTurningMotor(
+        "FR",
+        DriveConstants.FRONT_LEFT_TURN,
+        false,
+        DriveConstants.TURN_ENC_CHAN_FR,
+        DriveConstants.TURN_ENC_OFFSET_FR
+      ),
+      makeTurningMotor(
+        "BL",
+        DriveConstants.FRONT_LEFT_TURN,
+        false,
+        DriveConstants.TURN_ENC_CHAN_BL,
+        DriveConstants.TURN_ENC_OFFSET_BL
+      ),
+      makeTurningMotor(
+        "BR",
+        DriveConstants.FRONT_LEFT_TURN,
+        false,
+        DriveConstants.TURN_ENC_CHAN_BR,
+        DriveConstants.TURN_ENC_OFFSET_BR
+      ),
+      DriveConstants.FRONT_LEFT_LOC,
+      () -> new PIDController(0, 0, 0),
+      () ->
+        new ProfiledPIDController(
+          0,
+          0,
+          0,
+          new TrapezoidProfile.Constraints(0, 0)
+        ),
+      new SimpleMotorFeedforward(0, 0, 0),
+      new SimpleMotorFeedforward(0, 0, 0)
+    );
   }
 
   public void teleopInit() {
