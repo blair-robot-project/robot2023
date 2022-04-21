@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.team449.robot2022.RobotContainer2022;
 import io.github.oblarg.oblog.Logger;
 
@@ -31,23 +30,15 @@ public class Robot extends TimedRobot {
     Shuffleboard.startRecording();
 
     SmartDashboard.putData(robotContainer.field);
-
-    System.out.println("foo");
-    var driveDefaultCommand = new RunCommand(
-      () -> robotContainer.drive.set(robotContainer.oi.get()),
-      robotContainer.drive
-    );
-    driveDefaultCommand.setName("DriveDefaultCommand");
-    robotContainer.drive.setDefaultCommand(driveDefaultCommand);
   }
 
   @Override
   public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+
     robotContainer.robotPeriodic();
 
     robotContainer.field.setRobotPose(robotContainer.drive.getPose());
-
-    System.out.println(robotContainer.drive.getDefaultCommand().isScheduled());
   }
 
   @Override
@@ -72,7 +63,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    robotContainer.drive.set(robotContainer.oi.get());
+  }
 
   @Override
   public void disabledInit() {}

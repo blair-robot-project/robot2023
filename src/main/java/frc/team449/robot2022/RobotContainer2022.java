@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
@@ -24,19 +25,21 @@ import frc.team449.system.encoder.NEOEncoder;
 import frc.team449.system.encoder.QuadEncoder;
 import frc.team449.system.motor.SparkMaxConfig;
 import frc.team449.system.motor.WrappedMotor;
-import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 import java.util.function.Supplier;
 
-public final class RobotContainer2022 implements Loggable {
+public final class RobotContainer2022 {
 
   // Other CAN IDs
   public static final int PDP_CAN = 1, PCM_MODULE = 0;
 
-  public final XboxController driveJoystick = new XboxController(0);
+  public final XboxController driveController = new XboxController(0);
 
   public final AHRS ahrs = new AHRS(SerialPort.Port.kMXP);
 
+  @Log.Include
   public final SwerveDrive drive;
+
   public final Supplier<ChassisSpeeds> oi;
   // Instantiate/declare PDP and other stuff here
 
@@ -44,14 +47,13 @@ public final class RobotContainer2022 implements Loggable {
   public final SendableChooser<AutoRoutine> autoChooser = new SendableChooser<>();
 
   public RobotContainer2022() {
-    SmartDashboard.putData(field);
     this.drive = createDrivetrain();
     this.oi =
       new OIHolonomic(
         drive,
-        driveJoystick::getLeftY,
-        driveJoystick::getLeftX,
-        driveJoystick::getRightX,
+        driveController::getLeftY,
+        driveController::getLeftX,
+        () -> driveController.getRawAxis(3),
         new SlewRateLimiter(0.5),
         1.5,
         true
@@ -192,7 +194,7 @@ public final class RobotContainer2022 implements Loggable {
   public void robotPeriodic() {}
 
   public void simulationInit() {
-    DriverStationSim.setEnabled(true);
+    // DriverStationSim.setEnabled(true);
   }
 
   public void simulationPeriodic() {

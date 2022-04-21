@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
@@ -48,6 +49,17 @@ public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
           .toArray(Translation2d[]::new)
       );
     this.odometry = new SwerveDriveOdometry(this.kinematics, ahrs.getHeading());
+
+    SmartDashboard.putData(
+      this.getName(),
+      builder -> {
+        builder.addStringProperty(
+          "desired",
+          () -> this.desiredSpeeds.toString(),
+          null
+        );
+      }
+    );
   }
 
   /**

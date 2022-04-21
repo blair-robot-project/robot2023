@@ -6,6 +6,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team449.Robot;
 import frc.team449.system.motor.WrappedMotor;
 import io.github.oblarg.oblog.Loggable;
@@ -59,7 +61,7 @@ public class SwerveModule implements Loggable {
     @NotNull SimpleMotorFeedforward turnFeedforward,
     @NotNull Translation2d location
   ) {
-    if (Robot.isReal()) {
+    if (RobotBase.isReal()) {
       return new SwerveModule(
         name,
         drivingMotor,
@@ -148,6 +150,16 @@ public class SwerveModule implements Loggable {
         driveFeedforward,
         turnFeedforward,
         location
+      );
+      SmartDashboard.putData(
+        name,
+        builder -> {
+          builder.addStringProperty(
+            "state",
+            () -> this.getState().toString(),
+            null
+          );
+        }
       );
     }
 
