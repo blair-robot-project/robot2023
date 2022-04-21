@@ -4,9 +4,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import io.github.oblarg.oblog.Loggable;
 
 /** A drivetrain that uses closed-loop velocity control. */
-public interface DriveSubsystem extends Subsystem {
+public interface DriveSubsystem extends Subsystem, Loggable {
   /** Set the desired speeds to go at. */
   void set(ChassisSpeeds desiredSpeeds);
 

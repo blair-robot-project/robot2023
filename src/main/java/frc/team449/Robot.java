@@ -3,6 +3,7 @@ package frc.team449;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -27,11 +28,15 @@ public class Robot extends TimedRobot {
     Logger.configureLoggingAndConfig(robotContainer, false);
     Shuffleboard.setRecordingFileNameFormat("log-${time}");
     Shuffleboard.startRecording();
+
+    SmartDashboard.putData(robotContainer.field);
   }
 
   @Override
   public void robotPeriodic() {
     robotContainer.robotPeriodic();
+
+    robotContainer.field.setRobotPose(robotContainer.drive.getPose());
   }
 
   @Override
@@ -52,6 +57,9 @@ public class Robot extends TimedRobot {
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand);
     }
+    robotContainer.drive.setDefaultCommand(
+        new RunCommand(() -> robotContainer.drive.set(robotContainer.oi.get()),
+                robotContainer.drive));
     robotContainer.teleopInit();
   }
 

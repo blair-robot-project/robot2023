@@ -15,6 +15,8 @@ import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
 import java.util.Arrays;
 import java.util.function.Supplier;
+
+import io.github.oblarg.oblog.annotations.Log;
 import org.jetbrains.annotations.NotNull;
 
 public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
@@ -26,7 +28,7 @@ public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
   private final double maxLinearSpeed;
   private final double maxRotSpeed;
 
-  private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
+  @Log.ToString private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
   public SwerveDrive(
     AHRS ahrs,

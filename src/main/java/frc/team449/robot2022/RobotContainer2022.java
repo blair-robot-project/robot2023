@@ -3,6 +3,8 @@ package frc.team449.robot2022;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -11,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team449.control.auto.AutoRoutine;
+import frc.team449.control.holonomic.OIHolonomic;
 import frc.team449.control.holonomic.SwerveDrive;
 import frc.team449.robot2022.drive.DriveConstants;
 import frc.team449.system.AHRS;
@@ -22,6 +25,8 @@ import frc.team449.system.motor.SparkMaxConfig;
 import frc.team449.system.motor.WrappedMotor;
 import io.github.oblarg.oblog.Loggable;
 
+import java.util.function.Supplier;
+
 public final class RobotContainer2022 implements Loggable {
 
   // Other CAN IDs
@@ -32,6 +37,7 @@ public final class RobotContainer2022 implements Loggable {
   public final AHRS ahrs = new AHRS(SerialPort.Port.kMXP);
 
   public final SwerveDrive drive;
+  public final Supplier<ChassisSpeeds> oi;
   // Instantiate/declare PDP and other stuff here
 
   public final Field2d field = new Field2d();
@@ -40,6 +46,15 @@ public final class RobotContainer2022 implements Loggable {
   public RobotContainer2022() {
     SmartDashboard.putData(field);
     this.drive = createDrivetrain();
+    this.oi = new OIHolonomic(
+            drive,
+            driveJoystick::getLeftY,
+            driveJoystick::getLeftX,
+            driveJoystick::getRightX,
+            new SlewRateLimiter(0.5),
+            1.5,
+            true
+    );
   }
 
   /** Helper to make turning motors for swerve */
@@ -174,7 +189,6 @@ public final class RobotContainer2022 implements Loggable {
   }
 
   public void robotPeriodic() {
-    // todo Update robot pose on field and stuff
   }
 
   public void simulationPeriodic() {

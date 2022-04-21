@@ -4,6 +4,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -13,7 +16,7 @@ import java.util.function.Supplier;
  * while the x axis on another joystick is used to control rotational velocity (m/s).
  * <p> The magnitude of the acceleration is clamped </p>
  */
-public class OIHolonomic implements Supplier<ChassisSpeeds> {
+public class OIHolonomic implements Supplier<ChassisSpeeds>, Loggable {
 
   private final HolonomicDrive drive;
   private final DoubleSupplier xThrottle;
