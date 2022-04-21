@@ -69,7 +69,6 @@ public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
    *     the modules
    * @param driveFeedforward Driving feedforward for all the modules
    * @param turnFeedforward Turning feedforward for all the modules
-   * @return
    */
   public static SwerveDrive squareDrive(
     AHRS ahrs,
@@ -89,8 +88,51 @@ public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
     @NotNull SimpleMotorFeedforward driveFeedforward,
     @NotNull SimpleMotorFeedforward turnFeedforward
   ) {
-    // todo implement
-    return null;
+    return new SwerveDrive(
+      ahrs,
+      maxLinearSpeed,
+      maxRotSpeed,
+      SwerveModule.create(
+        "FLModule",
+        frontLeftDriveMotor,
+        frontLeftTurnMotor,
+        driveMotorController.get(),
+        turnMotorController.get(),
+        driveFeedforward,
+        turnFeedforward,
+        frontLeftLocation
+      ),
+      SwerveModule.create(
+        "FRModule",
+        frontRightDriveMotor,
+        frontRightTurnMotor,
+        driveMotorController.get(),
+        turnMotorController.get(),
+        driveFeedforward,
+        turnFeedforward,
+        frontLeftLocation.rotateBy(Rotation2d.fromDegrees(90))
+      ),
+      SwerveModule.create(
+        "BLModule",
+        backLeftDriveMotor,
+        backLeftTurnMotor,
+        driveMotorController.get(),
+        turnMotorController.get(),
+        driveFeedforward,
+        turnFeedforward,
+        frontLeftLocation.rotateBy(Rotation2d.fromDegrees(-90))
+      ),
+      SwerveModule.create(
+        "BRModule",
+        backRightDriveMotor,
+        backRightTurnMotor,
+        driveMotorController.get(),
+        turnMotorController.get(),
+        driveFeedforward,
+        turnFeedforward,
+        frontLeftLocation.rotateBy(Rotation2d.fromDegrees(180))
+      )
+    );
   }
 
   /**

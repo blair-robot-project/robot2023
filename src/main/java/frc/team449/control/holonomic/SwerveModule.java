@@ -8,9 +8,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.team449.Robot;
 import frc.team449.system.motor.WrappedMotor;
+import io.github.oblarg.oblog.Loggable;
+
 import org.jetbrains.annotations.NotNull;
 
-public class SwerveModule {
+public class SwerveModule implements Loggable {
+  private final String name;
   private final WrappedMotor drivingMotor;
   private final WrappedMotor turningMotor;
 
@@ -23,13 +26,16 @@ public class SwerveModule {
   public final Translation2d location;
 
   private SwerveModule(
-      @NotNull WrappedMotor drivingMotor,
-      @NotNull WrappedMotor turningMotor,
-      @NotNull PIDController driveController,
-      @NotNull ProfiledPIDController turnController,
-      @NotNull SimpleMotorFeedforward driveFeedforward,
-      @NotNull SimpleMotorFeedforward turnFeedforward,
-      @NotNull Translation2d location) {
+    @NotNull String name,
+    @NotNull WrappedMotor drivingMotor,
+    @NotNull WrappedMotor turningMotor,
+    @NotNull PIDController driveController,
+    @NotNull ProfiledPIDController turnController,
+    @NotNull SimpleMotorFeedforward driveFeedforward,
+    @NotNull SimpleMotorFeedforward turnFeedforward,
+    @NotNull Translation2d location
+  ) {
+    this.name = name;
     this.drivingMotor = drivingMotor;
     this.turningMotor = turningMotor;
     this.driveController = driveController;
@@ -41,54 +47,76 @@ public class SwerveModule {
     turnController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
-  public SwerveModule create(
-      @NotNull WrappedMotor drivingMotor,
-      @NotNull WrappedMotor turningMotor,
-      @NotNull PIDController driveController,
-      @NotNull ProfiledPIDController turnController,
-      @NotNull SimpleMotorFeedforward driveFeedforward,
-      @NotNull SimpleMotorFeedforward turnFeedforward,
-      @NotNull Translation2d location) {
+  public static SwerveModule create(
+    @NotNull String name,
+    @NotNull WrappedMotor drivingMotor,
+    @NotNull WrappedMotor turningMotor,
+    @NotNull PIDController driveController,
+    @NotNull ProfiledPIDController turnController,
+    @NotNull SimpleMotorFeedforward driveFeedforward,
+    @NotNull SimpleMotorFeedforward turnFeedforward,
+    @NotNull Translation2d location
+  ) {
     if (Robot.isReal()) {
       return new SwerveModule(
-          drivingMotor,
-          turningMotor,
-          driveController,
-          turnController,
-          driveFeedforward,
-          turnFeedforward,
-          location);
+        name,
+        drivingMotor,
+        turningMotor,
+        driveController,
+        turnController,
+        driveFeedforward,
+        turnFeedforward,
+        location
+      );
     } else {
       return new SwerveModuleSim(
-          drivingMotor,
-          turningMotor,
-          driveController,
-          turnController,
-          driveFeedforward,
-          turnFeedforward,
-          location);
+        name,
+        drivingMotor,
+        turningMotor,
+        driveController,
+        turnController,
+        driveFeedforward,
+        turnFeedforward,
+        location
+      );
     }
   }
 
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        drivingMotor.getVelocity(), new Rotation2d(turningMotor.getPosition()));
+      drivingMotor.getVelocity(),
+      new Rotation2d(turningMotor.getPosition())
+    );
   }
 
   /** Set the desired state for this module */
   void set(SwerveModuleState desiredState) {
     // Ensure the module doesn't turn the long way around
-    var state =
-        SwerveModuleState.optimize(desiredState, new Rotation2d(turningMotor.getPosition()));
+    var state = SwerveModuleState.optimize(
+      desiredState,
+      new Rotation2d(turningMotor.getPosition())
+    );
 
-    var drivePid =
-        driveController.calculate(drivingMotor.getVelocity(), state.speedMetersPerSecond);
+    var drivePid = driveController.calculate(
+      drivingMotor.getVelocity(),
+      state.speedMetersPerSecond
+    );
     var driveFF = driveFeedforward.calculate(state.speedMetersPerSecond);
     drivingMotor.setVoltage(drivePid + driveFF);
 
-    var turnPid = turnController.calculate(turningMotor.getVelocity(), state.angle.getRadians());
-    var turnFF = turnFeedforward.calculate(turnController.getSetpoint().velocity);
+    var turnPid = turnController.calculate(
+      turningMotor.getVelocity(),
+      state.angle.getRadians()
+    );
+    var turnFF = turnFeedforward.calculate(
+      turnController.getSetpoint().velocity
+    );
     turningMotor.setVoltage(turnPid + turnFF);
+  }
+
+  @Override
+  public String configureLogName() {
+    return this.name;
   }
 
   /**
@@ -100,21 +128,24 @@ public class SwerveModule {
     private SwerveModuleState state = new SwerveModuleState();
 
     public SwerveModuleSim(
-        @NotNull WrappedMotor drivingMotor,
-        @NotNull WrappedMotor turningMotor,
-        @NotNull PIDController driveController,
-        @NotNull ProfiledPIDController turnController,
-        @NotNull SimpleMotorFeedforward driveFeedforward,
-        @NotNull SimpleMotorFeedforward turnFeedforward,
-        @NotNull Translation2d location) {
-      super(
-          drivingMotor,
-          turningMotor,
-          driveController,
-          turnController,
-          driveFeedforward,
-          turnFeedforward,
-          location);
+      @NotNull String name,
+      @NotNull WrappedMotor drivingMotor,
+      @NotNull WrappedMotor turningMotor,
+      @NotNull PIDController driveController,
+      @NotNull ProfiledPIDController turnController,
+      @NotNull SimpleMotorFeedforward driveFeedforward,
+      @NotNull SimpleMotorFeedforward turnFeedforward,
+      @NotNull Translation2d location
+    ) {
+      super(name,
+        drivingMotor,
+        turningMotor,
+        driveController,
+        turnController,
+        driveFeedforward,
+        turnFeedforward,
+        location
+      );
     }
 
     @Override
