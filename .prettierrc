@@ -1,5 +1,6 @@
 {
+  "plugins": ["prettier-plugin-java"],
   "tabWidth": 2,
   "useTabs": false,
-  "plugins": ["prettier-plugin-java"]
+  "proseWrap": "always"
 }

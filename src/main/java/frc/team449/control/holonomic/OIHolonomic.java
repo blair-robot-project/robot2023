@@ -1,72 +1,77 @@
 package frc.team449.control.holonomic;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+/**
+ * Create an OI for controlling a holonomic drivetrain (probably swerve).
+ * The x and y axes on one joystick are used to control x and y velocity (m/s),
+ * while the x axis on another joystick is used to control rotational velocity (m/s).
+ *
+ * todo apply ramping to magnitude of difference vector, not just clamping
+ */
 public class OIHolonomic implements Supplier<ChassisSpeeds> {
 
   private final DoubleSupplier xThrottle;
   private final DoubleSupplier yThrottle;
   private final DoubleSupplier rotThrottle;
+  private final SlewRateLimiter xyRamp;
   private final SlewRateLimiter rotRamp;
   private final double maxLinearSpeed;
   private final double maxRotSpeed;
-  private final double maxAccel;
 
   private double prevX;
   private double prevY;
-  private double prevTime;
 
+  /**
+   *
+   * @param xThrottle
+   * @param yThrottle
+   * @param rotThrottle
+   * @param rotRamp
+   * @param maxLinearSpeed
+   * @param maxRotSpeed
+   * @param maxAccel Max accel, used for ramping
+   */
   public OIHolonomic(
-      DoubleSupplier xThrottle,
-      DoubleSupplier yThrottle,
-      DoubleSupplier rotThrottle,
-      SlewRateLimiter rotRamp,
-      double maxLinearSpeed,
-      double maxRotSpeed,
-      double maxAccel) {
+    DoubleSupplier xThrottle,
+    DoubleSupplier yThrottle,
+    DoubleSupplier rotThrottle,
+    SlewRateLimiter xyRamp,
+    SlewRateLimiter rotRamp,
+    double maxLinearSpeed,
+    double maxRotSpeed
+  ) {
     this.rotThrottle = rotThrottle;
     this.yThrottle = yThrottle;
     this.xThrottle = xThrottle;
     this.rotRamp = rotRamp;
     this.maxLinearSpeed = maxLinearSpeed;
     this.maxRotSpeed = maxRotSpeed;
-    this.maxAccel = maxAccel;
-    this.prevTime = Timer.getFPGATimestamp();
+    this.xyRamp = xyRamp;
   }
 
   /** @return The {@link ChassisSpeeds} for the given x, y and rotation input from the joystick */
   @Override
   public ChassisSpeeds get() {
-    var currTime = Timer.getFPGATimestamp();
-    var dt = currTime - prevTime;
-    this.prevTime = currTime;
-    var xRaw = xThrottle.getAsDouble();
-    var yRaw = yThrottle.getAsDouble();
+    var xScaled = xThrottle.getAsDouble() * this.maxLinearSpeed;
+    var yScaled = yThrottle.getAsDouble() * this.maxLinearSpeed;
 
-    // Make sure magnitude doesn't go above 1
-    // in case both throttles are near full speed
-    var magRaw = Math.min(1, Math.hypot(xRaw, yRaw));
-    var angle = Math.atan2(xRaw, yRaw);
-    var xRawClamped = Math.cos(angle) * magRaw;
-    var yRawClamped = Math.sin(angle) * magRaw;
-
-    var xScaled = xRawClamped * this.maxLinearSpeed;
-    var yScaled = yRawClamped * this.maxLinearSpeed;
-
-    // Clamp the translation throttles
+    // Ramp the translation throttles
+    xyRamp.reset(0);
     var dx = this.prevX - xScaled;
     var dy = this.prevY - yScaled;
-    var magAcc = Math.hypot(dx / dt, dy / dt);
-    var magAccClamped = Math.min(this.maxAccel, magAcc);
-    var dxClamped = dx * magAccClamped / magAcc;
-    var dyClamped = dy * magAccClamped / magAcc;
+    var magDiff = Math.hypot(dx, dy);
+    var magDiffRamped = xyRamp.calculate(magDiff);
+    var dxClamped = dx * magDiffRamped / magDiff;
+    var dyClamped = dy * magDiffRamped / magDiff;
 
-    var xClamped = prevX + dxClamped * dt;
-    var yClamped = prevY + dyClamped * dt;
+    var xClamped = prevX + dxClamped;
+    var yClamped = prevY + dyClamped;
 
     this.prevX = xClamped;
     this.prevY = yClamped;

@@ -18,28 +18,34 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
-public class SwerveDrive extends SubsystemBase implements DriveSubsystem {
+public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
 
   private final SwerveModule[] modules;
   private final AHRS ahrs;
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
-  public final double maxLinearSpeed;
-  public final double maxRotSpeed;
+  private final double maxLinearSpeed;
+  private final double maxRotSpeed;
 
   private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
   public SwerveDrive(
-      AHRS ahrs, double maxLinearSpeed, double maxRotSpeed, SwerveModule... modules) {
+    AHRS ahrs,
+    double maxLinearSpeed,
+    double maxRotSpeed,
+    SwerveModule... modules
+  ) {
     this.modules = modules;
     this.ahrs = ahrs;
     this.maxLinearSpeed = maxLinearSpeed;
     this.maxRotSpeed = maxRotSpeed;
     this.kinematics =
-        new SwerveDriveKinematics(
-            Arrays.stream(this.modules)
-                .map(module -> module.location)
-                .toArray(Translation2d[]::new));
+      new SwerveDriveKinematics(
+        Arrays
+          .stream(this.modules)
+          .map(module -> module.location)
+          .toArray(Translation2d[]::new)
+      );
     this.odometry = new SwerveDriveOdometry(this.kinematics, ahrs.getHeading());
   }
 
@@ -67,22 +73,23 @@ public class SwerveDrive extends SubsystemBase implements DriveSubsystem {
    * @return
    */
   public static SwerveDrive squareDrive(
-      AHRS ahrs,
-      double maxLinearSpeed,
-      double maxRotSpeed,
-      @NotNull WrappedMotor frontLeftDriveMotor,
-      @NotNull WrappedMotor frontRightDriveMotor,
-      @NotNull WrappedMotor backLeftDriveMotor,
-      @NotNull WrappedMotor backRightDriveMotor,
-      @NotNull WrappedMotor frontLeftTurnMotor,
-      @NotNull WrappedMotor frontRightTurnMotor,
-      @NotNull WrappedMotor backLeftTurnMotor,
-      @NotNull WrappedMotor backRightTurnMotor,
-      @NotNull Translation2d frontLeftLocation,
-      @NotNull Supplier<PIDController> driveMotorController,
-      @NotNull Supplier<ProfiledPIDController> turnMotorController,
-      @NotNull SimpleMotorFeedforward driveFeedforward,
-      @NotNull SimpleMotorFeedforward turnFeedforward) {
+    AHRS ahrs,
+    double maxLinearSpeed,
+    double maxRotSpeed,
+    @NotNull WrappedMotor frontLeftDriveMotor,
+    @NotNull WrappedMotor frontRightDriveMotor,
+    @NotNull WrappedMotor backLeftDriveMotor,
+    @NotNull WrappedMotor backRightDriveMotor,
+    @NotNull WrappedMotor frontLeftTurnMotor,
+    @NotNull WrappedMotor frontRightTurnMotor,
+    @NotNull WrappedMotor backLeftTurnMotor,
+    @NotNull WrappedMotor backRightTurnMotor,
+    @NotNull Translation2d frontLeftLocation,
+    @NotNull Supplier<PIDController> driveMotorController,
+    @NotNull Supplier<ProfiledPIDController> turnMotorController,
+    @NotNull SimpleMotorFeedforward driveFeedforward,
+    @NotNull SimpleMotorFeedforward turnFeedforward
+  ) {
     // todo implement
     return null;
   }
@@ -93,9 +100,21 @@ public class SwerveDrive extends SubsystemBase implements DriveSubsystem {
    * @param rotVel The robot's desired rotational velocity (rad/s)
    * @param fieldRelative true if x and y are relative to the field, false if relative to the robot
    */
-  public void set(double xVel, double yVel, double rotVel, boolean fieldRelative) {
+  public void set(
+    double xVel,
+    double yVel,
+    double rotVel,
+    boolean fieldRelative
+  ) {
     if (fieldRelative) {
-      this.set(ChassisSpeeds.fromFieldRelativeSpeeds(xVel, yVel, rotVel, this.ahrs.getHeading()));
+      this.set(
+          ChassisSpeeds.fromFieldRelativeSpeeds(
+            xVel,
+            yVel,
+            rotVel,
+            this.ahrs.getHeading()
+          )
+        );
     } else {
       this.set(new ChassisSpeeds(xVel, yVel, rotVel));
     }
@@ -109,6 +128,16 @@ public class SwerveDrive extends SubsystemBase implements DriveSubsystem {
   @Override
   public Rotation2d getHeading() {
     return this.ahrs.getHeading();
+  }
+
+  @Override
+  public double getMaxLinearSpeed() {
+    return this.maxLinearSpeed;
+  }
+
+  @Override
+  public double getMaxRotSpeed() {
+    return this.maxRotSpeed;
   }
 
   @Override
@@ -130,10 +159,18 @@ public class SwerveDrive extends SubsystemBase implements DriveSubsystem {
   public void periodic() {
     this.odometry.update(
         ahrs.getHeading(),
-        Arrays.stream(this.modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new));
+        Arrays
+          .stream(this.modules)
+          .map(SwerveModule::getState)
+          .toArray(SwerveModuleState[]::new)
+      );
 
-    var desiredModuleStates = this.kinematics.toSwerveModuleStates(this.desiredSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, this.maxLinearSpeed);
+    var desiredModuleStates =
+      this.kinematics.toSwerveModuleStates(this.desiredSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+      desiredModuleStates,
+      this.maxLinearSpeed
+    );
 
     for (int i = 0; i < this.modules.length; i++) {
       this.modules[i].set(desiredModuleStates[i]);
