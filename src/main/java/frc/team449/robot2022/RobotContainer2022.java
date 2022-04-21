@@ -105,52 +105,52 @@ public final class RobotContainer2022 implements Loggable {
       DriveConstants.MAX_ROT_SPEED,
       makeDrivingMotor(
         "FL",
-        DriveConstants.FRONT_LEFT_DRIVE,
+        DriveConstants.DRIVE_MOTOR_FL,
         false,
         DriveConstants.DRIVE_ENC_FL
       ),
       makeDrivingMotor(
         "FR",
-        DriveConstants.FRONT_RIGHT_DRIVE,
+        DriveConstants.DRIVE_MOTOR_FR,
         false,
         DriveConstants.DRIVE_ENC_FR
       ),
       makeDrivingMotor(
         "BL",
-        DriveConstants.BACK_LEFT_DRIVE,
+        DriveConstants.DRIVE_MOTOR_BL,
         false,
         DriveConstants.DRIVE_ENC_BL
       ),
       makeDrivingMotor(
         "BR",
-        DriveConstants.BACK_RIGHT_DRIVE,
+        DriveConstants.DRIVE_MOTOR_BR,
         false,
         DriveConstants.DRIVE_ENC_BR
       ),
       makeTurningMotor(
         "FL",
-        DriveConstants.FRONT_LEFT_TURN,
+        DriveConstants.TURN_MOTOR_FL,
         false,
         DriveConstants.TURN_ENC_CHAN_FL,
         DriveConstants.TURN_ENC_OFFSET_FL
       ),
       makeTurningMotor(
         "FR",
-        DriveConstants.FRONT_LEFT_TURN,
+        DriveConstants.TURN_MOTOR_FR,
         false,
         DriveConstants.TURN_ENC_CHAN_FR,
         DriveConstants.TURN_ENC_OFFSET_FR
       ),
       makeTurningMotor(
         "BL",
-        DriveConstants.FRONT_LEFT_TURN,
+        DriveConstants.TURN_MOTOR_BL,
         false,
         DriveConstants.TURN_ENC_CHAN_BL,
         DriveConstants.TURN_ENC_OFFSET_BL
       ),
       makeTurningMotor(
         "BR",
-        DriveConstants.FRONT_LEFT_TURN,
+        DriveConstants.TURN_MOTOR_BR,
         false,
         DriveConstants.TURN_ENC_CHAN_BR,
         DriveConstants.TURN_ENC_OFFSET_BR
