@@ -9,10 +9,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.team449.Robot;
 import frc.team449.system.motor.WrappedMotor;
 import io.github.oblarg.oblog.Loggable;
-
+import io.github.oblarg.oblog.annotations.Log;
 import org.jetbrains.annotations.NotNull;
 
 public class SwerveModule implements Loggable {
+
   private final String name;
   private final WrappedMotor drivingMotor;
   private final WrappedMotor turningMotor;
@@ -23,6 +24,7 @@ public class SwerveModule implements Loggable {
   private final SimpleMotorFeedforward turnFeedforward;
 
   /** The location of the module relative to the center */
+  @Log.ToString
   public final Translation2d location;
 
   private SwerveModule(
@@ -137,7 +139,8 @@ public class SwerveModule implements Loggable {
       @NotNull SimpleMotorFeedforward turnFeedforward,
       @NotNull Translation2d location
     ) {
-      super(name,
+      super(
+        name,
         drivingMotor,
         turningMotor,
         driveController,

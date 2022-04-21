@@ -13,10 +13,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
+import io.github.oblarg.oblog.annotations.Log;
 import java.util.Arrays;
 import java.util.function.Supplier;
-
-import io.github.oblarg.oblog.annotations.Log;
 import org.jetbrains.annotations.NotNull;
 
 public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
@@ -28,7 +27,8 @@ public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
   private final double maxLinearSpeed;
   private final double maxRotSpeed;
 
-  @Log.ToString private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
+  @Log.ToString
+  private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
   public SwerveDrive(
     AHRS ahrs,
@@ -135,32 +135,6 @@ public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
         frontLeftLocation.rotateBy(Rotation2d.fromDegrees(180))
       )
     );
-  }
-
-  /**
-   * @param xVel The robot's desired x velocity (m/s)
-   * @param yVel The robot's desired y velocity (m/s)
-   * @param rotVel The robot's desired rotational velocity (rad/s)
-   * @param fieldRelative true if x and y are relative to the field, false if relative to the robot
-   */
-  public void set(
-    double xVel,
-    double yVel,
-    double rotVel,
-    boolean fieldRelative
-  ) {
-    if (fieldRelative) {
-      this.set(
-          ChassisSpeeds.fromFieldRelativeSpeeds(
-            xVel,
-            yVel,
-            rotVel,
-            this.ahrs.getHeading()
-          )
-        );
-    } else {
-      this.set(new ChassisSpeeds(xVel, yVel, rotVel));
-    }
   }
 
   @Override

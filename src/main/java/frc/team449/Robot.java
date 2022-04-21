@@ -12,6 +12,7 @@ import io.github.oblarg.oblog.Logger;
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
 public class Robot extends TimedRobot {
+
   private final RobotContainer2022 robotContainer = new RobotContainer2022();
   private Command autoCommand;
 
@@ -30,6 +31,14 @@ public class Robot extends TimedRobot {
     Shuffleboard.startRecording();
 
     SmartDashboard.putData(robotContainer.field);
+
+    System.out.println("foo");
+    var driveDefaultCommand = new RunCommand(
+      () -> robotContainer.drive.set(robotContainer.oi.get()),
+      robotContainer.drive
+    );
+    driveDefaultCommand.setName("DriveDefaultCommand");
+    robotContainer.drive.setDefaultCommand(driveDefaultCommand);
   }
 
   @Override
@@ -37,6 +46,8 @@ public class Robot extends TimedRobot {
     robotContainer.robotPeriodic();
 
     robotContainer.field.setRobotPose(robotContainer.drive.getPose());
+
+    System.out.println(robotContainer.drive.getDefaultCommand().isScheduled());
   }
 
   @Override
@@ -57,9 +68,6 @@ public class Robot extends TimedRobot {
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand);
     }
-    robotContainer.drive.setDefaultCommand(
-        new RunCommand(() -> robotContainer.drive.set(robotContainer.oi.get()),
-                robotContainer.drive));
     robotContainer.teleopInit();
   }
 
@@ -83,7 +91,9 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {}
 
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    robotContainer.simulationInit();
+  }
 
   @Override
   public void simulationPeriodic() {

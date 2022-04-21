@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,7 +25,6 @@ import frc.team449.system.encoder.QuadEncoder;
 import frc.team449.system.motor.SparkMaxConfig;
 import frc.team449.system.motor.WrappedMotor;
 import io.github.oblarg.oblog.Loggable;
-
 import java.util.function.Supplier;
 
 public final class RobotContainer2022 implements Loggable {
@@ -46,15 +46,16 @@ public final class RobotContainer2022 implements Loggable {
   public RobotContainer2022() {
     SmartDashboard.putData(field);
     this.drive = createDrivetrain();
-    this.oi = new OIHolonomic(
-            drive,
-            driveJoystick::getLeftY,
-            driveJoystick::getLeftX,
-            driveJoystick::getRightX,
-            new SlewRateLimiter(0.5),
-            1.5,
-            true
-    );
+    this.oi =
+      new OIHolonomic(
+        drive,
+        driveJoystick::getLeftY,
+        driveJoystick::getLeftX,
+        driveJoystick::getRightX,
+        new SlewRateLimiter(0.5),
+        1.5,
+        true
+      );
   }
 
   /** Helper to make turning motors for swerve */
@@ -188,7 +189,10 @@ public final class RobotContainer2022 implements Loggable {
     // todo Add button bindings here
   }
 
-  public void robotPeriodic() {
+  public void robotPeriodic() {}
+
+  public void simulationInit() {
+    DriverStationSim.setEnabled(true);
   }
 
   public void simulationPeriodic() {

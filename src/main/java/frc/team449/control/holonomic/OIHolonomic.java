@@ -6,7 +6,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
-
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -18,7 +17,9 @@ import java.util.function.Supplier;
  */
 public class OIHolonomic implements Supplier<ChassisSpeeds>, Loggable {
 
+  @Log.Exclude
   private final HolonomicDrive drive;
+
   private final DoubleSupplier xThrottle;
   private final DoubleSupplier yThrottle;
   private final DoubleSupplier rotThrottle;
@@ -26,8 +27,12 @@ public class OIHolonomic implements Supplier<ChassisSpeeds>, Loggable {
   private final double maxAccel;
   private final boolean fieldOriented;
 
+  @Log
   private double prevX;
+
+  @Log
   private double prevY;
+
   private double prevTime = Double.NaN;
 
   /**

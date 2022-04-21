@@ -11,9 +11,12 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import frc.team449.control.DriveSubsystem;
 import frc.team449.system.AHRS;
 import frc.team449.system.motor.WrappedMotor;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
 /** A differential drive with closed-loop velocity control using PID */
 public class DifferentialDrive implements DriveSubsystem {
+
   /** The left side of the tank drive */
   private final WrappedMotor leftLeader;
   /** The right side of the tank drive */
@@ -28,8 +31,11 @@ public class DifferentialDrive implements DriveSubsystem {
   private final DifferentialDriveOdometry odometry;
   /** Feedforward calculator */
   private final SimpleMotorFeedforward feedforward;
+
   /** Velocity PID controller for left side */
+  @Config.PIDController
   private final PIDController leftPID;
+
   /** Velocity PID controller for right side */
   private final PIDController rightPID;
   /** The track width of the robot/distance between left and right wheels in meters */
@@ -39,21 +45,25 @@ public class DifferentialDrive implements DriveSubsystem {
   /** Max speed when rotating (rad/s) */
   public final double maxRotSpeed;
 
+  @Log.ToString
   private DifferentialDriveWheelSpeeds desiredSpeeds;
 
   public DifferentialDrive(
-      WrappedMotor leftLeader,
-      WrappedMotor rightLeader,
-      AHRS ahrs,
-      SimpleMotorFeedforward feedforward,
-      PIDController velPID,
-      double trackWidth,
-      double maxLinearSpeed) {
+    WrappedMotor leftLeader,
+    WrappedMotor rightLeader,
+    AHRS ahrs,
+    SimpleMotorFeedforward feedforward,
+    PIDController velPID,
+    double trackWidth,
+    double maxLinearSpeed
+  ) {
     this.leftLeader = leftLeader;
     this.rightLeader = rightLeader;
     this.ahrs = ahrs;
-    this.leftPID = new PIDController(velPID.getP(), velPID.getI(), velPID.getD());
-    this.rightPID = new PIDController(velPID.getP(), velPID.getI(), velPID.getD());
+    this.leftPID =
+      new PIDController(velPID.getP(), velPID.getI(), velPID.getD());
+    this.rightPID =
+      new PIDController(velPID.getP(), velPID.getI(), velPID.getD());
     this.feedforward = feedforward;
     this.trackWidth = trackWidth;
     this.maxLinearSpeed = maxLinearSpeed;
@@ -82,6 +92,7 @@ public class DifferentialDrive implements DriveSubsystem {
     return odometry;
   }
 
+  @Log
   @Override
   public Pose2d getPose() {
     return this.odometry.getPoseMeters();
@@ -112,8 +123,12 @@ public class DifferentialDrive implements DriveSubsystem {
     var leftVel = desiredSpeeds.leftMetersPerSecond;
     var rightVel = desiredSpeeds.rightMetersPerSecond;
     leftLeader.setVoltage(
-        feedforward.calculate(leftVel) + leftPID.calculate(leftLeader.getVelocity(), leftVel));
+      feedforward.calculate(leftVel) +
+      leftPID.calculate(leftLeader.getVelocity(), leftVel)
+    );
     rightLeader.setVoltage(
-        feedforward.calculate(rightVel) + rightPID.calculate(rightLeader.getVelocity(), rightVel));
+      feedforward.calculate(rightVel) +
+      rightPID.calculate(rightLeader.getVelocity(), rightVel)
+    );
   }
 }
