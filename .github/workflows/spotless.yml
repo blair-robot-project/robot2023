@@ -1,4 +1,4 @@
-name: Format with Spotless
+name: Check formatting with Spotless
 
 on:
   push:
@@ -21,12 +21,5 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-    - name: Format using spotless
-      run: ./gradlew spotlessApply
-    - name: Show diff
-      run: git diff
-    - name: Stage all changes
-      run: git add .
-    - uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Format with spotless
+    - name: Check formatting using spotless
+      run: ./gradlew spotlessCheck
