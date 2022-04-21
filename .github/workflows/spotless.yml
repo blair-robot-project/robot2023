@@ -23,6 +23,8 @@ jobs:
         distribution: 'temurin'
     - name: Format using spotless
       run: ./gradlew spotlessApply
+    - name: Show diff
+      run: git diff
     - name: Stage all changes
       run: git add .
     - uses: stefanzweifel/git-auto-commit-action@v4
