@@ -4,10 +4,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
-import java.util.function.BooleanSupplier
-import java.util.function.DoubleSupplier
-import java.util.function.Supplier
-
 import frc.team449.control.OI
 
 /**
@@ -33,16 +29,16 @@ object DifferentialOIs {
     rotRamp: SlewRateLimiter
   ): OI = OI {
     scaleAndApplyRamping(
-        edu.wpi.first.wpilibj.drive.DifferentialDrive.arcadeDriveIK(
-          xThrottle(),
-          rotThrottle(),
-          false
-        ),
-        drive.kinematics,
-        drive.maxLinearSpeed,
-        xRamp,
-        rotRamp
-      )
+      edu.wpi.first.wpilibj.drive.DifferentialDrive.arcadeDriveIK(
+        xThrottle(),
+        rotThrottle(),
+        false
+      ),
+      drive.kinematics,
+      drive.maxLinearSpeed,
+      xRamp,
+      rotRamp
+    )
   }
 
   /**
@@ -66,17 +62,17 @@ object DifferentialOIs {
     rotRamp: SlewRateLimiter,
     turnInPlace: () -> Boolean
   ): OI = OI {
-      scaleAndApplyRamping(
-        edu.wpi.first.wpilibj.drive.DifferentialDrive.curvatureDriveIK(
-          xThrottle(),
-          rotThrottle(),
-          turnInPlace()
-        ),
-        drive.kinematics,
-        drive.maxLinearSpeed,
-        xRamp,
-        rotRamp
-      )
+    scaleAndApplyRamping(
+      edu.wpi.first.wpilibj.drive.DifferentialDrive.curvatureDriveIK(
+        xThrottle(),
+        rotThrottle(),
+        turnInPlace()
+      ),
+      drive.kinematics,
+      drive.maxLinearSpeed,
+      xRamp,
+      rotRamp
+    )
   }
 
   /**
@@ -96,17 +92,17 @@ object DifferentialOIs {
     drive: DifferentialDrive,
     leftThrottle: () -> Double,
     rightThrottle: () -> Double,
-     leftRamp: SlewRateLimiter,
-     rightRamp: SlewRateLimiter
+    leftRamp: SlewRateLimiter,
+    rightRamp: SlewRateLimiter
   ): OI = OI {
-      drive.kinematics.toChassisSpeeds(
-        DifferentialDriveWheelSpeeds(
-          leftRamp.calculate(leftThrottle() * drive.maxLinearSpeed),
-          rightRamp.calculate(
-            rightThrottle() * drive.maxLinearSpeed
-          )
+    drive.kinematics.toChassisSpeeds(
+      DifferentialDriveWheelSpeeds(
+        leftRamp.calculate(leftThrottle() * drive.maxLinearSpeed),
+        rightRamp.calculate(
+          rightThrottle() * drive.maxLinearSpeed
         )
       )
+    )
   }
 
   /**
