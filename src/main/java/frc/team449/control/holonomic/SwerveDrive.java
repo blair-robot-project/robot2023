@@ -29,7 +29,7 @@ public class SwerveDrive extends SubsystemBase implements HolonomicDrive {
   private final double maxRotSpeed;
 
   @Log.ToString
-  private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
+  protected ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
   public SwerveDrive(
     AHRS ahrs,
