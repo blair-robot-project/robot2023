@@ -7,6 +7,10 @@ import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
 import frc.team449.system.encoder.EncoderCreator
 
+/** Wrap a TalonSRX or TalonFX in a WrappedMotor object
+ * @see configureSlaveTalon
+ * @see createSlaveVictor
+ */
 fun <T> createTalon(
   name: String,
   motor: T,
@@ -77,17 +81,17 @@ fun <T> createTalon(
     setMasterForTalon(
       slave,
       port,
-      this.isEnableBrakeMode,
+      enableBrakeMode,
       currentLimit,
-      if (this.isEnableVoltageComp) voltageCompSamples else null
+      if (enableVoltageComp) voltageCompSamples else null
     )
   }
   for (slave in slaveVictors) {
     setMasterForVictor(
       slave,
       motor,
-      this.isEnableBrakeMode,
-      if (this.isEnableVoltageComp) voltageCompSamples else null
+      enableBrakeMode,
+      if (enableVoltageComp) voltageCompSamples else null
     )
   }
   motor.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_10Ms)
@@ -97,11 +101,6 @@ fun <T> createTalon(
   motor.configPeakOutputForward(1.0, 0)
   motor.configPeakOutputReverse(1.0, 0)
 
-  // Set min voltage
-  // motor.configNominalOutputForward(this.currentGearSettings.fwdNominalOutputVoltage
-  // / 12., 0);
-  // motor.configNominalOutputReverse(this.currentGearSettings.revNominalOutputVoltage
-  // / 12., 0);
   motor.configNominalOutputForward(0.0, 0)
   motor.configNominalOutputReverse(0.0, 0)
 
@@ -156,7 +155,7 @@ fun configureSlaveTalon(
  */
 fun createSlaveVictor(port: Int, invertType: InvertType): VictorSPX {
   val victorSPX = VictorSPX(port)
-  victorSPX.setInverted(invertType ?: InvertType.FollowMaster)
+  victorSPX.setInverted(invertType)
   victorSPX.configPeakOutputForward(1.0, 0)
   victorSPX.configPeakOutputReverse(-1.0, 0)
   victorSPX.enableVoltageCompensation(true)
@@ -198,7 +197,7 @@ private fun setMasterForTalon(
   // safe
   if (currentLimit > 0) {
     slaveTalon.configSupplyCurrentLimit(
-      SupplyCurrentLimitConfiguration(true, currentLimit.toDouble(), 0, 0), 0
+      SupplyCurrentLimitConfiguration(true, currentLimit.toDouble(), 0.0, 0.0), 0
     )
   } else {
     // If we don't have a current limit, disable current limiting.
