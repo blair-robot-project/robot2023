@@ -34,7 +34,6 @@ open class SwerveDrive(
     this.desiredSpeeds = desiredSpeeds
   }
 
-  @get:Log
   override val heading: Rotation2d
     get() { return ahrs.heading }
 
@@ -65,7 +64,7 @@ open class SwerveDrive(
     )
 
     for (i in this.modules.indices) {
-      this.modules[i].set(desiredModuleStates[i])
+      this.modules[i].state = desiredModuleStates[i]
     }
   }
 
