@@ -67,8 +67,8 @@ class OIHolonomic(
     this.dt = currTime - prevTime
     this.prevTime = currTime
 
-    var xScaled = xThrottle.getAsDouble() * drive.getMaxLinearSpeed()
-    var yScaled = yThrottle.getAsDouble() * drive.getMaxLinearSpeed()
+    var xScaled = xThrottle.getAsDouble() * drive.maxLinearSpeed
+    var yScaled = yThrottle.getAsDouble() * drive.maxLinearSpeed
 
     // Clamp the acceleration
     this.dx = xScaled - this.prevX
@@ -87,7 +87,7 @@ class OIHolonomic(
     this.prevY = yClamped
 
     var rotRaw = rotThrottle.getAsDouble()
-    var rotScaled = rotRamp.calculate(rotRaw * drive.getMaxRotSpeed())
+    var rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
 
     if (this.fieldOriented) {
       return ChassisSpeeds.fromFieldRelativeSpeeds(

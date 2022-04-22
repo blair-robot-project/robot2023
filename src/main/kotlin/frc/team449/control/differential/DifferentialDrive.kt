@@ -64,8 +64,8 @@ class DifferentialDrive(
       return this.odometry.getPoseMeters()
     }
     set(pose) {
-      leftLeader.encoder.position = 0.0
-      rightLeader.encoder.position = 0.0
+      leftLeader.position = 0.0
+      rightLeader.position = 0.0
       ahrs.heading = pose.getRotation()
       this.odometry.resetPosition(pose, ahrs.heading)
     }
@@ -85,11 +85,11 @@ class DifferentialDrive(
     val rightVel = desiredSpeeds.rightMetersPerSecond
     leftLeader.setVoltage(
       feedforward.calculate(leftVel) +
-        leftPID.calculate(leftLeader.getVelocity(), leftVel)
+        leftPID.calculate(leftLeader.velocity, leftVel)
     )
     rightLeader.setVoltage(
       feedforward.calculate(rightVel) +
-        rightPID.calculate(rightLeader.getVelocity(), rightVel)
+        rightPID.calculate(rightLeader.velocity, rightVel)
     )
   }
 }

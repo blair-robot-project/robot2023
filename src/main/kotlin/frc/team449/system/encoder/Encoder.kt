@@ -28,19 +28,15 @@ abstract class Encoder(
 
   /**
    * Current position in encoder's units
-   *
-   * @see Encoder#getPosition()
    */
   protected abstract fun getPositionNative(): Double
 
   /**
    * Current velocity in encoder's units
-   *
-   * @see Encoder#getVelocity()
    */
   protected abstract fun getVelocityNative(): Double
 
-  /** Current position in meters */
+  /** Position in meters or whatever unit you set */
   var position: Double
     get() {
       return positionOffset + this.getPositionNative() * encoderToUnit
@@ -49,7 +45,7 @@ abstract class Encoder(
       this.positionOffset = pos - this.position
     }
 
-  /** Current velocity in meters per second */
+  /** Velocity in meters per second or whatever unit you set */
   val velocity: Double
     get() {
       return this.getVelocityNative() * encoderToUnit
