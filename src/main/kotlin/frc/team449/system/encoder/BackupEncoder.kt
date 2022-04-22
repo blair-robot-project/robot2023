@@ -12,34 +12,15 @@ import org.jetbrains.annotations.NotNull;
  * threshold, it concludes that the primary encoder is broken and switches to using the
  * fallback/integrated encoder.
  */
-public class BackupEncoder extends Encoder {
-
-  @NotNull private final Encoder primary;
-  @NotNull private final Encoder fallback;
-  private final double velThreshold;
+class BackupEncoder(
+  val primary: Encoder,
+  val  fallback: Encoder
+  val velThreshold: Double): Encoder(primary.configureLogName(), 1.0, 1.0, 1.0) {
 
   /** Whether the primary encoder's stopped working */
-  @Log private boolean useFallback = false;
+  @Log private var useFallback = false;
 
-  private BackupEncoder(@NotNull Encoder primary, @NotNull Encoder fallback, double velThreshold) {
-    super(primary.configureLogName(), 1, 1, 1);
-
-    this.primary = primary;
-    this.fallback = fallback;
-    this.velThreshold = velThreshold;
-  }
-
-  public static <T extends MotorController> EncoderCreator<T> creator(
-      EncoderCreator<T> primaryCreator, EncoderCreator<T> fallbackCreator, double velThreshold) {
-    return (name, motor, inverted) ->
-        new BackupEncoder(
-            primaryCreator.create(name, motor, inverted),
-            fallbackCreator.create(name, motor, inverted),
-            velThreshold);
-  }
-
-  @Override
-  protected double getPositionNative() {
+  protected fun getPositionNative(): Double {
     if (useFallback) {
       return fallback.getPosition();
     } else {
@@ -47,9 +28,8 @@ public class BackupEncoder extends Encoder {
     }
   }
 
-  @Override
-  protected double getVelocityNative() {
-    var fallbackVel = fallback.getVelocity();
+  protected fun getVelocityNative(): Double {
+    val fallbackVel = fallback.getVelocity();
     if (useFallback) {
       return fallbackVel;
     } else {
@@ -60,6 +40,19 @@ public class BackupEncoder extends Encoder {
       } else {
         return primaryVel;
       }
+    }
+  }
+
+  companion object {
+    fun <T : MotorController> creator(
+       primaryCreator: EncoderCreator<T>,
+        fallbackCreator: EncoderCreator<T>,
+         velThreshold: Double): EncoderCreator<T>  = {
+    (name, motor, inverted) ->
+        BackupEncoder(
+            primaryCreator.create(name, motor, inverted),
+            fallbackCreator.create(name, motor, inverted),
+            velThreshold)
     }
   }
 }

@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
  *
  * @param <M> The type of the motor controller
  */
-@FunctionalInterface
-public interface EncoderCreator<M extends MotorController> {
-  Encoder create(String encName, M motor, boolean inverted);
+fun interface EncoderCreator<M : MotorController> {
+  fun create(encName: String, motor: M, inverted: Boolean): Encoder
 }
