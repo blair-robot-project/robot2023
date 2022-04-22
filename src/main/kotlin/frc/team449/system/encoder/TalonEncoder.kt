@@ -1,38 +1,29 @@
-package frc.team449.system.encoder;
+package frc.team449.system.encoder
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import org.jetbrains.annotations.NotNull;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.motorcontrol.MotorController
 
 /** An encoder plugged into a TalonSRX */
-public final class TalonEncoder extends Encoder {
-  private final TalonSRX talon;
+class TalonEncoder(
+  name: String,
+  private val talon: TalonSRX,
+  encoderCPR: Int,
+  unitPerRotation: Double,
+  gearing: Double
+) : Encoder(name, encoderCPR * 4, unitPerRotation, gearing) {
 
-  private TalonEncoder(
-      @NotNull String name,
-      @NotNull TalonSRX talon,
-      int encoderCPR,
-      double unitPerRotation,
-      double gearing) {
-    // The Talon multiplies its encoder count by 4
-    super(name, encoderCPR * 4, unitPerRotation, gearing);
-    this.talon = talon;
-    this.resetPosition(0);
-  }
+  override fun getPositionNative() = talon.getSelectedSensorPosition(0)
 
-  public static <T extends MotorController> EncoderCreator<T> creator(
-      @NotNull TalonSRX talon, int encoderCPR, double unitPerRotation, double gearing) {
-    return (name, motor, inverted) ->
-        new TalonEncoder(name, talon, encoderCPR, unitPerRotation, gearing);
-  }
+  override fun getVelocityNative() = talon.getSelectedSensorVelocity(0)
 
-  @Override
-  public double getPositionNative() {
-    return this.talon.getSelectedSensorPosition(0);
-  }
-
-  @Override
-  public double getVelocityNative() {
-    return this.talon.getSelectedSensorVelocity(0);
+  companion object {
+    fun <T : MotorController> creator(
+      talon: TalonSRX,
+      encoderCPR: Int,
+      unitPerRotation: Double,
+      gearing: Double
+    ): EncoderCreator<T> = EncoderCreator { name, motor, inverted ->
+      TalonEncoder(name, talon, encoderCPR, unitPerRotation, gearing)
+    }
   }
 }

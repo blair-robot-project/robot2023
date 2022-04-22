@@ -1,6 +1,6 @@
-package frc.team449.system.encoder;
+package frc.team449.system.encoder
 
-import java.util.Objects;
+import java.util.Objects
 
 /**
  * Basically a dummy encoder object. It doesn't get position and velocity from anywhere, it relies
@@ -14,71 +14,64 @@ import java.util.Objects;
  * use a {@link SimEncoderController} to control it, the {@link SimEncoderController} constructor
  * will throw an error.
  */
-public class SimEncoder extends Encoder {
-  private double position;
-  private double velocity;
+class SimEncoder(name: String) : Encoder(name, 1, 1.0, 1.0) {
+  private var simPosition = 0.0
+  private var simVelocity = 0.0
 
   /** Whether a controller has been registered for this simulated encoder */
-  private boolean claimed;
+  private var claimed = false
 
-  public SimEncoder(String name) {
-    super(name, 1, 1, 1);
-  }
+  override fun getPositionNative() = simPosition
 
-  @Override
-  protected double getPositionNative() {
-    return position;
-  }
-
-  @Override
-  protected double getVelocityNative() {
-    return velocity;
-  }
-
-  private void setPosition(double pos) {
-    this.position = pos;
-  }
-
-  private void setVelocity(double vel) {
-    this.velocity = vel;
-  }
+  override fun getVelocityNative() = simVelocity
 
   /** Register the controller that will set the position and velocity for this simulated encoder. */
-  private synchronized void registerController(SimEncoderController controller) {
-    Objects.requireNonNull(controller);
+  @Synchronized
+  private fun registerController(controller: SimEncoderController) {
+    Objects.requireNonNull(controller)
     if (this.claimed) {
-      throw new IllegalStateException(
-          "SimEncoder"
-              + this.configureLogName()
-              + " already has a controller. There can only be one.");
+      throw IllegalStateException(
+        "SimEncoder" +
+          this.configureLogName() +
+          " already has a controller. There can only be one."
+      )
     }
-    this.claimed = true;
+    this.claimed = true
   }
 
-  /**
-   * Used to control {@link SimEncoder}s. Only one {@link SimEncoderController} should be used per
-   * {@link SimEncoder}.
-   *
-   * <p>Make sure to only create SimEncoders during simulation. If you create, say, a {@link
-   * NEOEncoder}, during simulation and try to use a {@link SimEncoderController} to control it, the
-   * {@link SimEncoderController} constructor will throw an error.
-   */
-  public static final class SimEncoderController {
-    private final SimEncoder encoder;
+  companion object {
+/**
+     * Used to control {@link SimEncoder}s. Only one {@link SimEncoderController} should be used per
+     * {@link SimEncoder}.
+     *
+     * <p>Make sure to only create SimEncoders during simulation. If you create, say, a {@link
+     * NEOEncoder}, during simulation and try to use a {@link SimEncoderController} to control it, the
+     * {@link SimEncoderController} constructor will throw an error.
+     */
+    class SimEncoderController(private val encoder: SimEncoder) {
+      init {
+        encoder.registerController(this)
+      }
 
-    public SimEncoderController(SimEncoder encoder) {
-      encoder.registerController(this);
-      this.encoder = encoder;
-    }
+      /** Set the position of the {@link SimEncoder} object this is controlling. */
+      var position: Double
+        get() {
+          return encoder.simPosition
+        }
 
-    /** Set the position of the {@link SimEncoder} object this is controlling. */
-    public void setPosition(double pos) {
-      encoder.setPosition(pos);
-    }
+        set(pos) {
+          encoder.simPosition = pos
+        }
 
-    /** Set the velocity of the {@link SimEncoder} object this is controlling. */
-    public void setVelocity(double vel) {
-      encoder.setVelocity(vel);
+      /** Set the velocity of the {@link SimEncoder} object this is controlling. */
+      var velocity: Double
+        get() {
+          return encoder.simVelocity
+        }
+
+        set(vel) {
+          encoder.simVelocity = vel
+        }
     }
   }
 }

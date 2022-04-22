@@ -12,7 +12,7 @@ import io.github.oblarg.oblog.Loggable
  *     >= 1, not a reciprocal), e.g. this would be 70 if there were a 70:1 gearing between the
  *     encoder and the final output
  */
-open class Encoder(
+abstract class Encoder(
   val name: String,
   encoderCPR: Int,
   unitPerRotation: Double,
@@ -41,12 +41,12 @@ open class Encoder(
   protected abstract fun getVelocityNative(): Double
 
   /** Current position in meters */
-  val position: Double
+  var position: Double = 0.0
     get() {
       return positionOffset + this.getPositionNative() * encoderToUnit
     }
     set(pos) {
-      this.positionOffset = pos - this.getPosition()
+      this.positionOffset = pos - field
     }
 
   /** Current velocity in meters per second */
