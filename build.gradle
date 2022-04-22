@@ -116,19 +116,19 @@ compileJava {
     options.incremental = true
 }
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-}
-
-ktlint {
-
-}
-
 // pre-commit hook to format
 tasks.register('updateGitHooks', Copy) {
     from './scripts/pre-commit'
     into './.git/hooks'
 }
-compileKotlin.dependsOn updateGitHooks
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    dependsOn updateGitHooks
+}
+
+ktlint {
+
+}

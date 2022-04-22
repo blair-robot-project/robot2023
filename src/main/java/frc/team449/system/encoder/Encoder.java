@@ -28,7 +28,6 @@ public abstract class Encoder implements Loggable {
   public Encoder(@NotNull String name, int encoderCPR, double unitPerRotation, double gearing) {
     this.name = name;
     this.encoderToUnit = unitPerRotation * gearing / encoderCPR;
-    this.resetPosition(0);
   }
 
   /**
