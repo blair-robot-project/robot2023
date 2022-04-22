@@ -1,8 +1,10 @@
 plugins {
     id "java"
     id "idea"
+    id "org.jetbrains.kotlin.jvm" version "1.6.21"
     id "edu.wpi.first.GradleRIO" version "2022.4.1"
     id "com.diffplug.spotless" version "6.4.2"
+    id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -88,6 +90,12 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main.java.srcDirs = ['src/main/java']
+    main.kotlin.srcDirs = ['src/main/java', 'src/main/kotlin']
+    main.resources.srcDirs = ['src/main/resources']
+}
+
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.
@@ -106,6 +114,12 @@ compileJava {
     options.incremental = true
 }
 
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
 spotless {
   // optional: limit format enforcement to just the files changed by this feature branch
   ratchetFrom 'origin/main'
@@ -122,6 +136,14 @@ spotless {
   java {
     prettier(['prettier-plugin-java': '1.6.1']).configFile("./.prettierrc")
   }
+  kotlin {
+    ktlint()
+      .userData(mapOf('indent_size' to '2', 'continuation_indent_size' to '2'))
+  }
+}
+
+ktlint {
+
 }
 
 // pre-commit hook to format
