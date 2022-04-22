@@ -41,12 +41,12 @@ abstract class Encoder(
   protected abstract fun getVelocityNative(): Double
 
   /** Current position in meters */
-  var position: Double = 0.0
+  var position: Double
     get() {
       return positionOffset + this.getPositionNative() * encoderToUnit
     }
     set(pos) {
-      this.positionOffset = pos - field
+      this.positionOffset = pos - this.position
     }
 
   /** Current velocity in meters per second */

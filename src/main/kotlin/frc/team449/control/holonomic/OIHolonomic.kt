@@ -94,7 +94,7 @@ class OIHolonomic(
         xClamped,
         yClamped,
         rotScaled,
-        drive.getHeading()
+        drive.heading
       )
     } else {
       return ChassisSpeeds(xClamped, yClamped, rotScaled)

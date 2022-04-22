@@ -37,7 +37,7 @@ class Robot : TimedRobot() {
 
     robotContainer.robotPeriodic()
 
-    robotContainer.field.setRobotPose(robotContainer.drive.getPose())
+    robotContainer.field.setRobotPose(robotContainer.drive.pose)
   }
 
   override fun autonomousInit() {
