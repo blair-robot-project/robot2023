@@ -1,4 +1,4 @@
-name: Check formatting with Spotless
+name: Check formatting with ktlint
 
 on:
   push:
@@ -21,5 +21,5 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-    - name: Check formatting using spotless
-      run: ./gradlew spotlessCheck
+    - name: Check formatting using ktlint
+      run: ./gradlew ktlintCheck
