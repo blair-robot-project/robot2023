@@ -1,21 +1,20 @@
-package frc.team449.control.differential;
+package frc.team449.control.differential
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
+import edu.wpi.first.math.filter.SlewRateLimiter
+import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
+import java.util.function.BooleanSupplier
+import java.util.function.DoubleSupplier
+import java.util.function.Supplier
+
+import frc.team449.control.OI
 
 /**
  * Helper class to create OIs for a differential drivetrain (arcade, curvature,
  * or tank)
  */
-public final class DifferentialOIs {
-
-  private DifferentialOIs() {}
-
+object DifferentialOIs {
   /**
    * Create an OI for arcade drive. One throttle controls forward-backward speed,
    * another controls rotation.
@@ -26,25 +25,24 @@ public final class DifferentialOIs {
    * @param xRamp Used for limiting forward-backward acceleration
    * @param rotRamp Used for limiting rotational acceleration
    */
-  public static Supplier<ChassisSpeeds> createArcade(
-    DifferentialDrive drive,
-    DoubleSupplier xThrottle,
-    DoubleSupplier rotThrottle,
-    SlewRateLimiter xRamp,
-    SlewRateLimiter rotRamp
-  ) {
-    return () ->
-      scaleAndApplyRamping(
+  fun createArcade(
+    drive: DifferentialDrive,
+    xThrottle: () -> Double,
+    rotThrottle: () -> Double,
+    xRamp: SlewRateLimiter,
+    rotRamp: SlewRateLimiter
+  ): OI = OI {
+    scaleAndApplyRamping(
         edu.wpi.first.wpilibj.drive.DifferentialDrive.arcadeDriveIK(
-          xThrottle.getAsDouble(),
-          rotThrottle.getAsDouble(),
+          xThrottle(),
+          rotThrottle(),
           false
         ),
         drive.kinematics,
         drive.maxLinearSpeed,
         xRamp,
         rotRamp
-      );
+      )
   }
 
   /**
@@ -60,26 +58,25 @@ public final class DifferentialOIs {
    * @param turnInPlace When this returns true, turns in place instead of turning
    *        like a car
    */
-  public static Supplier<ChassisSpeeds> createCurvature(
-    DifferentialDrive drive,
-    DoubleSupplier xThrottle,
-    DoubleSupplier rotThrottle,
-    SlewRateLimiter xRamp,
-    SlewRateLimiter rotRamp,
-    BooleanSupplier turnInPlace
-  ) {
-    return () ->
+  fun createCurvature(
+    drive: DifferentialDrive,
+    xThrottle: () -> Double,
+    rotThrottle: () -> Double,
+    xRamp: SlewRateLimiter,
+    rotRamp: SlewRateLimiter,
+    turnInPlace: () -> Boolean
+  ): OI = OI {
       scaleAndApplyRamping(
         edu.wpi.first.wpilibj.drive.DifferentialDrive.curvatureDriveIK(
-          xThrottle.getAsDouble(),
-          rotThrottle.getAsDouble(),
-          turnInPlace.getAsBoolean()
+          xThrottle(),
+          rotThrottle(),
+          turnInPlace()
         ),
         drive.kinematics,
         drive.maxLinearSpeed,
         xRamp,
         rotRamp
-      );
+      )
   }
 
   /**
@@ -95,22 +92,21 @@ public final class DifferentialOIs {
    * @param leftRamp Used for limiting the left side's acceleration
    * @param rightRamp Used for limiting the right side's acceleration
    */
-  public static Supplier<ChassisSpeeds> createTank(
-    DifferentialDrive drive,
-    DoubleSupplier leftThrottle,
-    DoubleSupplier rightThrottle,
-    SlewRateLimiter leftRamp,
-    SlewRateLimiter rightRamp
-  ) {
-    return () ->
+  fun createTank(
+    drive: DifferentialDrive,
+    leftThrottle: () -> Double,
+    rightThrottle: () -> Double,
+     leftRamp: SlewRateLimiter,
+     rightRamp: SlewRateLimiter
+  ): OI = OI {
       drive.kinematics.toChassisSpeeds(
-        new DifferentialDriveWheelSpeeds(
-          leftRamp.calculate(leftThrottle.getAsDouble() * drive.maxLinearSpeed),
+        DifferentialDriveWheelSpeeds(
+          leftRamp.calculate(leftThrottle() * drive.maxLinearSpeed),
           rightRamp.calculate(
-            rightThrottle.getAsDouble() * drive.maxLinearSpeed
+            rightThrottle() * drive.maxLinearSpeed
           )
         )
-      );
+      )
   }
 
   /**
@@ -128,24 +124,23 @@ public final class DifferentialOIs {
    * @param maxSpeed Max linear speed for the drivetrain
    * @param xRamp Used for limiting linear/forward-back acceleration
    * @param rotRamp Used for limiting rotational acceleration
-   * @return
    */
-  private static ChassisSpeeds scaleAndApplyRamping(
-    edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds wheelSpeeds,
-    DifferentialDriveKinematics kinematics,
-    double maxSpeed,
-    SlewRateLimiter xRamp,
-    SlewRateLimiter rotRamp
-  ) {
-    var leftVel = wheelSpeeds.left * maxSpeed;
-    var rightVel = wheelSpeeds.right * maxSpeed;
+  fun scaleAndApplyRamping(
+    wheelSpeeds: edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds,
+    kinematics: DifferentialDriveKinematics,
+    maxSpeed: Double,
+    xRamp: SlewRateLimiter,
+    rotRamp: SlewRateLimiter
+  ): ChassisSpeeds {
+    var leftVel = wheelSpeeds.left * maxSpeed
+    var rightVel = wheelSpeeds.right * maxSpeed
     var chassisSpeeds = kinematics.toChassisSpeeds(
-      new DifferentialDriveWheelSpeeds(leftVel, rightVel)
-    );
-    return new ChassisSpeeds(
+      DifferentialDriveWheelSpeeds(leftVel, rightVel)
+    )
+    return ChassisSpeeds(
       xRamp.calculate(chassisSpeeds.vxMetersPerSecond),
-      0,
+      0.0,
       rotRamp.calculate(chassisSpeeds.omegaRadiansPerSecond)
-    );
+    )
   }
 }

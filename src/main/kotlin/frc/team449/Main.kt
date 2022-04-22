@@ -2,6 +2,8 @@
 
 package frc.team449
 
+import edu.wpi.first.wpilibj.RobotBase
+
 fun main() {
-  frc.team449.Robot.startRobot { Robot() }
+  RobotBase.startRobot { Robot() }
 }
