@@ -5,19 +5,18 @@ import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.REVLibError
 import com.revrobotics.SparkMaxLimitSwitch
 import edu.wpi.first.wpilibj.RobotController
-import frc.team449.system.encoder.Encoder
-import org.jetbrains.annotations.NotNull
+import frc.team449.system.encoder.EncoderCreator
 
 /**
  * Create a Spark Max with the given configurations
- * 
+ *
  * @param name The motor's name
  * @param id The motor's CAN ID
  */
 fun createSparkMax(
   name: String,
   id: Int,
-  encCreator: (CANSparkMax, String) -> Encoder,
+  encCreator: EncoderCreator<CANSparkMax>,
   enableBrakeMode: Boolean = true,
   inverted: Boolean = false,
   currentLimit: Int = 0,
@@ -41,7 +40,7 @@ fun createSparkMax(
 
   motor.restoreFactoryDefaults()
 
-  val enc = encCreator(motor, name + "Enc")
+  val enc = encCreator.create(name + "Enc", motor, inverted)
 
   val brakeMode =
     if (enableBrakeMode) CANSparkMax.IdleMode.kBrake
@@ -93,7 +92,6 @@ fun createSparkMax(
  *
  * @param port The follower's CAN ID
  */
-@NotNull
 private fun createFollowerSpark(port: Int): CANSparkMax {
   val follower = CANSparkMax(
     port,

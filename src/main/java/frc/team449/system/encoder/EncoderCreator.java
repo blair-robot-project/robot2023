@@ -1,7 +1,6 @@
 package frc.team449.system.encoder;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import frc.team449.system.motor.MotorConfig;
 
 /**
  * Create an encoder given a motor controller and its configuration
@@ -10,5 +9,5 @@ import frc.team449.system.motor.MotorConfig;
  */
 @FunctionalInterface
 public interface EncoderCreator<M extends MotorController> {
-  Encoder create(M m, MotorConfig<?, M> config);
+  Encoder create(String encName, M motor, boolean inverted);
 }

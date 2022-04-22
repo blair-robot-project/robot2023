@@ -19,8 +19,7 @@ import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.BackupEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.encoder.QuadEncoder
-import frc.team449.system.motor.SparkMaxConfig
-import frc.team449.system.motor.WrappedMotor
+import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 
 class RobotContainer2022 {
@@ -56,29 +55,27 @@ class RobotContainer2022 {
     motorId: Int,
     inverted: Boolean,
     wpiEnc: Encoder
-  ): WrappedMotor {
-    return SparkMaxConfig()
-      .setName(name + "Drive")
-      .setId(motorId)
-      .setEnableBrakeMode(true)
-      .setInverted(inverted)
-      .setEncoderCreator(
-        BackupEncoder.creator(
-          QuadEncoder.creator(
-            wpiEnc,
-            DriveConstants.DRIVE_EXT_ENC_CPR,
-            DriveConstants.DRIVE_UPR,
-            1.0
-          ),
-          NEOEncoder.creator(
-            DriveConstants.DRIVE_UPR,
-            DriveConstants.DRIVE_GEARING
-          ),
-          DriveConstants.DRIVE_ENC_VEL_THRESHOLD
-        )
+  ) =
+    createSparkMax(
+      name = name + "Drive",
+      id = motorId,
+      enableBrakeMode = true,
+      inverted = inverted,
+      encCreator =
+      BackupEncoder.creator(
+        QuadEncoder.creator(
+          wpiEnc,
+          DriveConstants.DRIVE_EXT_ENC_CPR,
+          DriveConstants.DRIVE_UPR,
+          1.0
+        ),
+        NEOEncoder.creator(
+          DriveConstants.DRIVE_UPR,
+          DriveConstants.DRIVE_GEARING
+        ),
+        DriveConstants.DRIVE_ENC_VEL_THRESHOLD
       )
-      .build()
-  }
+    )
 
   /** Helper to make turning motors for swerve */
   private fun makeTurningMotor(
@@ -87,27 +84,23 @@ class RobotContainer2022 {
     inverted: Boolean,
     encoderChannel: Int,
     offset: Double
-  ): WrappedMotor {
-    return SparkMaxConfig()
-      .setName(name + "Turn")
-      .setId(motorId)
-      .setEnableBrakeMode(true)
-      .setInverted(inverted)
-      .setEncoderCreator(
-        AbsoluteEncoder.creator(
-          encoderChannel,
-          2 * Math.PI,
-          offset,
-          DriveConstants.TURN_UPR,
-          DriveConstants.TURN_GEARING
-        )
+  ) =
+    createSparkMax(
+      name = name + "Turn",
+      id = motorId,
+      enableBrakeMode = true,
+      inverted = inverted,
+      encCreator = AbsoluteEncoder.creator(
+        encoderChannel,
+        2 * Math.PI,
+        offset,
+        DriveConstants.TURN_UPR,
+        DriveConstants.TURN_GEARING
       )
-      .build()
-  }
+    )
 
-  private fun createDrivetrain(): SwerveDrive {
-    // todo actually make the modules
-    return SwerveDrive.squareDrive(
+  private fun createDrivetrain() =
+    SwerveDrive.squareDrive(
       ahrs,
       DriveConstants.MAX_LINEAR_SPEED,
       DriveConstants.MAX_ROT_SPEED,
@@ -176,7 +169,6 @@ class RobotContainer2022 {
       SimpleMotorFeedforward(.0, .0, .0),
       SimpleMotorFeedforward(.0, .0, .0)
     )
-  }
 
   fun teleopInit() {
     // todo Add button bindings here

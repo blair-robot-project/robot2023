@@ -18,6 +18,7 @@ public class AbsoluteEncoder extends Encoder {
 
   private final AnalogEncoder enc;
   private final double endPos;
+  private final boolean inverted;
 
   private double prevPos = Double.NaN;
   private double prevTime = Double.NaN;
@@ -31,12 +32,14 @@ public class AbsoluteEncoder extends Encoder {
     AnalogEncoder enc,
     double endPos,
     double unitPerRotation,
-    double gearing
+    double gearing,
+    boolean inverted
   ) {
     super(name, 1, 1, 1);
     enc.setDistancePerRotation(unitPerRotation * gearing);
     this.enc = enc;
     this.endPos = endPos;
+    this.inverted = inverted;
   }
 
   /**
@@ -53,13 +56,14 @@ public class AbsoluteEncoder extends Encoder {
     double unitPerRotation,
     double gearing
   ) {
-    return (motor, config) -> {
+    return (name, motor, inverted) -> {
       var enc = new AbsoluteEncoder(
-        config.getEncName(),
+        name,
         new AnalogEncoder(channel),
         endPos,
         unitPerRotation,
-        gearing
+        gearing,
+        inverted
       );
       enc.resetPosition(offset);
       return enc;
@@ -68,7 +72,12 @@ public class AbsoluteEncoder extends Encoder {
 
   @Override
   protected double getPositionNative() {
-    return enc.getAbsolutePosition();
+    var pos = enc.getAbsolutePosition();
+    if (!this.inverted) {
+      return pos;
+    } else {
+      return this.endPos - pos;
+    }
   }
 
   @Override

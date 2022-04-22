@@ -31,10 +31,10 @@ public class BackupEncoder extends Encoder {
 
   public static <T extends MotorController> EncoderCreator<T> creator(
       EncoderCreator<T> primaryCreator, EncoderCreator<T> fallbackCreator, double velThreshold) {
-    return (motor, config) ->
+    return (name, motor, inverted) ->
         new BackupEncoder(
-            primaryCreator.create(motor, config),
-            fallbackCreator.create(motor, config),
+            primaryCreator.create(name, motor, inverted),
+            fallbackCreator.create(name, motor, inverted),
             velThreshold);
   }
 

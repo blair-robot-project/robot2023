@@ -20,8 +20,8 @@ public final class NEOEncoder extends Encoder {
   }
 
   public static EncoderCreator<CANSparkMax> creator(double unitPerRotation, double gearing) {
-    return (motor, config) ->
-        new NEOEncoder(config.getEncName(), motor.getEncoder(), unitPerRotation, gearing);
+    return (name, motor, inverted) ->
+        new NEOEncoder(name, motor.getEncoder(), unitPerRotation, gearing);
   }
 
   @Override

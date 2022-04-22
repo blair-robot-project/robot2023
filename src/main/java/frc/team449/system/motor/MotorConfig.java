@@ -132,16 +132,4 @@ public abstract class MotorConfig<Self extends MotorConfig<Self, R>, R extends M
   /** Create only the underlying motor controller, not the encoder. */
   @NotNull
   protected abstract R createMotor();
-
-  /**
-   * Create a WrappedMotor with all the properties configured previously. Make sure that all
-   * required properties have been set before calling this method.
-   */
-  @NotNull
-  public final WrappedMotor build() {
-    var motor = this.createMotor();
-    var encoder =
-        Robot.isReal() ? encoderCreator.create(motor, this) : new SimEncoder(getEncName());
-    return new WrappedMotor(name, motor, encoder);
-  }
 }
