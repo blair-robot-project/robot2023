@@ -18,7 +18,7 @@ class Robot : TimedRobot() {
 
   override fun robotInit() {
     // Yes this should be a print statement, it's useful to know that robotInit started.
-    System.out.println("Started robotInit.")
+    println("Started robotInit.")
 
     if (RobotBase.isSimulation()) {
       // Don't complain about joysticks if there aren't going to be any

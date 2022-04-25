@@ -18,8 +18,7 @@ import java.util.function.Supplier;
  * while the x axis on another joystick is used to control rotational velocity (m/s).
  * <p> The magnitude of the acceleration is clamped </p>
  */
-public final class OIHolonomic
-    implements Supplier<ChassisSpeeds>, Loggable, Sendable {
+public final class OIHolonomic implements Supplier<ChassisSpeeds>, Loggable, Sendable {
 
   @Log.Exclude
   private final HolonomicDrive drive;
