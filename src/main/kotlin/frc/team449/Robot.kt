@@ -43,7 +43,7 @@ class Robot : TimedRobot() {
   override fun autonomousInit() {
     var routine = robotContainer.autoChooser.getSelected()
     if (routine != null) {
-      this.autoCommand = routine.command
+      this.autoCommand = routine.cmd
       robotContainer.field.getObject(routine.name).setTrajectory(routine.traj)
       CommandScheduler.getInstance().schedule(this.autoCommand)
     }
