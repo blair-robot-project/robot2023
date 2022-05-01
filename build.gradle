@@ -70,7 +70,6 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 }
 
-
 // Simulation configuration (e.g. environment variables).
 
 wpi.sim.addGui().defaultEnabled = true
@@ -116,6 +115,10 @@ compileJava {
     options.incremental = true
 }
 
+ktlint {
+    version = "0.45.2"
+}
+
 // pre-commit hook to format
 tasks.register('updateGitHooks', Copy) {
     from './scripts/pre-commit'
@@ -127,8 +130,4 @@ compileKotlin {
         jvmTarget = "11"
     }
     dependsOn updateGitHooks
-}
-
-ktlint {
-
 }
