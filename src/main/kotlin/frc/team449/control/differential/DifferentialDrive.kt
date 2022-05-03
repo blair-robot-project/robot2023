@@ -34,10 +34,10 @@ class DifferentialDrive(
   private val odometry = DifferentialDriveOdometry(ahrs.heading)
 
   /** Velocity PID controller for left side */
-  @Config.PIDController
+//  @Config.PIDController() //TODO causing casting errors
   private val leftPID = makeVelPID()
   /** Velocity PID controller for right side */
-  @Config.PIDController
+//  @Config.PIDController()
   private val rightPID = makeVelPID()
 
   val maxRotSpeed = 2 * maxLinearSpeed / trackWidth
@@ -54,11 +54,11 @@ class DifferentialDrive(
     this.desiredSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
   }
 
-  @get:Log
+  @get:Log.ToString
   override val heading: Rotation2d
     get() { return ahrs.heading }
 
-  @get:Log
+  @get:Log.ToString
   override var pose: Pose2d
     get() {
       return this.odometry.getPoseMeters()
