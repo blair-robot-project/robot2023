@@ -10,7 +10,7 @@ import io.github.oblarg.oblog.Loggable
 interface DriveSubsystem : Subsystem, Loggable {
   open val heading: Rotation2d
     get() {
-      return this.pose.getRotation()
+      return this.pose.rotation
     }
 
   abstract var pose: Pose2d

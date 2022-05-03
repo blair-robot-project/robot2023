@@ -31,12 +31,12 @@ import java.util.function.DoubleSupplier
 class OIHolonomic(
   @Log.Exclude
   val drive: HolonomicDrive,
-  val xThrottle: DoubleSupplier,
-  val yThrottle: DoubleSupplier,
-  val rotThrottle: DoubleSupplier,
-  val rotRamp: SlewRateLimiter,
-  val maxAccel: Double,
-  val fieldOriented: Boolean
+  private val xThrottle: DoubleSupplier,
+  private val yThrottle: DoubleSupplier,
+  private val rotThrottle: DoubleSupplier,
+  private val rotRamp: SlewRateLimiter,
+  private val maxAccel: Double,
+  private val fieldOriented: Boolean
 ) : OI, Loggable, Sendable {
 
   /** Previous x velocity (scaled and clamped) */
@@ -86,7 +86,7 @@ class OIHolonomic(
     this.prevX = xClamped
     this.prevY = yClamped
 
-    var rotRaw = rotThrottle.getAsDouble()
+    var rotRaw = rotThrottle.asDouble
     var rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
 
     if (this.fieldOriented) {

@@ -31,22 +31,18 @@ object DriveConstants {
   // Ramping
   const val LINEAR_ACC_LIMIT = 2.0
   const val TURNING_ACC_LIMIT = 120.0
-  /** External encoders for driving motors */
+  // Encoders for driving motors
   val DRIVE_ENC_RIGHT = Encoder(4, 5)
   val DRIVE_ENC_LEFT = Encoder(6, 7)
-
+  const val NEO_ENCODER_CPR = 1
+  const val DRIVE_EXT_ENC_CPR = 256
+  // Drive Characteristics
   val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
   const val DRIVE_GEARING = 5.86
   const val DRIVE_UPR = 0.3021211527151539
-  const val NEO_ENCODER_CPR = 1
-  /** CPR of external encoders on driving motors */
-  const val DRIVE_EXT_ENC_CPR = 256
 
   const val DRIVE_CURRENT_LIM = 50
   const val DRIVE_ENC_VEL_THRESHOLD = 0.1
   const val MAX_LINEAR_SPEED = 4.0
-  const val MAX_ROT_SPEED = 1.0
-  const val TRACK_WIDTH = .5 //m
-
-
+  const val TRACK_WIDTH = .5 // m
 }
