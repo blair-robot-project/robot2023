@@ -4,6 +4,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
+import frc.team449.control.DriveSubsystem
 import frc.team449.control.OI
 
 /**
@@ -21,7 +22,7 @@ object DifferentialOIs {
    * @param xRamp Used for limiting forward-backward acceleration
    * @param rotRamp Used for limiting rotational acceleration
    */
-  fun createArcade(
+  fun createArcade (
     drive: DifferentialDrive,
     xThrottle: () -> Double,
     rotThrottle: () -> Double,
