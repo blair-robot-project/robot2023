@@ -8,10 +8,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.control.DriveSubsystem
 import frc.team449.system.AHRS
 import frc.team449.system.motor.WrappedMotor
-import io.github.oblarg.oblog.annotations.Config
+import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 
 /** A differential drive with closed-loop velocity control using PID
@@ -25,7 +26,7 @@ class DifferentialDrive(
   makeVelPID: () -> PIDController,
   private val trackWidth: Double,
   val maxLinearSpeed: Double
-) : DriveSubsystem {
+) : DriveSubsystem, SubsystemBase(), Loggable {
   /**
    * The kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}
    */
@@ -66,7 +67,7 @@ class DifferentialDrive(
     set(pose) {
       leftLeader.position = 0.0
       rightLeader.position = 0.0
-      ahrs.heading = pose.getRotation()
+      ahrs.heading = pose.rotation
       this.odometry.resetPosition(pose, ahrs.heading)
     }
 

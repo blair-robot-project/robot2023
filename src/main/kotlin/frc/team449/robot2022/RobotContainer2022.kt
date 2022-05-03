@@ -1,27 +1,21 @@
 package frc.team449.robot2022
 
-import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
-import edu.wpi.first.math.system.plant.DCMotor
-import edu.wpi.first.math.system.plant.LinearSystemId
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.differential.DifferentialDrive
 import frc.team449.control.differential.DifferentialOIs
-import frc.team449.control.differential.DifferentialSim
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.BackupEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.encoder.QuadEncoder
-import frc.team449.system.encoder.SimEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.absoluteValue
@@ -45,11 +39,11 @@ class RobotContainer2022 {
 
   val oi = DifferentialOIs.createCurvature(
     drive,
-    {driveController.rightTriggerAxis - driveController.leftTriggerAxis},
-    {if (driveController.leftX.absoluteValue < DriveConstants.DRIVE_TURNING_DEADBAND) .0 else driveController.leftX},
+    { driveController.rightTriggerAxis - driveController.leftTriggerAxis },
+    { if (driveController.leftX.absoluteValue < DriveConstants.DRIVE_TURNING_DEADBAND) .0 else driveController.leftX },
     SlewRateLimiter(DriveConstants.LINEAR_ACC_LIMIT),
     SlewRateLimiter(DriveConstants.TURNING_ACC_LIMIT),
-    {true}
+    { true }
   )
   /** Helper to make turning motors for swerve */
   private fun makeSide(
@@ -82,28 +76,33 @@ class RobotContainer2022 {
     )
   private fun createDrivetrain() =
 //      if (RobotBase.isReal())
-        DifferentialDrive(
-        leftLeader = makeSide(
-          "Left_",
-          DriveConstants.DRIVE_MOTOR_L,
-          false,
-          DriveConstants.DRIVE_ENC_LEFT,
-          mapOf( Pair(DriveConstants.DRIVE_MOTOR_L1, false),
-            Pair(DriveConstants.DRIVE_MOTOR_L2, false))
-        ),
-        rightLeader = makeSide(
-          "Right_",
-          DriveConstants.DRIVE_MOTOR_R,
-          true,
-          DriveConstants.DRIVE_ENC_LEFT,
-          mapOf( Pair(DriveConstants.DRIVE_MOTOR_R1, false),
-            Pair(DriveConstants.DRIVE_MOTOR_R2, false))
-        ),
-        ahrs,
-        SimpleMotorFeedforward(DriveConstants.DRIVE_FF_KS,DriveConstants.DRIVE_FF_KV,DriveConstants.DRIVE_FF_KA),
-        { PIDController(DriveConstants.DRIVE_KP_VEL,DriveConstants.DRIVE_KI_VEL,DriveConstants.DRIVE_KD_VEL) },
-        DriveConstants.TRACK_WIDTH,
-        DriveConstants.MAX_LINEAR_SPEED)
+    DifferentialDrive(
+      leftLeader = makeSide(
+        "Left_",
+        DriveConstants.DRIVE_MOTOR_L,
+        false,
+        DriveConstants.DRIVE_ENC_LEFT,
+        mapOf(
+          Pair(DriveConstants.DRIVE_MOTOR_L1, false),
+          Pair(DriveConstants.DRIVE_MOTOR_L2, false)
+        )
+      ),
+      rightLeader = makeSide(
+        "Right_",
+        DriveConstants.DRIVE_MOTOR_R,
+        true,
+        DriveConstants.DRIVE_ENC_LEFT,
+        mapOf(
+          Pair(DriveConstants.DRIVE_MOTOR_R1, false),
+          Pair(DriveConstants.DRIVE_MOTOR_R2, false)
+        )
+      ),
+      ahrs,
+      SimpleMotorFeedforward(DriveConstants.DRIVE_FF_KS, DriveConstants.DRIVE_FF_KV, DriveConstants.DRIVE_FF_KA),
+      { PIDController(DriveConstants.DRIVE_KP_VEL, DriveConstants.DRIVE_KI_VEL, DriveConstants.DRIVE_KD_VEL) },
+      DriveConstants.TRACK_WIDTH,
+      DriveConstants.MAX_LINEAR_SPEED
+    )
 //      /** When in sim */
 //      else
 //        DifferentialSim(
@@ -128,7 +127,6 @@ class RobotContainer2022 {
   }
 
   fun robotPeriodic() {
-
   }
 
   fun simulationInit() {

@@ -117,7 +117,7 @@ fun <T> createTalon(
   return WrappedMotor(name, motor, enc)
 }
 
-/** @param Takes a slave TalonSRX or TalonFX and configures it to act as a slave
+/** @param slaveTalon Takes a slave TalonSRX or TalonFX and configures it to act as a slave
  * @return The same Talon
  */
 fun configureSlaveTalon(

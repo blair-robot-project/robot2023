@@ -29,7 +29,7 @@ fun createSparkMax(
     id,
     CANSparkMaxLowLevel.MotorType.kBrushless
   )
-  if (motor.getLastError() != REVLibError.kOk) {
+  if (motor.lastError != REVLibError.kOk) {
     System.out.println(
       "Motor could not be constructed on port " +
         id +
@@ -46,9 +46,9 @@ fun createSparkMax(
     if (enableBrakeMode) CANSparkMax.IdleMode.kBrake
     else CANSparkMax.IdleMode.kCoast
 
-  motor.setInverted(inverted)
+  motor.inverted = inverted
   // Set brake mode
-  motor.setIdleMode(brakeMode)
+  motor.idleMode = brakeMode
 
   // Set frame rates
   if (controlFrameRateMillis >= 1) {
@@ -75,7 +75,7 @@ fun createSparkMax(
     val slave = createFollowerSpark(slavePort)
     slave.restoreFactoryDefaults()
     slave.follow(motor, slaveInverted)
-    slave.setIdleMode(brakeMode)
+    slave.idleMode = brakeMode
     if (currentLimit > 0) {
       slave.setSmartCurrentLimit(currentLimit)
     }
