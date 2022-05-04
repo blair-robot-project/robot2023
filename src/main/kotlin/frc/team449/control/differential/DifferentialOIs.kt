@@ -4,6 +4,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.*
 import frc.team449.control.OI
 
 /**
@@ -29,7 +30,7 @@ object DifferentialOIs {
     rotRamp: SlewRateLimiter
   ): OI = OI {
     scaleAndApplyRamping(
-      edu.wpi.first.wpilibj.drive.DifferentialDrive.arcadeDriveIK(
+      arcadeDriveIK(
         xThrottle(),
         rotThrottle(),
         false
@@ -63,7 +64,7 @@ object DifferentialOIs {
     turnInPlace: () -> Boolean
   ): OI = OI {
     scaleAndApplyRamping(
-      edu.wpi.first.wpilibj.drive.DifferentialDrive.curvatureDriveIK(
+      curvatureDriveIK(
         xThrottle(),
         rotThrottle(),
         turnInPlace()
@@ -121,16 +122,16 @@ object DifferentialOIs {
    * @param xRamp Used for limiting linear/forward-back acceleration
    * @param rotRamp Used for limiting rotational acceleration
    */
-  fun scaleAndApplyRamping(
-    wheelSpeeds: edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds,
+  private fun scaleAndApplyRamping(
+    wheelSpeeds: WheelSpeeds,
     kinematics: DifferentialDriveKinematics,
     maxSpeed: Double,
     xRamp: SlewRateLimiter,
     rotRamp: SlewRateLimiter
   ): ChassisSpeeds {
-    var leftVel = wheelSpeeds.left * maxSpeed
-    var rightVel = wheelSpeeds.right * maxSpeed
-    var chassisSpeeds = kinematics.toChassisSpeeds(
+    val leftVel = wheelSpeeds.left * maxSpeed
+    val rightVel = wheelSpeeds.right * maxSpeed
+    val chassisSpeeds = kinematics.toChassisSpeeds(
       DifferentialDriveWheelSpeeds(leftVel, rightVel)
     )
     return ChassisSpeeds(

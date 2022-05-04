@@ -26,7 +26,7 @@ class RobotContainer2022 {
   val PDP_CAN = 1
   val PCM_MODULE = 0
 
-  val driveController = XboxController(0)
+  val driveController = XboxController(DriveConstants.DRIVE_CONTROLLER_PORT)
 
   val ahrs = AHRS(SerialPort.Port.kMXP)
 
@@ -45,7 +45,7 @@ class RobotContainer2022 {
     SlewRateLimiter(DriveConstants.TURNING_ACC_LIMIT),
     { true }
   )
-  /** Helper to make turning motors for swerve */
+  /** Helper to make each side for the differential drive */
   private fun makeSide(
     name: String,
     motorId: Int,

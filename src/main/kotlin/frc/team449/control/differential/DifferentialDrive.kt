@@ -24,7 +24,7 @@ class DifferentialDrive(
   private val ahrs: AHRS,
   private val feedforward: SimpleMotorFeedforward,
   makeVelPID: () -> PIDController,
-  private val trackWidth: Double,
+  trackWidth: Double,
   val maxLinearSpeed: Double
 ) : DriveSubsystem, SubsystemBase(), Loggable {
   /**

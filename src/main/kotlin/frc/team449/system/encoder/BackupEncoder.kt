@@ -2,6 +2,7 @@ package frc.team449.system.encoder
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
 import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.abs
 
 /**
  * A wrapper to use when you have one external encoder that's more accurate but may be unplugged and
@@ -34,7 +35,7 @@ class BackupEncoder(
       return fallbackVel
     } else {
       var primaryVel = primary.velocity
-      if (primaryVel == 0.0 && Math.abs(fallbackVel) > velThreshold) {
+      if (primaryVel == 0.0 && abs(fallbackVel) > velThreshold) {
         this.useFallback = true
         return fallbackVel
       } else {
