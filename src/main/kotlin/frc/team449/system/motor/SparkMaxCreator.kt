@@ -30,11 +30,11 @@ fun createSparkMax(
     CANSparkMaxLowLevel.MotorType.kBrushless
   )
   if (motor.lastError != REVLibError.kOk) {
-    System.out.println(
+    println(
       "Motor could not be constructed on port " +
         id +
         " due to error " +
-        motor.getLastError()
+        motor.lastError
     )
   }
 

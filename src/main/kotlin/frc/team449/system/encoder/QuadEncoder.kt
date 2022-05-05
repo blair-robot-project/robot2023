@@ -18,7 +18,7 @@ class QuadEncoder(
 
   override fun getPositionNative() = encoder.distance
 
-  override fun getVelocityNative() = encoder.getRate()
+  override fun getVelocityNative() = encoder.rate
 
   companion object {
     fun <T : MotorController> creator(

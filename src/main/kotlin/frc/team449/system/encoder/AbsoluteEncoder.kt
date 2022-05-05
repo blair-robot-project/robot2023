@@ -27,7 +27,7 @@ class AbsoluteEncoder(
   private var prevTime = Double.NaN
 
   override fun getPositionNative(): Double {
-    val pos = enc.getAbsolutePosition()
+    val pos = enc.absolutePosition
     if (!this.inverted) {
       return pos
     } else {
@@ -74,7 +74,7 @@ class AbsoluteEncoder(
       unitPerRotation: Double,
       gearing: Double
     ): EncoderCreator<T> =
-      EncoderCreator { name, motor, inverted ->
+      EncoderCreator { name, _, inverted ->
         val enc = AbsoluteEncoder(
           name,
           AnalogEncoder(channel),

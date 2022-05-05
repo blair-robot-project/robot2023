@@ -13,14 +13,14 @@ class NEOEncoder(
 
   init {
     // Let the underlying encoder do the conversions
-    enc.setPositionConversionFactor(unitPerRotation * gearing)
+    enc.positionConversionFactor = unitPerRotation * gearing
     // Divide by 60 because it's originally in RPM
-    enc.setVelocityConversionFactor(unitPerRotation * gearing / 60)
+    enc.velocityConversionFactor = unitPerRotation * gearing / 60
   }
 
-  protected override fun getPositionNative() = enc.getPosition()
+  protected override fun getPositionNative() = enc.position
 
-  protected override fun getVelocityNative(): Double = enc.getVelocity()
+  protected override fun getVelocityNative(): Double = enc.velocity
 
   companion object {
     const val NEO_ENCODER_CPR = 1
