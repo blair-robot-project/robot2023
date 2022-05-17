@@ -1,70 +1,68 @@
 package frc.team449.robot2022
 
-import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
-import edu.wpi.first.math.system.plant.DCMotor
-import edu.wpi.first.math.system.plant.LinearSystemId
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.PowerDistribution
-import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
-import frc.team449.RobotContainerBase
-import frc.team449.control.differential.DifferentialDrive
-import frc.team449.control.differential.DifferentialOIs
+import edu.wpi.first.wpilibj.smartdashboard.Field2d
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team449.control.auto.AutoRoutine
+import frc.team449.control.holonomic.OIHolonomic
+import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
+import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.BackupEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
-import kotlin.math.absoluteValue
 
-class RobotContainer2022 : RobotContainerBase() {
+class RobotContainer2022 {
 
   // Other CAN IDs
   val PDP_CAN = 1
+  val PCM_MODULE = 0
+
+  val driveController = XboxController(0)
 
   val ahrs = AHRS(SerialPort.Port.kMXP)
 
-  override val powerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
-
+  val field = Field2d()
+  val autoChooser = SendableChooser<AutoRoutine>()
   // Instantiate/declare PDP and other stuff here
 
+  val pdp = PowerDistribution()
+  val calc = frc.team449.ResistanceCalculator()
+
   @Log.Include
-  override val drive = createDrivetrain()
+  val drive = createDrivetrain()
 
-  override val driveSim = if (RobotBase.isSimulation()) createDriveSimController() else null
+  val oi = OIHolonomic(
+    drive,
+    driveController::getLeftY,
+    driveController::getLeftX,
+    { driveController.getRawAxis(3) },
+    SlewRateLimiter(0.5),
+    1.5,
+    true
+  )
 
-  val driveController = XboxController(DriveConstants.DRIVE_CONTROLLER_PORT)
-
-  override val oi =
-    DifferentialOIs.createCurvature(
-      drive,
-      { driveController.rightTriggerAxis - driveController.leftTriggerAxis },
-      {
-        if (driveController.leftX.absoluteValue < DriveConstants.DRIVE_TURNING_DEADBAND) .0
-        else driveController.leftX
-      },
-      SlewRateLimiter(DriveConstants.LINEAR_ACC_LIMIT),
-      SlewRateLimiter(DriveConstants.TURNING_ACC_LIMIT),
-      { true }
-    )
-
-  /** Helper to make each side for the differential drive */
-  private fun makeSide(
+  /** Helper to make turning motors for swerve */
+  private fun makeDrivingMotor(
     name: String,
     motorId: Int,
     inverted: Boolean,
-    wpiEnc: Encoder,
-    followers: Map<Int, Boolean>
+    wpiEnc: Encoder
   ) =
     createSparkMax(
-      name = name + "_Drive",
+      name = name + "Drive",
       id = motorId,
       enableBrakeMode = true,
       inverted = inverted,
@@ -76,68 +74,125 @@ class RobotContainer2022 : RobotContainerBase() {
           DriveConstants.DRIVE_UPR,
           1.0
         ),
-        NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING),
+        NEOEncoder.creator(
+          DriveConstants.DRIVE_UPR,
+          DriveConstants.DRIVE_GEARING
+        ),
         DriveConstants.DRIVE_ENC_VEL_THRESHOLD
-      ),
-      slaveSparks = followers,
-      currentLimit = DriveConstants.DRIVE_CURRENT_LIM
+      )
+    )
+
+  /** Helper to make turning motors for swerve */
+  private fun makeTurningMotor(
+    name: String,
+    motorId: Int,
+    inverted: Boolean,
+    encoderChannel: Int,
+    offset: Double
+  ) =
+    createSparkMax(
+      name = name + "Turn",
+      id = motorId,
+      enableBrakeMode = true,
+      inverted = inverted,
+      encCreator = AbsoluteEncoder.creator(
+        encoderChannel,
+        2 * Math.PI,
+        offset,
+        DriveConstants.TURN_UPR,
+        DriveConstants.TURN_GEARING
+      )
     )
 
   private fun createDrivetrain() =
-    DifferentialDrive(
-      leftLeader = makeSide(
-        "Left",
-        DriveConstants.DRIVE_MOTOR_L,
-        false,
-        DriveConstants.DRIVE_ENC_LEFT,
-        mapOf(
-          DriveConstants.DRIVE_MOTOR_L1 to false,
-          DriveConstants.DRIVE_MOTOR_L2 to false
-        )
-      ),
-      rightLeader = makeSide(
-        "Right",
-        DriveConstants.DRIVE_MOTOR_R,
-        true,
-        DriveConstants.DRIVE_ENC_RIGHT,
-        mapOf(
-          DriveConstants.DRIVE_MOTOR_R1 to false,
-          DriveConstants.DRIVE_MOTOR_R2 to false
-        )
-      ),
+    SwerveDrive.squareDrive(
       ahrs,
-      SimpleMotorFeedforward(
-        DriveConstants.DRIVE_FF_KS,
-        DriveConstants.DRIVE_FF_KV,
-        DriveConstants.DRIVE_FF_KA
+      DriveConstants.MAX_LINEAR_SPEED,
+      DriveConstants.MAX_ROT_SPEED,
+      makeDrivingMotor(
+        "FL",
+        DriveConstants.DRIVE_MOTOR_FL,
+        false,
+        DriveConstants.DRIVE_ENC_FL
       ),
+      makeDrivingMotor(
+        "FR",
+        DriveConstants.DRIVE_MOTOR_FR,
+        false,
+        DriveConstants.DRIVE_ENC_FR
+      ),
+      makeDrivingMotor(
+        "BL",
+        DriveConstants.DRIVE_MOTOR_BL,
+        false,
+        DriveConstants.DRIVE_ENC_BL
+      ),
+      makeDrivingMotor(
+        "BR",
+        DriveConstants.DRIVE_MOTOR_BR,
+        false,
+        DriveConstants.DRIVE_ENC_BR
+      ),
+      makeTurningMotor(
+        "FL",
+        DriveConstants.TURN_MOTOR_FL,
+        false,
+        DriveConstants.TURN_ENC_CHAN_FL,
+        DriveConstants.TURN_ENC_OFFSET_FL
+      ),
+      makeTurningMotor(
+        "FR",
+        DriveConstants.TURN_MOTOR_FR,
+        false,
+        DriveConstants.TURN_ENC_CHAN_FR,
+        DriveConstants.TURN_ENC_OFFSET_FR
+      ),
+      makeTurningMotor(
+        "BL",
+        DriveConstants.TURN_MOTOR_BL,
+        false,
+        DriveConstants.TURN_ENC_CHAN_BL,
+        DriveConstants.TURN_ENC_OFFSET_BL
+      ),
+      makeTurningMotor(
+        "BR",
+        DriveConstants.TURN_MOTOR_BR,
+        false,
+        DriveConstants.TURN_ENC_CHAN_BR,
+        DriveConstants.TURN_ENC_OFFSET_BR
+      ),
+      DriveConstants.FRONT_LEFT_LOC,
+      { PIDController(.0, .0, .0) },
       {
-        PIDController(
-          DriveConstants.DRIVE_KP_VEL,
-          DriveConstants.DRIVE_KI_VEL,
-          DriveConstants.DRIVE_KD_VEL
+        ProfiledPIDController(
+          .0,
+          .0,
+          .0,
+          TrapezoidProfile.Constraints(.0, .0)
         )
       },
-      DriveConstants.TRACK_WIDTH,
-      DriveConstants.MAX_LINEAR_SPEED
+      SimpleMotorFeedforward(.0, .0, .0),
+      SimpleMotorFeedforward(.0, .0, .0)
     )
 
-  private fun createDriveSimController() =
-    DifferentialDrive.SimController(
-      drive,
-      DifferentialDrivetrainSim(
-        LinearSystemId.identifyDrivetrainSystem(
-          DriveConstants.DRIVE_FF_KV,
-          DriveConstants.DRIVE_FF_KA,
-          DriveConstants.DRIVE_ANGLE_FF_KV,
-          DriveConstants.DRIVE_ANGLE_FF_KA
-        ),
-        DCMotor.getNEO(3),
-        DriveConstants.DRIVE_GEARING,
-        DriveConstants.TRACK_WIDTH,
-        DriveConstants.DRIVE_WHEEL_RADIUS,
-        VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
-      ),
-      AHRS.SimController()
-    )
+  fun teleopInit() {
+    // todo Add button bindings here
+    SmartDashboard.putData("Resistance", edu.wpi.first.util.sendable.Sendable { builder ->
+      builder.addDoubleProperty(
+        "robot",
+        { calc.calculate(pdp.getTotalCurrent(), pdp.getVoltage()) },
+        { _ -> }
+        )
+    })
+  }
+
+  fun robotPeriodic() {}
+
+  fun simulationInit() {
+    // DriverStationSim.setEnabled(true)
+  }
+
+  fun simulationPeriodic() {
+    // Update simulated mechanisms on Mechanism2d widget and stuff
+  }
 }
