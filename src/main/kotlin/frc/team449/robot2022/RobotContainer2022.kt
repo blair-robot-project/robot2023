@@ -1,11 +1,16 @@
 package frc.team449.robot2022
 
+import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
+import edu.wpi.first.math.system.plant.DCMotor
+import edu.wpi.first.math.system.plant.LinearSystemId
 import edu.wpi.first.wpilibj.Encoder
+import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.control.auto.AutoRoutine
@@ -36,6 +41,8 @@ class RobotContainer2022 {
 
   @Log.Include
   val drive = createDrivetrain()
+
+  val driveSim = if (RobotBase.isSimulation()) createDriveSimController() else null
 
   val oi = DifferentialOIs.createCurvature(
     drive,
@@ -75,7 +82,6 @@ class RobotContainer2022 {
       slaveSparks = followers
     )
   private fun createDrivetrain() =
-//      if (RobotBase.isReal())
     DifferentialDrive(
       leftLeader = makeSide(
         "Left_",
@@ -103,24 +109,22 @@ class RobotContainer2022 {
       DriveConstants.TRACK_WIDTH,
       DriveConstants.MAX_LINEAR_SPEED
     )
-//      /** When in sim */
-//      else
-//        DifferentialSim(
-//          DifferentialDrivetrainSim(
-//            LinearSystemId.identifyDrivetrainSystem(
-//              DriveConstants.DRIVE_FF_KV, DriveConstants.DRIVE_FF_KA, DriveConstants.DRIVE_ANGLE_FF_KV, DriveConstants.DRIVE_ANGLE_FF_KA
-//            ),
-//            DCMotor.getNEO(3),
-//            DriveConstants.DRIVE_GEARING,
-//            DriveConstants.TRACK_WIDTH,
-//            DriveConstants.DRIVE_WHEEL_RADIUS,
-//            VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
-//          ),
-//          SimEncoder("left_sim_encoder"),
-//          SimEncoder("right_sim_encoder"),
-//          DriveConstants.TRACK_WIDTH,
-//          DriveConstants.MAX_LINEAR_SPEED
-//        )
+
+  fun createDriveSimController() =
+    DifferentialDrive.SimController(
+      drive,
+      DifferentialDrivetrainSim(
+        LinearSystemId.identifyDrivetrainSystem(
+          DriveConstants.DRIVE_FF_KV, DriveConstants.DRIVE_FF_KA, DriveConstants.DRIVE_ANGLE_FF_KV, DriveConstants.DRIVE_ANGLE_FF_KA
+        ),
+        DCMotor.getNEO(3),
+        DriveConstants.DRIVE_GEARING,
+        DriveConstants.TRACK_WIDTH,
+        DriveConstants.DRIVE_WHEEL_RADIUS,
+        VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+      ),
+      AHRS.SimController()
+    )
 
   fun teleopInit() {
     // todo Add button bindings here
