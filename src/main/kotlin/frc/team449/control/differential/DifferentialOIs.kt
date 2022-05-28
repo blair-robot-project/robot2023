@@ -4,7 +4,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.*
 import frc.team449.control.OI
 
 /**
@@ -30,7 +29,7 @@ object DifferentialOIs {
     rotRamp: SlewRateLimiter
   ): OI = OI {
     scaleAndApplyRamping(
-      arcadeDriveIK(
+      edu.wpi.first.wpilibj.drive.DifferentialDrive.arcadeDriveIK(
         xThrottle(),
         rotThrottle(),
         false
@@ -64,7 +63,7 @@ object DifferentialOIs {
     turnInPlace: () -> Boolean
   ): OI = OI {
     scaleAndApplyRamping(
-      curvatureDriveIK(
+      edu.wpi.first.wpilibj.drive.DifferentialDrive.curvatureDriveIK(
         xThrottle(),
         rotThrottle(),
         turnInPlace()
@@ -123,7 +122,7 @@ object DifferentialOIs {
    * @param rotRamp Used for limiting rotational acceleration
    */
   private fun scaleAndApplyRamping(
-    wheelSpeeds: WheelSpeeds,
+    wheelSpeeds: edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds,
     kinematics: DifferentialDriveKinematics,
     maxSpeed: Double,
     xRamp: SlewRateLimiter,

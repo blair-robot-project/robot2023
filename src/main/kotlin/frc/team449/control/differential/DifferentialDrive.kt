@@ -8,15 +8,20 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.control.DriveSubsystem
 import frc.team449.system.AHRS
+import frc.team449.system.encoder.Encoder
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 
-/** A differential drive with closed-loop velocity control using PID
- * @param makeVelPID Used to make two copies of the same PIDController for both sides of the drivetrain
+/**
+ * A differential drive with closed-loop velocity control using PID
+ * @param makeVelPID Used to make two copies of the same PIDController for both sides of the
+ * drivetrain
  */
 class DifferentialDrive(
   private val leftLeader: WrappedMotor,
@@ -35,16 +40,15 @@ class DifferentialDrive(
   private val odometry = DifferentialDriveOdometry(ahrs.heading)
 
   /** Velocity PID controller for left side */
-//  @Config.PIDController() //TODO causing casting errors
+  //  @Config.PIDController() //TODO causing casting errors
   private val leftPID = makeVelPID()
   /** Velocity PID controller for right side */
-//  @Config.PIDController()
+  //  @Config.PIDController()
   private val rightPID = makeVelPID()
 
   val maxRotSpeed = 2 * maxLinearSpeed / trackWidth
 
-  @Log.ToString
-  private var desiredSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
+  @Log.ToString private var desiredSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
   /**
    * Convert from x, y, rotation to left and right speeds
@@ -52,12 +56,23 @@ class DifferentialDrive(
    * @param desiredSpeeds The {@link ChassisSpeeds} desired for the drive
    */
   override fun set(desiredSpeeds: ChassisSpeeds) {
-    this.desiredSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
+    val wheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
+    wheelSpeeds.desaturate(this.maxLinearSpeed)
+    val leftVel = wheelSpeeds.leftMetersPerSecond
+    val rightVel = wheelSpeeds.rightMetersPerSecond
+    leftLeader.setVoltage(
+      feedforward.calculate(leftVel) + leftPID.calculate(leftLeader.velocity, leftVel)
+    )
+    rightLeader.setVoltage(
+      feedforward.calculate(rightVel) + rightPID.calculate(rightLeader.velocity, rightVel)
+    )
   }
 
   @get:Log.ToString
   override val heading: Rotation2d
-    get() { return ahrs.heading }
+    get() {
+      return ahrs.heading
+    }
 
   @get:Log.ToString
   override var pose: Pose2d
@@ -77,20 +92,32 @@ class DifferentialDrive(
 
   /** Periodically update the odometry */
   override fun periodic() {
-    val leftPosition = this.leftLeader.position
-    val rightPosition = this.rightLeader.position
-    this.odometry.update(this.heading, leftPosition, rightPosition)
+    this.odometry.update(this.heading, this.leftLeader.position, this.rightLeader.position)
+  }
+  class SimController(
+    private val realDrive: DifferentialDrive,
+    private val driveSim: DifferentialDrivetrainSim,
+    private val gyroSim: AHRS.SimController
+  ) {
+    private val leftEncSim = Encoder.SimController(realDrive.leftLeader.encoder)
+    private val rightEncSim = Encoder.SimController(realDrive.rightLeader.encoder)
 
-    desiredSpeeds.desaturate(this.maxLinearSpeed)
-    val leftVel = desiredSpeeds.leftMetersPerSecond
-    val rightVel = desiredSpeeds.rightMetersPerSecond
-    leftLeader.setVoltage(
-      feedforward.calculate(leftVel) +
-        leftPID.calculate(leftLeader.velocity, leftVel)
-    )
-    rightLeader.setVoltage(
-      feedforward.calculate(rightVel) +
-        rightPID.calculate(rightLeader.velocity, rightVel)
-    )
+    private var lastTime = Timer.getFPGATimestamp()
+
+    fun update() {
+      driveSim.setInputs(realDrive.leftLeader.voltage, realDrive.rightLeader.voltage)
+
+      val currTime = Timer.getFPGATimestamp()
+      driveSim.update(currTime - lastTime)
+
+      leftEncSim.velocity = driveSim.leftVelocityMetersPerSecond
+      rightEncSim.velocity = driveSim.rightVelocityMetersPerSecond
+      leftEncSim.position = driveSim.leftPositionMeters
+      rightEncSim.position = driveSim.rightPositionMeters
+
+      gyroSim.fusedHeading = driveSim.heading.degrees
+
+      this.lastTime = currTime
+    }
   }
 }
