@@ -23,8 +23,18 @@ abstract class Encoder(
    * wanted
    */
   val encoderToUnit = unitPerRotation * gearing / encoderCPR
+
   /** An offset added to the position to allow resetting position. */
   var positionOffset = 0.0
+
+  /** Whether or not this encoder is being simulated */
+  private var simulated = false
+
+  /** Simulated position set by SimEncoderController */
+  private var simPos = 0.0
+
+  /** Simulated position set by SimEncoderController */
+  private var simVel = 0.0
 
   /**
    * Current position in encoder's units
@@ -39,7 +49,8 @@ abstract class Encoder(
   /** Position in meters or whatever unit you set */
   var position: Double
     get() {
-      return positionOffset + this.getPositionNative() * encoderToUnit
+      val posUnits = if (simulated) simPos else this.getPositionNative() * encoderToUnit
+      return positionOffset + posUnits
     }
     set(pos) {
       this.positionOffset = pos - this.position
@@ -48,8 +59,45 @@ abstract class Encoder(
   /** Velocity in meters per second or whatever unit you set */
   val velocity: Double
     get() {
-      return this.getVelocityNative() * encoderToUnit
+      return if (simulated) simVel else this.getVelocityNative() * encoderToUnit
     }
 
   override fun configureLogName() = this.name
+
+  companion object {
+    /**
+     * Used to control {@link Encoder}s. Only one {@link SimEncoderController} can be used per
+     * encoder object.
+     *
+     * @param enc The encoder to control.
+     */
+    class SimEncoderController(private val enc: Encoder) {
+      init {
+        if (enc.simulated) {
+          throw IllegalStateException("${enc.name} is already being simulated.")
+        }
+        enc.simulated = true
+      }
+
+      /** Set the position of the {@link SimEncoder} object this is controlling. */
+      var position: Double
+        get() {
+          return enc.simPos
+        }
+
+        set(pos) {
+          enc.simPos = pos
+        }
+
+      /** Set the velocity of the {@link SimEncoder} object this is controlling. */
+      var velocity: Double
+        get() {
+          return enc.simVel
+        }
+
+        set(vel) {
+          enc.simVel = vel
+        }
+    }
+  }
 }
