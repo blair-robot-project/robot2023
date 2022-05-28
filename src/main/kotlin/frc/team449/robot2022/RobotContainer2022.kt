@@ -39,19 +39,22 @@ class RobotContainer2022 {
   val autoChooser = SendableChooser<AutoRoutine>()
   // Instantiate/declare PDP and other stuff here
 
-  @Log.Include
-  val drive = createDrivetrain()
+  @Log.Include val drive = createDrivetrain()
 
   val driveSim = if (RobotBase.isSimulation()) createDriveSimController() else null
 
-  val oi = DifferentialOIs.createCurvature(
-    drive,
-    { driveController.rightTriggerAxis - driveController.leftTriggerAxis },
-    { if (driveController.leftX.absoluteValue < DriveConstants.DRIVE_TURNING_DEADBAND) .0 else driveController.leftX },
-    SlewRateLimiter(DriveConstants.LINEAR_ACC_LIMIT),
-    SlewRateLimiter(DriveConstants.TURNING_ACC_LIMIT),
-    { true }
-  )
+  val oi =
+    DifferentialOIs.createCurvature(
+      drive,
+      { driveController.rightTriggerAxis - driveController.leftTriggerAxis },
+      {
+        if (driveController.leftX.absoluteValue < DriveConstants.DRIVE_TURNING_DEADBAND) .0
+        else driveController.leftX
+      },
+      SlewRateLimiter(DriveConstants.LINEAR_ACC_LIMIT),
+      SlewRateLimiter(DriveConstants.TURNING_ACC_LIMIT),
+      { true }
+    )
   /** Helper to make each side for the differential drive */
   private fun makeSide(
     name: String,
@@ -73,10 +76,7 @@ class RobotContainer2022 {
           DriveConstants.DRIVE_UPR,
           1.0
         ),
-        NEOEncoder.creator(
-          DriveConstants.DRIVE_UPR,
-          DriveConstants.DRIVE_GEARING
-        ),
+        NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING),
         DriveConstants.DRIVE_ENC_VEL_THRESHOLD
       ),
       slaveSparks = followers
@@ -104,8 +104,18 @@ class RobotContainer2022 {
         )
       ),
       ahrs,
-      SimpleMotorFeedforward(DriveConstants.DRIVE_FF_KS, DriveConstants.DRIVE_FF_KV, DriveConstants.DRIVE_FF_KA),
-      { PIDController(DriveConstants.DRIVE_KP_VEL, DriveConstants.DRIVE_KI_VEL, DriveConstants.DRIVE_KD_VEL) },
+      SimpleMotorFeedforward(
+        DriveConstants.DRIVE_FF_KS,
+        DriveConstants.DRIVE_FF_KV,
+        DriveConstants.DRIVE_FF_KA
+      ),
+      {
+        PIDController(
+          DriveConstants.DRIVE_KP_VEL,
+          DriveConstants.DRIVE_KI_VEL,
+          DriveConstants.DRIVE_KD_VEL
+        )
+      },
       DriveConstants.TRACK_WIDTH,
       DriveConstants.MAX_LINEAR_SPEED
     )
@@ -115,7 +125,10 @@ class RobotContainer2022 {
       drive,
       DifferentialDrivetrainSim(
         LinearSystemId.identifyDrivetrainSystem(
-          DriveConstants.DRIVE_FF_KV, DriveConstants.DRIVE_FF_KA, DriveConstants.DRIVE_ANGLE_FF_KV, DriveConstants.DRIVE_ANGLE_FF_KA
+          DriveConstants.DRIVE_FF_KV,
+          DriveConstants.DRIVE_FF_KA,
+          DriveConstants.DRIVE_ANGLE_FF_KV,
+          DriveConstants.DRIVE_ANGLE_FF_KA
         ),
         DCMotor.getNEO(3),
         DriveConstants.DRIVE_GEARING,
@@ -130,8 +143,7 @@ class RobotContainer2022 {
     // todo Add button bindings here
   }
 
-  fun robotPeriodic() {
-  }
+  fun robotPeriodic() {}
 
   fun simulationInit() {
     // DriverStationSim.setEnabled(true)
@@ -139,5 +151,6 @@ class RobotContainer2022 {
 
   fun simulationPeriodic() {
     // Update simulated mechanisms on Mechanism2d widget and stuff
+    driveSim!!.update()
   }
 }
