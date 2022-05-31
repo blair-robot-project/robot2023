@@ -62,7 +62,7 @@ class DifferentialDrive(
   @get:Log.ToString
   override var pose: Pose2d
     get() {
-      return this.odometry.getPoseMeters()
+      return this.odometry.poseMeters
     }
     set(pose) {
       leftLeader.position = 0.0

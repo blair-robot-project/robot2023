@@ -72,7 +72,8 @@ class RobotContainer2022 {
         ),
         DriveConstants.DRIVE_ENC_VEL_THRESHOLD
       ),
-      slaveSparks = followers
+      slaveSparks = followers,
+      currentLimit = DriveConstants.DRIVE_CURRENT_LIM
     )
   private fun createDrivetrain() =
 //      if (RobotBase.isReal())
@@ -91,7 +92,7 @@ class RobotContainer2022 {
         "Right_",
         DriveConstants.DRIVE_MOTOR_R,
         true,
-        DriveConstants.DRIVE_ENC_LEFT,
+        DriveConstants.DRIVE_ENC_RIGHT,
         mapOf(
           Pair(DriveConstants.DRIVE_MOTOR_R1, false),
           Pair(DriveConstants.DRIVE_MOTOR_R2, false)
