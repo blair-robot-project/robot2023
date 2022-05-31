@@ -79,7 +79,8 @@ class RobotContainer2022 : RobotContainerBase() {
         NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING),
         DriveConstants.DRIVE_ENC_VEL_THRESHOLD
       ),
-      slaveSparks = followers
+      slaveSparks = followers,
+      currentLimit = DriveConstants.DRIVE_CURRENT_LIM
     )
 
   private fun createDrivetrain() =
@@ -98,7 +99,7 @@ class RobotContainer2022 : RobotContainerBase() {
         "Right",
         DriveConstants.DRIVE_MOTOR_R,
         true,
-        DriveConstants.DRIVE_ENC_LEFT,
+        DriveConstants.DRIVE_ENC_RIGHT,
         mapOf(
           DriveConstants.DRIVE_MOTOR_R1 to false,
           DriveConstants.DRIVE_MOTOR_R2 to false
