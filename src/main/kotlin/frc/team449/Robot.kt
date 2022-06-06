@@ -13,7 +13,7 @@ import io.github.oblarg.oblog.Logger
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
 class Robot : TimedRobot() {
 
-  private val robotContainer = RobotContainer2022()
+  private val robotContainer: RobotContainerBase = RobotContainer2022()
   private var autoCommand: Command? = null
 
   override fun robotInit() {
@@ -24,6 +24,8 @@ class Robot : TimedRobot() {
       // Don't complain about joysticks if there aren't going to be any
       DriverStation.silenceJoystickConnectionWarning(true)
     }
+
+    robotContainer.robotInit()
 
     Logger.configureLoggingAndConfig(robotContainer, false)
     Shuffleboard.setRecordingFileNameFormat("log-\${time}")
@@ -49,6 +51,8 @@ class Robot : TimedRobot() {
       robotContainer.field.getObject(routine.name).setTrajectory(routine.traj)
       CommandScheduler.getInstance().schedule(this.autoCommand)
     }
+
+    robotContainer.autonomousInit()
   }
 
   override fun autonomousPeriodic() {}
@@ -61,8 +65,7 @@ class Robot : TimedRobot() {
   }
 
   override fun teleopPeriodic() {
-    robotContainer.drive.periodic()
-    robotContainer.drive.set(robotContainer.oi.get())
+    robotContainer.teleopPeriodic()
   }
 
   override fun disabledInit() {}
