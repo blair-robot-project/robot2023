@@ -1,14 +1,17 @@
 package frc.team449.robot2022.cargo
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.*
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 
 class Cargo2022(
-  val intakeMotor: WrappedMotor,
-  val spitMotor: WrappedMotor,
-  val shootMotor: WrappedMotor,
+  var intakeMotor: WrappedMotor,
+  var spitMotor: WrappedMotor,
+  var shootMotor: WrappedMotor,
 ) : SubsystemBase(), Loggable {
+
+  init {
+  }
 
   fun runIntake() {
     intakeMotor.set(CargoConstants.FEEDER_OUTPUT)
