@@ -2,6 +2,7 @@ package frc.team449.robot2022.drive
 
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.wpilibj.Encoder
+import java.lang.Math.PI
 
 object DriveConstants {
   /** Controller constants */
@@ -37,12 +38,12 @@ object DriveConstants {
   const val NEO_ENCODER_CPR = 1
   const val DRIVE_EXT_ENC_CPR = 256
   // Drive Characteristics
-  val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
   const val DRIVE_GEARING = 5.86
-  const val DRIVE_UPR = 0.3021211527151539
+  private val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
+  val DRIVE_UPR = 2 * Math.PI * DRIVE_WHEEL_RADIUS
 
   const val DRIVE_CURRENT_LIM = 50
-  const val DRIVE_ENC_VEL_THRESHOLD = 0.1
-  const val MAX_LINEAR_SPEED = 1.0
-  const val TRACK_WIDTH = .5 // m
+  const val DRIVE_ENC_VEL_THRESHOLD = 999999.0
+  const val MAX_LINEAR_SPEED = 1.0 // m/s
+  const val TRACK_WIDTH = .615 // m
 }
