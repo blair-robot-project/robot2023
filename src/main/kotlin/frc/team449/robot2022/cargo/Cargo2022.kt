@@ -11,9 +11,6 @@ class Cargo2022(
 ) : SubsystemBase(), Loggable {
 
   init {
-    this.intakeMotor = intakeMotor
-    this.spitMotor = spitMotor
-    this.shootMotor = shootMotor
   }
 
   fun runIntake() {

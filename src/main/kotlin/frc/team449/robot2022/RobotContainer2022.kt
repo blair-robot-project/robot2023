@@ -122,7 +122,6 @@ class RobotContainer2022 {
 //          DriveConstants.TRACK_WIDTH,
 //          DriveConstants.MAX_LINEAR_SPEED
 //        )
-
   fun teleopInit() {
     // todo Add button bindings here
   }

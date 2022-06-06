@@ -23,9 +23,9 @@ object DriveConstants {
 
   /** Drive Constants */
   // Feed Forward
-  const val DRIVE_KP_VEL = 0.0
-  const val DRIVE_KI_VEL = 0.0
-  const val DRIVE_KD_VEL = 0.0
+  const val DRIVE_KP_VEL = .0
+  const val DRIVE_KI_VEL = .0
+  const val DRIVE_KD_VEL = .0
   const val DRIVE_FF_KS = 0.1908
   const val DRIVE_FF_KV = 2.5406
   const val DRIVE_FF_KA = 0.44982
@@ -44,6 +44,6 @@ object DriveConstants {
 
   const val DRIVE_CURRENT_LIM = 50
   const val DRIVE_ENC_VEL_THRESHOLD = 999999.0
-  const val MAX_LINEAR_SPEED = 1.0 // m/s
+  const val MAX_LINEAR_SPEED = 2.0 // m/s
   const val TRACK_WIDTH = .615 // m
 }

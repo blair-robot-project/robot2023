@@ -81,16 +81,19 @@ class DifferentialDrive(
     val rightPosition = this.rightLeader.position
     this.odometry.update(this.heading, leftPosition, rightPosition)
 
+    val leftVelocity = this.leftLeader.velocity
+    val rightVelocity = this.rightLeader.velocity
+
+//    println("LeftVelocity : $leftVelocity")
+//    println("RightVelocity : $rightVelocity")
     desiredSpeeds.desaturate(this.maxLinearSpeed)
     val leftVel = desiredSpeeds.leftMetersPerSecond
+    val leftVoltage = feedforward.calculate(leftVel) +
+      leftPID.calculate(leftLeader.velocity, leftVel)
     val rightVel = desiredSpeeds.rightMetersPerSecond
-    leftLeader.setVoltage(
-      feedforward.calculate(leftVel) +
-        leftPID.calculate(leftLeader.velocity, leftVel)
-    )
-    rightLeader.setVoltage(
-      feedforward.calculate(rightVel) +
-        rightPID.calculate(rightLeader.velocity, rightVel)
-    )
+    val rightVoltage = feedforward.calculate(rightVel) +
+      rightPID.calculate(rightLeader.velocity, rightVel)
+    leftLeader.setVoltage(leftVoltage)
+    rightLeader.setVoltage(rightVoltage)
   }
 }
