@@ -4,7 +4,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.6.21"
     id "edu.wpi.first.GradleRIO" version "2022.4.1"
     id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
-    id("org.jetbrains.dokka") version "1.6.20"
+    id "org.jetbrains.dokka" version "1.6.20"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11

@@ -57,7 +57,7 @@ class OIHolonomic(
   private var magAccClamped = 0.0
 
   /**
-   * @return The {@link ChassisSpeeds} for the given x, y and
+   * @return The [ChassisSpeeds] for the given x, y and
    * rotation input from the joystick */
   override fun get(): ChassisSpeeds {
     var currTime = Timer.getFPGATimestamp()

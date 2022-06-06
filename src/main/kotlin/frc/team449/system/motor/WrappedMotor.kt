@@ -15,16 +15,16 @@ class WrappedMotor(
   private val motor: MotorController,
   val encoder: Encoder
 ) : MotorController by motor, Loggable {
+  /**
+   * The last set voltage for this motor (through [setVoltage] or [set])
+   */
   @Log
-  var voltage = 0.0
+  var lastVoltage = 0.0
     private set
 
   /** Position in meters or whatever unit you set */
-  var position: Double
+  val position: Double
     get() = encoder.position
-    set(pos) {
-      encoder.position = pos
-    }
 
   /** Velocity in meters per second or whatever unit you set */
   val velocity: Double
@@ -32,12 +32,12 @@ class WrappedMotor(
 
   override fun setVoltage(volts: Double) {
     motor.setVoltage(volts)
-    this.voltage = volts
+    this.lastVoltage = volts
   }
 
   override fun set(output: Double) {
     motor.set(output)
-    this.voltage = output * RobotController.getBatteryVoltage()
+    this.lastVoltage = output * RobotController.getBatteryVoltage()
   }
 
   override fun configureLogName() = this.name

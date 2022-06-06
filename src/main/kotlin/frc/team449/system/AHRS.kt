@@ -2,21 +2,29 @@ package frc.team449.system
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.SerialPort
+import edu.wpi.first.wpilibj.interfaces.Gyro
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim
 import frc.team449.util.simBooleanProp
 import frc.team449.util.simDoubleProp
 
-class AHRS(port: SerialPort.Port = SerialPort.Port.kMXP) {
-  private val navx = com.kauailabs.navx.frc.AHRS(port)
+class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx {
   private var headingOffset = 0.0
 
   var heading: Rotation2d
     get() {
-      return Rotation2d.fromDegrees(headingOffset + this.navx.getFusedHeading())
+      return Rotation2d.fromDegrees(headingOffset + this.navx.fusedHeading)
     }
     set(newHeading) {
-      this.headingOffset = newHeading.getDegrees() - this.navx.getFusedHeading()
+      this.headingOffset = newHeading.degrees - this.navx.fusedHeading
     }
+
+  constructor(port: SerialPort.Port = SerialPort.Port.kMXP) : this(com.kauailabs.navx.frc.AHRS(port))
+
+  override fun reset() {
+    heading = Rotation2d()
+  }
+
+  override fun getAngle() = heading.degrees
 
   /**
    * Used to set properties of an [AHRS] object during simulation. See

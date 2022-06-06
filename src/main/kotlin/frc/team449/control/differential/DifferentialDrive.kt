@@ -33,27 +33,28 @@ class DifferentialDrive(
   val maxLinearSpeed: Double
 ) : DriveSubsystem, SubsystemBase(), Loggable {
   /**
-   * The kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}
+   * The kinematics used to convert [DifferentialDriveWheelSpeeds] to [ChassisSpeeds]
    */
   val kinematics = DifferentialDriveKinematics(trackWidth)
+
   /** Odometry to keep track of where the robot is */
   private val odometry = DifferentialDriveOdometry(ahrs.heading)
 
   /** Velocity PID controller for left side */
   //  @Config.PIDController() //TODO causing casting errors
   private val leftPID = makeVelPID()
+
   /** Velocity PID controller for right side */
   //  @Config.PIDController()
   private val rightPID = makeVelPID()
 
-  val maxRotSpeed = 2 * maxLinearSpeed / trackWidth
-
-  @Log.ToString private var desiredSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
+  @Log.ToString
+  private var desiredSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
   /**
    * Convert from x, y, rotation to left and right speeds
    *
-   * @param desiredSpeeds The {@link ChassisSpeeds} desired for the drive
+   * @param desiredSpeeds The [ChassisSpeeds] desired for the drive
    */
   override fun set(desiredSpeeds: ChassisSpeeds) {
     val wheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
@@ -70,18 +71,14 @@ class DifferentialDrive(
 
   @get:Log.ToString
   override val heading: Rotation2d
-    get() {
-      return ahrs.heading
-    }
+    get() = ahrs.heading
 
   @get:Log.ToString
   override var pose: Pose2d
-    get() {
-      return this.odometry.getPoseMeters()
-    }
+    get() = this.odometry.poseMeters
     set(pose) {
-      leftLeader.position = 0.0
-      rightLeader.position = 0.0
+      leftLeader.encoder.resetPosition(0.0)
+      rightLeader.encoder.resetPosition(0.0)
       ahrs.heading = pose.rotation
       this.odometry.resetPosition(pose, ahrs.heading)
     }
@@ -94,18 +91,22 @@ class DifferentialDrive(
   override fun periodic() {
     this.odometry.update(this.heading, this.leftLeader.position, this.rightLeader.position)
   }
+
+  /**
+   * Used for simulating a drivetrain
+   */
   class SimController(
     private val realDrive: DifferentialDrive,
     private val driveSim: DifferentialDrivetrainSim,
     private val gyroSim: AHRS.SimController
-  ) {
+  ) : DriveSubsystem.SimController {
     private val leftEncSim = Encoder.SimController(realDrive.leftLeader.encoder)
     private val rightEncSim = Encoder.SimController(realDrive.rightLeader.encoder)
 
     private var lastTime = Timer.getFPGATimestamp()
 
-    fun update() {
-      driveSim.setInputs(realDrive.leftLeader.voltage, realDrive.rightLeader.voltage)
+    override fun update() {
+      driveSim.setInputs(realDrive.leftLeader.lastVoltage, realDrive.rightLeader.lastVoltage)
 
       val currTime = Timer.getFPGATimestamp()
       driveSim.update(currTime - lastTime)
@@ -119,5 +120,7 @@ class DifferentialDrive(
 
       this.lastTime = currTime
     }
+
+    override fun getCurrentDraw() = driveSim.currentDrawAmps
   }
 }

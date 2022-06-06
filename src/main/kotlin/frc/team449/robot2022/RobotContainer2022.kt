@@ -7,13 +7,12 @@ import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.math.system.plant.LinearSystemId
 import edu.wpi.first.wpilibj.Encoder
+import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
-import edu.wpi.first.wpilibj.smartdashboard.Field2d
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
-import frc.team449.control.auto.AutoRoutine
+import frc.team449.RobotContainerBase
 import frc.team449.control.differential.DifferentialDrive
 import frc.team449.control.differential.DifferentialOIs
 import frc.team449.robot2022.drive.DriveConstants
@@ -25,25 +24,25 @@ import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.absoluteValue
 
-class RobotContainer2022 {
+class RobotContainer2022 : RobotContainerBase() {
 
   // Other CAN IDs
   val PDP_CAN = 1
-  val PCM_MODULE = 0
-
-  val driveController = XboxController(DriveConstants.DRIVE_CONTROLLER_PORT)
 
   val ahrs = AHRS(SerialPort.Port.kMXP)
 
-  val field = Field2d()
-  val autoChooser = SendableChooser<AutoRoutine>()
+  override val powerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
+
   // Instantiate/declare PDP and other stuff here
 
-  @Log.Include val drive = createDrivetrain()
+  @Log.Include
+  override val drive = createDrivetrain()
 
-  val driveSim = if (RobotBase.isSimulation()) createDriveSimController() else null
+  override val driveSim = if (RobotBase.isSimulation()) createDriveSimController() else null
 
-  val oi =
+  val driveController = XboxController(DriveConstants.DRIVE_CONTROLLER_PORT)
+
+  override val oi =
     DifferentialOIs.createCurvature(
       drive,
       { driveController.rightTriggerAxis - driveController.leftTriggerAxis },
@@ -55,6 +54,7 @@ class RobotContainer2022 {
       SlewRateLimiter(DriveConstants.TURNING_ACC_LIMIT),
       { true }
     )
+
   /** Helper to make each side for the differential drive */
   private fun makeSide(
     name: String,
@@ -64,7 +64,7 @@ class RobotContainer2022 {
     followers: Map<Int, Boolean>
   ) =
     createSparkMax(
-      name = name + "Drive",
+      name = name + "_Drive",
       id = motorId,
       enableBrakeMode = true,
       inverted = inverted,
@@ -81,26 +81,27 @@ class RobotContainer2022 {
       ),
       slaveSparks = followers
     )
+
   private fun createDrivetrain() =
     DifferentialDrive(
       leftLeader = makeSide(
-        "Left_",
+        "Left",
         DriveConstants.DRIVE_MOTOR_L,
         false,
         DriveConstants.DRIVE_ENC_LEFT,
         mapOf(
-          Pair(DriveConstants.DRIVE_MOTOR_L1, false),
-          Pair(DriveConstants.DRIVE_MOTOR_L2, false)
+          DriveConstants.DRIVE_MOTOR_L1 to false,
+          DriveConstants.DRIVE_MOTOR_L2 to false
         )
       ),
       rightLeader = makeSide(
-        "Right_",
+        "Right",
         DriveConstants.DRIVE_MOTOR_R,
         true,
         DriveConstants.DRIVE_ENC_LEFT,
         mapOf(
-          Pair(DriveConstants.DRIVE_MOTOR_R1, false),
-          Pair(DriveConstants.DRIVE_MOTOR_R2, false)
+          DriveConstants.DRIVE_MOTOR_R1 to false,
+          DriveConstants.DRIVE_MOTOR_R2 to false
         )
       ),
       ahrs,
@@ -120,7 +121,7 @@ class RobotContainer2022 {
       DriveConstants.MAX_LINEAR_SPEED
     )
 
-  fun createDriveSimController() =
+  private fun createDriveSimController() =
     DifferentialDrive.SimController(
       drive,
       DifferentialDrivetrainSim(
@@ -138,19 +139,4 @@ class RobotContainer2022 {
       ),
       AHRS.SimController()
     )
-
-  fun teleopInit() {
-    // todo Add button bindings here
-  }
-
-  fun robotPeriodic() {}
-
-  fun simulationInit() {
-    // DriverStationSim.setEnabled(true)
-  }
-
-  fun simulationPeriodic() {
-    // Update simulated mechanisms on Mechanism2d widget and stuff
-    driveSim!!.update()
-  }
 }

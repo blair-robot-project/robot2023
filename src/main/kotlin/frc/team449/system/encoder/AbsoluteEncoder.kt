@@ -83,7 +83,7 @@ class AbsoluteEncoder(
           gearing,
           inverted
         )
-        enc.position = offset
+        enc.resetPosition(offset)
         enc
       }
   }
