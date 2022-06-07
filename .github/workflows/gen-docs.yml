@@ -26,7 +26,7 @@ jobs:
           git pull
           git checkout docs --
           git switch main
-          git merge --strategy=ours docs
+          git merge --allow-unrelated-histories --strategy=ours docs
           git switch docs
           git merge main
 
