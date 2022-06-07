@@ -4,10 +4,12 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.wpilibj.Encoder
+import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.differential.DifferentialDrive
 import frc.team449.control.differential.DifferentialOIs
@@ -33,6 +35,9 @@ class RobotContainer2022 {
   val field = Field2d()
   val autoChooser = SendableChooser<AutoRoutine>()
   // Instantiate/declare PDP and other stuff here
+
+  val pdp = PowerDistribution()
+  val calc = frc.team449.ResistanceCalculator()
 
   @Log.Include
   val drive = createDrivetrain()
@@ -124,6 +129,13 @@ class RobotContainer2022 {
 //        )
   fun teleopInit() {
     // todo Add button bindings here
+    SmartDashboard.putData("Resistance", edu.wpi.first.util.sendable.Sendable { builder ->
+      builder.addDoubleProperty(
+        "robot",
+        { calc.calculate(pdp.getTotalCurrent(), pdp.getVoltage()) },
+        { _ -> }
+        )
+    })
   }
 
   fun robotPeriodic() {
