@@ -23,6 +23,8 @@ jobs:
 
       - name: Overwrite docs branch with main # From https://stackoverflow.com/a/2763118
         run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git pull
           git checkout docs --
           git switch main
@@ -39,8 +41,6 @@ jobs:
 
       - name: Commit files
         run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
           git commit -m "Generate html" -a
 
       - name: Pull before pushing
