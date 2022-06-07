@@ -87,8 +87,8 @@ wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
 repositories {
-    maven { url 'https://jitpack.io' }
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 sourceSets {
