@@ -4,7 +4,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.*
 import frc.team449.control.OI
 
 /**
@@ -30,7 +29,7 @@ object DifferentialOIs {
     rotRamp: SlewRateLimiter
   ): OI = OI {
     scaleAndApplyRamping(
-      arcadeDriveIK(
+      edu.wpi.first.wpilibj.drive.DifferentialDrive.arcadeDriveIK(
         xThrottle(),
         rotThrottle(),
         false
@@ -64,7 +63,7 @@ object DifferentialOIs {
     turnInPlace: () -> Boolean
   ): OI = OI {
     scaleAndApplyRamping(
-      curvatureDriveIK(
+      edu.wpi.first.wpilibj.drive.DifferentialDrive.curvatureDriveIK(
         xThrottle(),
         rotThrottle(),
         turnInPlace()
@@ -77,7 +76,7 @@ object DifferentialOIs {
   }
 
   /**
-   * Create an OI for tank drive. Each throttles controls one side of the drive
+   * Create an OI for tank drive. Each throttle controls one side of the drive
    * separately. Each side is also ramped separately.
    *
    * <p>
@@ -107,15 +106,15 @@ object DifferentialOIs {
   }
 
   /**
-   * Scales differential drive speeds from [-1, 1] using {@code maxSpeed}, then
-   * applies ramping.
+   * Scales differential drive throttles from [-1, 1] to [-[maxSpeed], [maxSpeed]], then
+   * applies ramping to give the final [ChassisSpeeds].
    *
    * <p>
-   * Do note that although this is given a {@link DifferentialDriveWheelSpeeds}
+   * Do note that although this is given a [DifferentialDriveWheelSpeeds]
    * object, the ramping isn't applied to the left and right side but to the
-   * linear and rotational velocity using a {@link ChassisSpeeds} object.
+   * linear and rotational velocity using a [ChassisSpeeds] object.
    *
-   * @param wheelSpeeds The left and right wheel speeds
+   * @param wheelThrottles The left and right wheel throttles
    * @param kinematics Kinematics object used for turning differential drive wheel
    *        speeds to chassis speeds
    * @param maxSpeed Max linear speed for the drivetrain
@@ -123,14 +122,14 @@ object DifferentialOIs {
    * @param rotRamp Used for limiting rotational acceleration
    */
   private fun scaleAndApplyRamping(
-    wheelSpeeds: WheelSpeeds,
+    wheelThrottles: edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds,
     kinematics: DifferentialDriveKinematics,
     maxSpeed: Double,
     xRamp: SlewRateLimiter,
     rotRamp: SlewRateLimiter
   ): ChassisSpeeds {
-    val leftVel = wheelSpeeds.left * maxSpeed
-    val rightVel = wheelSpeeds.right * maxSpeed
+    val leftVel = wheelThrottles.left * maxSpeed
+    val rightVel = wheelThrottles.right * maxSpeed
     val chassisSpeeds = kinematics.toChassisSpeeds(
       DifferentialDriveWheelSpeeds(leftVel, rightVel)
     )

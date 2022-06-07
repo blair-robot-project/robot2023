@@ -39,7 +39,7 @@ object DriveConstants {
   const val DRIVE_EXT_ENC_CPR = 256
   // Drive Characteristics
   const val DRIVE_GEARING = 5.86
-  private val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
+  val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
   val DRIVE_UPR = 2 * Math.PI * DRIVE_WHEEL_RADIUS
 
   const val DRIVE_CURRENT_LIM = 50
