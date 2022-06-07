@@ -1,0 +1,54 @@
+name: Generate docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Generate docs
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Overwrite docs branch with main # From https://stackoverflow.com/a/2763118
+        run: |
+          git pull
+          git checkout docs --
+          git switch main
+          git merge --strategy=ours docs
+          git switch docs
+          git merge main
+
+      - name: Run dokkaHtml
+        run: |
+          rm -rf docs
+          ./gradlew dokkaHtml
+          cp -a build/dokka/html/. docs/
+          git add docs
+
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Generate html" -a
+
+      - name: Pull before pushing
+        run: git pull origin docs
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: docs
+          force: true
