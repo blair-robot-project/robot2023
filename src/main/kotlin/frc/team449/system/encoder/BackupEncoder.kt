@@ -2,6 +2,7 @@ package frc.team449.system.encoder
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
 import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.abs
 
 /**
  * A wrapper to use when you have one external encoder that's more accurate but may be unplugged and
@@ -21,24 +22,24 @@ class BackupEncoder(
   @Log private var useFallback = false
 
   protected override fun getPositionNative(): Double {
-    if (useFallback) {
-      return fallback.position
+    return if (useFallback) {
+      fallback.position
     } else {
-      return primary.position
+      primary.position
     }
   }
 
   protected override fun getVelocityNative(): Double {
     val fallbackVel = fallback.velocity
-    if (useFallback) {
-      return fallbackVel
+    return if (useFallback) {
+      fallbackVel
     } else {
       var primaryVel = primary.velocity
-      if (primaryVel == 0.0 && Math.abs(fallbackVel) > velThreshold) {
+      if (primaryVel == 0.0 && abs(fallbackVel) > velThreshold) {
         this.useFallback = true
-        return fallbackVel
+        fallbackVel
       } else {
-        return primaryVel
+        primaryVel
       }
     }
   }

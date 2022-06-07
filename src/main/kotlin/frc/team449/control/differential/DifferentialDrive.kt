@@ -8,10 +8,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.control.DriveSubsystem
 import frc.team449.system.AHRS
 import frc.team449.system.motor.WrappedMotor
-import io.github.oblarg.oblog.annotations.Config
+import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 
 /** A differential drive with closed-loop velocity control using PID
@@ -23,9 +24,9 @@ class DifferentialDrive(
   private val ahrs: AHRS,
   private val feedforward: SimpleMotorFeedforward,
   makeVelPID: () -> PIDController,
-  private val trackWidth: Double,
+  trackWidth: Double,
   val maxLinearSpeed: Double
-) : DriveSubsystem {
+) : DriveSubsystem, SubsystemBase(), Loggable {
   /**
    * The kinematics used to convert {@link DifferentialDriveWheelSpeeds} to {@link ChassisSpeeds}
    */
@@ -34,10 +35,10 @@ class DifferentialDrive(
   private val odometry = DifferentialDriveOdometry(ahrs.heading)
 
   /** Velocity PID controller for left side */
-  @Config.PIDController
+//  @Config.PIDController() //TODO causing casting errors
   private val leftPID = makeVelPID()
   /** Velocity PID controller for right side */
-  @Config.PIDController
+//  @Config.PIDController()
   private val rightPID = makeVelPID()
 
   val maxRotSpeed = 2 * maxLinearSpeed / trackWidth
@@ -54,19 +55,19 @@ class DifferentialDrive(
     this.desiredSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
   }
 
-  @get:Log
+  @get:Log.ToString
   override val heading: Rotation2d
     get() { return ahrs.heading }
 
-  @get:Log
+  @get:Log.ToString
   override var pose: Pose2d
     get() {
-      return this.odometry.getPoseMeters()
+      return this.odometry.poseMeters
     }
     set(pose) {
       leftLeader.position = 0.0
       rightLeader.position = 0.0
-      ahrs.heading = pose.getRotation()
+      ahrs.heading = pose.rotation
       this.odometry.resetPosition(pose, ahrs.heading)
     }
 
@@ -80,16 +81,19 @@ class DifferentialDrive(
     val rightPosition = this.rightLeader.position
     this.odometry.update(this.heading, leftPosition, rightPosition)
 
+    val leftVelocity = this.leftLeader.velocity
+    val rightVelocity = this.rightLeader.velocity
+
+//    println("LeftVelocity : $leftVelocity")
+//    println("RightVelocity : $rightVelocity")
     desiredSpeeds.desaturate(this.maxLinearSpeed)
     val leftVel = desiredSpeeds.leftMetersPerSecond
+    val leftVoltage = feedforward.calculate(leftVel) +
+      leftPID.calculate(leftLeader.velocity, leftVel)
     val rightVel = desiredSpeeds.rightMetersPerSecond
-    leftLeader.setVoltage(
-      feedforward.calculate(leftVel) +
-        leftPID.calculate(leftLeader.velocity, leftVel)
-    )
-    rightLeader.setVoltage(
-      feedforward.calculate(rightVel) +
-        rightPID.calculate(rightLeader.velocity, rightVel)
-    )
+    val rightVoltage = feedforward.calculate(rightVel) +
+      rightPID.calculate(rightLeader.velocity, rightVel)
+    leftLeader.setVoltage(leftVoltage)
+    rightLeader.setVoltage(rightVoltage)
   }
 }

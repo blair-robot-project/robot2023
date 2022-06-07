@@ -35,13 +35,15 @@ class Robot : TimedRobot() {
   override fun robotPeriodic() {
     CommandScheduler.getInstance().run()
 
+    Logger.updateEntries()
+
     robotContainer.robotPeriodic()
 
-    robotContainer.field.setRobotPose(robotContainer.drive.pose)
+    robotContainer.field.robotPose = robotContainer.drive.pose
   }
 
   override fun autonomousInit() {
-    var routine = robotContainer.autoChooser.getSelected()
+    val routine = robotContainer.autoChooser.selected
     if (routine != null) {
       this.autoCommand = routine.cmd
       robotContainer.field.getObject(routine.name).setTrajectory(routine.traj)
@@ -59,6 +61,7 @@ class Robot : TimedRobot() {
   }
 
   override fun teleopPeriodic() {
+    robotContainer.drive.periodic()
     robotContainer.drive.set(robotContainer.oi.get())
   }
 

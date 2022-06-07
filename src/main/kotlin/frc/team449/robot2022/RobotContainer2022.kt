@@ -1,10 +1,8 @@
 package frc.team449.robot2022
 
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
-import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.SerialPort
@@ -13,16 +11,16 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team449.control.auto.AutoRoutine
-import frc.team449.control.holonomic.OIHolonomic
-import frc.team449.control.holonomic.SwerveDrive
+import frc.team449.control.differential.DifferentialDrive
+import frc.team449.control.differential.DifferentialOIs
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
-import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.BackupEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.absoluteValue
 
 class RobotContainer2022 {
 
@@ -30,7 +28,7 @@ class RobotContainer2022 {
   val PDP_CAN = 1
   val PCM_MODULE = 0
 
-  val driveController = XboxController(0)
+  val driveController = XboxController(DriveConstants.DRIVE_CONTROLLER_PORT)
 
   val ahrs = AHRS(SerialPort.Port.kMXP)
 
@@ -44,22 +42,21 @@ class RobotContainer2022 {
   @Log.Include
   val drive = createDrivetrain()
 
-  val oi = OIHolonomic(
+  val oi = DifferentialOIs.createCurvature(
     drive,
-    driveController::getLeftY,
-    driveController::getLeftX,
-    { driveController.getRawAxis(3) },
-    SlewRateLimiter(0.5),
-    1.5,
-    true
+    { driveController.rightTriggerAxis - driveController.leftTriggerAxis },
+    { if (driveController.leftX.absoluteValue < DriveConstants.DRIVE_TURNING_DEADBAND) .0 else driveController.leftX },
+    SlewRateLimiter(DriveConstants.LINEAR_ACC_LIMIT),
+    SlewRateLimiter(DriveConstants.TURNING_ACC_LIMIT),
+    { true }
   )
-
-  /** Helper to make turning motors for swerve */
-  private fun makeDrivingMotor(
+  /** Helper to make each side for the differential drive */
+  private fun makeSide(
     name: String,
     motorId: Int,
     inverted: Boolean,
-    wpiEnc: Encoder
+    wpiEnc: Encoder,
+    followers: Map<Int, Boolean>
   ) =
     createSparkMax(
       name = name + "Drive",
@@ -79,102 +76,57 @@ class RobotContainer2022 {
           DriveConstants.DRIVE_GEARING
         ),
         DriveConstants.DRIVE_ENC_VEL_THRESHOLD
-      )
+      ),
+      slaveSparks = followers,
+      currentLimit = DriveConstants.DRIVE_CURRENT_LIM
     )
-
-  /** Helper to make turning motors for swerve */
-  private fun makeTurningMotor(
-    name: String,
-    motorId: Int,
-    inverted: Boolean,
-    encoderChannel: Int,
-    offset: Double
-  ) =
-    createSparkMax(
-      name = name + "Turn",
-      id = motorId,
-      enableBrakeMode = true,
-      inverted = inverted,
-      encCreator = AbsoluteEncoder.creator(
-        encoderChannel,
-        2 * Math.PI,
-        offset,
-        DriveConstants.TURN_UPR,
-        DriveConstants.TURN_GEARING
-      )
-    )
-
   private fun createDrivetrain() =
-    SwerveDrive.squareDrive(
-      ahrs,
-      DriveConstants.MAX_LINEAR_SPEED,
-      DriveConstants.MAX_ROT_SPEED,
-      makeDrivingMotor(
-        "FL",
-        DriveConstants.DRIVE_MOTOR_FL,
+//      if (RobotBase.isReal())
+    DifferentialDrive(
+      leftLeader = makeSide(
+        "Left_",
+        DriveConstants.DRIVE_MOTOR_L,
         false,
-        DriveConstants.DRIVE_ENC_FL
-      ),
-      makeDrivingMotor(
-        "FR",
-        DriveConstants.DRIVE_MOTOR_FR,
-        false,
-        DriveConstants.DRIVE_ENC_FR
-      ),
-      makeDrivingMotor(
-        "BL",
-        DriveConstants.DRIVE_MOTOR_BL,
-        false,
-        DriveConstants.DRIVE_ENC_BL
-      ),
-      makeDrivingMotor(
-        "BR",
-        DriveConstants.DRIVE_MOTOR_BR,
-        false,
-        DriveConstants.DRIVE_ENC_BR
-      ),
-      makeTurningMotor(
-        "FL",
-        DriveConstants.TURN_MOTOR_FL,
-        false,
-        DriveConstants.TURN_ENC_CHAN_FL,
-        DriveConstants.TURN_ENC_OFFSET_FL
-      ),
-      makeTurningMotor(
-        "FR",
-        DriveConstants.TURN_MOTOR_FR,
-        false,
-        DriveConstants.TURN_ENC_CHAN_FR,
-        DriveConstants.TURN_ENC_OFFSET_FR
-      ),
-      makeTurningMotor(
-        "BL",
-        DriveConstants.TURN_MOTOR_BL,
-        false,
-        DriveConstants.TURN_ENC_CHAN_BL,
-        DriveConstants.TURN_ENC_OFFSET_BL
-      ),
-      makeTurningMotor(
-        "BR",
-        DriveConstants.TURN_MOTOR_BR,
-        false,
-        DriveConstants.TURN_ENC_CHAN_BR,
-        DriveConstants.TURN_ENC_OFFSET_BR
-      ),
-      DriveConstants.FRONT_LEFT_LOC,
-      { PIDController(.0, .0, .0) },
-      {
-        ProfiledPIDController(
-          .0,
-          .0,
-          .0,
-          TrapezoidProfile.Constraints(.0, .0)
+        DriveConstants.DRIVE_ENC_LEFT,
+        mapOf(
+          Pair(DriveConstants.DRIVE_MOTOR_L1, false),
+          Pair(DriveConstants.DRIVE_MOTOR_L2, false)
         )
-      },
-      SimpleMotorFeedforward(.0, .0, .0),
-      SimpleMotorFeedforward(.0, .0, .0)
+      ),
+      rightLeader = makeSide(
+        "Right_",
+        DriveConstants.DRIVE_MOTOR_R,
+        true,
+        DriveConstants.DRIVE_ENC_RIGHT,
+        mapOf(
+          Pair(DriveConstants.DRIVE_MOTOR_R1, false),
+          Pair(DriveConstants.DRIVE_MOTOR_R2, false)
+        )
+      ),
+      ahrs,
+      SimpleMotorFeedforward(DriveConstants.DRIVE_FF_KS, DriveConstants.DRIVE_FF_KV, DriveConstants.DRIVE_FF_KA),
+      { PIDController(DriveConstants.DRIVE_KP_VEL, DriveConstants.DRIVE_KI_VEL, DriveConstants.DRIVE_KD_VEL) },
+      DriveConstants.TRACK_WIDTH,
+      DriveConstants.MAX_LINEAR_SPEED
     )
-
+//      /** When in sim */
+//      else
+//        DifferentialSim(
+//          DifferentialDrivetrainSim(
+//            LinearSystemId.identifyDrivetrainSystem(
+//              DriveConstants.DRIVE_FF_KV, DriveConstants.DRIVE_FF_KA, DriveConstants.DRIVE_ANGLE_FF_KV, DriveConstants.DRIVE_ANGLE_FF_KA
+//            ),
+//            DCMotor.getNEO(3),
+//            DriveConstants.DRIVE_GEARING,
+//            DriveConstants.TRACK_WIDTH,
+//            DriveConstants.DRIVE_WHEEL_RADIUS,
+//            VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+//          ),
+//          SimEncoder("left_sim_encoder"),
+//          SimEncoder("right_sim_encoder"),
+//          DriveConstants.TRACK_WIDTH,
+//          DriveConstants.MAX_LINEAR_SPEED
+//        )
   fun teleopInit() {
     // todo Add button bindings here
     SmartDashboard.putData("Resistance", edu.wpi.first.util.sendable.Sendable { builder ->
@@ -186,7 +138,8 @@ class RobotContainer2022 {
     })
   }
 
-  fun robotPeriodic() {}
+  fun robotPeriodic() {
+  }
 
   fun simulationInit() {
     // DriverStationSim.setEnabled(true)
