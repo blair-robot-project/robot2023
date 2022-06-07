@@ -131,3 +131,28 @@ compileKotlin {
     }
     dependsOn updateGitHooks
 }
+
+dokkaHtml {
+    dokkaSourceSets {
+        configureEach {
+            separateInheritedMembers.set(true)
+
+            platform.set(org.jetbrains.dokka.Platform.jvm)
+            jdkVersion.set(11)
+
+            sourceRoots.from(file("src/main/kotlin"))
+
+            sourceLink {
+                localDirectory.set(file("src/main/kotlin"))
+
+                remoteUrl.set(java.net.URL(
+                    "https://github.com/blair-robot-project/framework2022/blob/main/src/main/kotlin"))
+                remoteLineSuffix.set("#L")
+            }
+
+            externalDocumentationLink {
+                url.set(URL("https://first.wpi.edu/wpilib/allwpilib/docs/release/java/"))
+            }
+        }
+    }
+}
