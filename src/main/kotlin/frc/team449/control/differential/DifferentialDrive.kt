@@ -48,8 +48,9 @@ class DifferentialDrive(
   //  @Config.PIDController()
   private val rightPID = makeVelPID()
 
+  /** Variable to keep track of the wheel speeds*/
   @Log.ToString
-  private var desiredSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
+  private var wheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
   /**
    * Convert from x, y, rotation to left and right speeds
@@ -57,7 +58,7 @@ class DifferentialDrive(
    * @param desiredSpeeds The [ChassisSpeeds] desired for the drive
    */
   override fun set(desiredSpeeds: ChassisSpeeds) {
-    val wheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
+    wheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
     wheelSpeeds.desaturate(this.maxLinearSpeed)
     val leftVel = wheelSpeeds.leftMetersPerSecond
     val rightVel = wheelSpeeds.rightMetersPerSecond
@@ -84,7 +85,7 @@ class DifferentialDrive(
     }
 
   override fun stop() {
-    this.desiredSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
+    set(ChassisSpeeds(.0, .0, .0))
   }
 
   /** Periodically update the odometry */
