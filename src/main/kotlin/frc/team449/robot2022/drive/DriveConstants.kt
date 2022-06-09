@@ -40,7 +40,7 @@ object DriveConstants {
   // Drive Characteristics
   const val DRIVE_GEARING = 5.86
   val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
-  val DRIVE_UPR = 2 * Math.PI * DRIVE_WHEEL_RADIUS
+  val DRIVE_UPR = 2 * PI * DRIVE_WHEEL_RADIUS
 
   const val DRIVE_CURRENT_LIM = 50
   const val DRIVE_ENC_VEL_THRESHOLD = 999999.0
