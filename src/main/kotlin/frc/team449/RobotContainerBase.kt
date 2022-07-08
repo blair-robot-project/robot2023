@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.control.DriveSubsystem
 import frc.team449.control.OI
 import frc.team449.control.auto.AutoRoutine
+import frc.team449.control.differential.DifferentialDrive
 import frc.team449.system.SimBattery
 
 abstract class RobotContainerBase {
@@ -15,7 +16,7 @@ abstract class RobotContainerBase {
 
   abstract val powerDistribution: PowerDistribution
 
-  abstract val drive: DriveSubsystem
+  abstract val drive: DifferentialDrive
 
   abstract val oi: OI
 

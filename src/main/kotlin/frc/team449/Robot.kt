@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team449.robot2022.RobotContainer2022
+import frc.team449.robot2022.auto.Example
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
@@ -32,6 +33,11 @@ class Robot : TimedRobot() {
     Shuffleboard.startRecording()
 
     SmartDashboard.putData(robotContainer.field)
+
+    // ADD AUTOS HERE
+    val example_auto = Example("Example", 1.0, 1.0, robotContainer.drive).getRoutine()
+    robotContainer.autoChooser.setDefaultOption(example_auto.name, example_auto)
+    SmartDashboard.putData(robotContainer.autoChooser)
   }
 
   override fun robotPeriodic() {
@@ -51,7 +57,6 @@ class Robot : TimedRobot() {
       robotContainer.field.getObject(routine.name).setTrajectory(routine.traj)
       CommandScheduler.getInstance().schedule(this.autoCommand)
     }
-
     robotContainer.autonomousInit()
   }
 
