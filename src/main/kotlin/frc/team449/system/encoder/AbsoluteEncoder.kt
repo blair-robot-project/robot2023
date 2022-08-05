@@ -1,6 +1,6 @@
 package frc.team449.system.encoder
 
-import edu.wpi.first.wpilibj.AnalogEncoder
+import edu.wpi.first.wpilibj.DutyCycleEncoder
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
 
@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController
  */
 class AbsoluteEncoder(
   name: String,
-  private val enc: AnalogEncoder,
+  private val enc: DutyCycleEncoder,
   private val endPos: Double,
   unitPerRotation: Double,
   gearing: Double,
   private val inverted: Boolean
-) : Encoder(name, 1, 1.0, 1.0) {
+) : Encoder(name, 1, unitPerRotation, gearing) {
 
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
@@ -77,7 +77,7 @@ class AbsoluteEncoder(
       EncoderCreator { name, _, inverted ->
         val enc = AbsoluteEncoder(
           name,
-          AnalogEncoder(channel),
+          DutyCycleEncoder(channel),
           endPos,
           unitPerRotation,
           gearing,
