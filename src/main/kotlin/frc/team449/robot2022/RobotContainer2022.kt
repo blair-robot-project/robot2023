@@ -6,17 +6,14 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.math.system.plant.LinearSystemId
-import edu.wpi.first.wpilibj.Encoder
-import edu.wpi.first.wpilibj.PowerDistribution
-import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj.SerialPort
-import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
 import frc.team449.RobotContainerBase
 import frc.team449.control.differential.DifferentialDrive
 import frc.team449.control.differential.DifferentialOIs
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
+import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.BackupEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.encoder.QuadEncoder
@@ -143,4 +140,11 @@ class RobotContainer2022 : RobotContainerBase() {
       ),
       AHRS.SimController()
     )
+  var encoder = DutyCycleEncoder(3)
+  var encoderObject = AbsoluteEncoder("coolEncoder", encoder, 2 * 3.14159, 2 * 3.14159, 1.0, false)
+  override fun robotPeriodic() {
+    super.robotPeriodic()
+    println("Distance: ${encoderObject.position}")
+    // println("Rotation angles : ${encoder.absolutePosition}")
+  }
 }
