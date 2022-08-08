@@ -12,7 +12,8 @@ import frc.team449.system.SimBattery
 abstract class RobotContainerBase {
 
   val field = Field2d()
-  val autoChooser = SendableChooser<AutoRoutine>()
+
+  abstract val autoChooser: SendableChooser<AutoRoutine>
 
   abstract val powerDistribution: PowerDistribution
 
@@ -22,7 +23,7 @@ abstract class RobotContainerBase {
 
   abstract val driveSim: DriveSubsystem.SimController?
 
-  val simBattery: SimBattery = SimBattery()
+  private val simBattery: SimBattery = SimBattery()
 
   open fun robotInit() {
     if (driveSim != null) {

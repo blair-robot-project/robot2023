@@ -9,14 +9,14 @@ import frc.team449.control.differential.DifferentialDrive
 
 class Example(private val trajFileName: String, private val maxAcc: Double, private val maxVel: Double, private val drive: DifferentialDrive) {
 
-  fun getRoutine(): AutoRoutine {
+  fun routine(): AutoRoutine {
     val traj = PathPlanner.loadPath(trajFileName, maxVel, maxAcc)
     val cmd = ParallelCommandGroup(
       AutoDriveCommand.differentialDriveCommand(drive, traj, true),
       AutoUtils.autoSequence(
         listOf(
           1.0 to InstantCommand(),
-          2.0 to InstantCommand() // ...
+          2.0 to InstantCommand() // seconds 0 - 15 to command to execute at that time
         )
       )
     )
