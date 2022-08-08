@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.holonomic.OIHolonomic
 import frc.team449.control.holonomic.SwerveDrive
@@ -177,13 +176,6 @@ class RobotContainer2022 {
 
   fun teleopInit() {
     // todo Add button bindings here
-    SmartDashboard.putData("Resistance", edu.wpi.first.util.sendable.Sendable { builder ->
-      builder.addDoubleProperty(
-        "robot",
-        { calc.calculate(pdp.getTotalCurrent(), pdp.getVoltage()) },
-        { _ -> }
-        )
-    })
   }
 
   fun robotPeriodic() {}
