@@ -27,11 +27,11 @@ class AbsoluteEncoder(
   private var prevTime = Double.NaN
 
   override fun getPositionNative(): Double {
-    val pos = enc.absolutePosition
+    val pos = enc.absolutePosition // TODO should this be absolutePosition or distance?
     if (!this.inverted) {
       return pos
     } else {
-      return this.endPos - pos
+      return -pos
     }
   }
 
@@ -52,7 +52,6 @@ class AbsoluteEncoder(
         }
         dx / dt
       }
-
     this.prevPos = currPos
     this.prevTime = currTime
 

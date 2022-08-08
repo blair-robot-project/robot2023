@@ -48,10 +48,10 @@ open class SwerveModule constructor(
 
       val turnPid = turnController.calculate(
         turningMotor.velocity,
-        state.angle.getRadians()
+        state.angle.radians
       )
       val turnFF = turnFeedforward.calculate(
-        turnController.getSetpoint().velocity
+        turnController.setpoint.velocity
       )
       turningMotor.setVoltage(turnPid + turnFF)
     }
