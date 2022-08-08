@@ -39,7 +39,7 @@ open class SwerveDrive(
 
   override var pose: Pose2d
     get() {
-      return this.odometry.getPoseMeters()
+      return this.odometry.poseMeters
     }
     set(pose) {
       this.odometry.resetPosition(pose, ahrs.heading)

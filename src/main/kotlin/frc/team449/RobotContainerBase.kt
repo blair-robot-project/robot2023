@@ -3,10 +3,9 @@ package frc.team449
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
-import frc.team449.control.DriveSubsystem
 import frc.team449.control.OI
 import frc.team449.control.auto.AutoRoutine
-import frc.team449.control.differential.DifferentialDrive
+import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.system.SimBattery
 
 abstract class RobotContainerBase {
@@ -17,18 +16,18 @@ abstract class RobotContainerBase {
 
   abstract val powerDistribution: PowerDistribution
 
-  abstract val drive: DifferentialDrive
+  abstract val drive: HolonomicDrive
 
   abstract val oi: OI
 
-  abstract val driveSim: DriveSubsystem.SimController?
+//  abstract val driveSim: DriveSubsystem.SimController? // TODO SIM
 
   private val simBattery: SimBattery = SimBattery()
 
   open fun robotInit() {
-    if (driveSim != null) {
-      simBattery.addCurrentDrawer(driveSim!!::getCurrentDraw)
-    }
+//    if (driveSim != null) {
+//      simBattery.addCurrentDrawer(driveSim!!::getCurrentDraw)
+//    }
   }
 
   open fun robotPeriodic() {}
@@ -47,9 +46,9 @@ abstract class RobotContainerBase {
   }
 
   open fun simulationPeriodic() {
-    if (driveSim != null) {
-      driveSim!!.update()
-    }
+//    if (driveSim != null) {
+//      driveSim!!.update()
+    //    } // TODO Swerve Drive SIM
     simBattery.update()
   }
 }

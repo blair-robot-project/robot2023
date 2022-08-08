@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
+import frc.team449.RobotContainerBase
 import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.holonomic.OIHolonomic
 import frc.team449.control.holonomic.SwerveDrive
@@ -23,27 +23,25 @@ import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 
-class RobotContainer2022 {
+class RobotContainer2022() : RobotContainerBase() {
 
   // Other CAN IDs
   val PDP_CAN = 1
   val PCM_MODULE = 0
 
-  val driveController = XboxController(0)
+  private val driveController = XboxController(0)
 
-  val ahrs = AHRS(SerialPort.Port.kMXP)
+  private val ahrs = AHRS(SerialPort.Port.kMXP)
 
-  val field = Field2d()
-  val autoChooser = SendableChooser<AutoRoutine>()
+  override val autoChooser = SendableChooser<AutoRoutine>()
   // Instantiate/declare PDP and other stuff here
 
-  val pdp = PowerDistribution()
-  val calc = frc.team449.ResistanceCalculator()
+  override val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
   @Log.Include
-  val drive = createDrivetrain()
+  override val drive = createDrivetrain()
 
-  val oi = OIHolonomic(
+  override val oi = OIHolonomic(
     drive,
     driveController::getLeftY,
     driveController::getLeftX,
@@ -174,17 +172,18 @@ class RobotContainer2022 {
       SimpleMotorFeedforward(.0, .0, .0)
     )
 
-  fun teleopInit() {
+  override fun teleopInit() {
     // todo Add button bindings here
   }
 
-  fun robotPeriodic() {}
+  override fun robotPeriodic() {
+  }
 
-  fun simulationInit() {
+  override fun simulationInit() {
     // DriverStationSim.setEnabled(true)
   }
 
-  fun simulationPeriodic() {
+  override fun simulationPeriodic() {
     // Update simulated mechanisms on Mechanism2d widget and stuff
   }
 }
