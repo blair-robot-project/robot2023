@@ -12,9 +12,12 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.RobotContainerBase
+import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.differential.DifferentialDrive
 import frc.team449.control.differential.DifferentialOIs
+import frc.team449.robot2022.auto.Example
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.BackupEncoder
@@ -33,10 +36,11 @@ class RobotContainer2022 : RobotContainerBase() {
 
   override val powerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
+  override val autoChooser: SendableChooser<AutoRoutine> = routines()
+
   // Instantiate/declare PDP and other stuff here
 
   val pdp = PowerDistribution()
-  val calc = frc.team449.ResistanceCalculator()
 
   @Log.Include
   override val drive = createDrivetrain()
@@ -143,4 +147,12 @@ class RobotContainer2022 : RobotContainerBase() {
       ),
       AHRS.SimController()
     )
+
+  private fun routines(): SendableChooser<AutoRoutine> {
+    var routines = SendableChooser<AutoRoutine>()
+    val example = Example("Example", 1.0, 1.0, drive).routine()
+    routines.addOption(example.name, example)
+    // TODO add more auto routines to the choices we have
+    return routines
+  }
 }
