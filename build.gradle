@@ -68,7 +68,7 @@ dependencies {
     nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
 }
 
 // Simulation configuration (e.g. environment variables).
