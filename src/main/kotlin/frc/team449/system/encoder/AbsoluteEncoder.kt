@@ -25,18 +25,21 @@ class AbsoluteEncoder(
 
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
+  private val initAngle = enc.absolutePosition
 
+  // NOTE: Units are in rotations natively
   override fun getPositionNative(): Double {
-    val pos = enc.absolutePosition // TODO should this be absolutePosition or distance?
-    if (!this.inverted) {
-      return pos
+    val pos = enc.distance
+    return if (!this.inverted) {
+      initAngle + pos
     } else {
-      return -pos
+      (1 - initAngle) - pos
     }
   }
 
   override fun getVelocityNative(): Double {
-    val currPos = this.getPositionNative()
+    enc.distancePerRotation = 1.0 // Check if this is 1.0, likely is but double check
+    val currPos = enc.distance
     val currTime = Timer.getFPGATimestamp()
 
     val vel =
