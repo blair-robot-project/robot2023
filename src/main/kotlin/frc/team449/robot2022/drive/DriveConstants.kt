@@ -22,7 +22,7 @@ object DriveConstants {
   val DRIVE_ENC_BL = Encoder(4, 5)
   val DRIVE_ENC_BR = Encoder(6, 7)
 
-  /** Analog encoder channels */
+  /** Absolute (Duty Cycle) encoder channels */
   const val TURN_ENC_CHAN_FL = 0
   const val TURN_ENC_CHAN_FR = 1
   const val TURN_ENC_CHAN_BL = 2

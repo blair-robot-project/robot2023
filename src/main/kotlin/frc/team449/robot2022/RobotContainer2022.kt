@@ -94,7 +94,6 @@ class RobotContainer2022() : RobotContainerBase() {
       inverted = inverted,
       encCreator = AbsoluteEncoder.creator(
         encoderChannel,
-        2 * Math.PI,
         offset,
         DriveConstants.TURN_UPR,
         DriveConstants.TURN_GEARING

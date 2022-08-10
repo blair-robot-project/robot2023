@@ -7,26 +7,30 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController
 /**
  * This class uses an absolute encoder, gear ratio and UPR to give the absolute position of the module or rotational velocity of the module.
  *
- * @param gearing This is the gear ratio which is the reciprocal of the # of teeth of driving/follower
+ * @param gearing This is the # of teeth of driving/follower
+ * @param offset This must be in rotations of how much the offset of the WHEEL should be. A positive offset means the new 0 will move clockwise, and a negative one means the new 0 will move counter-clockwise.
  */
 class AbsoluteEncoder(
   name: String,
   private val enc: DutyCycleEncoder,
-  private val unitPerRotation: Double,
+  unitPerRotation: Double,
   private val gearing: Double,
-  private val inverted: Boolean
+  private val inverted: Boolean,
+  private val offset: Double,
 ) : Encoder(name, 1, unitPerRotation, 1.0) {
 
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
-  private val initAngle = enc.absolutePosition
 
-  /** This returns the absolute position of the module using gearing and UPR */
+  /** This returns the absolute position of the module using gearing and UPR and includes offsetting */
   override fun getPositionNative(): Double {
+    enc.positionOffset = offset
+    val initAngle = enc.absolutePosition
+    val invertedInitAngle = 1 - enc.absolutePosition
     return if (!this.inverted) {
-      ((initAngle + enc.distance) * gearing * unitPerRotation) % unitPerRotation
+      ((initAngle + enc.distance) * gearing) % 1
     } else {
-      unitPerRotation - (((1 - initAngle - enc.distance) * gearing * unitPerRotation) % unitPerRotation)
+      ((invertedInitAngle - enc.distance) * gearing) % 1
     }
   }
 
@@ -34,10 +38,10 @@ class AbsoluteEncoder(
   override fun getVelocityNative(): Double {
     val currPos =
       if (!this.inverted) {
-        (initAngle + enc.distance) * gearing * unitPerRotation
+        (enc.distance) * gearing
       }
       else {
-        (1 - initAngle - enc.distance) * gearing * unitPerRotation
+        (-enc.distance) * gearing
       }
 
     val currTime = Timer.getFPGATimestamp()
@@ -60,8 +64,8 @@ class AbsoluteEncoder(
     /**
      *
      * @param <T>
-     * @param channel
-     * @param offset The position that the absolute encoder is actually at when it reads 0
+     * @param channel The DutyCycleEncoder port
+     * @param offset The position to put into DutyCycleEncoder's setPositionOffset
      */
     fun <T : MotorController> creator(
       channel: Int,
@@ -75,9 +79,10 @@ class AbsoluteEncoder(
           DutyCycleEncoder(channel),
           unitPerRotation,
           gearing,
-          inverted
+          inverted,
+          offset
         )
-        enc.resetPosition(offset)
+        // enc.resetPosition(offset)
         enc
       }
   }
