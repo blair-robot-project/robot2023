@@ -5,41 +5,41 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
 
 /**
- * todo have absolute encoders be separate from relative ones
- *   because this velocity calculation is likely not right
- * <p>
- * An absolute encoder masquerading as a relative encoder
- * <p>
- * To calculate velocity, it wraps around if it moved by more than half the
- * total distance
- * @param endPos Where the position wraps around (e.g. 2pi)
+ * This class uses an absolute encoder, gear ratio and UPR to give the absolute position of the module or rotational velocity of the module.
+ *
+ * @param gearing This is the gear ratio which is the reciprocal of the # of teeth of driving/follower
  */
 class AbsoluteEncoder(
   name: String,
   private val enc: DutyCycleEncoder,
-  private val endPos: Double,
-  unitPerRotation: Double,
-  gearing: Double,
+  private val unitPerRotation: Double,
+  private val gearing: Double,
   private val inverted: Boolean
-) : Encoder(name, 1, unitPerRotation, gearing) {
+) : Encoder(name, 1, unitPerRotation, 1.0) {
 
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
   private val initAngle = enc.absolutePosition
 
-  // NOTE: Units are in rotations natively
+  /** This returns the absolute position of the module using gearing and UPR */
   override fun getPositionNative(): Double {
-    val pos = enc.distance
     return if (!this.inverted) {
-      initAngle + pos
+      ((initAngle + enc.distance) * gearing * unitPerRotation) % unitPerRotation
     } else {
-      (1 - initAngle) - pos
+      unitPerRotation - (((1 - initAngle - enc.distance) * gearing * unitPerRotation) % unitPerRotation)
     }
   }
 
+  /** This returns the rotational velocity (on vertical axis) of the module using gearing and UPR */
   override fun getVelocityNative(): Double {
-    enc.distancePerRotation = 1.0 // Check if this is 1.0, likely is but double check
-    val currPos = enc.distance
+    val currPos =
+      if (!this.inverted) {
+        (initAngle + enc.distance) * gearing * unitPerRotation
+      }
+      else {
+        (1 - initAngle - enc.distance) * gearing * unitPerRotation
+      }
+
     val currTime = Timer.getFPGATimestamp()
 
     val vel =
@@ -47,12 +47,7 @@ class AbsoluteEncoder(
         0.0
       } else {
         val dt = currTime - prevTime
-        var dx = currPos - prevPos
-        if (dx < -this.endPos / 2) {
-          // If it moved by more than half, assume it actually went the other
-          // way and wrap around instead
-          dx = currPos - prevPos + this.endPos
-        }
+        val dx = currPos - prevPos
         dx / dt
       }
     this.prevPos = currPos
@@ -66,12 +61,10 @@ class AbsoluteEncoder(
      *
      * @param <T>
      * @param channel
-     * @param endPos The total distance that the motor can travel (e.g. 2pi rads)
      * @param offset The position that the absolute encoder is actually at when it reads 0
      */
     fun <T : MotorController> creator(
       channel: Int,
-      endPos: Double,
       offset: Double,
       unitPerRotation: Double,
       gearing: Double
@@ -80,7 +73,6 @@ class AbsoluteEncoder(
         val enc = AbsoluteEncoder(
           name,
           DutyCycleEncoder(channel),
-          endPos,
           unitPerRotation,
           gearing,
           inverted
