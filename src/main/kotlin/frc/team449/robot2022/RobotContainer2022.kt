@@ -5,7 +5,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.trajectory.TrapezoidProfile
-import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
@@ -53,8 +52,7 @@ class RobotContainer2022() : RobotContainerBase() {
   private fun makeDrivingMotor(
     name: String,
     motorId: Int,
-    inverted: Boolean,
-    wpiEnc: Encoder
+    inverted: Boolean
   ) =
     createSparkMax(
       name = name + "Drive",
@@ -97,26 +95,22 @@ class RobotContainer2022() : RobotContainerBase() {
       makeDrivingMotor(
         "FL",
         DriveConstants.DRIVE_MOTOR_FL,
-        false,
-        DriveConstants.DRIVE_ENC_FL
+        false
       ),
       makeDrivingMotor(
         "FR",
         DriveConstants.DRIVE_MOTOR_FR,
-        false,
-        DriveConstants.DRIVE_ENC_FR
+        false
       ),
       makeDrivingMotor(
         "BL",
         DriveConstants.DRIVE_MOTOR_BL,
-        false,
-        DriveConstants.DRIVE_ENC_BL
+        false
       ),
       makeDrivingMotor(
         "BR",
         DriveConstants.DRIVE_MOTOR_BR,
-        false,
-        DriveConstants.DRIVE_ENC_BR
+        false
       ),
       makeTurningMotor(
         "FL",

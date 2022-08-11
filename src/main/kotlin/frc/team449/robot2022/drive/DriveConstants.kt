@@ -2,7 +2,6 @@ package frc.team449.robot2022.drive
 
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.util.Units
-import edu.wpi.first.wpilibj.Encoder
 
 object DriveConstants {
 
@@ -17,10 +16,6 @@ object DriveConstants {
   const val TURN_MOTOR_BR = 7
 
   /** External encoders for driving motors */
-  val DRIVE_ENC_FL = Encoder(0, 1)
-  val DRIVE_ENC_FR = Encoder(2, 3)
-  val DRIVE_ENC_BL = Encoder(4, 5)
-  val DRIVE_ENC_BR = Encoder(6, 7)
 
   /** Absolute (Duty Cycle) encoder channels */
   const val TURN_ENC_CHAN_FL = 0
