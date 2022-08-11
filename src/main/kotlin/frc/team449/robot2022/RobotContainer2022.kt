@@ -20,6 +20,7 @@ import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.abs
 
 class RobotContainer2022() : RobotContainerBase() {
 
@@ -44,9 +45,9 @@ class RobotContainer2022() : RobotContainerBase() {
 
   override val oi = OIHolonomic(
     drive,
-    driveController::getLeftX,
-    driveController::getLeftY,
-    { driveController.getRawAxis(4) },
+    { if (abs(driveController.leftX) < .08) .0 else driveController.leftX },
+    { if (abs(driveController.leftY) < .08) .0 else driveController.leftY },
+    { if (abs(driveController.getRawAxis(4)) < .02) .0 else driveController.getRawAxis(4) },
     SlewRateLimiter(0.5),
     2.5,
     true
