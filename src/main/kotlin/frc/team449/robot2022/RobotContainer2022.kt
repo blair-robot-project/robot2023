@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.PowerDistribution
+import edu.wpi.first.wpilibj.RobotBase.isReal
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
@@ -35,14 +36,17 @@ class RobotContainer2022() : RobotContainerBase() {
 
   override val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
+  /**
+   * Converts the drive to a SwerveSim if the robot is in simulation
+   */
   @Log.Include
-  override val drive = createDrivetrain()
+  override val drive = if (isReal()) createDrivetrain() else SwerveDrive.simOf(createDrivetrain())
 
   override val oi = OIHolonomic(
     drive,
     driveController::getLeftY,
     driveController::getLeftX,
-    { driveController.getRawAxis(3) },
+    { driveController.getRawAxis(4) },
     SlewRateLimiter(0.5),
     1.5,
     true

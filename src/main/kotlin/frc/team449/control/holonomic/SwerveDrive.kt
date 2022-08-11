@@ -16,7 +16,7 @@ import io.github.oblarg.oblog.annotations.Log
 
 open class SwerveDrive(
   private val modules: List<SwerveModule>,
-  private val ahrs: AHRS,
+  val ahrs: AHRS,
   override val maxLinearSpeed: Double,
   override val maxRotSpeed: Double
 ) : SubsystemBase(), HolonomicDrive {
@@ -28,7 +28,7 @@ open class SwerveDrive(
   private val odometry = SwerveDriveOdometry(this.kinematics, ahrs.heading)
 
   @Log.ToString
-  private var desiredSpeeds = ChassisSpeeds()
+  var desiredSpeeds = ChassisSpeeds()
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
@@ -157,6 +157,13 @@ open class SwerveDrive(
         maxLinearSpeed,
         maxRotSpeed
       )
+    }
+
+    /**
+     * @return the sim version of this drive
+     */
+    fun simOf(swerve: SwerveDrive): SwerveSim {
+      return SwerveSim(swerve.modules, swerve.ahrs, swerve.maxLinearSpeed, swerve.maxRotSpeed)
     }
   }
 }
