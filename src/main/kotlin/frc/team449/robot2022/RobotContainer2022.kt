@@ -44,11 +44,11 @@ class RobotContainer2022() : RobotContainerBase() {
 
   override val oi = OIHolonomic(
     drive,
-    driveController::getLeftY,
     driveController::getLeftX,
+    driveController::getLeftY,
     { driveController.getRawAxis(4) },
     SlewRateLimiter(0.5),
-    1.5,
+    2.5,
     true
   )
 
