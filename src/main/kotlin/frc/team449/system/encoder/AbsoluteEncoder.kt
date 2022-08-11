@@ -39,8 +39,7 @@ class AbsoluteEncoder(
     val currPos =
       if (!this.inverted) {
         (enc.distance) * gearing
-      }
-      else {
+      } else {
         (-enc.distance) * gearing
       }
 

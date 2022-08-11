@@ -17,9 +17,7 @@ import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.AbsoluteEncoder
-import frc.team449.system.encoder.BackupEncoder
 import frc.team449.system.encoder.NEOEncoder
-import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 
@@ -64,18 +62,9 @@ class RobotContainer2022() : RobotContainerBase() {
       enableBrakeMode = true,
       inverted = inverted,
       encCreator =
-      BackupEncoder.creator(
-        QuadEncoder.creator(
-          wpiEnc,
-          DriveConstants.DRIVE_EXT_ENC_CPR,
-          DriveConstants.DRIVE_UPR,
-          1.0
-        ),
-        NEOEncoder.creator(
-          DriveConstants.DRIVE_UPR,
-          DriveConstants.DRIVE_GEARING
-        ),
-        DriveConstants.DRIVE_ENC_VEL_THRESHOLD
+      NEOEncoder.creator(
+        DriveConstants.DRIVE_UPR,
+        DriveConstants.DRIVE_GEARING
       )
     )
 
