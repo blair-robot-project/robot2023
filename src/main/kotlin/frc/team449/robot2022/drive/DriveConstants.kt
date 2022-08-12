@@ -6,22 +6,22 @@ import edu.wpi.first.math.util.Units
 object DriveConstants {
 
   /** Drive motor ports */
-  const val DRIVE_MOTOR_FL = 0
+  const val DRIVE_MOTOR_FL = 5
   const val DRIVE_MOTOR_FR = 1
-  const val DRIVE_MOTOR_BL = 2
-  const val DRIVE_MOTOR_BR = 3
-  const val TURN_MOTOR_FL = 4
-  const val TURN_MOTOR_FR = 5
-  const val TURN_MOTOR_BL = 6
-  const val TURN_MOTOR_BR = 7
+  const val DRIVE_MOTOR_BL = 8
+  const val DRIVE_MOTOR_BR = 4
+  const val TURN_MOTOR_FL = 6
+  const val TURN_MOTOR_FR = 2
+  const val TURN_MOTOR_BL = 7
+  const val TURN_MOTOR_BR = 3
 
   /** External encoders for driving motors */
 
   /** Absolute (Duty Cycle) encoder channels */
   const val TURN_ENC_CHAN_FL = 0
-  const val TURN_ENC_CHAN_FR = 1
-  const val TURN_ENC_CHAN_BL = 2
-  const val TURN_ENC_CHAN_BR = 3
+  const val TURN_ENC_CHAN_FR = 3
+  const val TURN_ENC_CHAN_BL = 1
+  const val TURN_ENC_CHAN_BR = 2
 
   /** Offsets for the absolute encoders */
   const val TURN_ENC_OFFSET_FL = 0.0
