@@ -50,12 +50,6 @@ open class SwerveDrive(
   }
 
   override fun periodic() {
-    this.odometry.update(
-      ahrs.heading,
-      *this.modules
-        .map { it.state }.toTypedArray()
-    )
-
     var desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
     SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -66,6 +60,12 @@ open class SwerveDrive(
     for (i in this.modules.indices) {
       this.modules[i].state = desiredModuleStates[i]
     }
+
+    this.odometry.update(
+      ahrs.heading,
+      *this.modules
+        .map { it.state }.toTypedArray()
+    )
   }
 
   companion object {

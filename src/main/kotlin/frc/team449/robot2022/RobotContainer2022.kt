@@ -14,6 +14,7 @@ import frc.team449.RobotContainerBase
 import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.holonomic.OIHolonomic
 import frc.team449.control.holonomic.SwerveDrive
+import frc.team449.robot2022.auto.Example
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.AbsoluteEncoder
@@ -32,7 +33,6 @@ class RobotContainer2022() : RobotContainerBase() {
 
   private val ahrs = AHRS(SerialPort.Port.kMXP)
 
-  override val autoChooser = SendableChooser<AutoRoutine>()
   // Instantiate/declare PDP and other stuff here
 
   override val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
@@ -42,6 +42,8 @@ class RobotContainer2022() : RobotContainerBase() {
    */
   @Log.Include
   override val drive = if (isReal()) createDrivetrain() else SwerveDrive.simOf(createDrivetrain())
+
+  override val autoChooser = addRoutines()
 
   override val oi = OIHolonomic(
     drive,
@@ -158,6 +160,14 @@ class RobotContainer2022() : RobotContainerBase() {
       SimpleMotorFeedforward(.0, .0, .0),
       SimpleMotorFeedforward(.0, .0, .0)
     )
+
+  private fun addRoutines(): SendableChooser<AutoRoutine> {
+    val chooser = SendableChooser<AutoRoutine>()
+    val exampleAuto = Example("Example", 1.7, 1.7, drive)
+    chooser.setDefaultOption("Example Swerve Auto", exampleAuto.routine())
+
+    return chooser
+  }
 
   override fun teleopInit() {
     // todo Add button bindings here

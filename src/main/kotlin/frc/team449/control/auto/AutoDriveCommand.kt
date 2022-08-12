@@ -1,5 +1,6 @@
 package frc.team449.control.auto
 
+import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.RamseteController
@@ -47,7 +48,7 @@ class AutoDriveCommand<T : DriveSubsystem>(
 
   override fun execute() {
     drivetrain.set(
-      controller(drivetrain.pose, trajectory.sample(Timer.getFPGATimestamp()))
+      controller(drivetrain.pose, trajectory.sample(Timer.getFPGATimestamp() - startTime))
     )
   }
 
@@ -70,15 +71,18 @@ class AutoDriveCommand<T : DriveSubsystem>(
   }
 
   companion object {
+    /**
+     * @return command to automatically drive a holonomic drive (eg. swerve, mecanum, ...) to a desired destination
+     */
     fun holonomicDriveCommand(
       drivetrain: HolonomicDrive,
-      trajectory: Trajectory,
+      trajectory: PathPlannerTrajectory,
       controller: HolonomicDriveController,
-      startHeading: Double,
-      endHeading: Double,
       resetPose: Boolean
     ): AutoDriveCommand<HolonomicDrive> {
       val totalTime = trajectory.totalTimeSeconds
+      val startHeading = trajectory.initialState.holonomicRotation.degrees
+      val endHeading = trajectory.endState.holonomicRotation.degrees
       return AutoDriveCommand(
         drivetrain,
         trajectory,
@@ -103,7 +107,14 @@ class AutoDriveCommand<T : DriveSubsystem>(
       resetPose: Boolean
     ): AutoDriveCommand<DifferentialDrive> {
       val controller = RamseteController()
-      return AutoDriveCommand(drivetrain, trajectory, { currentPose, desiredState -> controller.calculate(currentPose, desiredState) }, resetPose)
+      return AutoDriveCommand(
+        drivetrain,
+        trajectory,
+        { currentPose, desiredState ->
+          controller.calculate(currentPose, desiredState)
+        },
+        resetPose
+      )
     }
   }
 }
