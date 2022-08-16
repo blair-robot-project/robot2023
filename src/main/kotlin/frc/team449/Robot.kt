@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team449.robot2022.RobotContainer2022
@@ -30,10 +29,6 @@ class Robot : TimedRobot() {
     Logger.configureLoggingAndConfig(robotContainer, false)
     Shuffleboard.setRecordingFileNameFormat("log-\${time}")
     Shuffleboard.startRecording()
-
-    SmartDashboard.putData(robotContainer.field)
-
-    SmartDashboard.putData(robotContainer.autoChooser)
   }
 
   override fun robotPeriodic() {
@@ -42,17 +37,9 @@ class Robot : TimedRobot() {
     Logger.updateEntries()
 
     robotContainer.robotPeriodic()
-
-    robotContainer.field.robotPose = robotContainer.drive.pose
   }
 
   override fun autonomousInit() {
-    val routine = robotContainer.autoChooser.selected
-    if (routine != null) {
-      this.autoCommand = routine.cmd
-      robotContainer.field.getObject(routine.name).setTrajectory(routine.traj)
-      CommandScheduler.getInstance().schedule(this.autoCommand)
-    }
     robotContainer.autonomousInit()
   }
 
@@ -69,7 +56,9 @@ class Robot : TimedRobot() {
     robotContainer.teleopPeriodic()
   }
 
-  override fun disabledInit() {}
+  override fun disabledInit() {
+    robotContainer.disabledInit()
+  }
 
   override fun disabledPeriodic() {}
 

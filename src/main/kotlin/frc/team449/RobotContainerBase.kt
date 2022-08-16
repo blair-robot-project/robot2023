@@ -18,11 +18,7 @@ abstract class RobotContainerBase {
 
   private val simBattery: SimBattery = SimBattery()
 
-  open fun robotInit() {
-//    if (driveSim != null) {
-//      simBattery.addCurrentDrawer(driveSim!!::getCurrentDraw)
-//    }
-  }
+  open fun robotInit() {}
 
   open fun robotPeriodic() {}
 
@@ -33,16 +29,15 @@ abstract class RobotContainerBase {
 //    drive.periodic()
   }
 
-  open fun autonomousInit() {
-  }
+  open fun autonomousInit() {}
 
-  open fun simulationInit() {
-  }
+  open fun autonomousPeriodic() {}
+
+  open fun simulationInit() {}
 
   open fun simulationPeriodic() {
-//    if (driveSim != null) {
-//      driveSim!!.update()
-    //    } // TODO Swerve Drive SIM
     simBattery.update()
+  }
+  open fun disabledInit() {
   }
 }
