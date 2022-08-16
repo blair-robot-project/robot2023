@@ -17,7 +17,9 @@ class AbsoluteEncoder(
   private val inverted: Boolean,
   private val offset: Double,
 ) : Encoder(name, 1, unitPerRotation, 1.0) {
-
+  init {
+  }
+  @Log private var currPos = enc.distance
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
 
@@ -35,7 +37,7 @@ class AbsoluteEncoder(
   /** This returns the rotational velocity (on vertical axis) of the module using gearing and UPR */
   @Log
   override fun getVelocityNative(): Double {
-    val currPos =
+    currPos =
       if (!this.inverted) {
         enc.distance
       } else {

@@ -23,8 +23,6 @@ class RobotContainer2022() : RobotContainerBase() {
   var entries = ArrayList<Double>()
 
   /** Helper to make turning motors for swerve */
-
-  /** Helper to make turning motors for swerve */
   private fun makeTurningMotor(
     name: String,
     motorId: Int,
@@ -44,12 +42,12 @@ class RobotContainer2022() : RobotContainerBase() {
       )
     )
 
-  val motor = makeTurningMotor(
+  val FL = makeTurningMotor(
     "FL",
     DriveConstants.TURN_MOTOR_FL,
-    false,
+    true,
     DriveConstants.TURN_ENC_CHAN_FL,
-    0.0
+    DriveConstants.TURN_ENC_OFFSET_FL
   )
   override fun teleopInit() {
   }
@@ -57,7 +55,7 @@ class RobotContainer2022() : RobotContainerBase() {
   override fun disabledInit() {
     val elapsedTime = Timer.getFPGATimestamp() - startTime
     println("Robot disabled")
-    motor.set(0.0)
+    FL.set(0.0)
     // data processing step
     // data processing step
     data = entries.toString()
@@ -72,8 +70,13 @@ class RobotContainer2022() : RobotContainerBase() {
   override fun robotPeriodic() {
   }
 
+  override fun robotInit() {
+    // Set the update rate instead of using flush because of a ntcore bug
+    // -> probably don't want to do this on a robot in competition
+    NetworkTableInstance.getDefault().setUpdateRate(0.010)
+  }
   override fun autonomousInit() {
-    super.autonomousInit()
+//    super.autonomousInit()
     println("Robot in autonomous mode")
     startTime = Timer.getFPGATimestamp()
     counter = 0
@@ -84,15 +87,17 @@ class RobotContainer2022() : RobotContainerBase() {
     // Retrieve values to send back before telling the motors to do something
     val now = Timer.getFPGATimestamp()
 
-    val leftPosition: Double = motor.position
-    val leftRate: Double = motor.velocity
+    val leftPosition: Double = FL.position
+    val leftRate: Double = FL.velocity
 
-    val rightPosition: Double = leftPosition
-    val rightRate: Double = leftRate
+    val rightPosition: Double = FL.position
+    val rightRate: Double = FL.velocity
 
     val battery = RobotController.getBatteryVoltage()
     val motorVolts = battery * Math.abs(priorAutospeed)
 
+    val leftMotorVolts = motorVolts
+    val rightMotorVolts = motorVolts
     // Retrieve the commanded speed from NetworkTables
 
     // Retrieve the commanded speed from NetworkTables
@@ -102,13 +107,13 @@ class RobotContainer2022() : RobotContainerBase() {
     // command motors to do things
 
     // command motors to do things
-    motor.set(autospeed)
+    FL.set(autospeed)
 
     numberArray[0] = now
     numberArray[1] = battery
     numberArray[2] = autospeed
-    numberArray[3] = motorVolts
-    numberArray[4] = motorVolts
+    numberArray[3] = leftMotorVolts
+    numberArray[4] = rightMotorVolts
     numberArray[5] = leftPosition
     numberArray[6] = rightPosition
     numberArray[7] = leftRate

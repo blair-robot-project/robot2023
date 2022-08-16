@@ -15,8 +15,6 @@ object DriveConstants {
   const val TURN_MOTOR_BL = 7
   const val TURN_MOTOR_BR = 3
 
-  /** External encoders for driving motors */
-
   /** Absolute (Duty Cycle) encoder channels */
   const val TURN_ENC_CHAN_FL = 0
   const val TURN_ENC_CHAN_FR = 3
@@ -30,7 +28,7 @@ object DriveConstants {
   const val TURN_ENC_OFFSET_BR = 0.0
 
   val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
-  const val DRIVE_GEARING = 5.86
+  const val DRIVE_GEARING = 6.75
   // todo determine this
   const val TURN_GEARING = 1.0
   const val DRIVE_UPR = 0.3021211527151539

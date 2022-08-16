@@ -11,7 +11,7 @@ import frc.team449.robot2022.RobotContainer2022
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
-class Robot : TimedRobot() {
+class Robot : TimedRobot(.005) {
 
   private val robotContainer: RobotContainerBase = RobotContainer2022()
   private var autoCommand: Command? = null
@@ -47,7 +47,9 @@ class Robot : TimedRobot() {
     robotContainer.autonomousInit()
   }
 
-  override fun autonomousPeriodic() {}
+  override fun autonomousPeriodic() {
+    robotContainer.autonomousPeriodic()
+  }
 
   override fun teleopInit() {
     if (autoCommand != null) {
@@ -64,7 +66,8 @@ class Robot : TimedRobot() {
     robotContainer.disabledInit()
   }
 
-  override fun disabledPeriodic() {}
+  override fun disabledPeriodic() {
+  }
 
   override fun testInit() {
     if (autoCommand != null) {
