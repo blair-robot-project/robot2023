@@ -3,6 +3,7 @@ package frc.team449
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
@@ -15,6 +16,9 @@ class Robot : TimedRobot() {
   private val robotContainer: RobotContainerBase = RobotContainer2022()
   private var autoCommand: Command? = null
 
+  init {
+    LiveWindow.disableAllTelemetry()
+  }
   override fun robotInit() {
     // Yes this should be a print statement, it's useful to know that robotInit started.
     println("Started robotInit.")
