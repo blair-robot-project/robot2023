@@ -1,6 +1,7 @@
 package frc.team449.system.encoder
 
 import io.github.oblarg.oblog.Loggable
+import io.github.oblarg.oblog.annotations.Log
 
 /**
  * A wrapper around encoders. Allows resetting encoders to a position.
@@ -44,6 +45,7 @@ abstract class Encoder(
 
   /** Position in meters or whatever unit you set */
   val position: Double
+    @Log
     get() {
       val posUnits = if (simulated) simPos else this.getPositionDirect()
       return positionOffset + posUnits
@@ -51,8 +53,9 @@ abstract class Encoder(
 
   /** Velocity in meters per second or whatever unit you set */
   val velocity: Double
+    @Log
     get() {
-      return if (simulated) simVel else this.getVelocityNative() * encoderToUnit
+      return if (simulated) simVel else this.getVelocityNative()
     }
 
   /**

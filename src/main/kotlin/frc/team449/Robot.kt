@@ -11,7 +11,7 @@ import frc.team449.robot2022.RobotContainer2022
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
-class Robot : TimedRobot(.005) {
+class Robot : TimedRobot() {
 
   private val robotContainer: RobotContainerBase = RobotContainer2022()
   private var autoCommand: Command? = null

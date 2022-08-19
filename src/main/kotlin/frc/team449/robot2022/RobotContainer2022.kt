@@ -33,7 +33,7 @@ class RobotContainer2022() : RobotContainerBase() {
     createSparkMax(
       name = name + "Turn",
       id = motorId,
-      enableBrakeMode = true,
+      enableBrakeMode = false,
       inverted = inverted,
       encCreator = AbsoluteEncoder.creator(
         encoderChannel,

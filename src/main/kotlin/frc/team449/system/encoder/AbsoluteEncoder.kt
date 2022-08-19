@@ -13,15 +13,13 @@ import io.github.oblarg.oblog.annotations.Log
 class AbsoluteEncoder(
   name: String,
   private val enc: DutyCycleEncoder,
-  unitPerRotation: Double,
+  private val unitPerRotation: Double,
   private val inverted: Boolean,
   private val offset: Double,
 ) : Encoder(name, 1, unitPerRotation, 1.0) {
   init {
-    // set the position offset for the encoder
-    enc.positionOffset = offset
   }
-  @Log private var currPos = enc.distance
+
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
 
@@ -29,16 +27,16 @@ class AbsoluteEncoder(
   @Log
   override fun getPositionNative(): Double {
     return if (inverted) {
-      -enc.distance
+      1 - enc.absolutePosition
     } else {
-      enc.distance
+      enc.absolutePosition
     }
   }
 
   /** This returns the rotational velocity (on vertical axis) of the module using gearing and UPR */
   @Log
   override fun getVelocityNative(): Double {
-    currPos =
+    val currPos =
       if (inverted) {
         -enc.distance
       } else {
