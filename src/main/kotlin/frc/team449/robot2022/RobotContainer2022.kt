@@ -4,6 +4,8 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.trajectory.TrapezoidProfile
+import edu.wpi.first.wpilibj.PowerDistribution
+import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotContainerBase
 import frc.team449.control.holonomic.SwerveModule
 import frc.team449.robot2022.drive.DriveConstants
@@ -12,6 +14,10 @@ import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 
 class RobotContainer2022() : RobotContainerBase() {
+
+  private val joystick = XboxController(0)
+
+  val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
   /** Helper to make turning motors for swerve */
   private fun makeTurningMotor(
