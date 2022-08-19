@@ -27,8 +27,18 @@ object DriveConstants {
   const val TURN_ENC_OFFSET_BL = 0.0
   const val TURN_ENC_OFFSET_BR = 0.0
 
+  /** FF values for turning each module */
+  const val TURN_KS = 0.039835
+  const val TURN_KV = 0.078855
+  const val TURN_KA = 0.027521
+
+  /** FF values for driving each module */
+  const val DRIVE_KS = 0.17227
+  const val DRIVE_KV = 2.7582
+  const val DRIVE_KA = 0.2595
+
   val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
-  const val DRIVE_GEARING = 6.75
+  const val DRIVE_GEARING = 5.86
   // todo determine this
   const val TURN_GEARING = 1.0
   const val DRIVE_UPR = 0.3021211527151539
