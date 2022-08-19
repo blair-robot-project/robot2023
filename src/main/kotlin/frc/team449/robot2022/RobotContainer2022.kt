@@ -1,12 +1,7 @@
 package frc.team449.robot2022
 
-import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.controller.ProfiledPIDController
-import edu.wpi.first.math.controller.SimpleMotorFeedforward
-import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.networktables.NetworkTableInstance
 import frc.team449.RobotContainerBase
-import frc.team449.control.holonomic.SwerveModule
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
@@ -70,18 +65,6 @@ class RobotContainer2022() : RobotContainerBase() {
     "FL",
     DriveConstants.DRIVE_MOTOR_FL,
     false
-  )
-
-  val FL_MODULE = SwerveModule(
-    "FL_MODULE",
-    DRIVE_FL,
-    TURN_FL,
-    PIDController(.0, .0, .0),
-    ProfiledPIDController(
-      .0, .0, .0,
-      TrapezoidProfile.Constraints(.1, .1)
-    ),
-    SimpleMotorFeedforward(DriveConstants.DRIVE_KS)
   )
   override fun teleopInit() {
     // BIND Buttons
