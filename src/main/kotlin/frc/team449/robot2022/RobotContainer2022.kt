@@ -1,25 +1,17 @@
 package frc.team449.robot2022
 
-import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.controller.SimpleMotorFeedforward
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import frc.team449.RobotContainerBase
+import frc.team449.control.holonomic.SwerveModule
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 
 class RobotContainer2022() : RobotContainerBase() {
-
-  var autoSpeedEntry = NetworkTableInstance.getDefault().getEntry("/robot/autospeed")
-  var telemetryEntry = NetworkTableInstance.getDefault().getEntry("/robot/telemetry")
-
-  var data = ""
-
-  var counter = 0
-  var startTime = 0.0
-  var priorAutospeed = 0.0
-
-  var numberArray = DoubleArray(10)
-  var entries = ArrayList<Double>()
 
   /** Helper to make turning motors for swerve */
   private fun makeTurningMotor(
@@ -65,6 +57,20 @@ class RobotContainer2022() : RobotContainerBase() {
     "FL",
     DriveConstants.DRIVE_MOTOR_FL,
     false
+  )
+
+  val FL_MODULE = SwerveModule(
+    "FL_MODULE",
+    DRIVE_FL,
+    TURN_FL,
+    PIDController(.0, .0, .0),
+    ProfiledPIDController(
+      .0, .0, .0,
+      TrapezoidProfile.Constraints(.1, .1)
+    ),
+    SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
+    SimpleMotorFeedforward(DriveConstants.TURN_KS, DriveConstants.TURN_KV, DriveConstants.TURN_KA),
+    DriveConstants.FRONT_LEFT_LOC
   )
   override fun teleopInit() {
     // BIND Buttons
