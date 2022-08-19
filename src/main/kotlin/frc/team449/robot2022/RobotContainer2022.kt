@@ -73,7 +73,7 @@ class RobotContainer2022() : RobotContainerBase() {
   override fun robotInit() {
     // Set the update rate instead of using flush because of a ntcore bug
     // -> probably don't want to do this on a robot in competition
-    NetworkTableInstance.getDefault().setUpdateRate(0.010)
+//    NetworkTableInstance.getDefault().setUpdateRate(0.010)
   }
   override fun autonomousInit() {
 //    super.autonomousInit()

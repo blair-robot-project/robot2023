@@ -8,8 +8,9 @@ class NEOEncoder(
   name: String,
   private val enc: RelativeEncoder,
   unitPerRotation: Double,
-  gearing: Double
-) : Encoder(name, NEO_ENCODER_CPR, 1.0, 1.0) {
+  gearing: Double,
+  pollTime: Double = .02
+) : Encoder(name, NEO_ENCODER_CPR, 1.0, 1.0, pollTime) {
 
   init {
     // Let the underlying encoder do the conversions
@@ -20,7 +21,7 @@ class NEOEncoder(
 
   protected override fun getPositionNative() = enc.position
 
-  protected override fun getVelocityNative(): Double = enc.velocity
+  protected override fun pollVelocityNative(): Double = enc.velocity
 
   companion object {
     const val NEO_ENCODER_CPR = 1

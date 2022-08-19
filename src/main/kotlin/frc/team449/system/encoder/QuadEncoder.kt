@@ -8,8 +8,9 @@ class QuadEncoder(
   private val encoder: edu.wpi.first.wpilibj.Encoder,
   encoderCPR: Int,
   unitPerRotation: Double,
-  gearing: Double
-) : Encoder(name, 1, 1.0, 1.0) {
+  gearing: Double,
+  pollTime: Double = .02
+) : Encoder(name, 1, 1.0, 1.0, pollTime) {
   init {
     // Let the WPI encoder handle the distance scaling
     encoder.distancePerPulse = unitPerRotation * gearing / encoderCPR
@@ -18,7 +19,7 @@ class QuadEncoder(
 
   override fun getPositionNative() = encoder.distance
 
-  override fun getVelocityNative() = encoder.rate
+  override fun pollVelocityNative() = encoder.rate
 
   companion object {
     fun <T : MotorController> creator(
