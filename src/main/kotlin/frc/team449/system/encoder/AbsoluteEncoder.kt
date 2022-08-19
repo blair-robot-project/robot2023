@@ -18,6 +18,8 @@ class AbsoluteEncoder(
   private val offset: Double,
 ) : Encoder(name, 1, unitPerRotation, 1.0) {
   init {
+    // set the position offset for the encoder
+    enc.positionOffset = offset
   }
   @Log private var currPos = enc.distance
   private var prevPos = Double.NaN
@@ -26,11 +28,10 @@ class AbsoluteEncoder(
   /** This returns the absolute position of the module using gearing and UPR and includes offsetting */
   @Log
   override fun getPositionNative(): Double {
-    enc.positionOffset = offset
-    return if (!this.inverted) {
-      enc.absolutePosition
+    return if (inverted) {
+      -enc.distance
     } else {
-      1 - enc.absolutePosition
+      enc.distance
     }
   }
 
@@ -38,10 +39,10 @@ class AbsoluteEncoder(
   @Log
   override fun getVelocityNative(): Double {
     currPos =
-      if (!this.inverted) {
-        enc.distance
-      } else {
+      if (inverted) {
         -enc.distance
+      } else {
+        enc.distance
       }
 
     val currTime = Timer.getFPGATimestamp()
@@ -62,7 +63,6 @@ class AbsoluteEncoder(
 
   companion object {
     /**
-     *
      * @param <T>
      * @param channel The DutyCycleEncoder port
      * @param offset The position to put into DutyCycleEncoder's setPositionOffset
