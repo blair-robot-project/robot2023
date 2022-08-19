@@ -3,20 +3,26 @@ package frc.team449.robot2022
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.RobotContainerBase
 import frc.team449.control.holonomic.SwerveModule
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
+import java.awt.Button
+import kotlin.math.PI
 
 class RobotContainer2022() : RobotContainerBase() {
 
   private val joystick = XboxController(0)
-
+  val PDP_CAN = 1
   val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
   /** Helper to make turning motors for swerve */
@@ -72,13 +78,24 @@ class RobotContainer2022() : RobotContainerBase() {
     PIDController(.0, .0, .0),
     ProfiledPIDController(
       .0, .0, .0,
-      TrapezoidProfile.Constraints(.1, .1)
+      TrapezoidProfile.Constraints(.0, .0)
     ),
     SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
     SimpleMotorFeedforward(DriveConstants.TURN_KS, DriveConstants.TURN_KV, DriveConstants.TURN_KA),
     DriveConstants.FRONT_LEFT_LOC
   )
+
+  public fun bindAngleToButton(angle: Double, buttonNumber: Int) {
+    JoystickButton(joystick, buttonNumber).whenPressed(
+      InstantCommand({
+        FL_MODULE.state = SwerveModuleState(0.0, Rotation2d(angle))
+      })
+    )
+  }
   override fun teleopInit() {
-    // BIND Buttons
+    bindAngleToButton(3 * PI / 4, XboxController.Button.kA.value)
+    bindAngleToButton(PI, XboxController.Button.kX.value)
+    bindAngleToButton(PI / 2, XboxController.Button.kY.value)
+    bindAngleToButton(0.0, XboxController.Button.kB.value)
   }
 }
