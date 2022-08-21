@@ -1,7 +1,6 @@
 package frc.team449.control.holonomic
 
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -66,6 +65,9 @@ open class SwerveDrive(
       *this.modules
         .map { it.state }.toTypedArray()
     )
+
+    for (module in modules)
+      module.update()
   }
 
   companion object {
@@ -105,7 +107,7 @@ open class SwerveDrive(
       backRightTurnMotor: WrappedMotor,
       frontLeftLocation: Translation2d,
       driveMotorController: () -> PIDController,
-      turnMotorController: () -> ProfiledPIDController,
+      turnMotorController: () -> PIDController,
       driveFeedforward: SimpleMotorFeedforward,
       turnFeedforward: SimpleMotorFeedforward
     ): SwerveDrive {

@@ -1,22 +1,15 @@
 package frc.team449.robot2022
 
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.controller.ProfiledPIDController
-import edu.wpi.first.math.controller.SimpleMotorFeedforward
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.RobotContainerBase
-import frc.team449.control.holonomic.SwerveModule
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
-import java.awt.Button
 import kotlin.math.PI
 
 class RobotContainer2022() : RobotContainerBase() {
@@ -36,7 +29,7 @@ class RobotContainer2022() : RobotContainerBase() {
     createSparkMax(
       name = name + "Turn",
       id = motorId,
-      enableBrakeMode = false,
+      enableBrakeMode = true,
       inverted = inverted,
       encCreator = AbsoluteEncoder.creator(
         encoderChannel,
@@ -70,32 +63,37 @@ class RobotContainer2022() : RobotContainerBase() {
     DriveConstants.DRIVE_MOTOR_FL,
     false
   )
+//  val MODULE_FL = SwerveModule(
+//    "FL",
+//    DRIVE_FL,
+//    TURN_FL,
+//    PIDController(.2,.0,.0), /** DRIVE */
+//    PIDController(1.0, .00,.0), /** TURN */
+//    SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
+//    SimpleMotorFeedforward(DriveConstants.TURN_KS, DriveConstants.TURN_KV, DriveConstants.TURN_KA),
+//    DriveConstants.FRONT_LEFT_LOC
+//  )
+  var control = PIDController(.01166, .021, .00021) // Zeigler Nicols Tuned
 
-  val FL_MODULE = SwerveModule(
-    "FL_MODULE",
-    DRIVE_FL,
-    TURN_FL,
-    PIDController(.0, .0, .0),
-    ProfiledPIDController(
-      .0, .0, .0,
-      TrapezoidProfile.Constraints(.0, .0)
-    ),
-    SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
-    SimpleMotorFeedforward(DriveConstants.TURN_KS, DriveConstants.TURN_KV, DriveConstants.TURN_KA),
-    DriveConstants.FRONT_LEFT_LOC
-  )
-
-  public fun bindAngleToButton(angle: Double, buttonNumber: Int) {
+  private fun bindAngleToButton(angle: Double, buttonNumber: Int) {
     JoystickButton(joystick, buttonNumber).whenPressed(
       InstantCommand({
-        FL_MODULE.state = SwerveModuleState(0.0, Rotation2d(angle))
+        control.setpoint = angle * PI / 180
       })
     )
   }
+
   override fun teleopInit() {
-    bindAngleToButton(3 * PI / 4, XboxController.Button.kA.value)
-    bindAngleToButton(PI, XboxController.Button.kX.value)
-    bindAngleToButton(PI / 2, XboxController.Button.kY.value)
-    bindAngleToButton(0.0, XboxController.Button.kB.value)
+    control.enableContinuousInput(0.0, 2 * PI)
+    control.setTolerance(1.0) // -_- useless
+    bindAngleToButton(270.0, XboxController.Button.kA.value)
+    bindAngleToButton(180.0, XboxController.Button.kX.value)
+    bindAngleToButton(90.0, XboxController.Button.kY.value)
+    bindAngleToButton(360.0, XboxController.Button.kB.value)
+  }
+
+  override fun teleopPeriodic() {
+    val pid = control.calculate(TURN_FL.position)
+    TURN_FL.set(pid)
   }
 }
