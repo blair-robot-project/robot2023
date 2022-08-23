@@ -1,18 +1,75 @@
 package frc.team449.robot2022
 
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.SimpleMotorFeedforward
+import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.wpilibj.PowerDistribution
+import edu.wpi.first.wpilibj.RobotBase.isReal
+import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.RobotContainerBase
+import frc.team449.control.auto.AutoRoutine
+import frc.team449.control.holonomic.OIHolonomic
+import frc.team449.control.holonomic.SwerveDrive
+import frc.team449.robot2022.auto.Example
 import frc.team449.robot2022.drive.DriveConstants
+import frc.team449.system.AHRS
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
+import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.abs
 
 class RobotContainer2022() : RobotContainerBase() {
 
-  private val joystick = XboxController(0)
+  // Other CAN IDs
   val PDP_CAN = 1
-  val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
+  val PCM_MODULE = 0
+
+  private val driveController = XboxController(0)
+
+  private val ahrs = AHRS(SerialPort.Port.kMXP)
+
+  // Instantiate/declare PDP and other stuff here
+
+  override val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
+
+  /**
+   * Converts the drive to a SwerveSim if the robot is in simulation
+   */
+  @Log.Include
+  override val drive = if (isReal()) createDrivetrain() else SwerveDrive.simOf(createDrivetrain())
+
+  override val autoChooser = addRoutines()
+
+  override val oi = OIHolonomic(
+    drive,
+    { if (abs(driveController.leftX) < .08) .0 else driveController.leftX },
+    { if (abs(driveController.leftY) < .08) .0 else driveController.leftY },
+    { if (abs(driveController.getRawAxis(4)) < .02) .0 else driveController.getRawAxis(4) },
+    SlewRateLimiter(0.5),
+    2.5,
+    true
+  )
+
+  /** Helper to make turning motors for swerve */
+  private fun makeDrivingMotor(
+    name: String,
+    motorId: Int,
+    inverted: Boolean
+  ) =
+    createSparkMax(
+      name = name + "Drive",
+      id = motorId,
+      enableBrakeMode = true,
+      inverted = inverted,
+      encCreator =
+      NEOEncoder.creator(
+        DriveConstants.DRIVE_UPR,
+        DriveConstants.DRIVE_GEARING
+      )
+    )
 
   /** Helper to make turning motors for swerve */
   private fun makeTurningMotor(
@@ -35,85 +92,93 @@ class RobotContainer2022() : RobotContainerBase() {
         sensorPhase
       )
     )
-  private fun makeDrivingMotor(
-    name: String,
-    motorId: Int,
-    inverted: Boolean
-  ) = createSparkMax(
-    name = name + "Drive",
-    id = motorId,
-    enableBrakeMode = true,
-    inverted = inverted,
-    encCreator = NEOEncoder.creator(
-      DriveConstants.DRIVE_UPR,
-      DriveConstants.DRIVE_GEARING
+
+  private fun createDrivetrain() =
+    SwerveDrive.squareDrive(
+      ahrs,
+      DriveConstants.MAX_LINEAR_SPEED,
+      DriveConstants.MAX_ROT_SPEED,
+      makeDrivingMotor(
+        "FL",
+        DriveConstants.DRIVE_MOTOR_FL,
+        false
+      ),
+      makeDrivingMotor(
+        "FR",
+        DriveConstants.DRIVE_MOTOR_FR,
+        false
+      ),
+      makeDrivingMotor(
+        "BL",
+        DriveConstants.DRIVE_MOTOR_BL,
+        false
+      ),
+      makeDrivingMotor(
+        "BR",
+        DriveConstants.DRIVE_MOTOR_BR,
+        false
+      ),
+      makeTurningMotor(
+        "FL",
+        DriveConstants.TURN_MOTOR_FL,
+        true,
+        false,
+        DriveConstants.TURN_ENC_CHAN_FL,
+        DriveConstants.TURN_ENC_OFFSET_FL
+      ),
+      makeTurningMotor(
+        "FR",
+        DriveConstants.TURN_MOTOR_FR,
+        true,
+        false,
+        DriveConstants.TURN_ENC_CHAN_FR,
+        DriveConstants.TURN_ENC_OFFSET_FR
+      ),
+      makeTurningMotor(
+        "BL",
+        DriveConstants.TURN_MOTOR_BL,
+        true,
+        false,
+        DriveConstants.TURN_ENC_CHAN_BL,
+        DriveConstants.TURN_ENC_OFFSET_BL
+      ),
+      makeTurningMotor(
+        "BR",
+        DriveConstants.TURN_MOTOR_BR,
+        true,
+        false,
+        DriveConstants.TURN_ENC_CHAN_BR,
+        DriveConstants.TURN_ENC_OFFSET_BR
+      ),
+      DriveConstants.FRONT_LEFT_LOC,
+      { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) },
+      {
+        PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD)
+      },
+      SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
+      SimpleMotorFeedforward(DriveConstants.TURN_KS, DriveConstants.TURN_KV, DriveConstants.TURN_KA)
     )
-  )
-  val TURN_FL = makeTurningMotor(
-    "FL",
-    DriveConstants.TURN_MOTOR_FL,
-    true,
-    false,
-    DriveConstants.TURN_ENC_CHAN_FL,
-    DriveConstants.TURN_ENC_OFFSET_FL
-  )
-  val TURN_FR = makeTurningMotor(
-    "FR",
-    DriveConstants.TURN_MOTOR_FR,
-    true,
-    false,
-    DriveConstants.TURN_ENC_CHAN_FR,
-    DriveConstants.TURN_ENC_OFFSET_FR
-  )
-  val TURN_BL = makeTurningMotor(
-    "BL",
-    DriveConstants.TURN_MOTOR_BL,
-    true,
-    false,
-    DriveConstants.TURN_ENC_CHAN_BL,
-    DriveConstants.TURN_ENC_OFFSET_BL
-  )
-  val TURN_BR = makeTurningMotor(
-    "BR",
-    DriveConstants.TURN_MOTOR_BR,
-    true,
-    false,
-    DriveConstants.TURN_ENC_CHAN_BR,
-    DriveConstants.TURN_ENC_OFFSET_BR
-  )
-  val DRIVE_FL = makeDrivingMotor(
-    "FL",
-    DriveConstants.DRIVE_MOTOR_FL,
-    false
-  )
-  val DRIVE_FR = makeDrivingMotor(
-    "FR",
-    DriveConstants.DRIVE_MOTOR_FR,
-    false
-  )
-  val DRIVE_BL = makeDrivingMotor(
-    "BL",
-    DriveConstants.DRIVE_MOTOR_BL,
-    false
-  )
-  val DRIVE_BR = makeDrivingMotor(
-    "BR",
-    DriveConstants.DRIVE_MOTOR_BR,
-    false
-  )
-  override fun teleopInit() {
-    DRIVE_BL.set(.25 / 12)
-    DRIVE_BR.set(.25 / 12)
-    DRIVE_FR.set(.25 / 12)
-    DRIVE_FL.set(.25 / 12)
+
+  private fun addRoutines(): SendableChooser<AutoRoutine> {
+    val chooser = SendableChooser<AutoRoutine>()
+    val exampleAuto = Example("Example", 2.0, 2.0, drive)
+    chooser.setDefaultOption("Example Swerve Auto", exampleAuto.routine())
+
+    return chooser
   }
 
-  override fun disabledInit() {
-    DRIVE_BL.set(.0)
-    DRIVE_BR.set(.0)
-    DRIVE_FR.set(.0)
-    DRIVE_FL.set(.0)
+  override fun teleopInit() {
+    // todo Add button bindings here
   }
-  override fun teleopPeriodic() {
+
+  override fun robotPeriodic() {
+  }
+
+  override fun simulationInit() {
+    // DriverStationSim.setEnabled(true)
+  }
+
+  override fun simulationPeriodic() {
+    // Update simulated mechanisms on Mechanism2d widget and stuff
   }
 }
