@@ -18,7 +18,9 @@ class AbsoluteEncoder(
   private val offset: Double,
   pollTime: Double = .02
 ) : Encoder(name, 1, unitPerRotation, 1.0, pollTime) {
-
+  init {
+    enc.positionOffset = offset
+  }
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
 
@@ -28,7 +30,7 @@ class AbsoluteEncoder(
     return if (inverted) {
       1 - enc.absolutePosition
     } else {
-      enc.absolutePosition
+      enc.absolutePosition - offset
     }
   }
 

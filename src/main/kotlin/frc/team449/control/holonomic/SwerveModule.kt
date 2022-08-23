@@ -10,6 +10,7 @@ import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
+import kotlin.math.abs
 
 open class SwerveModule constructor(
   private val name: String,
@@ -22,7 +23,7 @@ open class SwerveModule constructor(
   val location: Translation2d
 ) : Loggable {
   init {
-    turnController.enableContinuousInput(0.0, 2 * PI)
+    turnController.enableContinuousInput(-PI, PI)
     turnController.setTolerance(.1) // Tolerate the noise from the encoders, ~.08 - .09
     driveController.reset()
     turnController.reset()
@@ -36,19 +37,27 @@ open class SwerveModule constructor(
     get() {
       return SwerveModuleState(
         drivingMotor.velocity,
-        Rotation2d(turningMotor.position)
+        Rotation2d(turningMotor.position - PI)
       )
     }
     set(desiredState) {
       // Ensure the module doesn't turn the long way around
+      if (abs(desiredState.speedMetersPerSecond) < .001) {
+        stop()
+        return
+      }
       val state = SwerveModuleState.optimize(
         desiredState,
-        Rotation2d(turningMotor.position)
+        Rotation2d(turningMotor.position - PI)
       )
       desiredAngle = state.angle.radians
       desiredSpeed = state.speedMetersPerSecond
     }
 
+  fun stop() {
+    desiredAngle = turningMotor.position - PI
+    desiredSpeed = 0.0
+  }
   override fun configureLogName() = this.name
 
   fun update() {
@@ -60,7 +69,7 @@ open class SwerveModule constructor(
     drivingMotor.setVoltage(drivePid + driveFF)
 
     val turnPid = turnController.calculate(
-      turningMotor.position,
+      turningMotor.position - PI,
       desiredAngle
     )
 
