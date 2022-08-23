@@ -32,21 +32,25 @@ object DriveConstants {
   const val TURN_KV = 0.078855
   const val TURN_KA = 0.027521
 
+  /** PID gains for turning each module*/
+  const val TURN_KP = 0.3
+  const val TURN_KI = 0.0
+  const val TURN_KD = 0.0
+
   /** FF values for driving each module */
   const val DRIVE_KS = 0.17227
   const val DRIVE_KV = 2.7582
   const val DRIVE_KA = 0.2595
 
+  /** PID gains for driving each module*/
+  const val DRIVE_KP = 0.2
+  const val DRIVE_KI = 0.0
+  const val DRIVE_KD = 0.0
+
   val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
   const val DRIVE_GEARING = 5.86
-  // todo determine this
-  const val TURN_GEARING = 1.0
   const val DRIVE_UPR = 0.3021211527151539
-  // todo determine this. should be in radians
   const val TURN_UPR = 2 * Math.PI * 1
-  const val NEO_ENCODER_CPR = 1
-  /** CPR of external encoders on driving motors */
-  const val DRIVE_EXT_ENC_CPR = 256
 
   /** Location of the front left module */
   val FRONT_LEFT_LOC = Translation2d(

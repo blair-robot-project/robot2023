@@ -1,16 +1,12 @@
 package frc.team449.robot2022
 
-import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.RobotContainerBase
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
-import kotlin.math.PI
 
 class RobotContainer2022() : RobotContainerBase() {
 
@@ -23,6 +19,7 @@ class RobotContainer2022() : RobotContainerBase() {
     name: String,
     motorId: Int,
     inverted: Boolean,
+    sensorPhase: Boolean,
     encoderChannel: Int,
     offset: Double
   ) =
@@ -34,7 +31,8 @@ class RobotContainer2022() : RobotContainerBase() {
       encCreator = AbsoluteEncoder.creator(
         encoderChannel,
         offset,
-        DriveConstants.TURN_UPR
+        DriveConstants.TURN_UPR,
+        sensorPhase
       )
     )
   private fun makeDrivingMotor(
@@ -54,46 +52,68 @@ class RobotContainer2022() : RobotContainerBase() {
   val TURN_FL = makeTurningMotor(
     "FL",
     DriveConstants.TURN_MOTOR_FL,
+    true,
     false,
     DriveConstants.TURN_ENC_CHAN_FL,
     DriveConstants.TURN_ENC_OFFSET_FL
+  )
+  val TURN_FR = makeTurningMotor(
+    "FR",
+    DriveConstants.TURN_MOTOR_FR,
+    true,
+    false,
+    DriveConstants.TURN_ENC_CHAN_FR,
+    DriveConstants.TURN_ENC_OFFSET_FR
+  )
+  val TURN_BL = makeTurningMotor(
+    "BL",
+    DriveConstants.TURN_MOTOR_BL,
+    true,
+    false,
+    DriveConstants.TURN_ENC_CHAN_BL,
+    DriveConstants.TURN_ENC_OFFSET_BL
+  )
+  val TURN_BR = makeTurningMotor(
+    "BR",
+    DriveConstants.TURN_MOTOR_BR,
+    true,
+    false,
+    DriveConstants.TURN_ENC_CHAN_BR,
+    DriveConstants.TURN_ENC_OFFSET_BR
   )
   val DRIVE_FL = makeDrivingMotor(
     "FL",
     DriveConstants.DRIVE_MOTOR_FL,
     false
   )
-//  val MODULE_FL = SwerveModule(
-//    "FL",
-//    DRIVE_FL,
-//    TURN_FL,
-//    PIDController(.2,.0,.0), /** DRIVE */
-//    PIDController(1.0, .00,.0), /** TURN */
-//    SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
-//    SimpleMotorFeedforward(DriveConstants.TURN_KS, DriveConstants.TURN_KV, DriveConstants.TURN_KA),
-//    DriveConstants.FRONT_LEFT_LOC
-//  )
-  var control = PIDController(.01166, .021, .00021) // Zeigler Nicols Tuned
-
-  private fun bindAngleToButton(angle: Double, buttonNumber: Int) {
-    JoystickButton(joystick, buttonNumber).whenPressed(
-      InstantCommand({
-        control.setpoint = angle * PI / 180
-      })
-    )
-  }
-
+  val DRIVE_FR = makeDrivingMotor(
+    "FR",
+    DriveConstants.DRIVE_MOTOR_FR,
+    false
+  )
+  val DRIVE_BL = makeDrivingMotor(
+    "BL",
+    DriveConstants.DRIVE_MOTOR_BL,
+    false
+  )
+  val DRIVE_BR = makeDrivingMotor(
+    "BR",
+    DriveConstants.DRIVE_MOTOR_BR,
+    false
+  )
   override fun teleopInit() {
-    control.enableContinuousInput(0.0, 2 * PI)
-    control.setTolerance(1.0) // -_- useless
-    bindAngleToButton(270.0, XboxController.Button.kA.value)
-    bindAngleToButton(180.0, XboxController.Button.kX.value)
-    bindAngleToButton(90.0, XboxController.Button.kY.value)
-    bindAngleToButton(360.0, XboxController.Button.kB.value)
+    DRIVE_BL.set(.25 / 12)
+    DRIVE_BR.set(.25 / 12)
+    DRIVE_FR.set(.25 / 12)
+    DRIVE_FL.set(.25 / 12)
   }
 
+  override fun disabledInit() {
+    DRIVE_BL.set(.0)
+    DRIVE_BR.set(.0)
+    DRIVE_FR.set(.0)
+    DRIVE_FL.set(.0)
+  }
   override fun teleopPeriodic() {
-    val pid = control.calculate(TURN_FL.position)
-    TURN_FL.set(pid)
   }
 }

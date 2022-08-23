@@ -18,8 +18,6 @@ class AbsoluteEncoder(
   private val offset: Double,
   pollTime: Double = .02
 ) : Encoder(name, 1, unitPerRotation, 1.0, pollTime) {
-  init {
-  }
 
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
@@ -64,18 +62,20 @@ class AbsoluteEncoder(
      * @param <T>
      * @param channel The DutyCycleEncoder port
      * @param offset The position to put into DutyCycleEncoder's setPositionOffset
+     * @param sensorPhase If the encoder needs to be inverted or not
      */
     fun <T : MotorController> creator(
       channel: Int,
       offset: Double,
       unitPerRotation: Double,
+      sensorPhase: Boolean
     ): EncoderCreator<T> =
       EncoderCreator { name, _, inverted ->
         val enc = AbsoluteEncoder(
           name,
           DutyCycleEncoder(channel),
           unitPerRotation,
-          inverted,
+          sensorPhase,
           offset
         )
         enc
