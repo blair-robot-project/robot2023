@@ -26,9 +26,10 @@ class QuadEncoder(
       encoder: edu.wpi.first.wpilibj.Encoder,
       encoderCPR: Int,
       unitPerRotation: Double,
-      gearing: Double
+      gearing: Double,
+      inverted: Boolean
     ): EncoderCreator<T> =
-      EncoderCreator { name, _, inverted ->
+      EncoderCreator { name, _ ->
         encoder.setReverseDirection(inverted)
         QuadEncoder(name, encoder, encoderCPR, unitPerRotation, gearing)
       }

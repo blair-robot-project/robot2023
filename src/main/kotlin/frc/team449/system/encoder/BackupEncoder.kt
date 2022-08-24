@@ -35,7 +35,7 @@ class BackupEncoder(
     return if (useFallback) {
       fallbackVel
     } else {
-      var primaryVel = primary.velocity
+      val primaryVel = primary.velocity
       if (primaryVel == 0.0 && abs(fallbackVel) > velThreshold) {
         this.useFallback = true
         fallbackVel
@@ -49,12 +49,12 @@ class BackupEncoder(
     fun <T : MotorController> creator(
       primaryCreator: EncoderCreator<T>,
       fallbackCreator: EncoderCreator<T>,
-      velThreshold: Double
+      velThreshold: Double,
     ): EncoderCreator<T> = EncoderCreator {
-        name, motor, inverted ->
+        name, motor ->
       BackupEncoder(
-        primaryCreator.create(name, motor, inverted),
-        fallbackCreator.create(name, motor, inverted),
+        primaryCreator.create(name, motor),
+        fallbackCreator.create(name, motor),
         velThreshold
       )
     }

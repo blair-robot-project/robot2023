@@ -64,20 +64,20 @@ class AbsoluteEncoder(
      * @param <T>
      * @param channel The DutyCycleEncoder port
      * @param offset The position to put into DutyCycleEncoder's setPositionOffset
-     * @param sensorPhase If the encoder needs to be inverted or not
+     * @param inverted If the encoder needs to be inverted or not
      */
     fun <T : MotorController> creator(
       channel: Int,
       offset: Double,
       unitPerRotation: Double,
-      sensorPhase: Boolean
+      inverted: Boolean
     ): EncoderCreator<T> =
-      EncoderCreator { name, _, inverted ->
+      EncoderCreator { name, _ ->
         val enc = AbsoluteEncoder(
           name,
           DutyCycleEncoder(channel),
           unitPerRotation,
-          sensorPhase,
+          inverted,
           offset
         )
         enc
