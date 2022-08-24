@@ -29,7 +29,7 @@ class QuadEncoder(
       gearing: Double,
       inverted: Boolean
     ): EncoderCreator<T> =
-      EncoderCreator { name, _ ->
+      EncoderCreator { name, _, _ ->
         encoder.setReverseDirection(inverted)
         QuadEncoder(name, encoder, encoderCPR, unitPerRotation, gearing)
       }

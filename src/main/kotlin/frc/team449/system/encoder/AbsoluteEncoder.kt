@@ -18,23 +18,20 @@ class AbsoluteEncoder(
   private val offset: Double,
   pollTime: Double = .02
 ) : Encoder(name, 1, unitPerRotation, 1.0, pollTime) {
-  init {
-    enc.positionOffset = offset
-  }
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
 
-  /** This returns the absolute position of the module using gearing and UPR and includes offsetting */
+  /** This returns the absolute position of the module */
   @Log
   override fun getPositionNative(): Double {
     return if (inverted) {
-      1 - enc.absolutePosition
+      1 - (enc.absolutePosition - offset)
     } else {
       enc.absolutePosition - offset
     }
   }
 
-  /** This returns the rotational velocity (on vertical axis) of the module using gearing and UPR */
+  /** This returns the rotational velocity (on vertical axis) of the module */
   override fun pollVelocityNative(): Double {
     val currPos =
       if (inverted) {
@@ -64,6 +61,7 @@ class AbsoluteEncoder(
      * @param <T>
      * @param channel The DutyCycleEncoder port
      * @param offset The position to put into DutyCycleEncoder's setPositionOffset
+     * @param unitPerRotation units measured when done one rotation (e.g 360 degrees per rotation)
      * @param inverted If the encoder needs to be inverted or not
      */
     fun <T : MotorController> creator(
@@ -72,7 +70,7 @@ class AbsoluteEncoder(
       unitPerRotation: Double,
       inverted: Boolean
     ): EncoderCreator<T> =
-      EncoderCreator { name, _ ->
+      EncoderCreator { name, _, _ ->
         val enc = AbsoluteEncoder(
           name,
           DutyCycleEncoder(channel),
