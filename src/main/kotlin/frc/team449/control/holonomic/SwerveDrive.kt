@@ -19,7 +19,10 @@ open class SwerveDrive(
   override val maxLinearSpeed: Double,
   override val maxRotSpeed: Double
 ) : SubsystemBase(), HolonomicDrive {
-
+  init {
+    // Zero out the gyro
+    ahrs.calibrate()
+  }
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
@@ -34,9 +37,13 @@ open class SwerveDrive(
   }
 
   override val heading: Rotation2d
-    get() { return ahrs.heading }
+    @Log.ToString
+    get() {
+      return ahrs.heading
+    }
 
   override var pose: Pose2d
+    @Log.ToString
     get() {
       return this.odometry.poseMeters
     }
@@ -49,8 +56,9 @@ open class SwerveDrive(
   }
 
   override fun periodic() {
-    var desiredModuleStates =
+    val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
+
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
       this.maxLinearSpeed
@@ -130,7 +138,7 @@ open class SwerveDrive(
           turnMotorController(),
           driveFeedforward,
           turnFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(90.0))
+          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(-90.0))
         ),
         SwerveModule.create(
           "BLModule",
@@ -140,7 +148,7 @@ open class SwerveDrive(
           turnMotorController(),
           driveFeedforward,
           turnFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(-90.0))
+          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(90.0))
         ),
         SwerveModule.create(
           "BRModule",

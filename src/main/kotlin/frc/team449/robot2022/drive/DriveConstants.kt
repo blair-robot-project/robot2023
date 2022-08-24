@@ -43,23 +43,20 @@ object DriveConstants {
   const val DRIVE_KA = 0.2595
 
   /** PID gains for driving each module*/
-  const val DRIVE_KP = 0.0
+  const val DRIVE_KP = 0.1
   const val DRIVE_KI = 0.0
   const val DRIVE_KD = 0.0
 
-  val DRIVE_WHEEL_RADIUS = Units.inchesToMeters(2.0)
   const val DRIVE_GEARING = 5.86
   const val DRIVE_UPR = 0.3021211527151539
   const val TURN_UPR = 2 * Math.PI * 1
 
   /** Location of the front left module */
   val FRONT_LEFT_LOC = Translation2d(
-    Units.inchesToMeters(25.0) / 2,
-    Units.inchesToMeters(25.0) / 2
+    Units.inchesToMeters(24.0) / 2,
+    Units.inchesToMeters(24.0) / 2
   )
 
-  const val DRIVE_CURRENT_LIM = 40
-  const val DRIVE_ENC_VEL_THRESHOLD = 0.1
-  const val MAX_LINEAR_SPEED = 4.0
-  const val MAX_ROT_SPEED = 1.0
+  const val MAX_LINEAR_SPEED = 2.0
+  const val MAX_ROT_SPEED = 2.0
 }

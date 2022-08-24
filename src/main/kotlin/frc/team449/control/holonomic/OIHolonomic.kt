@@ -10,6 +10,7 @@ import frc.team449.control.OI
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 import java.util.function.DoubleSupplier
+import kotlin.math.hypot
 
 /**
  * Create an OI for controlling a holonomic drivetrain (probably swerve).
@@ -67,13 +68,13 @@ class OIHolonomic(
     this.dt = currTime - prevTime
     this.prevTime = currTime
 
-    var xScaled = xThrottle.getAsDouble() * drive.maxLinearSpeed
-    var yScaled = yThrottle.getAsDouble() * drive.maxLinearSpeed
+    var xScaled = xThrottle.asDouble * drive.maxLinearSpeed
+    var yScaled = yThrottle.asDouble * drive.maxLinearSpeed
 
     // Clamp the acceleration
     this.dx = xScaled - this.prevX
     this.dy = yScaled - this.prevY
-    this.magAcc = Math.hypot(dx / dt, dy / dt)
+    this.magAcc = hypot(dx / dt, dy / dt)
     this.magAccClamped = MathUtil.clamp(magAcc, -this.maxAccel, this.maxAccel)
 
     // Scale the change in x and y the same as the acceleration
@@ -89,15 +90,15 @@ class OIHolonomic(
     var rotRaw = rotThrottle.asDouble
     var rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
 
-    if (this.fieldOriented) {
-      return ChassisSpeeds.fromFieldRelativeSpeeds(
+    return if (this.fieldOriented) {
+      ChassisSpeeds.fromFieldRelativeSpeeds(
         xClamped,
         yClamped,
         rotScaled,
         drive.heading
       )
     } else {
-      return ChassisSpeeds(xClamped, yClamped, rotScaled)
+      ChassisSpeeds(xClamped, yClamped, rotScaled)
     }
   }
 

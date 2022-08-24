@@ -45,10 +45,10 @@ class RobotContainer2022() : RobotContainerBase() {
 
   override val oi = OIHolonomic(
     drive,
-    { if (abs(driveController.leftX) < .08) .0 else driveController.leftX },
     { if (abs(driveController.leftY) < .08) .0 else driveController.leftY },
+    { if (abs(driveController.leftX) < .08) .0 else driveController.leftX },
     { if (abs(driveController.getRawAxis(4)) < .02) .0 else driveController.getRawAxis(4) },
-    SlewRateLimiter(1.0),
+    SlewRateLimiter(1.5),
     2.5,
     true
   )
