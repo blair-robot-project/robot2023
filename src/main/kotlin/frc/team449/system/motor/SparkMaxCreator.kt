@@ -40,7 +40,7 @@ fun createSparkMax(
 
   motor.restoreFactoryDefaults()
 
-  val enc = encCreator.create(name + "Enc", motor, inverted)
+  val enc = encCreator.create(name + "Enc", motor)
 
   val brakeMode =
     if (enableBrakeMode) CANSparkMax.IdleMode.kBrake

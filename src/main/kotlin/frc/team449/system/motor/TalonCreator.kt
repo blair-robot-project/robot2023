@@ -37,7 +37,7 @@ fun <T> createTalon(
   statusFrameRatesMillis: Map<StatusFrameEnhanced, Int> = mapOf(),
   feedbackDevice: FeedbackDevice? = null
 ): WrappedMotor where T : MotorController, T : BaseTalon {
-  val enc = encCreator.create(name + "Enc", motor, inverted)
+  val enc = encCreator.create(name + "Enc", motor)
   motor.setInverted(inverted)
   // Set brake mode
   val idleMode = if (enableBrakeMode) NeutralMode.Brake else NeutralMode.Coast
