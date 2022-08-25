@@ -43,7 +43,7 @@ object DriveConstants {
   const val DRIVE_KA = 0.2595
 
   /** PID gains for driving each module*/
-  const val DRIVE_KP = 0.1
+  const val DRIVE_KP = 0.09
   const val DRIVE_KI = 0.0
   const val DRIVE_KD = 0.0
 
