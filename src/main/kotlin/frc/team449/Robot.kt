@@ -3,8 +3,8 @@ package frc.team449
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
-import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team449.robot2022.RobotContainer2022
@@ -16,9 +16,6 @@ class Robot : TimedRobot() {
   private val robotContainer: RobotContainerBase = RobotContainer2022()
   private var autoCommand: Command? = null
 
-  init {
-    LiveWindow.disableAllTelemetry()
-  }
   override fun robotInit() {
     // Yes this should be a print statement, it's useful to know that robotInit started.
     println("Started robotInit.")
@@ -33,6 +30,10 @@ class Robot : TimedRobot() {
     Logger.configureLoggingAndConfig(robotContainer, false)
     Shuffleboard.setRecordingFileNameFormat("log-\${time}")
     Shuffleboard.startRecording()
+
+    SmartDashboard.putData(robotContainer.field)
+
+    SmartDashboard.putData(robotContainer.autoChooser)
   }
 
   override fun robotPeriodic() {
@@ -41,15 +42,21 @@ class Robot : TimedRobot() {
     Logger.updateEntries()
 
     robotContainer.robotPeriodic()
+
+    robotContainer.field.robotPose = robotContainer.drive.pose
   }
 
   override fun autonomousInit() {
+    val routine = robotContainer.autoChooser.selected
+    if (routine != null) {
+      this.autoCommand = routine.cmd
+      robotContainer.field.getObject(routine.name).setTrajectory(routine.traj)
+      CommandScheduler.getInstance().schedule(this.autoCommand)
+    }
     robotContainer.autonomousInit()
   }
 
-  override fun autonomousPeriodic() {
-//    robotContainer.autonomousPeriodic()
-  }
+  override fun autonomousPeriodic() {}
 
   override fun teleopInit() {
     if (autoCommand != null) {
@@ -62,12 +69,9 @@ class Robot : TimedRobot() {
     robotContainer.teleopPeriodic()
   }
 
-  override fun disabledInit() {
-//    robotContainer.disabledInit()
-  }
+  override fun disabledInit() {}
 
-  override fun disabledPeriodic() {
-  }
+  override fun disabledPeriodic() {}
 
   override fun testInit() {
     if (autoCommand != null) {
