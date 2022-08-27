@@ -21,7 +21,7 @@ open class SwerveDrive(
 ) : SubsystemBase(), HolonomicDrive {
   init {
     // Zero out the gyro
-    ahrs.calibrate()
+    ahrs.reset()
   }
   private val kinematics = SwerveDriveKinematics(
     *this.modules
