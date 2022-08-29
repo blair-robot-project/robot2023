@@ -8,12 +8,12 @@ import io.github.oblarg.oblog.annotations.Log
 /**
  * This class uses an absolute encoder, gear ratio and UPR to give the absolute position of the module or rotational velocity of the module.
  *
- * @param offset This must be in rotations of how much the offset of the ENCODER should be. TODO: Test what does setPositionOffset actually does, write description here.
+ * @param offset This must be in rotations of how much the offset of the ENCODER should be.
  */
 class AbsoluteEncoder(
   name: String,
   private val enc: DutyCycleEncoder,
-  private val unitPerRotation: Double,
+  unitPerRotation: Double,
   private val inverted: Boolean,
   private val offset: Double,
   pollTime: Double = .02
