@@ -13,6 +13,7 @@ import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.holonomic.OIHolonomic
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2022.auto.Example
+import frc.team449.robot2022.auto.Pose2dAuto
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.AbsoluteEncoder
@@ -162,7 +163,8 @@ class RobotContainer2022() : RobotContainerBase() {
   private fun addRoutines(): SendableChooser<AutoRoutine> {
     val chooser = SendableChooser<AutoRoutine>()
     val exampleAuto = Example("Example", 2.0, 2.0, drive)
-    chooser.setDefaultOption("Example Swerve Auto", exampleAuto.routine())
+    val wpilibAuto = Pose2dAuto(drive, 2.0, 2.0)
+    chooser.setDefaultOption("WPIlib Swerve Auto", wpilibAuto.routine())
 
     return chooser
   }

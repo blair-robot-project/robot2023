@@ -21,12 +21,14 @@ open class SwerveDrive(
 ) : SubsystemBase(), HolonomicDrive {
   init {
     // Zero out the gyro
+    ahrs.calibrate()
     ahrs.reset()
   }
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
+
   private val odometry = SwerveDriveOdometry(this.kinematics, ahrs.heading)
 
   @Log.ToString
@@ -47,12 +49,18 @@ open class SwerveDrive(
     get() {
       return this.odometry.poseMeters
     }
-    set(pose) {
-      this.odometry.resetPosition(pose, ahrs.heading)
-    }
+    set(value) {}
+
+  fun resetOdometry(pose: Pose2d) {
+    this.odometry.resetPosition(pose, ahrs.heading)
+  }
 
   override fun stop() {
     this.set(ChassisSpeeds(0.0, 0.0, 0.0))
+  }
+
+  fun getKinematics(): SwerveDriveKinematics {
+    return this.kinematics
   }
 
   override fun periodic() {
