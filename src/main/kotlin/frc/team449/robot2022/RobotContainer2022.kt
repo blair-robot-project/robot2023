@@ -183,4 +183,8 @@ class RobotContainer2022() : RobotContainerBase() {
   override fun simulationPeriodic() {
     // Update simulated mechanisms on Mechanism2d widget and stuff
   }
+
+  override fun disabledInit() {
+    drive.stop()
+  }
 }

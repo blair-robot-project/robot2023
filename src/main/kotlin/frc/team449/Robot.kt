@@ -69,7 +69,9 @@ class Robot : TimedRobot() {
     robotContainer.teleopPeriodic()
   }
 
-  override fun disabledInit() {}
+  override fun disabledInit() {
+    robotContainer.disabledInit()
+  }
 
   override fun disabledPeriodic() {}
 

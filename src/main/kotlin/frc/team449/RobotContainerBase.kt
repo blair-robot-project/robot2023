@@ -51,4 +51,7 @@ abstract class RobotContainerBase {
     //    } // TODO Swerve Drive SIM
     simBattery.update()
   }
+
+  open fun disabledInit() {
+  }
 }
