@@ -50,7 +50,6 @@ class Robot : TimedRobot() {
     val routine = robotContainer.autoChooser.selected
     if (routine != null) {
       this.autoCommand = routine.cmd
-      robotContainer.field.getObject(routine.name).setTrajectory(routine.traj)
       CommandScheduler.getInstance().schedule(this.autoCommand)
     }
     robotContainer.autonomousInit()

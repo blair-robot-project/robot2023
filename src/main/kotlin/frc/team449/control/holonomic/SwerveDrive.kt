@@ -24,12 +24,12 @@ open class SwerveDrive(
     ahrs.calibrate()
     ahrs.reset()
   }
-  private val kinematics = SwerveDriveKinematics(
+  val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
 
-  private val odometry = SwerveDriveOdometry(this.kinematics, ahrs.heading)
+  private val odometry = SwerveDriveOdometry(this.kinematics, -ahrs.heading)
 
   @Log.ToString
   var desiredSpeeds = ChassisSpeeds()
@@ -41,7 +41,7 @@ open class SwerveDrive(
   override val heading: Rotation2d
     @Log.ToString
     get() {
-      return ahrs.heading
+      return -ahrs.heading
     }
 
   override var pose: Pose2d
@@ -49,18 +49,12 @@ open class SwerveDrive(
     get() {
       return this.odometry.poseMeters
     }
-    set(value) {}
-
-  fun resetOdometry(pose: Pose2d) {
-    this.odometry.resetPosition(pose, ahrs.heading)
-  }
+    set(value) {
+      this.odometry.resetPosition(value, heading)
+    }
 
   override fun stop() {
     this.set(ChassisSpeeds(0.0, 0.0, 0.0))
-  }
-
-  fun getKinematics(): SwerveDriveKinematics {
-    return this.kinematics
   }
 
   override fun periodic() {
@@ -77,7 +71,7 @@ open class SwerveDrive(
     }
 
     this.odometry.update(
-      ahrs.heading,
+      heading,
       *this.modules
         .map { it.state }.toTypedArray()
     )
