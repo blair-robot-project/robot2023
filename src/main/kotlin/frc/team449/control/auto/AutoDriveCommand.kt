@@ -5,7 +5,6 @@ import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.RamseteController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.math.trajectory.Trajectory
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
@@ -23,7 +22,7 @@ import frc.team449.control.holonomic.HolonomicDrive
  */
 class AutoDriveCommand<T : DriveSubsystem>(
   val drivetrain: T,
-  val trajectory: Trajectory,
+  val trajectory: PathPlannerTrajectory,
   val controller: (Pose2d, PathPlannerTrajectory.PathPlannerState) -> ChassisSpeeds,
   val resetPose: Boolean
 ) : CommandBase() {
@@ -47,7 +46,7 @@ class AutoDriveCommand<T : DriveSubsystem>(
   override fun execute() {
     val desiredState =
       drivetrain.set(
-        controller(drivetrain.pose, (trajectory.sample(Timer.getFPGATimestamp() - startTime) as PathPlannerTrajectory.PathPlannerState))
+        controller(drivetrain.pose, trajectory.sample(Timer.getFPGATimestamp() - startTime) as PathPlannerTrajectory.PathPlannerState)
       )
   }
 
@@ -95,7 +94,7 @@ class AutoDriveCommand<T : DriveSubsystem>(
 
     fun differentialDriveCommand(
       drivetrain: DifferentialDrive,
-      trajectory: Trajectory,
+      trajectory: PathPlannerTrajectory,
       resetPose: Boolean
     ): AutoDriveCommand<DifferentialDrive> {
       val controller = RamseteController()

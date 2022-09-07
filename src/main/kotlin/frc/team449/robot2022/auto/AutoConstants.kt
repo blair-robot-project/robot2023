@@ -8,14 +8,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile
 object AutoConstants {
 
   /** Driving Config */
-  const val MAX_VEL = 2.0
+  const val MAX_VEL = 4.24
   const val MAX_ACC = 2.0
-  private const val MAX_ROTVEL = 2.26
-  const val MAX_ROTACC = 2.26
+  private const val MAX_ROTVEL = 3.26
+  private const val MAX_ROTACC = 3.26
 
   /** PID gains */
-  private const val TRANSLATION_KP = 1.0
-  private const val ROTATION_KP = 1.0
+  private const val TRANSLATION_KP = 1.5
+  private const val ROTATION_KP = 3.0
 
   /** PID controllers for each degree of freedom */
   val ROT_CONTROLLER = ProfiledPIDController(

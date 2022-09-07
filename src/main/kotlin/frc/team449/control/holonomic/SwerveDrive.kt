@@ -63,7 +63,7 @@ open class SwerveDrive(
 
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      this.maxLinearSpeed
+      4.267
     )
 
     for (i in this.modules.indices) {
