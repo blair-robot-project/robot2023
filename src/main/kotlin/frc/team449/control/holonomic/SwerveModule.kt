@@ -23,13 +23,14 @@ open class SwerveModule constructor(
   val location: Translation2d
 ) : Loggable {
   init {
-    turnController.enableContinuousInput(-PI, PI)
+    turnController.enableContinuousInput(.0, 2 * PI)
     turnController.setTolerance(.1) // Tolerate the noise from the encoders, ~.08 - .09
     driveController.reset()
     turnController.reset()
   }
 
   private var desiredSpeed = 0.0
+  @Log
   private var desiredAngle = turningMotor.position
 
   open var state: SwerveModuleState
@@ -37,7 +38,7 @@ open class SwerveModule constructor(
     get() {
       return SwerveModuleState(
         drivingMotor.velocity,
-        Rotation2d(turningMotor.position - PI)
+        Rotation2d(turningMotor.position)
       )
     }
     set(desiredState) {
@@ -48,14 +49,14 @@ open class SwerveModule constructor(
       }
       val state = SwerveModuleState.optimize(
         desiredState,
-        Rotation2d(turningMotor.position - PI)
+        Rotation2d(turningMotor.position)
       )
       desiredAngle = state.angle.radians
       desiredSpeed = state.speedMetersPerSecond
     }
 
   fun stop() {
-    desiredAngle = turningMotor.position - PI
+    desiredAngle = turningMotor.position
     desiredSpeed = 0.0
   }
   override fun configureLogName() = this.name
@@ -69,7 +70,7 @@ open class SwerveModule constructor(
     drivingMotor.setVoltage(drivePid + driveFF)
 
     val turnPid = turnController.calculate(
-      turningMotor.position - PI,
+      turningMotor.position,
       desiredAngle
     )
 
