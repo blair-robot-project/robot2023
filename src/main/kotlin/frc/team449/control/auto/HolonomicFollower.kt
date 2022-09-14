@@ -4,6 +4,7 @@ import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
@@ -38,14 +39,15 @@ class HolonomicFollower(
 
   override fun initialize() {
     if (resetPose) {
-      drivetrain.pose = trajectory.initialPose
+      var start = trajectory.initialState as PathPlannerTrajectory.PathPlannerState
+      drivetrain.pose = Pose2d(start.poseMeters.x, start.poseMeters.y, start.holonomicRotation)
     }
 
     xController.reset()
     yController.reset()
     thetaController.reset(drivetrain.pose.rotation.radians)
-    timer.reset()
 
+    timer.reset()
     timer.start()
   }
 
@@ -54,7 +56,14 @@ class HolonomicFollower(
     val reference = trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
     val currentPose = drivetrain.pose
 
-    drivetrain.set(controller.calculate(currentPose, reference.poseMeters, reference.velocityMetersPerSecond, reference.holonomicRotation))
+    drivetrain.set(
+      controller.calculate(
+        currentPose,
+        reference.poseMeters,
+        reference.velocityMetersPerSecond,
+        reference.holonomicRotation
+      )
+    )
 
     prevTime = currTime
   }
