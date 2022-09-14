@@ -3,9 +3,7 @@ package frc.team449.robot2022.auto
 import com.pathplanner.lib.PathPlanner
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
-import frc.team449.control.auto.AutoDriveCommand
-import frc.team449.control.auto.AutoRoutine
-import frc.team449.control.auto.AutoUtils
+import frc.team449.control.auto.*
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2022.auto.AutoConstants.ROT_CONTROLLER
 import frc.team449.robot2022.auto.AutoConstants.xController
@@ -25,10 +23,9 @@ class Example(
         yController.reset()
         ROT_CONTROLLER.reset(traj.initialPose.rotation.radians)
       }).andThen(
-        AutoDriveCommand.holonomicDriveCommand(
+        HolonomicFollower(
           drive,
-          traj,
-          AutoConstants.controller,
+          SwerveTrajectory(AutoConstants.points),
           true
         )
       ),
