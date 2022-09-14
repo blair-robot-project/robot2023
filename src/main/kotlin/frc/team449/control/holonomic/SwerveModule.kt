@@ -19,7 +19,6 @@ open class SwerveModule constructor(
   private val driveController: PIDController,
   private val turnController: PIDController,
   private val driveFeedforward: SimpleMotorFeedforward,
-  private val turnFeedforward: SimpleMotorFeedforward, // Todo remove?
   val location: Translation2d
 ) : Loggable {
   init {
@@ -85,7 +84,6 @@ open class SwerveModule constructor(
       driveController: PIDController,
       turnController: PIDController,
       driveFeedforward: SimpleMotorFeedforward,
-      turnFeedforward: SimpleMotorFeedforward,
       location: Translation2d
     ): SwerveModule {
       if (RobotBase.isReal()) {
@@ -96,7 +94,6 @@ open class SwerveModule constructor(
           driveController,
           turnController,
           driveFeedforward,
-          turnFeedforward,
           location
         )
       } else {
@@ -107,7 +104,6 @@ open class SwerveModule constructor(
           driveController,
           turnController,
           driveFeedforward,
-          turnFeedforward,
           location
         )
       }
@@ -126,7 +122,6 @@ class SwerveModuleSim(
   driveController: PIDController,
   turnController: PIDController,
   driveFeedforward: SimpleMotorFeedforward,
-  turnFeedforward: SimpleMotorFeedforward,
   location: Translation2d
 ) : SwerveModule(
   name,
@@ -135,7 +130,6 @@ class SwerveModuleSim(
   driveController,
   turnController,
   driveFeedforward,
-  turnFeedforward,
   location
 ) {
 

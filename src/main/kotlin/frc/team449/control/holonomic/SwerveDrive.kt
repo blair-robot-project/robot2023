@@ -118,8 +118,7 @@ open class SwerveDrive(
       frontLeftLocation: Translation2d,
       driveMotorController: () -> PIDController,
       turnMotorController: () -> PIDController,
-      driveFeedforward: SimpleMotorFeedforward,
-      turnFeedforward: SimpleMotorFeedforward
+      driveFeedforward: SimpleMotorFeedforward
     ): SwerveDrive {
       val modules = listOf(
         SwerveModule.create(
@@ -129,7 +128,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation
         ),
         SwerveModule.create(
@@ -139,7 +137,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation.rotateBy(Rotation2d.fromDegrees(-90.0))
         ),
         SwerveModule.create(
@@ -149,7 +146,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation.rotateBy(Rotation2d.fromDegrees(90.0))
         ),
         SwerveModule.create(
@@ -159,7 +155,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation.rotateBy(Rotation2d.fromDegrees(180.0))
         )
       )

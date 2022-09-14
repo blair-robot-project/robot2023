@@ -1,18 +1,17 @@
 package frc.team449.control.auto
 
 import com.pathplanner.lib.PathPlannerTrajectory
-import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2022.auto.AutoConstants
 
-class HolonomicFollower (
+class HolonomicFollower(
   private val drivetrain: HolonomicDrive,
   private val trajectory: PathPlannerTrajectory,
   private val resetPose: Boolean
-  ) : CommandBase() {
+) : CommandBase() {
   private val timer = Timer()
   private var prevTime = 0.0
 
@@ -44,6 +43,4 @@ class HolonomicFollower (
   override fun end(interrupted: Boolean) {
     drivetrain.stop()
   }
-
-
 }
