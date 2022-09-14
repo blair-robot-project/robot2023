@@ -14,8 +14,8 @@ object AutoConstants {
   private const val MAX_ROTACC = 1.0
 
   /** PID gains */
-  private const val TRANSLATION_KP = .02
-  private const val ROTATION_KP = 2.0
+  const val TRANSLATION_KP = .02
+  const val ROTATION_KP = 2.0
 
   /** PID controllers for each degree of freedom */
   val ROT_CONTROLLER = ProfiledPIDController(
