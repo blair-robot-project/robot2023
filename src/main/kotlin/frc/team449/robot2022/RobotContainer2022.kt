@@ -158,7 +158,7 @@ class RobotContainer2022() : RobotContainerBase() {
 
   private fun addRoutines(): SendableChooser<AutoRoutine> {
     val chooser = SendableChooser<AutoRoutine>()
-    val exampleAuto = Example("wishes", drive)
+    val exampleAuto = Example("Example", drive)
 //    val wpilibAuto = Pose2dAuto(drive, 2.0, 2.0)
     chooser.setDefaultOption("Example Auto", exampleAuto.routine())
 

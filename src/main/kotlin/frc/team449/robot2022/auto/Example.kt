@@ -19,8 +19,8 @@ class Example(
         drive,
         traj,
         true,
-        AutoConstants.MAX_VEL,
-        AutoConstants.MAX_ACC
+        AutoConstants.MAX_ROTVEL,
+        AutoConstants.MAX_ROTACC
       ),
       // Doing other stuff commands
       AutoUtils.autoSequence(
