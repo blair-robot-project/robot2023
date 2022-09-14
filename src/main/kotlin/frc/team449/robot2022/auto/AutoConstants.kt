@@ -10,8 +10,8 @@ object AutoConstants {
   /** Driving Config */
   const val MAX_VEL = .5
   const val MAX_ACC = 2.0
-  private const val MAX_ROTVEL = 1.0
-  private const val MAX_ROTACC = 1.0
+  private const val MAX_ROTVEL = 2.0
+  private const val MAX_ROTACC = 2.0
 
   /** PID gains */
   const val TRANSLATION_KP = .02

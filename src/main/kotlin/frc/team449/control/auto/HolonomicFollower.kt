@@ -18,6 +18,7 @@ class HolonomicFollower(
   maxRotVel: Double,
   maxRotAcc: Double
 ) : CommandBase() {
+
   private val timer = Timer()
   private var prevTime = 0.0
 
@@ -30,17 +31,20 @@ class HolonomicFollower(
   private val controller = HolonomicDriveController(
     xController, yController, thetaController
   )
+
+  init {
+    thetaController.enableContinuousInput(.0, 2 * PI)
+  }
+
   override fun initialize() {
-    thetaController.enableContinuousInput(0.0, PI * 2)
+    if (resetPose) {
+      drivetrain.pose = trajectory.initialPose
+    }
 
     xController.reset()
     yController.reset()
     thetaController.reset(drivetrain.pose.rotation.radians)
     timer.reset()
-
-    if (resetPose) {
-      drivetrain.pose = trajectory.initialPose
-    }
 
     timer.start()
   }
