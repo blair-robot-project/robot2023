@@ -1,7 +1,10 @@
 package frc.team449.control.auto
 
+import com.pathplanner.lib.PathPlannerTrajectory
+import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
@@ -10,44 +13,54 @@ import kotlin.math.PI
 
 class HolonomicFollower(
   private val drivetrain: HolonomicDrive,
-  private val trajectory: SwerveTrajectory,
-  private val resetPose: Boolean
+  private val trajectory: PathPlannerTrajectory,
+  private val resetPose: Boolean,
+  maxRotVel: Double,
+  maxRotAcc: Double
 ) : CommandBase() {
   private val timer = Timer()
   private var prevTime = 0.0
 
   private var xController = PIDController(AutoConstants.TRANSLATION_KP, .0, .0)
   private var yController = PIDController(AutoConstants.TRANSLATION_KP, .0, .0)
-  private var thetaController = PIDController(AutoConstants.ROTATION_KP, .0, .0)
-
+  private var thetaController = ProfiledPIDController(
+    AutoConstants.ROTATION_KP, .0, .0,
+    TrapezoidProfile.Constraints(maxRotVel, maxRotAcc)
+  )
+  private val controller = HolonomicDriveController(
+    xController, yController, thetaController
+  )
   override fun initialize() {
     thetaController.enableContinuousInput(0.0, PI * 2)
-    timer.start()
+
+    xController.reset()
+    yController.reset()
+    thetaController.reset(drivetrain.pose.rotation.radians)
+    timer.reset()
+
     if (resetPose) {
-      drivetrain.pose = trajectory.getInitialPose()
+      drivetrain.pose = trajectory.initialPose
     }
+
+    timer.start()
   }
 
   override fun execute() {
     val currTime = timer.get()
-    val dt = currTime - prevTime
-    val reference = trajectory.sample(currTime)
+    val reference = trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
     val currentPose = drivetrain.pose
 
-    val vx = xController.calculate(currentPose.x, reference.pose.x)
-    val vy = yController.calculate(currentPose.y, reference.pose.y)
-    val omega = -thetaController.calculate(currentPose.rotation.radians, dt) - reference.velocity.z
-
-    drivetrain.set(ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, omega, drivetrain.heading))
+    drivetrain.set(controller.calculate(currentPose, reference.poseMeters, reference.velocityMetersPerSecond, reference.holonomicRotation))
 
     prevTime = currTime
   }
 
   override fun isFinished(): Boolean {
-    return timer.hasElapsed(trajectory.getTotalTime())
+    return timer.hasElapsed(trajectory.totalTimeSeconds)
   }
 
   override fun end(interrupted: Boolean) {
+    timer.stop()
     drivetrain.stop()
   }
 }
