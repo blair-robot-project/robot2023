@@ -56,7 +56,7 @@ object DriveConstants {
 
   /** Location of the front left module */
   val FRONT_LEFT_LOC = Translation2d(
-    Units.inchesToMeters(24.0) / 2,
-    Units.inchesToMeters(24.0) / 2
+    Units.inchesToMeters(18.75) / 2,
+    Units.inchesToMeters(18.75) / 2
   )
 }

@@ -159,7 +159,6 @@ class RobotContainer2022() : RobotContainerBase() {
   private fun addRoutines(): SendableChooser<AutoRoutine> {
     val chooser = SendableChooser<AutoRoutine>()
     val exampleAuto = Example("Example", drive)
-//    val wpilibAuto = Pose2dAuto(drive, 2.0, 2.0)
     chooser.setDefaultOption("Example Auto", exampleAuto.routine())
 
     return chooser
@@ -173,7 +172,6 @@ class RobotContainer2022() : RobotContainerBase() {
   }
 
   override fun simulationInit() {
-    // DriverStationSim.setEnabled(true)
   }
 
   override fun simulationPeriodic() {

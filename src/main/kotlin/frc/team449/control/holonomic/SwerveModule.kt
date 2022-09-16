@@ -23,7 +23,7 @@ open class SwerveModule constructor(
 ) : Loggable {
   init {
     turnController.enableContinuousInput(.0, 2 * PI)
-    turnController.setTolerance(.1) // Tolerate the noise from the encoders, ~.08 - .09
+    turnController.setTolerance(.1) /** Tolerate the noise from the encoders, ~.08 - .09 */
     driveController.reset()
     turnController.reset()
   }
@@ -112,8 +112,8 @@ open class SwerveModule constructor(
 }
 
 /**
- * A "simulated" swerve module that just pretends it immediately got to whatever desired state was
- * given
+ * A "simulated" swerve module that just pretends
+ * it immediately got to whatever desired state was given
  */
 class SwerveModuleSim(
   name: String,
