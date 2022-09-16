@@ -53,7 +53,7 @@ object DriveConstants {
   const val TURN_UPR = 2 * Math.PI * 1
   const val MAX_LINEAR_SPEED = 4.0
   const val MAX_ROT_SPEED = 2.5
-
+  const val MAX_ATTAINABLE_MK4I_SPEED = 4.267
   /** Location of the front left module */
   val FRONT_LEFT_LOC = Translation2d(
     Units.inchesToMeters(18.75) / 2,

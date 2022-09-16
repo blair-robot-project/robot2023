@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.annotations.Log
@@ -61,9 +62,11 @@ open class SwerveDrive(
     val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
 
+    /** If any module is going faster than the max speed,
+     *  apply scaling down */
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      4.267
+      DriveConstants.MAX_ATTAINABLE_MK4I_SPEED
     )
 
     for (i in this.modules.indices) {

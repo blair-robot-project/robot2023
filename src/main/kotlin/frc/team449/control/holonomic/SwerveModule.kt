@@ -12,6 +12,16 @@ import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
 import kotlin.math.abs
 
+/**
+ * @param name the name of the module (relevant for logging)
+ * @param drivingMotor the motor that controls the speed of the module
+ * @param turningMotor the motor that controls the turning(angle) of the module
+ * @param driveController the velocity control PID for speed of the module
+ * @param turnController the position control PID for turning(angle) of the module
+ * @param driveFeedforward voltage predicting equation for a specified speed of the module
+ * @param location the location of the module in reference to the center of the robot
+ * NOTE: In relation to the robot [+X is forward, +Y is left, and +THETA is Counter Clock-Wise].
+ */
 open class SwerveModule constructor(
   private val name: String,
   private val drivingMotor: WrappedMotor,
@@ -23,7 +33,8 @@ open class SwerveModule constructor(
 ) : Loggable {
   init {
     turnController.enableContinuousInput(.0, 2 * PI)
-    turnController.setTolerance(.1) /** Tolerate the noise from the encoders, ~.08 - .09 */
+    /** Tolerate the noise from the encoders, ~.08 - .09 */
+    turnController.setTolerance(.1)
     driveController.reset()
     turnController.reset()
   }
@@ -41,11 +52,11 @@ open class SwerveModule constructor(
       )
     }
     set(desiredState) {
-      // Ensure the module doesn't turn the long way around
       if (abs(desiredState.speedMetersPerSecond) < .001) {
         stop()
         return
       }
+      /** Ensure the module doesn't turn the long way around */
       val state = SwerveModuleState.optimize(
         desiredState,
         Rotation2d(turningMotor.position)
@@ -66,6 +77,7 @@ open class SwerveModule constructor(
       desiredSpeed
     )
     val driveFF = driveFeedforward.calculate(desiredSpeed)
+
     drivingMotor.setVoltage(drivePid + driveFF)
 
     val turnPid = turnController.calculate(
