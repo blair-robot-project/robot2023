@@ -88,6 +88,11 @@ open class SwerveModule constructor(
     turningMotor.set(turnPid)
   }
 
+  /**
+   * Creates a simulated or a real robot based
+   * on if the robot is being simulated.
+   * @see SwerveModule for parameter description
+   */
   companion object {
     fun create(
       name: String,

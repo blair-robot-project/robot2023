@@ -14,6 +14,12 @@ import frc.team449.system.AHRS
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.annotations.Log
 
+/**
+ * @param modules the list of swerve modules on this drivetrain
+ * @param ahrs the gyro that is mounted on the chassis
+ * @param maxLinearSpeed the maximum translation speed of the chassis.
+ * @param maxRotSpeed the maximum rotation speed of the chassis
+ */
 open class SwerveDrive(
   private val modules: List<SwerveModule>,
   val ahrs: AHRS,

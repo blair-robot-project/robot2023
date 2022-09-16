@@ -4,6 +4,10 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.Timer.getFPGATimestamp
 import frc.team449.system.AHRS
 
+/**
+ * A "simulated" version of the swerve drive
+ * Incrementally sums up
+ */
 class SwerveSim(
   modules: List<SwerveModule>,
   ahrs: AHRS,
