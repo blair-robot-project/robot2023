@@ -45,11 +45,11 @@ class RobotContainer2022() : RobotContainerBase() {
 
   override val oi = OIHolonomic(
     drive,
-    { if (abs(driveController.leftY) < .08) .0 else driveController.leftY },
-    { if (abs(driveController.leftX) < .08) .0 else driveController.leftX },
-    { if (abs(driveController.getRawAxis(4)) < .02) .0 else driveController.getRawAxis(4) },
-    SlewRateLimiter(1.5),
-    2.5,
+    { if (abs(driveController.leftY) < .08) .0 else -driveController.leftY },
+    { if (abs(driveController.leftX) < .08) .0 else -driveController.leftX },
+    { if (abs(driveController.getRawAxis(4)) < .02) .0 else -driveController.getRawAxis(4) },
+    SlewRateLimiter(10.5),
+    4.5,
     true
   )
 
@@ -152,17 +152,13 @@ class RobotContainer2022() : RobotContainerBase() {
       ),
       DriveConstants.FRONT_LEFT_LOC,
       { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) },
-      {
-        PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD)
-      },
-      SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
-      SimpleMotorFeedforward(DriveConstants.TURN_KS, DriveConstants.TURN_KV, DriveConstants.TURN_KA)
+      { PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD) },
+      SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA)
     )
 
   private fun addRoutines(): SendableChooser<AutoRoutine> {
     val chooser = SendableChooser<AutoRoutine>()
     val exampleAuto = Example("Example", drive)
-//    val wpilibAuto = Pose2dAuto(drive, 2.0, 2.0)
     chooser.setDefaultOption("Example Auto", exampleAuto.routine())
 
     return chooser
@@ -176,7 +172,6 @@ class RobotContainer2022() : RobotContainerBase() {
   }
 
   override fun simulationInit() {
-    // DriverStationSim.setEnabled(true)
   }
 
   override fun simulationPeriodic() {

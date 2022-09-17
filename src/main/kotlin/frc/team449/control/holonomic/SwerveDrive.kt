@@ -9,10 +9,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.annotations.Log
 
+/**
+ * @param modules the list of swerve modules on this drivetrain
+ * @param ahrs the gyro that is mounted on the chassis
+ * @param maxLinearSpeed the maximum translation speed of the chassis.
+ * @param maxRotSpeed the maximum rotation speed of the chassis
+ */
 open class SwerveDrive(
   private val modules: List<SwerveModule>,
   val ahrs: AHRS,
@@ -61,9 +68,11 @@ open class SwerveDrive(
     val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
 
+    /** If any module is going faster than the max speed,
+     *  apply scaling down */
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      4.267
+      DriveConstants.MAX_ATTAINABLE_MK4I_SPEED
     )
 
     for (i in this.modules.indices) {
@@ -118,8 +127,7 @@ open class SwerveDrive(
       frontLeftLocation: Translation2d,
       driveMotorController: () -> PIDController,
       turnMotorController: () -> PIDController,
-      driveFeedforward: SimpleMotorFeedforward,
-      turnFeedforward: SimpleMotorFeedforward
+      driveFeedforward: SimpleMotorFeedforward
     ): SwerveDrive {
       val modules = listOf(
         SwerveModule.create(
@@ -129,7 +137,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation
         ),
         SwerveModule.create(
@@ -139,7 +146,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation.rotateBy(Rotation2d.fromDegrees(-90.0))
         ),
         SwerveModule.create(
@@ -149,7 +155,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation.rotateBy(Rotation2d.fromDegrees(90.0))
         ),
         SwerveModule.create(
@@ -159,7 +164,6 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
           frontLeftLocation.rotateBy(Rotation2d.fromDegrees(180.0))
         )
       )

@@ -50,7 +50,6 @@ class OIHolonomic(
 
   private var prevTime = Double.NaN
 
-  // todo Remove these soon, only for logging
   private var dx = 0.0
   private var dy = 0.0
   private var magAcc = 0.0

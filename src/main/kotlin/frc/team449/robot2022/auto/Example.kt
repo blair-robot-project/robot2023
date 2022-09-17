@@ -3,13 +3,8 @@ package frc.team449.robot2022.auto
 import com.pathplanner.lib.PathPlanner
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
-import frc.team449.control.auto.AutoDriveCommand
-import frc.team449.control.auto.AutoRoutine
-import frc.team449.control.auto.AutoUtils
+import frc.team449.control.auto.*
 import frc.team449.control.holonomic.HolonomicDrive
-import frc.team449.robot2022.auto.AutoConstants.ROT_CONTROLLER
-import frc.team449.robot2022.auto.AutoConstants.xController
-import frc.team449.robot2022.auto.AutoConstants.yController
 
 class Example(
   private val trajFileName: String,
@@ -20,17 +15,12 @@ class Example(
     val traj = PathPlanner.loadPath(trajFileName, AutoConstants.MAX_VEL, AutoConstants.MAX_ACC)
 
     val cmd = ParallelCommandGroup(
-      InstantCommand({ // reset before driving
-        xController.reset()
-        yController.reset()
-        ROT_CONTROLLER.reset(traj.initialPose.rotation.radians)
-      }).andThen(
-        AutoDriveCommand.holonomicDriveCommand(
-          drive,
-          traj,
-          AutoConstants.controller,
-          true
-        )
+      HolonomicFollower(
+        drive,
+        traj,
+        true,
+        AutoConstants.MAX_ROTVEL,
+        AutoConstants.MAX_ROTACC
       ),
       // Doing other stuff commands
       AutoUtils.autoSequence(
