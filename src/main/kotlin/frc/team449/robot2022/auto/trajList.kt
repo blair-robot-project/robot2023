@@ -1,7 +1,6 @@
 package frc.team449.robot2022.auto
 
 import com.pathplanner.lib.PathPlanner
-import frc.team449.robot2022.drive.DriveConstants
 
 object trajList {
 
@@ -11,5 +10,4 @@ object trajList {
       AutoConstants.MAX_VEL,
       AutoConstants.MAX_ACC
     )
-
 }

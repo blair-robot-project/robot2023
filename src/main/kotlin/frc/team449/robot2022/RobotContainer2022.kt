@@ -47,7 +47,7 @@ class RobotContainer2022() : RobotContainerBase() {
     drive,
     { if (abs(driveController.leftY) < .08) .0 else -driveController.leftY },
     { if (abs(driveController.leftX) < .08) .0 else -driveController.leftX },
-    { if (abs(driveController.getRawAxis(4)) < .02) .0 else -driveController.getRawAxis(4) },
+    { if (abs(driveController.getRawAxis(4)) < .07) .0 else -driveController.getRawAxis(4) },
     SlewRateLimiter(10.5),
     4.5,
     true
