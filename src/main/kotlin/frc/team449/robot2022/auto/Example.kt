@@ -1,22 +1,20 @@
 package frc.team449.robot2022.auto
 
-import com.pathplanner.lib.PathPlanner
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import frc.team449.control.auto.*
-import frc.team449.control.holonomic.HolonomicDrive
+import frc.team449.robot2022.RobotContainer2022
 
 class Example(
-  private val trajFileName: String,
-  private val drive: HolonomicDrive
+  private val robot: RobotContainer2022
 ) {
 
   fun routine(): AutoRoutine {
-    val traj = PathPlanner.loadPath(trajFileName, AutoConstants.MAX_VEL, AutoConstants.MAX_ACC)
+    val traj = Paths.FIVE_BALL
 
     val cmd = ParallelCommandGroup(
       HolonomicFollower(
-        drive,
+        robot.drive,
         traj,
         true,
         AutoConstants.MAX_ROTVEL,

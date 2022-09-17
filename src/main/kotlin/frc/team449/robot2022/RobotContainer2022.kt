@@ -24,8 +24,8 @@ import kotlin.math.abs
 class RobotContainer2022() : RobotContainerBase() {
 
   // Other CAN IDs
-  val PDP_CAN = 1
-  val PCM_MODULE = 0
+  private val PDP_CAN = 1
+  private val PCM_MODULE = 0
 
   private val driveController = XboxController(0)
 
@@ -50,7 +50,7 @@ class RobotContainer2022() : RobotContainerBase() {
     { if (abs(driveController.getRawAxis(4)) < .07) .0 else -driveController.getRawAxis(4) },
     SlewRateLimiter(10.5),
     4.5,
-    true
+    { true }
   )
 
   /** Helper to make turning motors for swerve */
@@ -94,7 +94,7 @@ class RobotContainer2022() : RobotContainerBase() {
     )
 
   private fun createDrivetrain() =
-    SwerveDrive.squareDrive(
+    SwerveDrive.swerveDrive(
       ahrs,
       DriveConstants.MAX_LINEAR_SPEED,
       DriveConstants.MAX_ROT_SPEED,
@@ -150,7 +150,8 @@ class RobotContainer2022() : RobotContainerBase() {
         DriveConstants.TURN_ENC_CHAN_BR,
         DriveConstants.TURN_ENC_OFFSET_BR
       ),
-      DriveConstants.FRONT_LEFT_LOC,
+      DriveConstants.WHEELBASE,
+      DriveConstants.TRACKWIDTH,
       { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) },
       { PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD) },
       SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA)
@@ -158,7 +159,7 @@ class RobotContainer2022() : RobotContainerBase() {
 
   private fun addRoutines(): SendableChooser<AutoRoutine> {
     val chooser = SendableChooser<AutoRoutine>()
-    val exampleAuto = Example("Example", drive)
+    val exampleAuto = Example(this)
     chooser.setDefaultOption("Example Auto", exampleAuto.routine())
 
     return chooser

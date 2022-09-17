@@ -31,7 +31,7 @@ open class SwerveDrive(
     ahrs.calibrate()
     ahrs.reset()
   }
-  val kinematics = SwerveDriveKinematics(
+  private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
@@ -91,7 +91,7 @@ open class SwerveDrive(
 
   companion object {
     /**
-     * Create a square swerve drivetrain
+     * Create a swerve drivetrain
      *
      * @param ahrs Gyro used for robot heading
      * @param maxLinearSpeed Max speed (m/s) at which the robot can translate
@@ -104,15 +104,13 @@ open class SwerveDrive(
      * @param frontRightTurnMotor
      * @param backLeftTurnMotor
      * @param backRightTurnMotor
-     * @param frontLeftLocation Location of the front left module
-     * @param driveMotorController Supplier to make copies of the same driving PID controllers for all
-     *     the modules
-     * @param turnMotorController Supplier to make copies of the same turning PID controllers for all
-     *     the modules
+     * @param wheelbase the length of the sides of the robot measured from the center of the wheels
+     * @param trackwidth the length of the front and back of the robot measured from center of wheels
+     * @param driveMotorController Supplier to make copies of the same driving PID controllers for all the modules
+     * @param turnMotorController Supplier to make copies of the same turning PID controllers for all the modules
      * @param driveFeedforward Driving feedforward for all the modules
-     * @param turnFeedforward Turning feedforward for all the modules
      */
-    fun squareDrive(
+    fun swerveDrive(
       ahrs: AHRS,
       maxLinearSpeed: Double,
       maxRotSpeed: Double,
@@ -124,7 +122,8 @@ open class SwerveDrive(
       frontRightTurnMotor: WrappedMotor,
       backLeftTurnMotor: WrappedMotor,
       backRightTurnMotor: WrappedMotor,
-      frontLeftLocation: Translation2d,
+      wheelbase: Double,
+      trackwidth: Double,
       driveMotorController: () -> PIDController,
       turnMotorController: () -> PIDController,
       driveFeedforward: SimpleMotorFeedforward
@@ -137,7 +136,7 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          frontLeftLocation
+          Translation2d(wheelbase / 2, trackwidth / 2)
         ),
         SwerveModule.create(
           "FRModule",
@@ -146,7 +145,7 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(-90.0))
+          Translation2d(wheelbase / 2, - trackwidth / 2)
         ),
         SwerveModule.create(
           "BLModule",
@@ -155,7 +154,7 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(90.0))
+          Translation2d(- wheelbase / 2, trackwidth / 2)
         ),
         SwerveModule.create(
           "BRModule",
@@ -164,7 +163,7 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(180.0))
+          Translation2d(- wheelbase / 2, - trackwidth / 2)
         )
       )
       return SwerveDrive(

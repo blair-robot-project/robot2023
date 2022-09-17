@@ -37,7 +37,7 @@ class OIHolonomic(
   private val rotThrottle: DoubleSupplier,
   private val rotRamp: SlewRateLimiter,
   private val maxAccel: Double,
-  private val fieldOriented: Boolean
+  private val fieldOriented: () -> Boolean
 ) : OI, Loggable, Sendable {
 
   /** Previous x velocity (scaled and clamped) */
@@ -60,15 +60,15 @@ class OIHolonomic(
    * @return The [ChassisSpeeds] for the given x, y and
    * rotation input from the joystick */
   override fun get(): ChassisSpeeds {
-    var currTime = Timer.getFPGATimestamp()
+    val currTime = Timer.getFPGATimestamp()
     if (this.prevTime.isNaN()) {
       this.prevTime = currTime - 0.02
     }
     this.dt = currTime - prevTime
     this.prevTime = currTime
 
-    var xScaled = xThrottle.asDouble * drive.maxLinearSpeed
-    var yScaled = yThrottle.asDouble * drive.maxLinearSpeed
+    val xScaled = xThrottle.asDouble * drive.maxLinearSpeed
+    val yScaled = yThrottle.asDouble * drive.maxLinearSpeed
 
     // Clamp the acceleration
     this.dx = xScaled - this.prevX
@@ -77,19 +77,19 @@ class OIHolonomic(
     this.magAccClamped = MathUtil.clamp(magAcc, -this.maxAccel, this.maxAccel)
 
     // Scale the change in x and y the same as the acceleration
-    var factor = if (magAcc == 0.0) 0.0 else magAccClamped / magAcc
-    var dxClamped = dx * factor
-    var dyClamped = dy * factor
-    var xClamped = prevX + dxClamped
-    var yClamped = prevY + dyClamped
+    val factor = if (magAcc == 0.0) 0.0 else magAccClamped / magAcc
+    val dxClamped = dx * factor
+    val dyClamped = dy * factor
+    val xClamped = prevX + dxClamped
+    val yClamped = prevY + dyClamped
 
     this.prevX = xClamped
     this.prevY = yClamped
 
-    var rotRaw = rotThrottle.asDouble
-    var rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
+    val rotRaw = rotThrottle.asDouble
+    val rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
 
-    return if (this.fieldOriented) {
+    return if (this.fieldOriented()) {
       ChassisSpeeds.fromFieldRelativeSpeeds(
         xClamped,
         yClamped,
