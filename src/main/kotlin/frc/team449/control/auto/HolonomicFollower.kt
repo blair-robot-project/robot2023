@@ -69,6 +69,11 @@ class HolonomicFollower(
   }
 
   override fun isFinished(): Boolean {
+    if (resetPose) {
+      var start = trajectory.endState as PathPlannerTrajectory.PathPlannerState
+      drivetrain.pose = Pose2d(start.poseMeters.x, start.poseMeters.y, start.holonomicRotation)
+    }
+    // TODO: Figure out the reset of gyro
     return timer.hasElapsed(trajectory.totalTimeSeconds)
   }
 

@@ -158,7 +158,7 @@ class RobotContainer2022() : RobotContainerBase() {
 
   private fun addRoutines(): SendableChooser<AutoRoutine> {
     val chooser = SendableChooser<AutoRoutine>()
-    val exampleAuto = Example("Example", drive)
+    val exampleAuto = Example("wishes", drive)
     chooser.setDefaultOption("Example Auto", exampleAuto.routine())
 
     return chooser

@@ -57,6 +57,7 @@ open class SwerveDrive(
       return this.odometry.poseMeters
     }
     set(value) {
+      ahrs.heading = value.rotation
       this.odometry.resetPosition(value, heading)
     }
 
