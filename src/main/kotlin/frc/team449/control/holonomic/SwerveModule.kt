@@ -39,6 +39,7 @@ open class SwerveModule constructor(
     turnController.reset()
   }
 
+  @Log.Graph
   private var desiredSpeed = 0.0
   @Log
   private var desiredAngle = turningMotor.position
@@ -61,8 +62,9 @@ open class SwerveModule constructor(
         desiredState,
         Rotation2d(turningMotor.position)
       )
-      desiredAngle = state.angle.radians
+      turnController.setpoint = state.angle.radians
       desiredSpeed = state.speedMetersPerSecond
+      driveController.setpoint = state.speedMetersPerSecond
     }
 
   fun stop() {
@@ -73,16 +75,14 @@ open class SwerveModule constructor(
 
   fun update() {
     val drivePid = driveController.calculate(
-      drivingMotor.velocity,
-      desiredSpeed
+      drivingMotor.velocity
     )
     val driveFF = driveFeedforward.calculate(desiredSpeed)
 
     drivingMotor.setVoltage(drivePid + driveFF)
 
     val turnPid = turnController.calculate(
-      turningMotor.position,
-      desiredAngle
+      turningMotor.position
     )
 
     turningMotor.set(turnPid)

@@ -33,7 +33,7 @@ object DriveConstants {
   const val TURN_KA = 0.027521
 
   /** PID gains for turning each module*/
-  const val TURN_KP = 0.9
+  const val TURN_KP = 0.7
   const val TURN_KI = 0.0
   const val TURN_KD = 0.0
 
@@ -43,14 +43,14 @@ object DriveConstants {
   const val DRIVE_KA = 0.2595
 
   /** PID gains for driving each module*/
-  const val DRIVE_KP = 0.07
+  const val DRIVE_KP = 0.3
   const val DRIVE_KI = 0.0
   const val DRIVE_KD = 0.0
 
   /** Drive configuration */
-  const val DRIVE_GEARING = 1 / 5.86
-  const val DRIVE_UPR = 0.3021211527151539
-  const val TURN_UPR = 2 * Math.PI * 1
+  const val DRIVE_GEARING = 1 / 6.75
+  const val DRIVE_UPR = 0.319185814
+  const val TURN_UPR = 2 * Math.PI
   const val MAX_LINEAR_SPEED = 4.0
   const val MAX_ROT_SPEED = 2.5
   const val MAX_ATTAINABLE_MK4I_SPEED = 4.267
@@ -59,4 +59,7 @@ object DriveConstants {
     Units.inchesToMeters(18.75) / 2,
     Units.inchesToMeters(18.75) / 2
   )
+
+  val WHEELBASE = Units.inchesToMeters(18.75)
+  val TRACKWIDTH = Units.inchesToMeters(18.75)
 }

@@ -40,6 +40,21 @@ open class SwerveDrive(
 
   @Log.ToString
   var desiredSpeeds = ChassisSpeeds()
+  @Log.Graph
+  var desiredSpeedsX = 0.0
+  @Log.Graph
+  var desiredSpeedsY = 0.0
+  @Log.Graph
+  var desiredSpeedsOmega = 0.0
+
+  @Log.ToString
+  var actualSpeeds = ChassisSpeeds()
+  @Log.Graph
+  var actualSpeedsX = 0.0
+  @Log.Graph
+  var actualSpeedsY = 0.0
+  @Log.Graph
+  var actualSpeedsOmega = 0.0
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
@@ -57,7 +72,6 @@ open class SwerveDrive(
       return this.odometry.poseMeters
     }
     set(value) {
-      ahrs.heading = value.rotation
       this.odometry.resetPosition(value, heading)
     }
 
@@ -66,6 +80,9 @@ open class SwerveDrive(
   }
 
   override fun periodic() {
+    desiredSpeedsX = desiredSpeeds.vxMetersPerSecond
+    desiredSpeedsY = desiredSpeeds.vyMetersPerSecond
+    desiredSpeedsOmega = desiredSpeeds.omegaRadiansPerSecond
     val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
 
@@ -88,6 +105,14 @@ open class SwerveDrive(
 
     for (module in modules)
       module.update()
+
+    actualSpeeds = kinematics.toChassisSpeeds(
+      *this.modules
+        .map { it.state }.toTypedArray()
+    )
+    actualSpeedsX = actualSpeeds.vxMetersPerSecond
+    actualSpeedsY = actualSpeeds.vyMetersPerSecond
+    actualSpeedsOmega = actualSpeeds.omegaRadiansPerSecond
   }
 
   companion object {

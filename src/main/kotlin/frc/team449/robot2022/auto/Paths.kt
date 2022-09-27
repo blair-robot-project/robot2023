@@ -6,7 +6,7 @@ object Paths {
 
   val TEST =
     PathPlanner.loadPath(
-      "example",
+      "Simple",
       AutoConstants.MAX_VEL,
       AutoConstants.MAX_ACC
     )
