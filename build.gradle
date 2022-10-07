@@ -1,10 +1,10 @@
 plugins {
-    id "java"
-    id "idea"
-    id "org.jetbrains.kotlin.jvm" version "1.6.21"
-    id "edu.wpi.first.GradleRIO" version "2022.4.1"
-    id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
-    id "org.jetbrains.dokka" version "1.6.20"
+  id "java"
+  id "idea"
+  id "org.jetbrains.kotlin.jvm" version "1.6.21"
+  id "edu.wpi.first.GradleRIO" version "2022.4.1"
+  id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
+  id "org.jetbrains.dokka" version "1.6.20"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -15,60 +15,58 @@ def ROBOT_MAIN_CLASS = "frc.team449.Main"
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
-    targets {
-        roborio(getTargetTypeClass('RoboRIO')) {
-            // Team number is loaded either from the .wpilib/wpilib_preferences.json
-            // or from command line. If not found an exception will be thrown.
-            // You can use getTeamOrDefault(team) instead of getTeamNumber if you
-            // want to store a team number in this file.
-            team = project.frc.getTeamOrDefault(449)
-            debug = project.frc.getDebugOrDefault(false)
+  targets {
+    roborio(getTargetTypeClass('RoboRIO')) {
+      // Team number is loaded either from the .wpilib/wpilib_preferences.json
+      // or from command line. If not found an exception will be thrown.
+      // You can use getTeamOrDefault(team) instead of getTeamNumber if you
+      // want to store a team number in this file.
+      team = project.frc.getTeamOrDefault(449)
+      debug = project.frc.getDebugOrDefault(false)
 
-            artifacts {
-                // First part is artifact name, 2nd is artifact type
-                // getTargetTypeClass is a shortcut to get the class type using a string
+      artifacts {
+        // First part is artifact name, 2nd is artifact type
+        // getTargetTypeClass is a shortcut to get the class type using a string
 
-                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                }
-
-                // Static files artifact
-                frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
-                    files = project.fileTree('src/main/deploy')
-                    directory = '/home/lvuser/deploy'
-                }
-            }
+        frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
         }
+
+        // Static files artifact
+        frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
+          files = project.fileTree('src/main/deploy')
+          directory = '/home/lvuser/deploy'
+        }
+      }
     }
+  }
 }
 
 def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
+  testImplementation 'junit:junit:4.13.2'
 
-    compileOnly 'org.jetbrains:annotations:23.0.0'
+  compileOnly 'org.jetbrains:annotations:23.0.0'
 
-    implementation 'com.github.Oblarg:Oblog:3.1.2'
+  implementation 'com.github.Oblarg:Oblog:3.1.2'
 
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.20")
+  implementation wpi.java.deps.wpilib()
+  implementation wpi.java.vendor.java()
 
-    implementation wpi.java.deps.wpilib()
-    implementation wpi.java.vendor.java()
+  roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
+  roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
 
-    roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
-    roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
+  roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
+  roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
 
-    roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
-    roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
+  nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
+  nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
+  simulationDebug wpi.sim.enableDebug()
 
-    nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
-    nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
-    simulationDebug wpi.sim.enableDebug()
-
-    nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
-    nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
-    simulationRelease wpi.sim.enableRelease()
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+  nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
+  nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
+  simulationRelease wpi.sim.enableRelease()
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib'
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -88,47 +86,70 @@ wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
 repositories {
-    maven { url 'https://jitpack.io' }
-    mavenCentral()
+  mavenCentral()
+  maven { url 'https://jitpack.io' }
 }
 
 sourceSets {
-    main.java.srcDirs = ['src/main/java']
-    main.kotlin.srcDirs = ['src/main/java', 'src/main/kotlin']
-    main.resources.srcDirs = ['src/main/resources']
+  main.java.srcDirs = ['src/main/java']
+  main.kotlin.srcDirs = ['src/main/java', 'src/main/kotlin']
+  main.resources.srcDirs = ['src/main/resources']
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.
 jar {
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+  from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+  manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+  duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 wrapper {
-    gradleVersion = '7.4.2'
+  gradleVersion = '7.4.2'
 }
 
 compileJava {
-    options.compilerArgs += ['-parameters', '-Xlint']
-    options.incremental = true
+  options.compilerArgs += ['-parameters', '-Xlint']
+  options.incremental = true
 }
 
 ktlint {
-    version = "0.45.2"
+  version = "0.45.2"
 }
 
 // pre-commit hook to format
 tasks.register('updateGitHooks', Copy) {
-    from './scripts/pre-commit'
-    into './.git/hooks'
+  from './scripts/pre-commit'
+  into './.git/hooks'
 }
 
 compileKotlin {
-    kotlinOptions {
-        jvmTarget = "11"
+  kotlinOptions {
+    jvmTarget = "11"
+  }
+  dependsOn updateGitHooks
+}
+
+dokkaHtml.configure {
+  dokkaSourceSets {
+    all {
+      jdkVersion.set(11)
+      platform.set(org.jetbrains.dokka.Platform.jvm)
+
+      sourceLink {
+        localDirectory.set(file("src/main/kotlin"))
+        remoteUrl.set(new URL(
+            "https://github.com/blair-robot-project/framework2022/blob/main/src/main/kotlin"))
+        remoteLineSuffix.set("#L")
+      }
+
+      externalDocumentationLink {
+        url.set(new URL("https://first.wpi.edu/wpilib/allwpilib/docs/release/java/"))
+      }
+
+      pluginsMapConfiguration.set([
+          "org.jetbrains.dokka.base.DokkaBase": '{"separateInheritedMembers": true}'])
     }
-    dependsOn updateGitHooks
+  }
 }
