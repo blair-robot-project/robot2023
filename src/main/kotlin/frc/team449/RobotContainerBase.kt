@@ -34,21 +34,13 @@ abstract class RobotContainerBase {
 
   open fun teleopInit() {}
 
-  open fun teleopPeriodic() {
-    drive.set(oi.get())
-    drive.periodic()
-  }
+  open fun teleopPeriodic() {}
 
-  open fun autonomousInit() {
-  }
+  open fun autonomousInit() {}
 
-  open fun simulationInit() {
-  }
+  open fun simulationInit() {}
 
   open fun simulationPeriodic() {
-//    if (driveSim != null) {
-//      driveSim!!.update()
-    //    } // TODO Swerve Drive SIM
     simBattery.update()
   }
 
