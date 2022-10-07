@@ -97,14 +97,14 @@ open class SwerveDrive(
       this.modules[i].state = desiredModuleStates[i]
     }
 
+    for (module in modules)
+      module.update()
+
     this.odometry.update(
       heading,
       *this.modules
         .map { it.state }.toTypedArray()
     )
-
-    for (module in modules)
-      module.update()
 
     actualSpeeds = kinematics.toChassisSpeeds(
       *this.modules
