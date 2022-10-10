@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.Timer
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
@@ -41,8 +42,7 @@ open class SwerveModule constructor(
 
   @Log.Graph
   private var desiredSpeed = 0.0
-  @Log
-  private var desiredAngle = turningMotor.position
+  private var prevTime = Double.NaN
 
   open var state: SwerveModuleState
     @Log.ToString
@@ -68,23 +68,30 @@ open class SwerveModule constructor(
     }
 
   fun stop() {
-    desiredAngle = turningMotor.position
+    turnController.setpoint = turningMotor.position
     desiredSpeed = 0.0
   }
   override fun configureLogName() = this.name
 
   fun update() {
+    val currTime = Timer.getFPGATimestamp()
+    if (prevTime.isNaN())
+      prevTime = currTime - 0.02
+    val dt = currTime - prevTime
+
     val drivePid = driveController.calculate(
       drivingMotor.velocity
     )
-    val driveFF = driveFeedforward.calculate(desiredSpeed)
-
+    val driveFF = driveFeedforward.calculate(
+      drivingMotor.velocity,
+      desiredSpeed,
+      dt
+    )
     drivingMotor.setVoltage(drivePid + driveFF)
 
     val turnPid = turnController.calculate(
       turningMotor.position
     )
-
     turningMotor.set(turnPid)
   }
 
