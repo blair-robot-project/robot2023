@@ -34,8 +34,6 @@ open class SwerveModule constructor(
 ) : Loggable {
   init {
     turnController.enableContinuousInput(.0, 2 * PI)
-    /** Tolerate the noise from the encoders, ~.08 - .09 */
-    turnController.setTolerance(.1)
     driveController.reset()
     turnController.reset()
   }
