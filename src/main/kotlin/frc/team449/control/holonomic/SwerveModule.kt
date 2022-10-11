@@ -91,6 +91,7 @@ open class SwerveModule constructor(
       turningMotor.position
     )
     turningMotor.set(turnPid)
+    prevTime = currTime
   }
 
   /**
