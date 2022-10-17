@@ -7,13 +7,15 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.team449.control.auto.AutoChooser
 import frc.team449.robot2022.RobotContainer2022
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
 class Robot : TimedRobot() {
 
-  private val robotContainer: RobotContainerBase = RobotContainer2022()
+  private val robotContainer = RobotContainer2022()
+  private var autoChooser: AutoChooser = AutoChooser(robotContainer)
   private var autoCommand: Command? = null
 
   override fun robotInit() {
@@ -33,7 +35,7 @@ class Robot : TimedRobot() {
 
     SmartDashboard.putData(robotContainer.field)
 
-    SmartDashboard.putData(robotContainer.autoChooser)
+    SmartDashboard.putData(autoChooser)
   }
 
   override fun robotPeriodic() {
@@ -47,7 +49,7 @@ class Robot : TimedRobot() {
   }
 
   override fun autonomousInit() {
-    val routine = robotContainer.autoChooser.selected
+    val routine = autoChooser.selected
     if (routine != null) {
       this.autoCommand = routine.cmd
       CommandScheduler.getInstance().schedule(this.autoCommand)
