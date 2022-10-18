@@ -11,7 +11,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
+import frc.team449.system.encoder.AbsoluteEncoder
+import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.WrappedMotor
+import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 
 /**
@@ -174,6 +177,46 @@ open class SwerveDrive(
         maxRotSpeed
       )
     }
+
+    /** Helper to make turning motors for swerve */
+    fun makeDrivingMotor(
+      name: String,
+      motorId: Int,
+      inverted: Boolean
+    ) =
+      createSparkMax(
+        name = name + "Drive",
+        id = motorId,
+        enableBrakeMode = true,
+        inverted = inverted,
+        encCreator =
+        NEOEncoder.creator(
+          DriveConstants.DRIVE_UPR,
+          DriveConstants.DRIVE_GEARING
+        )
+      )
+
+    /** Helper to make turning motors for swerve */
+    fun makeTurningMotor(
+      name: String,
+      motorId: Int,
+      inverted: Boolean,
+      sensorPhase: Boolean,
+      encoderChannel: Int,
+      offset: Double
+    ) =
+      createSparkMax(
+        name = name + "Turn",
+        id = motorId,
+        enableBrakeMode = true,
+        inverted = inverted,
+        encCreator = AbsoluteEncoder.creator(
+          encoderChannel,
+          offset,
+          DriveConstants.TURN_UPR,
+          sensorPhase
+        )
+      )
 
     /**
      * @return the sim version of this drive
