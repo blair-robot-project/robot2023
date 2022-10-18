@@ -7,12 +7,9 @@ import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase.isReal
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.RobotContainerBase
-import frc.team449.control.auto.AutoRoutine
 import frc.team449.control.holonomic.OIHolonomic
 import frc.team449.control.holonomic.SwerveDrive
-import frc.team449.robot2022.auto.Example
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.AbsoluteEncoder
@@ -40,8 +37,6 @@ class RobotContainer2022() : RobotContainerBase() {
    */
   @Log.Include
   override val drive = if (isReal()) createDrivetrain() else SwerveDrive.simOf(createDrivetrain())
-
-  override val autoChooser = addRoutines()
 
   override val oi = OIHolonomic(
     drive,
@@ -156,13 +151,6 @@ class RobotContainer2022() : RobotContainerBase() {
       { PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD) },
       SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA)
     )
-
-  private fun addRoutines(): SendableChooser<AutoRoutine> {
-    val chooser = SendableChooser<AutoRoutine>()
-    val exampleAuto = Example(this)
-    chooser.setDefaultOption("Example Auto", exampleAuto.routine())
-    return chooser
-  }
 
   override fun teleopInit() {
     // todo Add button bindings here
