@@ -6,7 +6,7 @@ import frc.team449.system.AHRS
 
 /**
  * A "simulated" version of the swerve drive
- * Incrementally sums up
+ * Incrementally sums up heading
  */
 class SwerveSim(
   modules: List<SwerveModule>,

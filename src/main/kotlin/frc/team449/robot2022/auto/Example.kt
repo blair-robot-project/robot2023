@@ -20,16 +20,12 @@ class Example(
         traj,
         true,
         AutoConstants.MAX_ROTVEL,
-        AutoConstants.MAX_ROTACC,
-        0.02,
-        0.01,
-        1.0
+        AutoConstants.MAX_ROTACC
       ),
       // Doing other stuff commands
       AutoUtils.autoSequence(
         listOf(
-          1.0 to InstantCommand(),
-          2.0 to InstantCommand() // seconds 0 - 15 to command to execute at that time
+          1.0 to InstantCommand() // time(s) to command
         )
       )
     )

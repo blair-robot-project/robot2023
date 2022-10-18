@@ -43,7 +43,6 @@ open class SwerveModule constructor(
   private var prevTime = Double.NaN
 
   open var state: SwerveModuleState
-    @Log.ToString
     get() {
       return SwerveModuleState(
         drivingMotor.velocity,
@@ -55,7 +54,7 @@ open class SwerveModule constructor(
         stop()
         return
       }
-      /** Ensure the module doesn't turn the long way around */
+      /** Ensure the module doesn't turn the long way around (more than 90 deg) */
       val state = SwerveModuleState.optimize(
         desiredState,
         Rotation2d(turningMotor.position)
@@ -65,6 +64,7 @@ open class SwerveModule constructor(
       driveController.setpoint = state.speedMetersPerSecond
     }
 
+  /** Keep same direction of module but keep speed at zero */
   fun stop() {
     turnController.setpoint = turningMotor.position
     desiredSpeed = 0.0
@@ -72,11 +72,16 @@ open class SwerveModule constructor(
   override fun configureLogName() = this.name
 
   fun update() {
+    /** calculate difference in time from last updated time
+     *  to be used for obtaining what acceleration should
+     *  be fed to the module
+     **/
     val currTime = Timer.getFPGATimestamp()
     if (prevTime.isNaN())
       prevTime = currTime - 0.02
     val dt = currTime - prevTime
 
+    /** CONTROL speed of module */
     val drivePid = driveController.calculate(
       drivingMotor.velocity
     )
@@ -87,10 +92,12 @@ open class SwerveModule constructor(
     )
     drivingMotor.setVoltage(drivePid + driveFF)
 
+    /** CONTROL direction of module */
     val turnPid = turnController.calculate(
       turningMotor.position
     )
     turningMotor.set(turnPid)
+
     prevTime = currTime
   }
 

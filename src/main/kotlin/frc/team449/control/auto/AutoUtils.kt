@@ -47,26 +47,30 @@ object AutoUtils {
     return cmd
   }
   /**
-   * @param timeStamp List of commands paired with desired time after beginning auto they are to be scheduled
-   *
+   * @param timeStamp List of commands paired with their start times with t = 0 being when auto starts
+   * @return [SequentialCommandGroup] of the commands given with the time fitting in 15 seconds
    */
   fun autoSequence(
-    timeStamp: List<Pair<Double, Command>> // need a list of Time mapped to Commands to do in auto
+    timeStamp: List<Pair<Double, Command>>
   ): SequentialCommandGroup {
+    /** Collection of the pairs, ascending by timestamp **/
     val queue = PriorityQueue<Pair<Double, Command>>(
       timeStamp.size
     ) { o1, o2 ->
       val a = o1.first
       val b = o2.first
-      if (a >= b) if (a == b) 0 else -1
-      1
+      if (a >= b) {
+        if (a == b) 0 else 1
+      } else
+        -1
     }
+    // Dump all pairs into collection
     timeStamp.forEach { queue.offer(it) }
+    // Command to be returned
     val cmd = SequentialCommandGroup()
     var lastTime = 0.0
     while (!queue.isEmpty()) {
       val current = queue.poll()
-      println(current.first)
       cmd.addCommands(
         // wait command
         WaitCommand(current.first - lastTime),

@@ -15,7 +15,7 @@ import kotlin.math.abs
 
 /**
  * @param drivetrain Holonomic Drivetrain used
- * @param trajectory Pathplanner trajectory to follow
+ * @param trajectory Path Planner trajectory to follow
  * @param resetPose Whether to reset the robot pose to the first pose in the trajectory
  * @param maxRotAcc Max rotational acceleration
  * @param maxRotVel Max rotational velocity
@@ -29,9 +29,9 @@ class HolonomicFollower(
   private val resetPose: Boolean,
   maxRotVel: Double,
   maxRotAcc: Double,
-  private val translationTol: Double,
-  private val angleTol: Double,
-  private val timeout: Double
+  private val translationTol: Double = 0.05,
+  private val angleTol: Double = 0.05,
+  private val timeout: Double = 0.05
 ) : CommandBase() {
 
   private val timer = Timer()
@@ -48,11 +48,13 @@ class HolonomicFollower(
   )
 
   init {
+    // controlling heading which is circular (0, 2PI)
     thetaController.enableContinuousInput(.0, 2 * PI)
   }
 
   override fun initialize() {
     if (resetPose) {
+      // reset the position of the robot to where we start this path(trajectory)
       val start = trajectory.initialState as PathPlannerTrajectory.PathPlannerState
       drivetrain.pose = Pose2d(start.poseMeters.x, start.poseMeters.y, start.holonomicRotation)
     }
@@ -61,7 +63,6 @@ class HolonomicFollower(
     yController.reset()
     thetaController.reset(drivetrain.pose.rotation.radians)
 
-    timer.reset()
     timer.start()
   }
 
@@ -83,14 +84,17 @@ class HolonomicFollower(
   }
 
   override fun isFinished(): Boolean {
-    return (timer.hasElapsed(trajectory.totalTimeSeconds) && inTolerance()) // TODO: add after testing || (timer.hasElapsed(trajectory.totalTimeSeconds + timeout))
+    return (timer.hasElapsed(trajectory.totalTimeSeconds) && inTolerance()) ||
+      (timer.hasElapsed(trajectory.totalTimeSeconds + timeout))
   }
 
   override fun end(interrupted: Boolean) {
     timer.stop()
+    timer.reset()
     drivetrain.stop()
   }
 
+  /** Check if the x y and theta of the robot are close enough to the END goal */
   private fun inTolerance(): Boolean {
     val endError = trajectory.endState.poseMeters.relativeTo(drivetrain.pose)
     return abs(endError.x) < translationTol && abs(endError.y) < translationTol && abs(endError.rotation.radians) < angleTol

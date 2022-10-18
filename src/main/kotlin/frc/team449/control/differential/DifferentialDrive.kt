@@ -16,9 +16,11 @@ import frc.team449.system.AHRS
 import frc.team449.system.encoder.Encoder
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
+import io.github.oblarg.oblog.annotations.Config
 import io.github.oblarg.oblog.annotations.Log
 
 /**
+ * TODO **** DIFFERENTIAL DRIVE NOT UPDATED ON CURRENT BRANCH ****
  * A differential drive with closed-loop velocity control using PID
  * @param makeVelPID Used to make two copies of the same PIDController for both sides of the
  * drivetrain
@@ -41,11 +43,11 @@ class DifferentialDrive(
   private val odometry = DifferentialDriveOdometry(ahrs.heading)
 
   /** Velocity PID controller for left side */
-  //  @Config.PIDController() //TODO causing casting errors
+  @Config.PIDController
   private val leftPID = makeVelPID()
 
   /** Velocity PID controller for right side */
-  //  @Config.PIDController()
+  @Config.PIDController
   private val rightPID = makeVelPID()
 
   /** Variable to keep track of the wheel speeds*/

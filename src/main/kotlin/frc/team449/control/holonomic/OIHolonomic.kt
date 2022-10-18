@@ -97,7 +97,11 @@ class OIHolonomic(
         drive.heading
       )
     } else {
-      ChassisSpeeds(xClamped, yClamped, rotScaled)
+      ChassisSpeeds(
+        xClamped,
+        yClamped,
+        rotScaled
+      )
     }
   }
 

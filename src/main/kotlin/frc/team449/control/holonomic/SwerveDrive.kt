@@ -29,32 +29,16 @@ open class SwerveDrive(
   init {
     // Zero out the gyro
     ahrs.calibrate()
-    ahrs.reset()
   }
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
 
-  private val odometry = SwerveDriveOdometry(this.kinematics, -ahrs.heading)
+  private val odometry = SwerveDriveOdometry(this.kinematics, ahrs.heading)
 
   @Log.ToString
   var desiredSpeeds = ChassisSpeeds()
-  @Log.Graph
-  var desiredSpeedsX = 0.0
-  @Log.Graph
-  var desiredSpeedsY = 0.0
-  @Log.Graph
-  var desiredSpeedsOmega = 0.0
-
-  @Log.ToString
-  var actualSpeeds = ChassisSpeeds()
-  @Log.Graph
-  var actualSpeedsX = 0.0
-  @Log.Graph
-  var actualSpeedsY = 0.0
-  @Log.Graph
-  var actualSpeedsOmega = 0.0
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
@@ -63,9 +47,11 @@ open class SwerveDrive(
   override val heading: Rotation2d
     @Log.ToString
     get() {
-      return -ahrs.heading
+      return ahrs.heading
     }
 
+  // TODO fix set()
+  /** The x y theta location of the robot on the field */
   override var pose: Pose2d
     @Log.ToString
     get() {
@@ -80,9 +66,6 @@ open class SwerveDrive(
   }
 
   override fun periodic() {
-    desiredSpeedsX = desiredSpeeds.vxMetersPerSecond
-    desiredSpeedsY = desiredSpeeds.vyMetersPerSecond
-    desiredSpeedsOmega = desiredSpeeds.omegaRadiansPerSecond
     val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
 
@@ -105,14 +88,6 @@ open class SwerveDrive(
       *this.modules
         .map { it.state }.toTypedArray()
     )
-
-    actualSpeeds = kinematics.toChassisSpeeds(
-      *this.modules
-        .map { it.state }.toTypedArray()
-    )
-    actualSpeedsX = actualSpeeds.vxMetersPerSecond
-    actualSpeedsY = actualSpeeds.vyMetersPerSecond
-    actualSpeedsOmega = actualSpeeds.omegaRadiansPerSecond
   }
 
   companion object {
@@ -121,7 +96,7 @@ open class SwerveDrive(
      *
      * @param ahrs Gyro used for robot heading
      * @param maxLinearSpeed Max speed (m/s) at which the robot can translate
-     * @param maxRotSpeed Max speed (rad/s) at which the robot can turn in place
+     * @param maxRotSpeed Max speed (rad/s) at which the robot can rotate
      * @param frontLeftDriveMotor
      * @param frontRightDriveMotor
      * @param backLeftDriveMotor

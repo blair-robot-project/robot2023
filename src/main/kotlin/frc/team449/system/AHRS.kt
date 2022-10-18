@@ -11,10 +11,12 @@ import io.github.oblarg.oblog.annotations.Log
 class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx {
   private var headingOffset = 0.0
 
+  // TODO fix heading set and get
+  /** The current reading of the gyro with the offset included */
   var heading: Rotation2d
     @Log
     get() {
-      return Rotation2d.fromDegrees(headingOffset + this.navx.fusedHeading)
+      return -Rotation2d.fromDegrees(headingOffset + this.navx.fusedHeading)
     }
     set(newHeading) {
       this.headingOffset = this.navx.fusedHeading - newHeading.degrees
