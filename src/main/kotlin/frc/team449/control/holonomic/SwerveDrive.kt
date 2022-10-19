@@ -102,12 +102,12 @@ open class SwerveDrive(
         SwerveModule.create(
           "FLModule",
           makeDrivingMotor(
-            "FL-DRIVE",
+            "FL",
             DriveConstants.DRIVE_MOTOR_FL,
             false
           ),
           makeTurningMotor(
-            "FL-TURN",
+            "FL",
             DriveConstants.TURN_MOTOR_FL,
             true,
             false,
@@ -122,12 +122,12 @@ open class SwerveDrive(
         SwerveModule.create(
           "FRModule",
           makeDrivingMotor(
-            "FR-DRIVE",
+            "FR",
             DriveConstants.DRIVE_MOTOR_FR,
             false
           ),
           makeTurningMotor(
-            "FR-TURN",
+            "FR",
             DriveConstants.TURN_MOTOR_FR,
             true,
             false,
@@ -142,12 +142,12 @@ open class SwerveDrive(
         SwerveModule.create(
           "BLModule",
           makeDrivingMotor(
-            "BL-DRIVE",
+            "BL",
             DriveConstants.DRIVE_MOTOR_BL,
             false
           ),
           makeTurningMotor(
-            "BL-TURN",
+            "BL",
             DriveConstants.TURN_MOTOR_BL,
             true,
             false,
@@ -162,12 +162,12 @@ open class SwerveDrive(
         SwerveModule.create(
           "BRModule",
           makeDrivingMotor(
-            "BR-DRIVE",
+            "BR",
             DriveConstants.DRIVE_MOTOR_BR,
             false
           ),
           makeTurningMotor(
-            "BR-TURN",
+            "BR",
             DriveConstants.TURN_MOTOR_BR,
             true,
             false,
