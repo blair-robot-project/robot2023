@@ -13,7 +13,6 @@ import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
-import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 
@@ -94,92 +93,103 @@ open class SwerveDrive(
   }
 
   companion object {
-    /**
-     * Create a swerve drivetrain
-     *
-     * @param ahrs Gyro used for robot heading
-     * @param maxLinearSpeed Max speed (m/s) at which the robot can translate
-     * @param maxRotSpeed Max speed (rad/s) at which the robot can rotate
-     * @param frontLeftDriveMotor
-     * @param frontRightDriveMotor
-     * @param backLeftDriveMotor
-     * @param backRightDriveMotor
-     * @param frontLeftTurnMotor
-     * @param frontRightTurnMotor
-     * @param backLeftTurnMotor
-     * @param backRightTurnMotor
-     * @param wheelbase the length of the sides of the robot measured from the center of the wheels
-     * @param trackwidth the length of the front and back of the robot measured from center of wheels
-     * @param driveMotorController Supplier to make copies of the same driving PID controllers for all the modules
-     * @param turnMotorController Supplier to make copies of the same turning PID controllers for all the modules
-     * @param driveFeedforward Driving feedforward for all the modules
-     */
-    fun swerveDrive(
-      ahrs: AHRS,
-      maxLinearSpeed: Double,
-      maxRotSpeed: Double,
-      frontLeftDriveMotor: WrappedMotor,
-      frontRightDriveMotor: WrappedMotor,
-      backLeftDriveMotor: WrappedMotor,
-      backRightDriveMotor: WrappedMotor,
-      frontLeftTurnMotor: WrappedMotor,
-      frontRightTurnMotor: WrappedMotor,
-      backLeftTurnMotor: WrappedMotor,
-      backRightTurnMotor: WrappedMotor,
-      wheelbase: Double,
-      trackwidth: Double,
-      driveMotorController: () -> PIDController,
-      turnMotorController: () -> PIDController,
-      driveFeedforward: SimpleMotorFeedforward
-    ): SwerveDrive {
+    /** Create a swerve drivetrain using DriveConstants */
+    fun swerveDrive(ahrs: AHRS,): SwerveDrive {
+      val driveMotorController = { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) }
+      val turnMotorController = { PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD) }
+      val driveFeedforward = SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA)
       val modules = listOf(
         SwerveModule.create(
           "FLModule",
-          frontLeftDriveMotor,
-          frontLeftTurnMotor,
+          makeDrivingMotor(
+            "FL-DRIVE",
+            DriveConstants.DRIVE_MOTOR_FL,
+            false
+          ),
+          makeTurningMotor(
+            "FL-TURN",
+            DriveConstants.TURN_MOTOR_FL,
+            true,
+            false,
+            DriveConstants.TURN_ENC_CHAN_FL,
+            DriveConstants.TURN_ENC_OFFSET_FL
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          Translation2d(wheelbase / 2, trackwidth / 2)
+          Translation2d(DriveConstants.WHEELBASE / 2, DriveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "FRModule",
-          frontRightDriveMotor,
-          frontRightTurnMotor,
+          makeDrivingMotor(
+            "FR-DRIVE",
+            DriveConstants.DRIVE_MOTOR_FR,
+            false
+          ),
+          makeTurningMotor(
+            "FR-TURN",
+            DriveConstants.TURN_MOTOR_FR,
+            true,
+            false,
+            DriveConstants.TURN_ENC_CHAN_FR,
+            DriveConstants.TURN_ENC_OFFSET_FR
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          Translation2d(wheelbase / 2, - trackwidth / 2)
+          Translation2d(DriveConstants.WHEELBASE / 2, - DriveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "BLModule",
-          backLeftDriveMotor,
-          backLeftTurnMotor,
+          makeDrivingMotor(
+            "BL-DRIVE",
+            DriveConstants.DRIVE_MOTOR_BL,
+            false
+          ),
+          makeTurningMotor(
+            "BL-TURN",
+            DriveConstants.TURN_MOTOR_BL,
+            true,
+            false,
+            DriveConstants.TURN_ENC_CHAN_BL,
+            DriveConstants.TURN_ENC_OFFSET_BL
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          Translation2d(- wheelbase / 2, trackwidth / 2)
+          Translation2d(- DriveConstants.WHEELBASE / 2, DriveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "BRModule",
-          backRightDriveMotor,
-          backRightTurnMotor,
+          makeDrivingMotor(
+            "BR-DRIVE",
+            DriveConstants.DRIVE_MOTOR_BR,
+            false
+          ),
+          makeTurningMotor(
+            "BR-TURN",
+            DriveConstants.TURN_MOTOR_BR,
+            true,
+            false,
+            DriveConstants.TURN_ENC_CHAN_BR,
+            DriveConstants.TURN_ENC_OFFSET_BR
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          Translation2d(- wheelbase / 2, - trackwidth / 2)
+          Translation2d(- DriveConstants.WHEELBASE / 2, - DriveConstants.TRACKWIDTH / 2)
         )
       )
       return SwerveDrive(
         modules,
         ahrs,
-        maxLinearSpeed,
-        maxRotSpeed
+        DriveConstants.MAX_LINEAR_SPEED,
+        DriveConstants.MAX_ROT_SPEED
       )
     }
 
     /** Helper to make turning motors for swerve */
-    fun makeDrivingMotor(
+    private fun makeDrivingMotor(
       name: String,
       motorId: Int,
       inverted: Boolean
@@ -197,7 +207,7 @@ open class SwerveDrive(
       )
 
     /** Helper to make turning motors for swerve */
-    fun makeTurningMotor(
+    private fun makeTurningMotor(
       name: String,
       motorId: Int,
       inverted: Boolean,

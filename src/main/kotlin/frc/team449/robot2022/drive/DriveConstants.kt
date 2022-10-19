@@ -1,6 +1,5 @@
 package frc.team449.robot2022.drive
 
-import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.util.Units
 
 object DriveConstants {
@@ -27,11 +26,6 @@ object DriveConstants {
   const val TURN_ENC_OFFSET_BL = 0.369
   const val TURN_ENC_OFFSET_BR = 0.362
 
-  /** Feed forward values for turning each module */
-  const val TURN_KS = 0.039835
-  const val TURN_KV = 0.078855
-  const val TURN_KA = 0.027521
-
   /** PID gains for turning each module*/
   const val TURN_KP = 0.7
   const val TURN_KI = 0.0
@@ -54,11 +48,12 @@ object DriveConstants {
   const val MAX_LINEAR_SPEED = 4.0
   const val MAX_ROT_SPEED = 2.5
   const val MAX_ATTAINABLE_MK4I_SPEED = 4.267
-  /** Location of the front left module */
-  val FRONT_LEFT_LOC = Translation2d(
-    Units.inchesToMeters(18.75) / 2,
-    Units.inchesToMeters(18.75) / 2
-  )
+  const val MAX_ACCEL = 4.5
+
+  /** Controller Configurations */
+  const val RATE_LIMIT = 10.5
+  const val TRANSLATION_DEADBAND = .08
+  const val ROTATION_DEADBAND = .07
 
   val WHEELBASE = Units.inchesToMeters(18.75)
   val TRACKWIDTH = Units.inchesToMeters(18.75)

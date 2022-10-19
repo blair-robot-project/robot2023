@@ -6,10 +6,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.XboxController
 import frc.team449.control.OI
+import frc.team449.robot2022.RobotContainer2022
+import frc.team449.robot2022.drive.DriveConstants
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 import java.util.function.DoubleSupplier
+import kotlin.math.abs
 import kotlin.math.hypot
 
 /**
@@ -116,5 +120,19 @@ class OIHolonomic(
     builder.addDoubleProperty("magAcc", { this.magAcc }, null)
     builder.addDoubleProperty("magAccClamped", { this.magAccClamped }, null)
     builder.addStringProperty("speeds", { this.get().toString() }, null)
+  }
+
+  companion object {
+    fun createHolonomicOI(robotContainer: RobotContainer2022, driveController: XboxController): OIHolonomic {
+      return OIHolonomic(
+        robotContainer.drive,
+        { if (abs(driveController.leftY) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
+        { if (abs(driveController.leftX) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
+        { if (abs(driveController.getRawAxis(4)) < DriveConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
+        SlewRateLimiter(DriveConstants.RATE_LIMIT),
+        DriveConstants.MAX_ACCEL,
+        { true }
+      )
+    }
   }
 }
