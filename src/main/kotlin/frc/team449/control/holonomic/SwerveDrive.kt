@@ -94,7 +94,7 @@ open class SwerveDrive(
 
   companion object {
     /** Create a swerve drivetrain using DriveConstants */
-    fun swerveDrive(ahrs: AHRS,): SwerveDrive {
+    fun swerveDrive(ahrs: AHRS): SwerveDrive {
       val driveMotorController = { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) }
       val turnMotorController = { PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD) }
       val driveFeedforward = SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA)
@@ -104,13 +104,13 @@ open class SwerveDrive(
           makeDrivingMotor(
             "FL",
             DriveConstants.DRIVE_MOTOR_FL,
-            false
+            inverted = false
           ),
           makeTurningMotor(
             "FL",
             DriveConstants.TURN_MOTOR_FL,
-            true,
-            false,
+            inverted = true,
+            sensorPhase = false,
             DriveConstants.TURN_ENC_CHAN_FL,
             DriveConstants.TURN_ENC_OFFSET_FL
           ),
@@ -124,13 +124,13 @@ open class SwerveDrive(
           makeDrivingMotor(
             "FR",
             DriveConstants.DRIVE_MOTOR_FR,
-            false
+            inverted = false
           ),
           makeTurningMotor(
             "FR",
             DriveConstants.TURN_MOTOR_FR,
-            true,
-            false,
+            inverted = true,
+            sensorPhase = false,
             DriveConstants.TURN_ENC_CHAN_FR,
             DriveConstants.TURN_ENC_OFFSET_FR
           ),
@@ -144,13 +144,13 @@ open class SwerveDrive(
           makeDrivingMotor(
             "BL",
             DriveConstants.DRIVE_MOTOR_BL,
-            false
+            inverted = false
           ),
           makeTurningMotor(
             "BL",
             DriveConstants.TURN_MOTOR_BL,
-            true,
-            false,
+            inverted = true,
+            sensorPhase = false,
             DriveConstants.TURN_ENC_CHAN_BL,
             DriveConstants.TURN_ENC_OFFSET_BL
           ),
@@ -164,13 +164,13 @@ open class SwerveDrive(
           makeDrivingMotor(
             "BR",
             DriveConstants.DRIVE_MOTOR_BR,
-            false
+            inverted = false
           ),
           makeTurningMotor(
             "BR",
             DriveConstants.TURN_MOTOR_BR,
-            true,
-            false,
+            inverted = true,
+            sensorPhase = false,
             DriveConstants.TURN_ENC_CHAN_BR,
             DriveConstants.TURN_ENC_OFFSET_BR
           ),

@@ -8,7 +8,6 @@ import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
 import frc.team449.control.OI
-import frc.team449.robot2022.RobotContainer2022
 import frc.team449.robot2022.drive.DriveConstants
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
@@ -123,9 +122,9 @@ class OIHolonomic(
   }
 
   companion object {
-    fun createHolonomicOI(robotContainer: RobotContainer2022, driveController: XboxController): OIHolonomic {
+    fun createHolonomicOI(drive: HolonomicDrive, driveController: XboxController): OIHolonomic {
       return OIHolonomic(
-        robotContainer.drive,
+        drive,
         { if (abs(driveController.leftY) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
         { if (abs(driveController.leftX) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
         { if (abs(driveController.getRawAxis(4)) < DriveConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },

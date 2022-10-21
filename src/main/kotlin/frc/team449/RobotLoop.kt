@@ -7,15 +7,16 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.team449.control.DriveCommand
 import frc.team449.control.auto.AutoChooser
-import frc.team449.robot2022.RobotContainer2022
+import frc.team449.robot2022.Robot
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
-class Robot : TimedRobot() {
+class RobotLoop : TimedRobot() {
 
-  private val robotContainer = RobotContainer2022()
-  private var autoChooser: AutoChooser = AutoChooser(robotContainer)
+  private val robot = Robot()
+  private var autoChooser: AutoChooser = AutoChooser(robot)
   private var autoCommand: Command? = null
 
   override fun robotInit() {
@@ -27,13 +28,11 @@ class Robot : TimedRobot() {
       DriverStation.silenceJoystickConnectionWarning(true)
     }
 
-    robotContainer.robotInit()
-
-    Logger.configureLoggingAndConfig(robotContainer, false)
+    Logger.configureLoggingAndConfig(robot, false)
     Shuffleboard.setRecordingFileNameFormat("log-\${time}")
     Shuffleboard.startRecording()
 
-    SmartDashboard.putData(robotContainer.field)
+    SmartDashboard.putData(robot.field)
 
     SmartDashboard.putData(autoChooser)
   }
@@ -43,9 +42,7 @@ class Robot : TimedRobot() {
 
     Logger.updateEntries()
 
-    robotContainer.robotPeriodic()
-
-    robotContainer.field.robotPose = robotContainer.drive.pose
+    robot.field.robotPose = robot.drive.pose
   }
 
   override fun autonomousInit() {
@@ -54,7 +51,6 @@ class Robot : TimedRobot() {
       this.autoCommand = routine.cmd
       CommandScheduler.getInstance().schedule(this.autoCommand)
     }
-    robotContainer.autonomousInit()
   }
 
   override fun autonomousPeriodic() {}
@@ -63,16 +59,14 @@ class Robot : TimedRobot() {
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand)
     }
-    robotContainer.teleopInit()
+    robot.drive.defaultCommand = DriveCommand(robot.drive, robot.oi)
   }
 
   override fun teleopPeriodic() {
-    robotContainer.drive.set(robotContainer.oi.get())
-    robotContainer.teleopPeriodic()
   }
 
   override fun disabledInit() {
-    robotContainer.disabledInit()
+    robot.drive.stop()
   }
 
   override fun disabledPeriodic() {}
@@ -85,11 +79,7 @@ class Robot : TimedRobot() {
 
   override fun testPeriodic() {}
 
-  override fun simulationInit() {
-    robotContainer.simulationInit()
-  }
+  override fun simulationInit() {}
 
-  override fun simulationPeriodic() {
-    robotContainer.simulationPeriodic()
-  }
+  override fun simulationPeriodic() {}
 }
