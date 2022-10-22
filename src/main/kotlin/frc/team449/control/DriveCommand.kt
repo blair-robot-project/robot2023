@@ -17,8 +17,4 @@ class DriveCommand(
   override fun execute() {
     drive.set(oi.get())
   }
-
-  override fun isFinished(): Boolean {
-    return false
-  }
 }
