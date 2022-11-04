@@ -40,6 +40,7 @@ open class SwerveModule constructor(
 
   @Log.Graph
   private var desiredSpeed = 0.0
+  private var prevDesiredSpeed = 0.0
   private var prevTime = Double.NaN
 
   open var state: SwerveModuleState
@@ -60,6 +61,7 @@ open class SwerveModule constructor(
         Rotation2d(turningMotor.position)
       )
       turnController.setpoint = state.angle.radians
+      prevDesiredSpeed = desiredSpeed
       desiredSpeed = state.speedMetersPerSecond
       driveController.setpoint = state.speedMetersPerSecond
     }
@@ -86,7 +88,7 @@ open class SwerveModule constructor(
       drivingMotor.velocity
     )
     val driveFF = driveFeedforward.calculate(
-      drivingMotor.velocity,
+      prevDesiredSpeed,
       desiredSpeed,
       dt
     )
