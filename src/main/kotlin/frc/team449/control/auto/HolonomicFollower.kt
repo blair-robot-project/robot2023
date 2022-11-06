@@ -5,13 +5,14 @@ import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2022.auto.AutoConstants
 import kotlin.math.PI
-import kotlin.math.abs
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -50,6 +51,8 @@ class HolonomicFollower(
   init {
     // controlling heading which is circular (0, 2PI)
     thetaController.enableContinuousInput(.0, 2 * PI)
+
+    controller.setTolerance(Pose2d(Translation2d(translationTol, translationTol), Rotation2d(angleTol)))
   }
 
   override fun initialize() {
@@ -84,7 +87,7 @@ class HolonomicFollower(
   }
 
   override fun isFinished(): Boolean {
-    return (timer.hasElapsed(trajectory.totalTimeSeconds) && inTolerance()) ||
+    return (timer.hasElapsed(trajectory.totalTimeSeconds) && controller.atReference()) ||
       (timer.hasElapsed(trajectory.totalTimeSeconds + timeout))
   }
 
@@ -92,11 +95,5 @@ class HolonomicFollower(
     timer.stop()
     timer.reset()
     drivetrain.stop()
-  }
-
-  /** Check if the x y and theta of the robot are close enough to the END goal */
-  private fun inTolerance(): Boolean {
-    val endError = trajectory.endState.poseMeters.relativeTo(drivetrain.pose)
-    return abs(endError.x) < translationTol && abs(endError.y) < translationTol && abs(endError.rotation.radians) < angleTol
   }
 }
