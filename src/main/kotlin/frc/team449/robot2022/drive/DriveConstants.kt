@@ -21,10 +21,10 @@ object DriveConstants {
   const val TURN_ENC_CHAN_BR = 2
 
   /** Offsets for the absolute encoders in rotations */
-  const val TURN_ENC_OFFSET_FL = 0.955
-  const val TURN_ENC_OFFSET_FR = 0.286
-  const val TURN_ENC_OFFSET_BL = 0.369
-  const val TURN_ENC_OFFSET_BR = 0.362
+  const val TURN_ENC_OFFSET_FL = .0
+  const val TURN_ENC_OFFSET_FR = .0
+  const val TURN_ENC_OFFSET_BL = .0
+  const val TURN_ENC_OFFSET_BR = .0
 
   /** PID gains for turning each module*/
   const val TURN_KP = 0.7
