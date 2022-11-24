@@ -9,12 +9,13 @@ class TalonEncoder(
   private val talon: BaseTalon,
   encoderCPR: Int,
   unitPerRotation: Double,
-  gearing: Double
-) : Encoder(name, encoderCPR * 4, unitPerRotation, gearing) {
+  gearing: Double,
+  pollTime: Double = .02
+) : Encoder(name, encoderCPR * 4, unitPerRotation, gearing, pollTime) {
 
   override fun getPositionNative() = talon.getSelectedSensorPosition(0)
 
-  override fun getVelocityNative() = talon.getSelectedSensorVelocity(0)
+  override fun pollVelocityNative() = talon.getSelectedSensorVelocity(0)
 
   companion object {
     fun <T> creator(

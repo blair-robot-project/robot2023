@@ -2,7 +2,12 @@ package frc.team449.control.auto
 
 import edu.wpi.first.math.trajectory.Trajectory
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
+import java.util.*
 import java.util.function.Function
+import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 object AutoUtils {
   /**
@@ -39,6 +44,42 @@ object AutoUtils {
       }
       currStates.add(state)
     }
+    return cmd
+  }
+  /**
+   * @param timeStamp List of commands paired with their start times with t = 0 being when auto starts
+   * @return [SequentialCommandGroup] of the commands given with the time fitting in 15 seconds
+   */
+  fun autoSequence(
+    timeStamp: List<Pair<Double, Command>>
+  ): SequentialCommandGroup {
+    /** Collection of the pairs, ascending by timestamp **/
+    val queue = PriorityQueue<Pair<Double, Command>>(
+      timeStamp.size
+    ) { o1, o2 ->
+      val a = o1.first
+      val b = o2.first
+      if (a >= b) {
+        if (a == b) 0 else 1
+      } else
+        -1
+    }
+    // Dump all pairs into collection
+    timeStamp.forEach { queue.offer(it) }
+    // Command to be returned
+    val cmd = SequentialCommandGroup()
+    var lastTime = 0.0
+    while (!queue.isEmpty()) {
+      val current = queue.poll()
+      cmd.addCommands(
+        // wait command
+        WaitCommand(current.first - lastTime),
+        // actual command
+        current.second
+      )
+      lastTime = current.first
+    }
+    if (lastTime < 15.0) cmd.addCommands(WaitCommand(15.0 - lastTime))
     return cmd
   }
 }

@@ -2,6 +2,7 @@ package frc.team449.system.encoder
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
 import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.abs
 
 /**
  * A wrapper to use when you have one external encoder that's more accurate but may be unplugged and
@@ -14,31 +15,32 @@ import io.github.oblarg.oblog.annotations.Log
 class BackupEncoder(
   private val primary: Encoder,
   private val fallback: Encoder,
-  private val velThreshold: Double
-) : Encoder(primary.configureLogName(), 1, 1.0, 1.0) {
+  private val velThreshold: Double,
+  pollTime: Double = .02
+) : Encoder(primary.configureLogName(), 1, 1.0, 1.0, pollTime) {
 
   /** Whether the primary encoder's stopped working */
   @Log private var useFallback = false
 
   protected override fun getPositionNative(): Double {
-    if (useFallback) {
-      return fallback.position
+    return if (useFallback) {
+      fallback.position
     } else {
-      return primary.position
+      primary.position
     }
   }
 
-  protected override fun getVelocityNative(): Double {
+  protected override fun pollVelocityNative(): Double {
     val fallbackVel = fallback.velocity
-    if (useFallback) {
-      return fallbackVel
+    return if (useFallback) {
+      fallbackVel
     } else {
-      var primaryVel = primary.velocity
-      if (primaryVel == 0.0 && Math.abs(fallbackVel) > velThreshold) {
+      val primaryVel = primary.velocity
+      if (primaryVel == 0.0 && abs(fallbackVel) > velThreshold) {
         this.useFallback = true
-        return fallbackVel
+        fallbackVel
       } else {
-        return primaryVel
+        primaryVel
       }
     }
   }
@@ -47,12 +49,12 @@ class BackupEncoder(
     fun <T : MotorController> creator(
       primaryCreator: EncoderCreator<T>,
       fallbackCreator: EncoderCreator<T>,
-      velThreshold: Double
+      velThreshold: Double,
     ): EncoderCreator<T> = EncoderCreator {
         name, motor, inverted ->
       BackupEncoder(
-        primaryCreator.create(name, motor, inverted),
-        fallbackCreator.create(name, motor, inverted),
+        primaryCreator.create("primary_$name", motor, inverted),
+        fallbackCreator.create("fallback_$name", motor, inverted),
         velThreshold
       )
     }

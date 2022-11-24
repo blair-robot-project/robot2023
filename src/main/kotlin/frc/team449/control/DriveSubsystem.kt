@@ -8,16 +8,26 @@ import io.github.oblarg.oblog.Loggable
 
 /** A drivetrain that uses closed-loop velocity control. */
 interface DriveSubsystem : Subsystem, Loggable {
-  open val heading: Rotation2d
-    get() {
-      return this.pose.getRotation()
-    }
+  val heading: Rotation2d
+    get() = this.pose.rotation
 
-  abstract var pose: Pose2d
+  var pose: Pose2d
 
   /** Set the desired speeds to go at. */
   fun set(desiredSpeeds: ChassisSpeeds)
 
   /** Set both motors' voltage to 0. */
   fun stop()
+
+  /**
+   * Used to simulate a drivetrain. Only one instance of this class should be made per drivetrain.
+   */
+  interface SimController {
+    fun update()
+
+    /**
+     * Simulate the current drawn by the drivetrain
+     */
+    fun getCurrentDraw(): Double
+  }
 }

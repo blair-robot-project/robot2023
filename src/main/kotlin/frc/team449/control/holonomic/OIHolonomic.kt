@@ -2,14 +2,20 @@ package frc.team449.control.holonomic
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.filter.SlewRateLimiter
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.XboxController
 import frc.team449.control.OI
+import frc.team449.robot2022.drive.DriveConstants
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 import java.util.function.DoubleSupplier
+import kotlin.math.abs
+import kotlin.math.hypot
 
 /**
  * Create an OI for controlling a holonomic drivetrain (probably swerve).
@@ -31,12 +37,12 @@ import java.util.function.DoubleSupplier
 class OIHolonomic(
   @Log.Exclude
   val drive: HolonomicDrive,
-  val xThrottle: DoubleSupplier,
-  val yThrottle: DoubleSupplier,
-  val rotThrottle: DoubleSupplier,
-  val rotRamp: SlewRateLimiter,
-  val maxAccel: Double,
-  val fieldOriented: Boolean
+  private val xThrottle: DoubleSupplier,
+  private val yThrottle: DoubleSupplier,
+  private val rotThrottle: DoubleSupplier,
+  private val rotRamp: SlewRateLimiter,
+  private val maxAccel: Double,
+  private val fieldOriented: () -> Boolean
 ) : OI, Loggable, Sendable {
 
   /** Previous x velocity (scaled and clamped) */
@@ -49,7 +55,6 @@ class OIHolonomic(
 
   private var prevTime = Double.NaN
 
-  // todo Remove these soon, only for logging
   private var dx = 0.0
   private var dy = 0.0
   private var magAcc = 0.0
@@ -57,47 +62,58 @@ class OIHolonomic(
   private var magAccClamped = 0.0
 
   /**
-   * @return The {@link ChassisSpeeds} for the given x, y and
+   * @return The [ChassisSpeeds] for the given x, y and
    * rotation input from the joystick */
   override fun get(): ChassisSpeeds {
-    var currTime = Timer.getFPGATimestamp()
+    val currTime = Timer.getFPGATimestamp()
     if (this.prevTime.isNaN()) {
       this.prevTime = currTime - 0.02
     }
     this.dt = currTime - prevTime
     this.prevTime = currTime
 
-    var xScaled = xThrottle.getAsDouble() * drive.maxLinearSpeed
-    var yScaled = yThrottle.getAsDouble() * drive.maxLinearSpeed
+    val xScaled = xThrottle.asDouble * drive.maxLinearSpeed
+    val yScaled = yThrottle.asDouble * drive.maxLinearSpeed
 
     // Clamp the acceleration
     this.dx = xScaled - this.prevX
     this.dy = yScaled - this.prevY
-    this.magAcc = Math.hypot(dx / dt, dy / dt)
+    this.magAcc = hypot(dx / dt, dy / dt)
     this.magAccClamped = MathUtil.clamp(magAcc, -this.maxAccel, this.maxAccel)
 
     // Scale the change in x and y the same as the acceleration
-    var factor = if (magAcc == 0.0) 0.0 else magAccClamped / magAcc
-    var dxClamped = dx * factor
-    var dyClamped = dy * factor
-    var xClamped = prevX + dxClamped
-    var yClamped = prevY + dyClamped
+    val factor = if (magAcc == 0.0) 0.0 else magAccClamped / magAcc
+    val dxClamped = dx * factor
+    val dyClamped = dy * factor
+    val xClamped = prevX + dxClamped
+    val yClamped = prevY + dyClamped
 
     this.prevX = xClamped
     this.prevY = yClamped
 
-    var rotRaw = rotThrottle.getAsDouble()
-    var rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
+    val rotRaw = rotThrottle.asDouble
+    val rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
 
-    if (this.fieldOriented) {
-      return ChassisSpeeds.fromFieldRelativeSpeeds(
-        xClamped,
-        yClamped,
+    // translation velocity vector
+    val vel = Translation2d(xClamped, yClamped)
+
+    return if (this.fieldOriented()) {
+      /** Quick fix for the velocity skewing towards the direction of rotation
+       * by rotating it with offset proportional to how much we are rotating
+       **/
+      vel.rotateBy(Rotation2d(-rotScaled * dt / 2))
+      ChassisSpeeds.fromFieldRelativeSpeeds(
+        vel.x,
+        vel.y,
         rotScaled,
         drive.heading
       )
     } else {
-      return ChassisSpeeds(xClamped, yClamped, rotScaled)
+      ChassisSpeeds(
+        vel.x,
+        vel.y,
+        rotScaled
+      )
     }
   }
 
@@ -112,5 +128,19 @@ class OIHolonomic(
     builder.addDoubleProperty("magAcc", { this.magAcc }, null)
     builder.addDoubleProperty("magAccClamped", { this.magAccClamped }, null)
     builder.addStringProperty("speeds", { this.get().toString() }, null)
+  }
+
+  companion object {
+    fun createHolonomicOI(drive: HolonomicDrive, driveController: XboxController): OIHolonomic {
+      return OIHolonomic(
+        drive,
+        { if (abs(driveController.leftY) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
+        { if (abs(driveController.leftX) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
+        { if (abs(driveController.getRawAxis(4)) < DriveConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
+        SlewRateLimiter(DriveConstants.RATE_LIMIT),
+        DriveConstants.MAX_ACCEL,
+        { true }
+      )
+    }
   }
 }

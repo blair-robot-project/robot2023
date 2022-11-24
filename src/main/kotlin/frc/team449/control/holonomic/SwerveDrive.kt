@@ -1,48 +1,78 @@
 package frc.team449.control.holonomic
 
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
+import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
-import frc.team449.system.motor.WrappedMotor
+import frc.team449.system.VisionCamera
+import frc.team449.system.encoder.AbsoluteEncoder
+import frc.team449.system.encoder.NEOEncoder
+import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 
+/**
+ * @param modules the list of swerve modules on this drivetrain
+ * @param ahrs the gyro that is mounted on the chassis
+ * @param maxLinearSpeed the maximum translation speed of the chassis.
+ * @param maxRotSpeed the maximum rotation speed of the chassis
+ */
 open class SwerveDrive(
   private val modules: List<SwerveModule>,
-  private val ahrs: AHRS,
+  val ahrs: AHRS,
   override val maxLinearSpeed: Double,
-  override val maxRotSpeed: Double
+  override val maxRotSpeed: Double,
+  private val cameras: MutableList<VisionCamera> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
-
+  init {
+    // Zero out the gyro
+    ahrs.calibrate()
+  }
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
-  private val odometry = SwerveDriveOdometry(this.kinematics, ahrs.heading)
 
+  private val odometry = SwerveDrivePoseEstimator(
+    -ahrs.heading,
+    Pose2d(),
+    kinematics,
+    MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01),
+    MatBuilder(Nat.N1(), Nat.N1()).fill(0.01),
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005)
+  )
   @Log.ToString
-  private var desiredSpeeds = ChassisSpeeds()
+  var desiredSpeeds = ChassisSpeeds()
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
   }
 
-  override val heading: Rotation2d
-    get() { return ahrs.heading }
-
-  override var pose: Pose2d
+  override var heading: Rotation2d
+    @Log.ToString
     get() {
-      return this.odometry.getPoseMeters()
+      return ahrs.heading
     }
-    set(pose) {
-      this.odometry.resetPosition(pose, ahrs.heading)
+    set(value) {
+      ahrs.heading = value
+    }
+
+  // TODO fix set()
+  /** The x y theta location of the robot on the field */
+  override var pose: Pose2d
+    @Log.ToString
+    get() {
+      return this.odometry.estimatedPosition
+    }
+    set(value) {
+      heading = value.rotation
+      this.odometry.resetPosition(value, heading)
     }
 
   override fun stop() {
@@ -50,113 +80,188 @@ open class SwerveDrive(
   }
 
   override fun periodic() {
-    this.odometry.update(
-      ahrs.heading,
-      *this.modules
-        .map { it.state }.toTypedArray()
-    )
-
-    var desiredModuleStates =
+    val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
+
+    /** If any module is going faster than the max speed,
+     *  apply scaling down */
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      this.maxLinearSpeed
+      DriveConstants.MAX_ATTAINABLE_WHEEL_SPEED
     )
 
     for (i in this.modules.indices) {
       this.modules[i].state = desiredModuleStates[i]
     }
+
+    for (module in modules)
+      module.update()
+
+    if (cameras.isNotEmpty()) localize()
+
+    this.odometry.update(
+      heading,
+      *this.modules
+        .map { it.state }.toTypedArray()
+    )
+  }
+
+  fun addCamera(camera: VisionCamera) {
+    cameras.add(camera)
+  }
+
+  private fun localize() {
+    for (camera in cameras) {
+      if (camera.hasTarget()) {
+        odometry.addVisionMeasurement(
+          camera.camPose(Pose3d(Transform3d())).toPose2d(),
+          camera.timestamp()
+        )
+      }
+    }
   }
 
   companion object {
-    /**
-     * Create a square swerve drivetrain
-     *
-     * @param ahrs Gyro used for robot heading
-     * @param maxLinearSpeed Max speed (m/s) at which the robot can translate
-     * @param maxRotSpeed Max speed (rad/s) at which the robot can turn in place
-     * @param frontLeftDriveMotor
-     * @param frontRightDriveMotor
-     * @param backLeftDriveMotor
-     * @param backRightDriveMotor
-     * @param frontLeftTurnMotor
-     * @param frontRightTurnMotor
-     * @param backLeftTurnMotor
-     * @param backRightTurnMotor
-     * @param frontLeftLocation Location of the front left module
-     * @param driveMotorController Supplier to make copies of the same driving PID controllers for all
-     *     the modules
-     * @param turnMotorController Supplier to make copies of the same turning PID controllers for all
-     *     the modules
-     * @param driveFeedforward Driving feedforward for all the modules
-     * @param turnFeedforward Turning feedforward for all the modules
-     */
-    fun squareDrive(
-      ahrs: AHRS,
-      maxLinearSpeed: Double,
-      maxRotSpeed: Double,
-      frontLeftDriveMotor: WrappedMotor,
-      frontRightDriveMotor: WrappedMotor,
-      backLeftDriveMotor: WrappedMotor,
-      backRightDriveMotor: WrappedMotor,
-      frontLeftTurnMotor: WrappedMotor,
-      frontRightTurnMotor: WrappedMotor,
-      backLeftTurnMotor: WrappedMotor,
-      backRightTurnMotor: WrappedMotor,
-      frontLeftLocation: Translation2d,
-      driveMotorController: () -> PIDController,
-      turnMotorController: () -> ProfiledPIDController,
-      driveFeedforward: SimpleMotorFeedforward,
-      turnFeedforward: SimpleMotorFeedforward
-    ): SwerveDrive {
+    /** Create a swerve drivetrain using DriveConstants */
+    fun swerveDrive(ahrs: AHRS): SwerveDrive {
+      val driveMotorController = { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) }
+      val turnMotorController = { PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD) }
+      val driveFeedforward = SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA)
       val modules = listOf(
         SwerveModule.create(
           "FLModule",
-          frontLeftDriveMotor,
-          frontLeftTurnMotor,
+          makeDrivingMotor(
+            "FL",
+            DriveConstants.DRIVE_MOTOR_FL,
+            inverted = false
+          ),
+          makeTurningMotor(
+            "FL",
+            DriveConstants.TURN_MOTOR_FL,
+            inverted = true,
+            sensorPhase = false,
+            DriveConstants.TURN_ENC_CHAN_FL,
+            DriveConstants.TURN_ENC_OFFSET_FL
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
-          frontLeftLocation
+          Translation2d(DriveConstants.WHEELBASE / 2, DriveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "FRModule",
-          frontRightDriveMotor,
-          frontRightTurnMotor,
+          makeDrivingMotor(
+            "FR",
+            DriveConstants.DRIVE_MOTOR_FR,
+            inverted = false
+          ),
+          makeTurningMotor(
+            "FR",
+            DriveConstants.TURN_MOTOR_FR,
+            inverted = true,
+            sensorPhase = false,
+            DriveConstants.TURN_ENC_CHAN_FR,
+            DriveConstants.TURN_ENC_OFFSET_FR
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(90.0))
+          Translation2d(DriveConstants.WHEELBASE / 2, - DriveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "BLModule",
-          backLeftDriveMotor,
-          backLeftTurnMotor,
+          makeDrivingMotor(
+            "BL",
+            DriveConstants.DRIVE_MOTOR_BL,
+            inverted = false
+          ),
+          makeTurningMotor(
+            "BL",
+            DriveConstants.TURN_MOTOR_BL,
+            inverted = true,
+            sensorPhase = false,
+            DriveConstants.TURN_ENC_CHAN_BL,
+            DriveConstants.TURN_ENC_OFFSET_BL
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(-90.0))
+          Translation2d(- DriveConstants.WHEELBASE / 2, DriveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "BRModule",
-          backRightDriveMotor,
-          backRightTurnMotor,
+          makeDrivingMotor(
+            "BR",
+            DriveConstants.DRIVE_MOTOR_BR,
+            inverted = false
+          ),
+          makeTurningMotor(
+            "BR",
+            DriveConstants.TURN_MOTOR_BR,
+            inverted = true,
+            sensorPhase = false,
+            DriveConstants.TURN_ENC_CHAN_BR,
+            DriveConstants.TURN_ENC_OFFSET_BR
+          ),
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          turnFeedforward,
-          frontLeftLocation.rotateBy(Rotation2d.fromDegrees(180.0))
+          Translation2d(- DriveConstants.WHEELBASE / 2, - DriveConstants.TRACKWIDTH / 2)
         )
       )
       return SwerveDrive(
         modules,
         ahrs,
-        maxLinearSpeed,
-        maxRotSpeed
+        DriveConstants.MAX_LINEAR_SPEED,
+        DriveConstants.MAX_ROT_SPEED
       )
+    }
+
+    /** Helper to make turning motors for swerve */
+    private fun makeDrivingMotor(
+      name: String,
+      motorId: Int,
+      inverted: Boolean
+    ) =
+      createSparkMax(
+        name = name + "Drive",
+        id = motorId,
+        enableBrakeMode = true,
+        inverted = inverted,
+        encCreator =
+        NEOEncoder.creator(
+          DriveConstants.DRIVE_UPR,
+          DriveConstants.DRIVE_GEARING
+        )
+      )
+
+    /** Helper to make turning motors for swerve */
+    private fun makeTurningMotor(
+      name: String,
+      motorId: Int,
+      inverted: Boolean,
+      sensorPhase: Boolean,
+      encoderChannel: Int,
+      offset: Double
+    ) =
+      createSparkMax(
+        name = name + "Turn",
+        id = motorId,
+        enableBrakeMode = true,
+        inverted = inverted,
+        encCreator = AbsoluteEncoder.creator(
+          encoderChannel,
+          offset,
+          DriveConstants.TURN_UPR,
+          sensorPhase
+        )
+      )
+
+    /**
+     * @return the sim version of this drive
+     */
+    fun simOf(swerve: SwerveDrive): SwerveSim {
+      return SwerveSim(swerve.modules, swerve.ahrs, swerve.maxLinearSpeed, swerve.maxRotSpeed)
     }
   }
 }
