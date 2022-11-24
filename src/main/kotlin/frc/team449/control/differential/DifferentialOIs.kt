@@ -5,9 +5,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
 import frc.team449.control.OI
+import frc.team449.robot2022.drive.DriveConstants
 
 /**
- * TODO **** NOT UPDATED ON CURRENT BRANCH ****
  * Helper class to create OIs for a differential drivetrain (arcade, curvature,
  * or tank)
  */
@@ -36,7 +36,6 @@ object DifferentialOIs {
         false
       ),
       drive.kinematics,
-      drive.maxLinearSpeed,
       xRamp,
       rotRamp
     )
@@ -70,7 +69,6 @@ object DifferentialOIs {
         turnInPlace()
       ),
       drive.kinematics,
-      drive.maxLinearSpeed,
       xRamp,
       rotRamp
     )
@@ -98,16 +96,16 @@ object DifferentialOIs {
   ): OI = OI {
     drive.kinematics.toChassisSpeeds(
       DifferentialDriveWheelSpeeds(
-        leftRamp.calculate(leftThrottle() * drive.maxLinearSpeed),
+        leftRamp.calculate(leftThrottle() * DriveConstants.MAX_LINEAR_SPEED),
         rightRamp.calculate(
-          rightThrottle() * drive.maxLinearSpeed
+          rightThrottle() * DriveConstants.MAX_LINEAR_SPEED
         )
       )
     )
   }
 
   /**
-   * Scales differential drive throttles from [-1, 1] to [-[maxSpeed], [maxSpeed]], then
+   * Scales differential drive throttles from [-1, 1] to [-maxSpeed, maxSpeed], then
    * applies ramping to give the final [ChassisSpeeds].
    *
    * <p>
@@ -118,24 +116,22 @@ object DifferentialOIs {
    * @param wheelThrottles The left and right wheel throttles
    * @param kinematics Kinematics object used for turning differential drive wheel
    *        speeds to chassis speeds
-   * @param maxSpeed Max linear speed for the drivetrain
-   * @param xRamp Used for limiting linear/forward-back acceleration
+   * @param ramp Used for limiting linear/forward-back acceleration
    * @param rotRamp Used for limiting rotational acceleration
    */
   private fun scaleAndApplyRamping(
     wheelThrottles: edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds,
     kinematics: DifferentialDriveKinematics,
-    maxSpeed: Double,
-    xRamp: SlewRateLimiter,
+    ramp: SlewRateLimiter,
     rotRamp: SlewRateLimiter
   ): ChassisSpeeds {
-    val leftVel = wheelThrottles.left * maxSpeed
-    val rightVel = wheelThrottles.right * maxSpeed
+    val leftVel = wheelThrottles.left * DriveConstants.MAX_LINEAR_SPEED
+    val rightVel = wheelThrottles.right * DriveConstants.MAX_LINEAR_SPEED
     val chassisSpeeds = kinematics.toChassisSpeeds(
       DifferentialDriveWheelSpeeds(leftVel, rightVel)
     )
     return ChassisSpeeds(
-      xRamp.calculate(chassisSpeeds.vxMetersPerSecond),
+      ramp.calculate(chassisSpeeds.vxMetersPerSecond),
       0.0,
       rotRamp.calculate(chassisSpeeds.omegaRadiansPerSecond)
     )
