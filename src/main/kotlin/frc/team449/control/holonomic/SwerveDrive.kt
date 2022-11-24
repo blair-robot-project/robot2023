@@ -1,16 +1,17 @@
 package frc.team449.control.holonomic
 
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
+import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
+import frc.team449.system.VisionCamera
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
@@ -26,7 +27,8 @@ open class SwerveDrive(
   private val modules: List<SwerveModule>,
   val ahrs: AHRS,
   override val maxLinearSpeed: Double,
-  override val maxRotSpeed: Double
+  override val maxRotSpeed: Double,
+  private val cameras: MutableList<VisionCamera> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
   init {
     // Zero out the gyro
@@ -37,8 +39,14 @@ open class SwerveDrive(
       .map { it.location }.toTypedArray()
   )
 
-  private val odometry = SwerveDriveOdometry(this.kinematics, ahrs.heading)
-
+  private val odometry = SwerveDrivePoseEstimator(
+    -ahrs.heading,
+    Pose2d(),
+    kinematics,
+    MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01),
+    MatBuilder(Nat.N1(), Nat.N1()).fill(0.01),
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005)
+  )
   @Log.ToString
   var desiredSpeeds = ChassisSpeeds()
 
@@ -46,10 +54,13 @@ open class SwerveDrive(
     this.desiredSpeeds = desiredSpeeds
   }
 
-  override val heading: Rotation2d
+  override var heading: Rotation2d
     @Log.ToString
     get() {
       return ahrs.heading
+    }
+    set(value) {
+      ahrs.heading = value
     }
 
   // TODO fix set()
@@ -57,9 +68,10 @@ open class SwerveDrive(
   override var pose: Pose2d
     @Log.ToString
     get() {
-      return this.odometry.poseMeters
+      return this.odometry.estimatedPosition
     }
     set(value) {
+      heading = value.rotation
       this.odometry.resetPosition(value, heading)
     }
 
@@ -75,7 +87,7 @@ open class SwerveDrive(
      *  apply scaling down */
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      DriveConstants.MAX_ATTAINABLE_MK4I_SPEED
+      DriveConstants.MAX_ATTAINABLE_WHEEL_SPEED
     )
 
     for (i in this.modules.indices) {
@@ -85,11 +97,28 @@ open class SwerveDrive(
     for (module in modules)
       module.update()
 
+    if (cameras.isNotEmpty()) localize()
+
     this.odometry.update(
       heading,
       *this.modules
         .map { it.state }.toTypedArray()
     )
+  }
+
+  fun addCamera(camera: VisionCamera) {
+    cameras.add(camera)
+  }
+
+  private fun localize() {
+    for (camera in cameras) {
+      if (camera.hasTarget()) {
+        odometry.addVisionMeasurement(
+          camera.camPose(Pose3d(Transform3d())).toPose2d(),
+          camera.timestamp()
+        )
+      }
+    }
   }
 
   companion object {

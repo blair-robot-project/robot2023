@@ -49,10 +49,18 @@ class HolonomicFollower(
   )
 
   init {
-    // controlling heading which is circular (0, 2PI)
+    // require the drivetrain to interrupt
+    addRequirements(drivetrain)
+
+    // controlling heading which is circular, [0, 2*PI)
     thetaController.enableContinuousInput(.0, 2 * PI)
 
-    controller.setTolerance(Pose2d(Translation2d(translationTol, translationTol), Rotation2d(angleTol)))
+    controller.setTolerance(
+      Pose2d(
+        Translation2d(translationTol, translationTol),
+        Rotation2d(angleTol)
+      )
+    )
   }
 
   override fun initialize() {
@@ -62,10 +70,13 @@ class HolonomicFollower(
       drivetrain.pose = Pose2d(start.poseMeters.x, start.poseMeters.y, start.holonomicRotation)
     }
 
+    // reset the controllers so that the error from last run doesn't transfer
     xController.reset()
     yController.reset()
     thetaController.reset(drivetrain.pose.rotation.radians)
 
+    // reset timer from last run and restart for this run
+    timer.reset()
     timer.start()
   }
 
@@ -86,6 +97,9 @@ class HolonomicFollower(
     prevTime = currTime
   }
 
+  /**
+   * @return if the robot reached ending position by estimated end time
+   */
   override fun isFinished(): Boolean {
     return (timer.hasElapsed(trajectory.totalTimeSeconds) && controller.atReference()) ||
       (timer.hasElapsed(trajectory.totalTimeSeconds + timeout))
