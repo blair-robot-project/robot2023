@@ -22,7 +22,7 @@ class DifferentialFollower(
   private val trajectory: PathPlannerTrajectory,
   private val resetPose: Boolean,
   private val translationTol: Double = 0.1,
-  private val angleTol: Double = 0.25,
+  private val angleTol: Double = 0.5,
   private val timeout: Double = 5.0
 ) : CommandBase() {
 
