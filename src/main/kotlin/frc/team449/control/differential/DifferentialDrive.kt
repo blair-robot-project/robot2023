@@ -45,31 +45,23 @@ open class DifferentialDrive(
   val kinematics = DifferentialDriveKinematics(trackwidth)
 
   /** Odometry to keep track of where the robot is */
-  val odometry = DifferentialDriveOdometry(-ahrs.heading)
+  val odometry = DifferentialDriveOdometry(ahrs.heading)
 
   /** Velocity PID controller for left side */
-  //  @Config.PIDController() //TODO causing casting errors
   val leftPID = makeVelPID()
 
   /** Velocity PID controller for right side */
-  //  @Config.PIDController()
   val rightPID = makeVelPID()
 
   /** Variable to keep track of the wheel speeds*/
-  @Log.ToString
+  @Log.ToString(name = "Desired Differential Speeds")
   var wheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
-  @Log.Graph
+  @Log.Graph(name = "X Pose")
   private var poseX = 0.0
 
-  @Log.Graph
+  @Log.Graph(name = "Y Pose")
   private var poseY = 0.0
-
-  @Log.Graph
-  private var leftPos = leftLeader.position
-
-  @Log.Graph
-  private var rightPos = rightLeader.position
 
   private var previousTime = Double.NaN
   var prevWheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
@@ -91,14 +83,14 @@ open class DifferentialDrive(
     wheelSpeeds.desaturate(DriveConstants.MAX_LINEAR_SPEED)
   }
 
-  @get:Log.ToString
+  @get:Log.ToString(name = "Heading")
   override var heading: Rotation2d
-    get() = -ahrs.heading
+    get() = ahrs.heading
     set(newHeading) {
       ahrs.heading = newHeading
     }
 
-  @get:Log.ToString
+  @get:Log.ToString(name = "Pose")
   override var pose: Pose2d
     get() = this.odometry.poseMeters
     set(pose) {
@@ -137,8 +129,6 @@ open class DifferentialDrive(
 
     poseX = pose.x
     poseY = pose.y
-    leftPos = leftLeader.position
-    rightPos = rightLeader.position
 
     previousTime = currentTime
   }

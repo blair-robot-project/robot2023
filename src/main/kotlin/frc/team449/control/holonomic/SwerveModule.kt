@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.Timer
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
-import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -38,7 +37,6 @@ open class SwerveModule constructor(
     turnController.reset()
   }
 
-  @Log.Graph
   private var desiredSpeed = 0.0
   private var prevDesiredSpeed = 0.0
   private var prevTime = Double.NaN

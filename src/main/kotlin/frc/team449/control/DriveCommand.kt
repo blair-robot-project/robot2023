@@ -1,5 +1,6 @@
 package frc.team449.control
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.CommandBase
 
 /**
@@ -14,6 +15,9 @@ class DriveCommand(
     addRequirements(drive)
   }
 
+  /**
+   * Feed [ChassisSpeeds] from the joystick/[OI] to drive[DriveSubsystem]
+   */
   override fun execute() {
     drive.set(oi.get())
   }

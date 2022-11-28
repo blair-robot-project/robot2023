@@ -6,15 +6,12 @@ import edu.wpi.first.wpilibj.interfaces.Gyro
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim
 import frc.team449.util.simBooleanProp
 import frc.team449.util.simDoubleProp
-import io.github.oblarg.oblog.annotations.Log
 
 class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx {
   private var headingOffset = 0.0
 
-  // TODO fix heading set and get
   /** The current reading of the gyro with the offset included */
   var heading: Rotation2d
-    @Log
     get() {
       return -Rotation2d.fromDegrees(headingOffset + this.navx.fusedHeading)
     }

@@ -48,7 +48,7 @@ dependencies {
 
   compileOnly 'org.jetbrains:annotations:23.0.0'
 
-  implementation 'com.github.Oblarg:Oblog:3.1.2'
+  implementation 'com.github.Oblarg:Oblog:4.0.9'
 
   implementation wpi.java.deps.wpilib()
   implementation wpi.java.vendor.java()

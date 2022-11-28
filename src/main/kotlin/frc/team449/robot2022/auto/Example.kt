@@ -9,12 +9,10 @@ class Example(
 ) {
 
   fun routine(): AutoRoutine {
-
     val cmd =
       HolonomicFollower(
         robot.drive,
-        Paths.TEST,
-        true
+        Paths.TEST
       )
 
     return AutoRoutine("Example Auto", cmd)

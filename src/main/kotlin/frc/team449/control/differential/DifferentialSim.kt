@@ -12,9 +12,9 @@ import frc.team449.system.motor.WrappedMotor
 
 class DifferentialSim(
   private val driveSim: DifferentialDrivetrainSim,
-  private val leftLeader: WrappedMotor,
-  private val rightLeader: WrappedMotor,
-  private val ahrs: AHRS,
+  leftLeader: WrappedMotor,
+  rightLeader: WrappedMotor,
+  ahrs: AHRS,
   private val feedforward: SimpleMotorFeedforward,
   makeVelPID: () -> PIDController,
   trackwidth: Double

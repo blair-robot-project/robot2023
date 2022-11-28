@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds
+import edu.wpi.first.wpilibj.RobotBase.isSimulation
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
@@ -59,7 +61,7 @@ open class MecanumDrive(
   private val blController = controller()
   private val brController = controller()
 
-  // 10.500 x, 10.713 y (outreach 2022) (in.) (top right) (y is horizontal axis)
+  var lastTime = Timer.getFPGATimestamp()
 
   val kinematics = MecanumDriveKinematics(
     frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation
@@ -74,13 +76,17 @@ open class MecanumDrive(
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005)
   )
 
-  override val heading: Rotation2d
+  override var heading: Rotation2d
+    @Log.ToString(name = "Heading")
     get() {
       return ahrs.heading
     }
+    set(value) {
+      ahrs.heading = value
+    }
 
   override var pose: Pose2d
-    @Log.ToString
+    @Log.ToString(name = "Pose")
     get() {
       return this.poseEstimator.estimatedPosition
     }
@@ -88,7 +94,7 @@ open class MecanumDrive(
       this.poseEstimator.resetPosition(value, heading)
     }
 
-  @Log.ToString
+  @Log.ToString(name = "Desired Mecanum Speeds")
   private var desiredWheelSpeeds = MecanumDriveWheelSpeeds()
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
@@ -101,6 +107,16 @@ open class MecanumDrive(
   }
 
   override fun periodic() {
+    val currTime = Timer.getFPGATimestamp()
+    /**
+     * We cannot simulate the robot turning accurately,
+     * so just accumulate it to the heading based on the input omega(rad/s)
+     */
+    if (isSimulation()) {
+      this.heading =
+        this.heading.plus(Rotation2d(this.kinematics.toChassisSpeeds(MecanumDriveWheelSpeeds()).omegaRadiansPerSecond * (currTime - lastTime)))
+      ahrs.heading = this.heading
+    }
 
     val frontLeftPID = flController.calculate(frontLeftMotor.velocity, desiredWheelSpeeds.frontLeftMetersPerSecond)
     val frontRightPID = frController.calculate(frontRightMotor.velocity, desiredWheelSpeeds.frontRightMetersPerSecond)
@@ -136,6 +152,8 @@ open class MecanumDrive(
         backRightMotor.velocity
       )
     )
+
+    lastTime = currTime
   }
 
   fun addCamera(camera: VisionCamera) {
@@ -171,10 +189,6 @@ open class MecanumDrive(
         SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
         { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) }
       )
-    }
-
-    fun simDrive(ahrs: AHRS): MecanumDrive {
-      return MecanumSim(ahrs)
     }
   }
 }
