@@ -1,5 +1,6 @@
 package frc.team449
 
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
@@ -10,6 +11,7 @@ import frc.team449.control.DriveCommand
 import frc.team449.control.auto.AutoChooser
 import frc.team449.robot2022.Robot
 import frc.team449.robot2022.auto.Paths
+import frc.team449.system.VisionCamera
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
@@ -26,12 +28,15 @@ class RobotLoop : TimedRobot() {
     if (RobotBase.isSimulation()) {
       // Don't complain about joysticks if there aren't going to be any
       DriverStation.silenceJoystickConnectionWarning(true)
+      val instance = NetworkTableInstance.getDefault()
+      instance.stopServer()
+      instance.startClient("localhost")
     }
-
     Logger.configureLoggingAndConfig(robot, false)
     Logger.configureLoggingAndConfig(Paths, false)
     SmartDashboard.putData("Field", robot.field)
     SmartDashboard.putData("Auto Chooser", autoChooser)
+    robot.drive.addCamera(VisionCamera("gloworm"))
   }
 
   override fun robotPeriodic() {

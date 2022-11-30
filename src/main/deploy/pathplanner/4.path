@@ -32,7 +32,7 @@
         "y": 2.5
       },
       "nextControl": {
-        "x": 3.273197279768662,
+        "x": 3.300288839813126,
         "y": 2.5
       },
       "holonomicAngle": -45.0,
@@ -44,7 +44,7 @@
         "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
-        "waitTime": 0
+        "waitTime": 2.0
       }
     },
     {

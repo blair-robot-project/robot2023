@@ -112,6 +112,14 @@ open class SwerveDrive(
     for (module in modules)
       module.update()
 
+    poseEstimator.setVisionMeasurementStdDevs(
+      MatBuilder(Nat.N3(), Nat.N1()).fill(
+        desiredSpeeds.vxMetersPerSecond + .005,
+        desiredSpeeds.vyMetersPerSecond + .005,
+        desiredSpeeds.omegaRadiansPerSecond + .005
+      )
+    )
+
     if (cameras.isNotEmpty()) localize()
 
     this.poseEstimator.update(
