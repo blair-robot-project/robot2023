@@ -1,11 +1,6 @@
 package frc.team449.robot2022.auto
-
-import com.pathplanner.lib.PathPlanner
+import frc.team449.control.auto.HolonomicPath
 
 object Paths {
-  val TEST =
-    PathPlanner.loadPath(
-      "9",
-      PathPlanner.getConstraintsFromPath("9")
-    )
+  val TEST = HolonomicPath("9", true)
 }
