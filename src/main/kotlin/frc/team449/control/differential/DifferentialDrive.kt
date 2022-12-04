@@ -45,7 +45,7 @@ open class DifferentialDrive(
   val kinematics = DifferentialDriveKinematics(trackwidth)
 
   /** Odometry to keep track of where the robot is */
-  val odometry = DifferentialDriveOdometry(ahrs.heading)
+  val odometry = DifferentialDriveOdometry(ahrs.heading, leftLeader.position, rightLeader.position)
 
   /** Velocity PID controller for left side */
   val leftPID = makeVelPID()
@@ -97,7 +97,7 @@ open class DifferentialDrive(
       leftLeader.encoder.resetPosition(0.0)
       rightLeader.encoder.resetPosition(0.0)
       ahrs.heading = pose.rotation
-      this.odometry.resetPosition(pose, ahrs.heading)
+      this.odometry.resetPosition(ahrs.heading, leftLeader.position, rightLeader.position, pose)
     }
 
   override fun stop() {

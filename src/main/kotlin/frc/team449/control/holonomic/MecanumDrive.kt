@@ -8,6 +8,7 @@ import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator
 import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds
 import edu.wpi.first.wpilibj.RobotBase.isSimulation
 import edu.wpi.first.wpilibj.Timer
@@ -45,7 +46,7 @@ open class MecanumDrive(
   frontRightLocation: Translation2d,
   backLeftLocation: Translation2d,
   backRightLocation: Translation2d,
-  val ahrs: AHRS,
+  private val ahrs: AHRS,
   override val maxLinearSpeed: Double,
   override val maxRotSpeed: Double,
   private val feedForward: SimpleMotorFeedforward,
@@ -61,7 +62,7 @@ open class MecanumDrive(
   private val blController = controller()
   private val brController = controller()
 
-  var lastTime = Timer.getFPGATimestamp()
+  private var lastTime = Timer.getFPGATimestamp()
 
   val kinematics = MecanumDriveKinematics(
     frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation
@@ -69,11 +70,12 @@ open class MecanumDrive(
 
   private val poseEstimator = MecanumDrivePoseEstimator(
     ahrs.heading,
+    getPositions(),
     Pose2d(),
     kinematics,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01),
-    MatBuilder(Nat.N1(), Nat.N1()).fill(0.01),
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005)
+    MatBuilder(Nat.N7(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01), // [x, y, theta, fl_pos, fr_pos, bl_pos, br_pos]
+    MatBuilder(Nat.N5(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005) // [x, y, theta]
   )
 
   override var heading: Rotation2d
@@ -91,7 +93,7 @@ open class MecanumDrive(
       return this.poseEstimator.estimatedPosition
     }
     set(value) {
-      this.poseEstimator.resetPosition(value, heading)
+      this.poseEstimator.resetPosition(heading, getPositions(), value)
     }
 
   @Log.ToString(name = "Desired Mecanum Speeds")
@@ -114,7 +116,7 @@ open class MecanumDrive(
      */
     if (isSimulation()) {
       this.heading =
-        this.heading.plus(Rotation2d(this.kinematics.toChassisSpeeds(MecanumDriveWheelSpeeds()).omegaRadiansPerSecond * (currTime - lastTime)))
+        this.heading.plus(Rotation2d(this.kinematics.toChassisSpeeds(desiredWheelSpeeds).omegaRadiansPerSecond * (currTime - lastTime)))
       ahrs.heading = this.heading
     }
 
@@ -145,16 +147,34 @@ open class MecanumDrive(
 
     this.poseEstimator.update(
       heading,
-      MecanumDriveWheelSpeeds(
-        frontLeftMotor.velocity,
-        frontRightMotor.velocity,
-        backLeftMotor.velocity,
-        backRightMotor.velocity
-      )
+      getSpeeds(),
+      getPositions()
     )
 
     lastTime = currTime
   }
+
+  /**
+   * @return the position readings of the wheels bundled into one object (meters)
+   */
+  private fun getPositions(): MecanumDriveWheelPositions =
+    MecanumDriveWheelPositions(
+      frontLeftMotor.position,
+      frontRightMotor.position,
+      backLeftMotor.position,
+      backRightMotor.position
+    )
+
+  /**
+   * @return the velocity readings of the wheels bundled into one object (meters/s)
+   */
+  private fun getSpeeds(): MecanumDriveWheelSpeeds =
+    MecanumDriveWheelSpeeds(
+      frontLeftMotor.velocity,
+      frontRightMotor.velocity,
+      backLeftMotor.velocity,
+      backRightMotor.velocity
+    )
 
   fun addCamera(camera: VisionCamera) {
     cameras.add(camera)
@@ -164,7 +184,7 @@ open class MecanumDrive(
     for (camera in cameras) {
       if (camera.hasTarget()) {
         poseEstimator.addVisionMeasurement(
-          camera.camPose(Pose3d(Transform3d())).toPose2d(),
+          camera.camPose(Pose3d(Pose2d())).toPose2d(),
           camera.timestamp()
         )
       }

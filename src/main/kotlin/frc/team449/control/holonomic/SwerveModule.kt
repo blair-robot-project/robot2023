@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.Timer
@@ -64,6 +65,13 @@ open class SwerveModule constructor(
       driveController.setpoint = state.speedMetersPerSecond
     }
 
+  open val position: SwerveModulePosition
+    get() {
+      return SwerveModulePosition(
+        drivingMotor.position,
+        Rotation2d(turningMotor.position)
+      )
+    }
   /** Keep same direction of module but keep speed at zero */
   fun stop() {
     turnController.setpoint = turningMotor.position

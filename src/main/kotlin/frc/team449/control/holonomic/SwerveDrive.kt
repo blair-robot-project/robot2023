@@ -8,6 +8,8 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
+import edu.wpi.first.math.kinematics.SwerveModulePosition
+import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase.isSimulation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -43,12 +45,16 @@ open class SwerveDrive(
   )
 
   private val poseEstimator = SwerveDrivePoseEstimator(
-    -ahrs.heading,
+    Nat.N7(),
+    Nat.N7(),
+    Nat.N5(),
+    ahrs.heading,
+    getPositions(),
     Pose2d(),
     kinematics,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01),
-    MatBuilder(Nat.N1(), Nat.N1()).fill(0.01),
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005)
+    MatBuilder(Nat.N7(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01), // [x, y, theta, fl_pos, fr_pos, bl_pos, br_pos]
+    MatBuilder(Nat.N5(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005) // [x, y, theta]
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -77,7 +83,11 @@ open class SwerveDrive(
     }
     set(value) {
       heading = value.rotation
-      this.poseEstimator.resetPosition(value, heading)
+      this.poseEstimator.resetPosition(
+        heading,
+        getPositions(),
+        value
+      )
     }
 
   override fun stop() {
@@ -124,11 +134,25 @@ open class SwerveDrive(
 
     this.poseEstimator.update(
       heading,
-      *this.modules
-        .map { it.state }.toTypedArray()
+      getStates(),
+      getPositions()
     )
 
     this.lastTime = currTime
+  }
+
+  /**
+   * @return an array of [SwerveModulePosition] for each module, containing [angle, position]
+   */
+  private fun getPositions(): Array<SwerveModulePosition> {
+    return Array(modules.size) { i -> modules[i].position }
+  }
+
+  /**
+   * @return an array of [SwerveModuleState] for each module, containing [angle, velocity]
+   */
+  private fun getStates(): Array<SwerveModuleState> {
+    return Array(modules.size) { i -> modules[i].state }
   }
 
   fun addCamera(camera: VisionCamera) {
@@ -139,7 +163,7 @@ open class SwerveDrive(
     for (camera in cameras) {
       if (camera.hasTarget()) {
         poseEstimator.addVisionMeasurement(
-          camera.camPose(Pose3d(Transform3d())).toPose2d(),
+          camera.camPose(Pose3d(Pose2d())).toPose2d(),
           camera.timestamp()
         )
       }
