@@ -171,5 +171,9 @@ class SwerveModuleSim(
   location
 ) {
 
+  init {
+  }
   override var state = SwerveModuleState()
+  override val position: SwerveModulePosition
+    get() = super.position
 }

@@ -45,15 +45,11 @@ open class SwerveDrive(
   )
 
   private val poseEstimator = SwerveDrivePoseEstimator(
-    Nat.N7(),
-    Nat.N7(),
-    Nat.N5(),
+    kinematics,
     ahrs.heading,
     getPositions(),
     Pose2d(),
-    kinematics,
-    MatBuilder(Nat.N7(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01), // [x, y, theta, fl_pos, fr_pos, bl_pos, br_pos]
-    MatBuilder(Nat.N5(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005) // [x, y, theta]
   )
 
@@ -134,7 +130,6 @@ open class SwerveDrive(
 
     this.poseEstimator.update(
       heading,
-      getStates(),
       getPositions()
     )
 

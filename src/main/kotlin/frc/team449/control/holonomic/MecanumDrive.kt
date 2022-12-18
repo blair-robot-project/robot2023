@@ -69,13 +69,12 @@ open class MecanumDrive(
   )
 
   private val poseEstimator = MecanumDrivePoseEstimator(
+    kinematics,
     ahrs.heading,
     getPositions(),
     Pose2d(),
-    kinematics,
-    MatBuilder(Nat.N7(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01), // [x, y, theta, fl_pos, fr_pos, bl_pos, br_pos]
-    MatBuilder(Nat.N5(), Nat.N1()).fill(0.01, 0.01, 0.01, 0.01, 0.01), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005) // [x, y, theta]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005), // [x, y, theta] other estimates
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005) // [x, y, theta] vision estimates
   )
 
   override var heading: Rotation2d
@@ -147,7 +146,6 @@ open class MecanumDrive(
 
     this.poseEstimator.update(
       heading,
-      getSpeeds(),
       getPositions()
     )
 

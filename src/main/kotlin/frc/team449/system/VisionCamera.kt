@@ -17,10 +17,8 @@ class VisionCamera(
    * @return the pose of the camera in relative to the field
    */
   fun camPose(targetPose: Pose3d): Pose3d {
-    val result = latestResult
-    val camToTarget: Transform3d = result.bestTarget.bestCameraToTarget
-    val fieldToCam: Pose3d = targetPose.transformBy(camToTarget.inverse())
-    return fieldToCam.transformBy(robotToCamera.inverse())
+    val cameraToTarget = latestResult.bestTarget.bestCameraToTarget
+    return targetPose.plus(cameraToTarget.inverse()).plus(robotToCamera.inverse())
   }
 
   /**
