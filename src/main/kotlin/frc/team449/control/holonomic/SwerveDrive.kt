@@ -35,22 +35,21 @@ open class SwerveDrive(
   private val cameras: MutableList<VisionCamera> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
 
-  init {
-    // Zero out the gyro
-    ahrs.calibrate()
-  }
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
 
+  @Log.ToString
+  private var camPose = Pose2d()
+
   private val poseEstimator = SwerveDrivePoseEstimator(
     kinematics,
-    ahrs.heading,
+    DriveConstants.GYRO_OFFSET,
     getPositions(),
-    Pose2d(),
+    DriveConstants.INITAL_POSE,
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005) // [x, y, theta]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .075, .025) // [x, y, theta]
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -108,7 +107,7 @@ open class SwerveDrive(
      *  apply scaling down */
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      DriveConstants.MAX_ATTAINABLE_WHEEL_SPEED
+      DriveConstants.MAX_ATTAINABLE_MK4I_SPEED
     )
 
     for (i in this.modules.indices) {
@@ -118,13 +117,13 @@ open class SwerveDrive(
     for (module in modules)
       module.update()
 
-    poseEstimator.setVisionMeasurementStdDevs(
-      MatBuilder(Nat.N3(), Nat.N1()).fill(
-        desiredSpeeds.vxMetersPerSecond + .005,
-        desiredSpeeds.vyMetersPerSecond + .005,
-        desiredSpeeds.omegaRadiansPerSecond + .005
-      )
-    )
+//    poseEstimator.setVisionMeasurementStdDevs(
+//      MatBuilder(Nat.N3(), Nat.N1()).fill(
+//        desiredSpeeds.vxMetersPerSecond + .005,
+//        desiredSpeeds.vyMetersPerSecond + .005,
+//        desiredSpeeds.omegaRadiansPerSecond + .005
+//      )
+//    )
 
     if (cameras.isNotEmpty()) localize()
 
@@ -150,15 +149,12 @@ open class SwerveDrive(
     return Array(modules.size) { i -> modules[i].state }
   }
 
-  fun addCamera(camera: VisionCamera) {
-    cameras.add(camera)
-  }
-
   private fun localize() {
     for (camera in cameras) {
       if (camera.hasTarget()) {
+        camPose = camera.camPose().toPose2d()
         poseEstimator.addVisionMeasurement(
-          camera.camPose(Pose3d(Pose2d())).toPose2d(),
+          camPose,
           camera.timestamp()
         )
       }
@@ -257,7 +253,8 @@ open class SwerveDrive(
         modules,
         ahrs,
         DriveConstants.MAX_LINEAR_SPEED,
-        DriveConstants.MAX_ROT_SPEED
+        DriveConstants.MAX_ROT_SPEED,
+        mutableListOf(VisionCamera(DriveConstants.CAM_NAME, DriveConstants.ROBOT_TO_CAM, DriveConstants.TAG_LAYOUT))
       )
     }
 

@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj.Timer
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import kotlin.math.PI
@@ -39,8 +38,6 @@ open class SwerveModule constructor(
   }
 
   private var desiredSpeed = 0.0
-  private var prevDesiredSpeed = 0.0
-  private var prevTime = Double.NaN
 
   open var state: SwerveModuleState
     get() {
@@ -60,7 +57,6 @@ open class SwerveModule constructor(
         Rotation2d(turningMotor.position)
       )
       turnController.setpoint = state.angle.radians
-      prevDesiredSpeed = desiredSpeed
       desiredSpeed = state.speedMetersPerSecond
       driveController.setpoint = state.speedMetersPerSecond
     }
@@ -80,23 +76,13 @@ open class SwerveModule constructor(
   override fun configureLogName() = this.name
 
   fun update() {
-    /** calculate difference in time from last updated time
-     *  to be used for obtaining what acceleration should
-     *  be fed to the module
-     **/
-    val currTime = Timer.getFPGATimestamp()
-    if (prevTime.isNaN())
-      prevTime = currTime - 0.02
-    val dt = currTime - prevTime
 
     /** CONTROL speed of module */
     val drivePid = driveController.calculate(
       drivingMotor.velocity
     )
     val driveFF = driveFeedforward.calculate(
-      prevDesiredSpeed,
-      desiredSpeed,
-      dt
+      desiredSpeed
     )
     drivingMotor.setVoltage(drivePid + driveFF)
 
@@ -105,8 +91,6 @@ open class SwerveModule constructor(
       turningMotor.position
     )
     turningMotor.set(turnPid)
-
-    prevTime = currTime
   }
 
   /**

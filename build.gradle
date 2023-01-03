@@ -50,7 +50,7 @@ dependencies {
 
   compileOnly 'org.jetbrains:annotations:23.0.0'
 
-  implementation 'com.github.Oblarg:Oblog:5.1.0'
+  implementation 'com.github.Oblarg:Oblog:5.0.0'
 
   implementation wpi.java.deps.wpilib()
   implementation wpi.java.vendor.java()
@@ -142,7 +142,7 @@ dokkaHtml.configure {
       sourceLink {
         localDirectory.set(file("src/main/kotlin"))
         remoteUrl.set(new URL(
-            "https://github.com/blair-robot-project/framework2022/blob/main/src/main/kotlin"))
+                "https://github.com/blair-robot-project/framework2022/blob/main/src/main/kotlin"))
         remoteLineSuffix.set("#L")
       }
 
@@ -151,7 +151,7 @@ dokkaHtml.configure {
       }
 
       pluginsMapConfiguration.set([
-          "org.jetbrains.dokka.base.DokkaBase": '{"separateInheritedMembers": true}'])
+              "org.jetbrains.dokka.base.DokkaBase": '{"separateInheritedMembers": true}'])
     }
   }
 }

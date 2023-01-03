@@ -34,7 +34,6 @@ class RobotLoop : TimedRobot() {
     Logger.configureLoggingAndConfig(Paths, false)
     SmartDashboard.putData("Field", robot.field)
     SmartDashboard.putData("Auto Chooser", autoChooser)
-//    robot.drive.addCamera(VisionCamera("gloworm"))
   }
 
   override fun robotPeriodic() {

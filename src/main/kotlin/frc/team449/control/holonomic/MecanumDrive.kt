@@ -100,7 +100,7 @@ open class MecanumDrive(
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
-    desiredWheelSpeeds.desaturate(DriveConstants.MAX_ATTAINABLE_WHEEL_SPEED)
+    desiredWheelSpeeds.desaturate(DriveConstants.MAX_ATTAINABLE_MK4I_SPEED)
   }
 
   override fun stop() {
@@ -174,15 +174,11 @@ open class MecanumDrive(
       backRightMotor.velocity
     )
 
-  fun addCamera(camera: VisionCamera) {
-    cameras.add(camera)
-  }
-
   private fun localize() {
     for (camera in cameras) {
       if (camera.hasTarget()) {
         poseEstimator.addVisionMeasurement(
-          camera.camPose(Pose3d(Pose2d())).toPose2d(),
+          camera.camPose().toPose2d(),
           camera.timestamp()
         )
       }
