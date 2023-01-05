@@ -77,7 +77,6 @@ open class SwerveDrive(
       return this.poseEstimator.estimatedPosition
     }
     set(value) {
-      heading = value.rotation
       this.poseEstimator.resetPosition(
         heading,
         getPositions(),
