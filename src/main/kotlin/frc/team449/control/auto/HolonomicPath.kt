@@ -26,7 +26,8 @@ class HolonomicPath(
 ) : Loggable {
   val trajectory: PathPlannerTrajectory = PathPlanner.loadPath(
     fileName,
-    PathPlanner.getConstraintsFromPath(fileName)
+    0.5,
+    0.5
   )
 
   override fun configureLogName(): String {

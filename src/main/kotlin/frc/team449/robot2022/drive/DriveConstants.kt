@@ -48,8 +48,8 @@ object DriveConstants {
   const val DRIVE_GEARING = 1 / 6.75
   const val DRIVE_UPR = 0.31818905832
   const val TURN_UPR = 2 * Math.PI
-  const val MAX_LINEAR_SPEED = 0.2 // 2.0
-  const val MAX_ROT_SPEED = 0.5 // 3.0
+  const val MAX_LINEAR_SPEED = 2.0 // 2.0
+  const val MAX_ROT_SPEED = 2.0 // 3.0
   const val MAX_ATTAINABLE_MK4I_SPEED = 4.267
   const val MAX_ACCEL = 5.5 // 4.5
 
@@ -65,5 +65,5 @@ object DriveConstants {
   val ROBOT_TO_CAM = Transform3d()
   val GYRO_OFFSET = Rotation2d.fromDegrees(-180.0)
   val INITAL_POSE = Pose2d(0.0, 0.0, GYRO_OFFSET)
-  val TAG_LAYOUT = AprilTagFieldLayout(listOf(AprilTag(12, Pose3d())), 16.4846, 8.1026)
+  val TAG_LAYOUT = AprilTagFieldLayout(listOf(AprilTag(0, Pose3d())), 16.4846, 8.1026)
 }
