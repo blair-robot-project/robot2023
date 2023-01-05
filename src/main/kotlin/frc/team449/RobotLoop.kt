@@ -3,13 +3,13 @@ package frc.team449
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team449.control.DriveCommand
 import frc.team449.control.auto.AutoChooser
 import frc.team449.robot2022.Robot
+import frc.team449.robot2022.auto.Paths
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
@@ -26,15 +26,14 @@ class RobotLoop : TimedRobot() {
     if (RobotBase.isSimulation()) {
       // Don't complain about joysticks if there aren't going to be any
       DriverStation.silenceJoystickConnectionWarning(true)
+//      val instance = NetworkTableInstance.getDefault()
+//      instance.stopServer()
+//      instance.startClient4("localhost")
     }
-
     Logger.configureLoggingAndConfig(robot, false)
-    Shuffleboard.setRecordingFileNameFormat("log-\${time}")
-    Shuffleboard.startRecording()
-
-    SmartDashboard.putData(robot.field)
-
-    SmartDashboard.putData(autoChooser)
+    Logger.configureLoggingAndConfig(Paths, false)
+    SmartDashboard.putData("Field", robot.field)
+    SmartDashboard.putData("Auto Chooser", autoChooser)
   }
 
   override fun robotPeriodic() {

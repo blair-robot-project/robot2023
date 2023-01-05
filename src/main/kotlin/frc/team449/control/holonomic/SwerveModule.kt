@@ -4,12 +4,11 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase
-import edu.wpi.first.wpilibj.Timer
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
-import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -38,10 +37,7 @@ open class SwerveModule constructor(
     turnController.reset()
   }
 
-  @Log.Graph
   private var desiredSpeed = 0.0
-  private var prevDesiredSpeed = 0.0
-  private var prevTime = Double.NaN
 
   open var state: SwerveModuleState
     get() {
@@ -61,11 +57,17 @@ open class SwerveModule constructor(
         Rotation2d(turningMotor.position)
       )
       turnController.setpoint = state.angle.radians
-      prevDesiredSpeed = desiredSpeed
       desiredSpeed = state.speedMetersPerSecond
       driveController.setpoint = state.speedMetersPerSecond
     }
 
+  open val position: SwerveModulePosition
+    get() {
+      return SwerveModulePosition(
+        drivingMotor.position,
+        Rotation2d(turningMotor.position)
+      )
+    }
   /** Keep same direction of module but keep speed at zero */
   fun stop() {
     turnController.setpoint = turningMotor.position
@@ -74,23 +76,13 @@ open class SwerveModule constructor(
   override fun configureLogName() = this.name
 
   fun update() {
-    /** calculate difference in time from last updated time
-     *  to be used for obtaining what acceleration should
-     *  be fed to the module
-     **/
-    val currTime = Timer.getFPGATimestamp()
-    if (prevTime.isNaN())
-      prevTime = currTime - 0.02
-    val dt = currTime - prevTime
 
     /** CONTROL speed of module */
     val drivePid = driveController.calculate(
       drivingMotor.velocity
     )
     val driveFF = driveFeedforward.calculate(
-      prevDesiredSpeed,
-      desiredSpeed,
-      dt
+      desiredSpeed
     )
     drivingMotor.setVoltage(drivePid + driveFF)
 
@@ -99,8 +91,6 @@ open class SwerveModule constructor(
       turningMotor.position
     )
     turningMotor.set(turnPid)
-
-    prevTime = currTime
   }
 
   /**
@@ -165,5 +155,9 @@ class SwerveModuleSim(
   location
 ) {
 
+  init {
+  }
   override var state = SwerveModuleState()
+  override val position: SwerveModulePosition
+    get() = super.position
 }

@@ -4,36 +4,48 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.interfaces.Gyro
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim
+import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.util.simBooleanProp
 import frc.team449.util.simDoubleProp
-import io.github.oblarg.oblog.annotations.Log
 
 class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx {
+
   private var headingOffset = 0.0
 
-  // TODO fix heading set and get
   /** The current reading of the gyro with the offset included */
   var heading: Rotation2d
-    @Log
     get() {
-      return -Rotation2d.fromDegrees(headingOffset + this.navx.fusedHeading)
+      return -Rotation2d.fromDegrees((headingOffset + this.navx.fusedHeading) % 360)
     }
     set(newHeading) {
-      this.headingOffset = this.navx.fusedHeading - newHeading.degrees
+      this.headingOffset = -newHeading.degrees - this.navx.fusedHeading
     }
 
-  constructor(port: SerialPort.Port = SerialPort.Port.kMXP) : this(com.kauailabs.navx.frc.AHRS(port))
+  init {
+    calibrate()
+    heading = DriveConstants.GYRO_OFFSET
+  }
+
+  constructor(
+    port: SerialPort.Port = SerialPort.Port.kMXP
+  ) : this(
+    com.kauailabs.navx.frc.AHRS(port)
+  )
 
   override fun reset() {
-    navx.zeroYaw()
     heading = Rotation2d()
+  }
+
+  fun isCalibrated(): Boolean {
+    return navx.isMagnetometerCalibrated
   }
 
   override fun getAngle() = heading.degrees
 
   /**
    * Used to set properties of an [AHRS] object during simulation. See
-   * https://pdocs.kauailabs.com/navx-mxp/software/roborio-libraries/java/
+   * https://pdocs.kauailabs.com/navx-mxp/softwa
+   * re/roborio-libraries/java/
    *
    * @param devName The name of the simulated device.
    * @param index The NavX index.

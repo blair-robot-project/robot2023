@@ -8,7 +8,10 @@ import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator
 import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds
+import edu.wpi.first.wpilibj.RobotBase.isSimulation
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.system.AHRS
@@ -43,7 +46,7 @@ open class MecanumDrive(
   frontRightLocation: Translation2d,
   backLeftLocation: Translation2d,
   backRightLocation: Translation2d,
-  val ahrs: AHRS,
+  private val ahrs: AHRS,
   override val maxLinearSpeed: Double,
   override val maxRotSpeed: Double,
   private val feedForward: SimpleMotorFeedforward,
@@ -59,41 +62,45 @@ open class MecanumDrive(
   private val blController = controller()
   private val brController = controller()
 
-  // 10.500 x, 10.713 y (outreach 2022) (in.) (top right) (y is horizontal axis)
+  private var lastTime = Timer.getFPGATimestamp()
 
   val kinematics = MecanumDriveKinematics(
     frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation
   )
 
   private val poseEstimator = MecanumDrivePoseEstimator(
-    ahrs.heading,
-    Pose2d(),
     kinematics,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.01),
-    MatBuilder(Nat.N1(), Nat.N1()).fill(0.01),
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005)
+    ahrs.heading,
+    getPositions(),
+    Pose2d(),
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005), // [x, y, theta] other estimates
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005) // [x, y, theta] vision estimates
   )
 
-  override val heading: Rotation2d
+  override var heading: Rotation2d
+    @Log.ToString(name = "Heading")
     get() {
       return ahrs.heading
     }
+    set(value) {
+      ahrs.heading = value
+    }
 
   override var pose: Pose2d
-    @Log.ToString
+    @Log.ToString(name = "Pose")
     get() {
       return this.poseEstimator.estimatedPosition
     }
     set(value) {
-      this.poseEstimator.resetPosition(value, heading)
+      this.poseEstimator.resetPosition(heading, getPositions(), value)
     }
 
-  @Log.ToString
+  @Log.ToString(name = "Desired Mecanum Speeds")
   private var desiredWheelSpeeds = MecanumDriveWheelSpeeds()
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
-    desiredWheelSpeeds.desaturate(DriveConstants.MAX_ATTAINABLE_WHEEL_SPEED)
+    desiredWheelSpeeds.desaturate(DriveConstants.MAX_ATTAINABLE_MK4I_SPEED)
   }
 
   override fun stop() {
@@ -101,6 +108,16 @@ open class MecanumDrive(
   }
 
   override fun periodic() {
+    val currTime = Timer.getFPGATimestamp()
+    /**
+     * We cannot simulate the robot turning accurately,
+     * so just accumulate it to the heading based on the input omega(rad/s)
+     */
+    if (isSimulation()) {
+      this.heading =
+        this.heading.plus(Rotation2d(this.kinematics.toChassisSpeeds(desiredWheelSpeeds).omegaRadiansPerSecond * (currTime - lastTime)))
+      ahrs.heading = this.heading
+    }
 
     val frontLeftPID = flController.calculate(frontLeftMotor.velocity, desiredWheelSpeeds.frontLeftMetersPerSecond)
     val frontRightPID = frController.calculate(frontRightMotor.velocity, desiredWheelSpeeds.frontRightMetersPerSecond)
@@ -129,24 +146,39 @@ open class MecanumDrive(
 
     this.poseEstimator.update(
       heading,
-      MecanumDriveWheelSpeeds(
-        frontLeftMotor.velocity,
-        frontRightMotor.velocity,
-        backLeftMotor.velocity,
-        backRightMotor.velocity
-      )
+      getPositions()
     )
+
+    lastTime = currTime
   }
 
-  fun addCamera(camera: VisionCamera) {
-    cameras.add(camera)
-  }
+  /**
+   * @return the position readings of the wheels bundled into one object (meters)
+   */
+  private fun getPositions(): MecanumDriveWheelPositions =
+    MecanumDriveWheelPositions(
+      frontLeftMotor.position,
+      frontRightMotor.position,
+      backLeftMotor.position,
+      backRightMotor.position
+    )
+
+  /**
+   * @return the velocity readings of the wheels bundled into one object (meters/s)
+   */
+  private fun getSpeeds(): MecanumDriveWheelSpeeds =
+    MecanumDriveWheelSpeeds(
+      frontLeftMotor.velocity,
+      frontRightMotor.velocity,
+      backLeftMotor.velocity,
+      backRightMotor.velocity
+    )
 
   private fun localize() {
     for (camera in cameras) {
       if (camera.hasTarget()) {
         poseEstimator.addVisionMeasurement(
-          camera.camPose(Pose3d(Transform3d())).toPose2d(),
+          camera.camPose().toPose2d(),
           camera.timestamp()
         )
       }
@@ -171,10 +203,6 @@ open class MecanumDrive(
         SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
         { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) }
       )
-    }
-
-    fun simDrive(ahrs: AHRS): MecanumDrive {
-      return MecanumSim(ahrs)
     }
   }
 }

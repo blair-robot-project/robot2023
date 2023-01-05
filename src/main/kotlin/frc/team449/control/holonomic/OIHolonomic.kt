@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
 import frc.team449.control.OI
 import frc.team449.robot2022.drive.DriveConstants
-import io.github.oblarg.oblog.Loggable
-import io.github.oblarg.oblog.annotations.Log
 import java.util.function.DoubleSupplier
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -35,22 +33,19 @@ import kotlin.math.hypot
  * be relative to the field rather than relative to the robot. This better be true.
  */
 class OIHolonomic(
-  @Log.Exclude
-  val drive: HolonomicDrive,
+  private val drive: HolonomicDrive,
   private val xThrottle: DoubleSupplier,
   private val yThrottle: DoubleSupplier,
   private val rotThrottle: DoubleSupplier,
   private val rotRamp: SlewRateLimiter,
   private val maxAccel: Double,
   private val fieldOriented: () -> Boolean
-) : OI, Loggable, Sendable {
+) : OI, Sendable {
 
   /** Previous x velocity (scaled and clamped) */
-  @Log
   private var prevX = 0.0
 
   /** Previous y velocity (scaled and clamped) */
-  @Log
   private var prevY = 0.0
 
   private var prevTime = Double.NaN
@@ -106,7 +101,7 @@ class OIHolonomic(
         vel.x,
         vel.y,
         rotScaled,
-        drive.heading
+        drive.pose.rotation
       )
     } else {
       ChassisSpeeds(
