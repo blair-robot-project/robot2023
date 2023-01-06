@@ -4,27 +4,16 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.interfaces.Gyro
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim
-import frc.team449.robot2022.drive.DriveConstants
 import frc.team449.util.simBooleanProp
 import frc.team449.util.simDoubleProp
 
 class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx {
 
-  private var headingOffset = 0.0
-
   /** The current reading of the gyro with the offset included */
-  var heading: Rotation2d
+  val heading: Rotation2d
     get() {
-      return -Rotation2d.fromDegrees((headingOffset + this.navx.fusedHeading) % 360)
+      return Rotation2d.fromDegrees(navx.fusedHeading.toDouble())
     }
-    set(newHeading) {
-      this.headingOffset = -newHeading.degrees - this.navx.fusedHeading
-    }
-
-  init {
-    calibrate()
-    heading = DriveConstants.GYRO_OFFSET
-  }
 
   constructor(
     port: SerialPort.Port = SerialPort.Port.kMXP
@@ -32,11 +21,7 @@ class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx {
     com.kauailabs.navx.frc.AHRS(port)
   )
 
-  override fun reset() {
-    heading = Rotation2d()
-  }
-
-  fun isCalibrated(): Boolean {
+  fun calibrated(): Boolean {
     return navx.isMagnetometerCalibrated
   }
 

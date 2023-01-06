@@ -5,12 +5,12 @@ import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
-import edu.wpi.first.math.geometry.*
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.wpilibj.RobotBase.isSimulation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2022.drive.DriveConstants
@@ -45,7 +45,7 @@ open class SwerveDrive(
 
   private val poseEstimator = SwerveDrivePoseEstimator(
     kinematics,
-    DriveConstants.GYRO_OFFSET,
+    ahrs.heading,
     getPositions(),
     DriveConstants.INITAL_POSE,
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
@@ -61,15 +61,6 @@ open class SwerveDrive(
     this.desiredSpeeds = desiredSpeeds
   }
 
-  override var heading: Rotation2d
-    @Log.ToString(name = "Heading")
-    get() {
-      return ahrs.heading
-    }
-    set(value) {
-      ahrs.heading = value
-    }
-
   /** The x y theta location of the robot on the field */
   override var pose: Pose2d
     @Log.ToString(name = "Pose")
@@ -78,7 +69,7 @@ open class SwerveDrive(
     }
     set(value) {
       this.poseEstimator.resetPosition(
-        heading,
+        ahrs.heading,
         getPositions(),
         value
       )
@@ -90,14 +81,6 @@ open class SwerveDrive(
 
   override fun periodic() {
     val currTime = Timer.getFPGATimestamp()
-    /**
-     * We cannot simulate the robot turning accurately,
-     * so just accumulate it to the heading based on the input omega(rad/s)
-     */
-    if (isSimulation()) {
-      this.heading = this.heading.plus(Rotation2d(this.desiredSpeeds.omegaRadiansPerSecond * (currTime - lastTime)))
-      ahrs.heading = this.heading
-    }
 
     val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
@@ -116,18 +99,10 @@ open class SwerveDrive(
     for (module in modules)
       module.update()
 
-//    poseEstimator.setVisionMeasurementStdDevs(
-//      MatBuilder(Nat.N3(), Nat.N1()).fill(
-//        desiredSpeeds.vxMetersPerSecond + .005,
-//        desiredSpeeds.vyMetersPerSecond + .005,
-//        desiredSpeeds.omegaRadiansPerSecond + .005
-//      )
-//    )
-
     if (cameras.isNotEmpty()) localize()
 
     this.poseEstimator.update(
-      heading,
+      ahrs.heading,
       getPositions()
     )
 

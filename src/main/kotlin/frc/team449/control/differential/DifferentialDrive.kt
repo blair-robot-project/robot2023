@@ -4,7 +4,6 @@ import edu.wpi.first.math.VecBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry
@@ -44,8 +43,8 @@ open class DifferentialDrive(
    */
   val kinematics = DifferentialDriveKinematics(trackwidth)
 
-  /** Odometry to keep track of where the robot is */
-  val odometry = DifferentialDriveOdometry(ahrs.heading, leftLeader.position, rightLeader.position)
+  /** Odometer to keep track of where the robot is */
+  private val odometer = DifferentialDriveOdometry(ahrs.heading, leftLeader.position, rightLeader.position)
 
   /** Velocity PID controller for left side */
   val leftPID = makeVelPID()
@@ -57,13 +56,7 @@ open class DifferentialDrive(
   @Log.ToString(name = "Desired Differential Speeds")
   var wheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
-  @Log.Graph(name = "X Pose")
-  private var poseX = 0.0
-
-  @Log.Graph(name = "Y Pose")
-  private var poseY = 0.0
-
-  private var previousTime = Double.NaN
+  private var previousTime = Timer.getFPGATimestamp()
   var prevWheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
   init {
@@ -83,21 +76,13 @@ open class DifferentialDrive(
     wheelSpeeds.desaturate(DriveConstants.MAX_LINEAR_SPEED)
   }
 
-  @get:Log.ToString(name = "Heading")
-  override var heading: Rotation2d
-    get() = ahrs.heading
-    set(newHeading) {
-      ahrs.heading = newHeading
-    }
-
   @get:Log.ToString(name = "Pose")
   override var pose: Pose2d
-    get() = this.odometry.poseMeters
+    get() = this.odometer.poseMeters
     set(pose) {
       leftLeader.encoder.resetPosition(0.0)
       rightLeader.encoder.resetPosition(0.0)
-      ahrs.heading = pose.rotation
-      this.odometry.resetPosition(ahrs.heading, leftLeader.position, rightLeader.position, pose)
+      this.odometer.resetPosition(ahrs.heading, leftLeader.position, rightLeader.position, pose)
     }
 
   override fun stop() {
@@ -125,10 +110,7 @@ open class DifferentialDrive(
       feedforward.calculate(prevRightVel, rightVel, dt) + rightPID.calculate(rightLeader.velocity, rightVel)
     )
 
-    this.odometry.update(this.heading, this.leftLeader.position, this.rightLeader.position)
-
-    poseX = pose.x
-    poseY = pose.y
+    this.odometer.update(ahrs.heading, this.leftLeader.position, this.rightLeader.position)
 
     previousTime = currentTime
   }

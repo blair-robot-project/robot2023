@@ -101,7 +101,7 @@ class OIHolonomic(
         vel.x,
         vel.y,
         rotScaled,
-        drive.pose.rotation
+        drive.heading
       )
     } else {
       ChassisSpeeds(
