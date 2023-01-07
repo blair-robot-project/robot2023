@@ -19,7 +19,6 @@ class HolonomicFollower(
   private val xController: PIDController,
   private val yController: PIDController,
   private val thetaController: PIDController,
-  private val resetPose: Boolean,
   poseTol: Pose2d,
   private val timeout: Double
 ) : CommandBase() {
@@ -44,10 +43,6 @@ class HolonomicFollower(
   }
 
   override fun initialize() {
-    if (resetPose) {
-      // initially assume the robot is at this pose already
-      drivetrain.pose = trajectory.initialHolonomicPose
-    }
 
     // reset the controllers so that the error from last run doesn't transfer
     xController.reset()

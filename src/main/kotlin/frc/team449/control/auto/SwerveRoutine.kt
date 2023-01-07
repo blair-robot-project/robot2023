@@ -18,7 +18,7 @@ class SwerveRoutine(
   @field:Config.PIDController(name = "Rotation PID") var rotController: PIDController = PIDController(AutoConstants.DEFAULT_ROTATION_KP, 0.0, 0.0),
   private val drive: HolonomicDrive,
   eventMap: HashMap<String, Command>,
-  private val driveEventMap: HashMap<Int, CommandBase>,
+  private val driveEventMap: HashMap<Int, Command>,
   private val translationTol: Double = 0.05,
   private val angleTol: Double = 0.05,
   private val resetPosition: Boolean = false,
@@ -32,7 +32,6 @@ class SwerveRoutine(
       xController,
       yController,
       rotController,
-      resetPosition,
       Pose2d(
         translationTol,
         translationTol,
@@ -44,6 +43,11 @@ class SwerveRoutine(
 
   override fun fullAuto(pathGroup: ArrayList<PathPlannerTrajectory>): CommandBase {
     val command = SequentialCommandGroup()
+
+    if (resetPosition) {
+      // Assume the initial position of the robot is the first pose in the path group
+      drive.pose = pathGroup[0].initialHolonomicPose
+    }
 
     for (index in 0 until pathGroup.size) {
       command.addCommands(stopEventGroup(pathGroup[index].startStopEvent))
