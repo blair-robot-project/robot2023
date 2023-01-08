@@ -6,13 +6,16 @@ import edu.wpi.first.wpilibj.interfaces.Gyro
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim
 import frc.team449.util.simBooleanProp
 import frc.team449.util.simDoubleProp
+import io.github.oblarg.oblog.Loggable
+import io.github.oblarg.oblog.annotations.Log
 
-class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx {
+class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx, Loggable {
 
   /** The current reading of the gyro with the offset included */
+  @get:Log.ToString
   val heading: Rotation2d
     get() {
-      return Rotation2d.fromDegrees(navx.fusedHeading.toDouble())
+      return -Rotation2d.fromDegrees(navx.fusedHeading.toDouble())
     }
 
   constructor(

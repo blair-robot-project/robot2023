@@ -44,7 +44,7 @@ open class DifferentialDrive(
   val kinematics = DifferentialDriveKinematics(trackwidth)
 
   /** Odometer to keep track of where the robot is */
-  private val odometer = DifferentialDriveOdometry(ahrs.heading, leftLeader.position, rightLeader.position)
+  val odometer = DifferentialDriveOdometry(ahrs.heading, leftLeader.position, rightLeader.position)
 
   /** Velocity PID controller for left side */
   val leftPID = makeVelPID()
