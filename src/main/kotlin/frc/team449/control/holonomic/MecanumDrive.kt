@@ -72,7 +72,7 @@ open class MecanumDrive(
     kinematics,
     ahrs.heading,
     getPositions(),
-    Pose2d(),
+    DriveConstants.INITAL_POSE,
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005), // [x, y, theta] other estimates
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005) // [x, y, theta] vision estimates
   )
@@ -201,7 +201,8 @@ open class MecanumDrive(
         DriveConstants.MAX_LINEAR_SPEED,
         DriveConstants.MAX_ROT_SPEED,
         SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
-        { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) }
+        { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) },
+        mutableListOf(VisionCamera(DriveConstants.CAM_NAME, DriveConstants.ROBOT_TO_CAM, DriveConstants.TAG_LAYOUT))
       )
     }
   }

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2022.auto.AutoConstants
 import io.github.oblarg.oblog.annotations.Config
+import java.util.ArrayList
 
 class SwerveRoutine(
   @field:Config.PIDController(name = "X PID") var xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
@@ -41,7 +42,7 @@ class SwerveRoutine(
     )
   }
 
-  override fun fullAuto(pathGroup: ArrayList<PathPlannerTrajectory>): CommandBase {
+  fun fullAuto(pathGroup: ArrayList<PathPlannerTrajectory>): CommandBase {
     val command = SequentialCommandGroup()
 
     if (resetPosition) {
