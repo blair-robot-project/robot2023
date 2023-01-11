@@ -2,7 +2,7 @@ package frc.team449.robot2022.auto
 
 import edu.wpi.first.wpilibj2.command.PrintCommand
 import frc.team449.control.auto.AutoRoutine
-import frc.team449.control.auto.SwerveRoutine
+import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.robot2022.Robot
 
 class Example(
@@ -11,7 +11,7 @@ class Example(
 
   fun routine(): AutoRoutine {
     val routine =
-      SwerveRoutine(
+      HolonomicRoutine(
         drive = robot.drive,
         eventMap = hashMapOf(
           "marker1" to PrintCommand("Lower Intake Command"),

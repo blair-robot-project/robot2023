@@ -4,6 +4,7 @@ import com.pathplanner.lib.PathPlannerTrajectory
 import com.pathplanner.lib.controllers.PPHolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
@@ -56,7 +57,12 @@ class HolonomicFollower(
 
   override fun execute() {
     val currTime = timer.get()
-    val reference = trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
+
+    // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
+    val reference = PathPlannerTrajectory.transformStateForAlliance(
+      trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState,
+      DriverStation.getAlliance()
+    )
     val currentPose = drivetrain.pose
 
     drivetrain.set(
