@@ -7,19 +7,19 @@ import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.DriveSubsystem
 
 class HeadingAlign(
-  val drive: DriveSubsystem,
-  val point: Translation2d,
-  val headingPID: PIDController
+  private val drive: DriveSubsystem,
+  private val point: Translation2d,
+  private val headingPID: PIDController
 ) : CommandBase() {
 
-	val fieldToRobot = Translation2d()
-  val robotToPoint = Translation2d()
+  private var fieldToRobot = Translation2d()
+  private var robotToPoint = Translation2d()
 
   override fun execute() {
     fieldToRobot = drive.pose.translation
     robotToPoint = point - fieldToRobot
     headingPID.setpoint = robotToPoint.angle.radians
- 
+
     drive.set(
       ChassisSpeeds(
         0.0,
