@@ -11,13 +11,15 @@ class HeadingAlign(
   val point: Translation2d,
   val headingPID: PIDController
 ) : CommandBase() {
-  override fun initialize() {
-    val fieldToRobot = drive.pose.translation
-    val robotToPoint = point - fieldToRobot
-    headingPID.setpoint = robotToPoint.angle.radians
-  }
+
+	val fieldToRobot = Translation2d()
+  val robotToPoint = Translation2d()
 
   override fun execute() {
+    fieldToRobot = drive.pose.translation
+    robotToPoint = point - fieldToRobot
+    headingPID.setpoint = robotToPoint.angle.radians
+ 
     drive.set(
       ChassisSpeeds(
         0.0,
