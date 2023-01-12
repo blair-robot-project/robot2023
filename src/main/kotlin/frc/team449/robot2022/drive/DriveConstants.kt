@@ -30,7 +30,7 @@ object DriveConstants {
   const val DRIVE_GEARING = 1 / 8.0
   val DRIVE_UPR = Math.PI * Units.inchesToMeters(6.0)
   const val MAX_LINEAR_SPEED = 1.5 // 1.5
-  const val MAX_ROT_SPEED = 1.0 // m'/s
+  const val MAX_ROT_SPEED = .1 // m'/s
   const val MAX_ATTAINABLE_MK4I_SPEED = (12 - DRIVE_KS) / DRIVE_KV
   const val MAX_ACCEL = 5.0
 
@@ -39,7 +39,7 @@ object DriveConstants {
   const val TRANSLATION_DEADBAND = .125
   const val ROTATION_DEADBAND = .125
 
-  val CAM_NAME = "limelight"
+  val CAM_NAME = "gloworm"
   val ROBOT_TO_CAM = Transform3d()
   val TAG_LAYOUT = AprilTagFieldLayout(listOf(AprilTag(0, Pose3d())), 16.4846, 8.1026)
 

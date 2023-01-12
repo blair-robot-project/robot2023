@@ -46,7 +46,7 @@ class DifferentialSim(
     driveSim.setInputs(leftVoltage, rightVoltage)
 
     driveSim.update(dt)
-    this.odometry.update(heading, this.leftEncSim.position, this.rightEncSim.position)
+    this.odometer.update(heading, this.leftEncSim.position, this.rightEncSim.position)
     this.lastTime = currTime
   }
 
