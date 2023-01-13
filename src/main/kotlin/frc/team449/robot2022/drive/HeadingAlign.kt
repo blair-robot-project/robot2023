@@ -12,6 +12,10 @@ class HeadingAlign(
   private val headingPID: PIDController
 ) : CommandBase() {
 
+  init {
+    addRequirements(drive)
+  }
+
   private var fieldToRobot = Translation2d()
   private var robotToPoint = Translation2d()
 
@@ -30,7 +34,7 @@ class HeadingAlign(
   }
 
   override fun isFinished(): Boolean {
-    return headingPID.atSetpoint()
+    return false
   }
 
   override fun end(interrupted: Boolean) {
