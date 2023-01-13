@@ -2,12 +2,12 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 3.0,
+        "x": 2.0,
         "y": 0.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9058351272249525,
+        "x": 1.9058351272249525,
         "y": 1.3877787807814457e-17
       },
       "holonomicAngle": -180.0,
@@ -24,18 +24,18 @@
     },
     {
       "anchorPoint": {
-        "x": 2.480738294809923,
+        "x": 1.75,
         "y": 0.0
       },
       "prevControl": {
-        "x": 2.6932867110174374,
-        "y": -0.02283833627496346
+        "x": 1.9637718850460257,
+        "y": -2.61795054769311e-17
       },
       "nextControl": {
-        "x": 2.268189878602408,
-        "y": 0.022838336274963462
+        "x": 1.5362281149539743,
+        "y": 2.617950547693112e-17
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 170.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -49,11 +49,11 @@
     },
     {
       "anchorPoint": {
-        "x": 2.0,
+        "x": 1.25,
         "y": 0.0
       },
       "prevControl": {
-        "x": 2.0582265611620154,
+        "x": 1.3082265611620154,
         "y": 6.938893903907228e-18
       },
       "nextControl": null,
@@ -70,5 +70,18 @@
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.2,
+      "names": [
+        "printIntake"
+      ]
+    },
+    {
+      "position": 1.75,
+      "names": [
+        "stopIntake"
+      ]
+    }
+  ]
 }

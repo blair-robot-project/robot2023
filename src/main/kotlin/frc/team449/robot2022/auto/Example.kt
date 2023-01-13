@@ -14,14 +14,15 @@ class Example(
       HolonomicRoutine(
         drive = robot.drive,
         eventMap = hashMapOf(
-          "marker1" to PrintCommand("Lower Intake Command"),
-          "marker2" to PrintCommand("Intake Command"),
-          "marker3" to PrintCommand("Win Game Command")
+          "printIntake" to PrintCommand("Intaking.... WOAH"),
+          "printStopIntake" to PrintCommand("STOPPING INTAKE!!!!!!!!!!")
         ),
         driveEventMap = hashMapOf(
-          1 to PrintCommand("Align Drive Command"),
-          2 to PrintCommand("Smash into Alliance Wall Command"),
-          3 to PrintCommand("Commands that require drive")
+//          1 to HeadingAlign(
+//            robot.drive,
+//            Translation2d(),
+//            PIDController(1.0, 0.0, 0.0)
+//          )
         )
       )
 

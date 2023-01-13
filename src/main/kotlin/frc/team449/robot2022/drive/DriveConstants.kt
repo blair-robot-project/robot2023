@@ -39,7 +39,7 @@ object DriveConstants {
   const val TRANSLATION_DEADBAND = .125
   const val ROTATION_DEADBAND = .125
 
-  val CAM_NAME = "gloworm"
+  val CAM_NAME = "limelight"
   val ROBOT_TO_CAM = Transform3d()
   val TAG_LAYOUT = AprilTagFieldLayout(listOf(AprilTag(0, Pose3d())), 16.4846, 8.1026)
 
