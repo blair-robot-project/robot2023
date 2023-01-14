@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team449.control.DriveCommand
-import frc.team449.control.auto.AutoChooser
 import frc.team449.robot2022.Robot
+import frc.team449.robot2022.auto.AutoChooser
 import frc.team449.robot2022.auto.Paths
 import frc.team449.robot2022.drive.ControllerBindings
 import io.github.oblarg.oblog.Logger

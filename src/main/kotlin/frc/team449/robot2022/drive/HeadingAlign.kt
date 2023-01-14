@@ -14,6 +14,8 @@ class HeadingAlign(
 
   init {
     addRequirements(drive)
+    headingPID.enableContinuousInput(-Math.PI, Math.PI)
+    headingPID.setTolerance(0.05)
   }
 
   private var fieldToRobot = Translation2d()
@@ -34,7 +36,7 @@ class HeadingAlign(
   }
 
   override fun isFinished(): Boolean {
-    return false
+    return headingPID.atSetpoint()
   }
 
   override fun end(interrupted: Boolean) {
