@@ -43,8 +43,7 @@ object DriveConstants {
   val ROBOT_TO_CAM = Transform3d()
   val TAG_LAYOUT = AprilTagFieldLayout(listOf(AprilTag(0, Pose3d())), 16.4846, 8.1026)
 
-  val GYRO_OFFSET = Rotation2d.fromDegrees(-180.0)
-  val INITAL_POSE = Pose2d(0.0, 0.0, GYRO_OFFSET)
+  val INITAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(-180.0))
 
   val WHEELBASE = Units.inchesToMeters(21.426)
   val TRACKWIDTH = Units.inchesToMeters(21.000)
