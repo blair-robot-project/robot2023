@@ -12,7 +12,7 @@ import io.github.oblarg.oblog.annotations.Log
 
 class Robot : RobotBase() {
 
-  // Other CAN IDs
+  // Other CAN ID
   private val PDP_CAN = 1
   private val PCM_MODULE = 0
 

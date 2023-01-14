@@ -21,7 +21,7 @@ import io.github.oblarg.oblog.annotations.Config
  * @param driveEventMap A hash map of the stop point number (the first stop point is the start of the path) paired with the command you want to run that may require drive
  * @param translationTol Allowed error in meters when following a trajectory
  * @param thetaTol Allowed error in radians when following a trajectory
- * @param resetPosition Whether to reset your position to the inital pose in the first trajectory
+ * @param resetPosition Whether to reset your position to the initial pose in the first trajectory
  * @param timeout Maximum time in seconds for the path follower to correct itself after EACH trajectory is done
  */
 class HolonomicRoutine(

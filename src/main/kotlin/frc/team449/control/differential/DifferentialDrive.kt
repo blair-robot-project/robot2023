@@ -14,9 +14,14 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.control.DriveSubsystem
+import frc.team449.robot2022.drive.DifferentialConstants
 import frc.team449.robot2022.drive.DriveConstants
+import frc.team449.robot2022.drive.MecanumConstants
+import frc.team449.robot2022.drive.SwerveConstants
 import frc.team449.system.AHRS
+import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
+import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 
@@ -57,7 +62,7 @@ open class DifferentialDrive(
   var wheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
   private var previousTime = Timer.getFPGATimestamp()
-  var prevWheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
+  private var prevWheelSpeeds = DifferentialDriveWheelSpeeds(0.0, 0.0)
 
   init {
     leftLeader.encoder.resetPosition(0.0)
@@ -89,7 +94,7 @@ open class DifferentialDrive(
     set(ChassisSpeeds(.0, .0, .0))
   }
 
-  /** Periodically update the odometry */
+  /** Periodically update the odometer */
   override fun periodic() {
     val currentTime = Timer.getFPGATimestamp()
 
@@ -116,88 +121,90 @@ open class DifferentialDrive(
   }
 
   companion object {
-//    /** Helper to make each side for the differential drive */
-//    private fun makeSide(
-//      name: String,
-//      motorId: Int,
-//      inverted: Boolean,
-//      encInverted: Boolean,
-//      wpiEnc: edu.wpi.first.wpilibj.Encoder,
-//      followers: Map<Int, Boolean>
-//    ) =
-//      createSparkMax(
-//        name = name + "_Drive",
-//        id = motorId,
-//        enableBrakeMode = true,
-//        inverted = inverted,
-//        enableVoltageComp = false,
-//        encCreator =
-//
-//        QuadEncoder.creator(
-//          wpiEnc,
-//          DriveConstants.DRIVE_EXT_ENC_CPR,
-//          DriveConstants.DRIVE_UPR,
-//          DriveConstants.DRIVE_GEARING,
-//          encInverted
-//        ),
-//
-//        slaveSparks = followers,
-//        currentLimit = DriveConstants.DRIVE_CURRENT_LIM
-//      )
-//
-//    fun createDifferentialDrive(ahrs: AHRS): DifferentialDrive {
-//      return DifferentialDrive(
-//        leftLeader = makeSide(
-//          "Left",
-//          DriveConstants.DRIVE_MOTOR_L,
-//          inverted = false,
-//          encInverted = false,
-//          wpiEnc = DriveConstants.DRIVE_ENC_LEFT,
-//          followers = mapOf(
-//            DriveConstants.DRIVE_MOTOR_L1 to false,
-//            DriveConstants.DRIVE_MOTOR_L2 to false
-//          )
-//        ),
-//        rightLeader = makeSide(
-//          "Right",
-//          DriveConstants.DRIVE_MOTOR_R,
-//          inverted = true,
-//          encInverted = true,
-//          wpiEnc = DriveConstants.DRIVE_ENC_RIGHT,
-//          followers = mapOf(
-//            DriveConstants.DRIVE_MOTOR_R1 to false,
-//            DriveConstants.DRIVE_MOTOR_R2 to false
-//          )
-//        ),
-//        ahrs,
-//        SimpleMotorFeedforward(
-//          DriveConstants.DRIVE_FF_KS,
-//          DriveConstants.DRIVE_FF_KV,
-//          DriveConstants.DRIVE_FF_KA
-//        )
-//      ) {
-//        PIDController(
-//          DriveConstants.DRIVE_KP_VEL,
-//          DriveConstants.DRIVE_KI_VEL,
-//          DriveConstants.DRIVE_KD_VEL
-//        )
-//      }
-//    }
+    /** Helper to make each side for the differential drive */
+    private fun makeSide(
+      name: String,
+      motorId: Int,
+      inverted: Boolean,
+      encInverted: Boolean,
+      wpiEnc: edu.wpi.first.wpilibj.Encoder,
+      followers: Map<Int, Boolean>
+    ) =
+      createSparkMax(
+        name = name + "_Drive",
+        id = motorId,
+        enableBrakeMode = true,
+        inverted = inverted,
+        enableVoltageComp = false,
+        encCreator =
+
+        QuadEncoder.creator(
+          wpiEnc,
+          DifferentialConstants.DRIVE_EXT_ENC_CPR,
+          DifferentialConstants.DRIVE_UPR,
+          DifferentialConstants.DRIVE_GEARING,
+          encInverted
+        ),
+
+        slaveSparks = followers,
+        currentLimit = DifferentialConstants.DRIVE_CURRENT_LIM
+      )
+
+    fun createDifferentialDrive(ahrs: AHRS): DifferentialDrive {
+      return DifferentialDrive(
+        leftLeader = makeSide(
+          "Left",
+          DifferentialConstants.DRIVE_MOTOR_L,
+          inverted = false,
+          encInverted = false,
+          wpiEnc = DifferentialConstants.DRIVE_ENC_LEFT,
+          followers = mapOf(
+            DifferentialConstants.DRIVE_MOTOR_L1 to false,
+            DifferentialConstants.DRIVE_MOTOR_L2 to false
+          )
+        ),
+        rightLeader = makeSide(
+          "Right",
+          DifferentialConstants.DRIVE_MOTOR_R,
+          inverted = true,
+          encInverted = true,
+          wpiEnc = DifferentialConstants.DRIVE_ENC_RIGHT,
+          followers = mapOf(
+            DifferentialConstants.DRIVE_MOTOR_R1 to false,
+            DifferentialConstants.DRIVE_MOTOR_R2 to false
+          )
+        ),
+        ahrs,
+        SimpleMotorFeedforward(
+          DifferentialConstants.DRIVE_FF_KS,
+          DifferentialConstants.DRIVE_FF_KV,
+          DifferentialConstants.DRIVE_FF_KA
+        ),
+        {
+          PIDController(
+            DifferentialConstants.DRIVE_KP_VEL,
+            DifferentialConstants.DRIVE_KI_VEL,
+            DifferentialConstants.DRIVE_KD_VEL
+          )
+        },
+        DifferentialConstants.TRACK_WIDTH
+      )
+    }
 
     fun simOf(
       drive: DifferentialDrive,
-      KV: Double,
-      KA: Double,
+      kV: Double,
+      kA: Double,
       angleKV: Double,
       angleKA: Double,
       wheelRadius: Double
     ): DifferentialSim {
       val drivePlant = LinearSystemId.identifyDrivetrainSystem(
-        KV, KA, angleKV, angleKA
+        kV, kA, angleKV, angleKA
       )
       val driveSim = DifferentialDrivetrainSim(
         drivePlant,
-        DCMotor.getNEO(3), DriveConstants.DRIVE_GEARING,
+        DCMotor.getNEO(3), DifferentialConstants.DRIVE_GEARING,
         drive.trackwidth, wheelRadius,
         VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
       )

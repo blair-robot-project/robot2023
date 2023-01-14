@@ -5,7 +5,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
 import frc.team449.control.OI
+import frc.team449.robot2022.drive.DifferentialConstants
 import frc.team449.robot2022.drive.DriveConstants
+import frc.team449.robot2022.drive.MecanumConstants
 
 /**
  * Helper class to create OIs for a differential drivetrain (arcade, curvature,
@@ -14,7 +16,7 @@ import frc.team449.robot2022.drive.DriveConstants
 object DifferentialOIs {
   /**
    * Create an OI for arcade drive. One throttle controls forward-backward speed,
-   * another controls rotation.
+   * the other; controls rotation.
    *
    * @param drive The drivetrain
    * @param xThrottle Throttle to get forward-backward movement

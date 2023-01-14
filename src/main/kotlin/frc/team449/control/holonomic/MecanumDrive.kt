@@ -13,6 +13,8 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2022.drive.DriveConstants
+import frc.team449.robot2022.drive.MecanumConstants
+import frc.team449.robot2022.vision.VisionConstants
 import frc.team449.system.AHRS
 import frc.team449.system.VisionCamera
 import frc.team449.system.encoder.NEOEncoder
@@ -49,7 +51,7 @@ open class MecanumDrive(
   override val maxRotSpeed: Double,
   private val feedForward: SimpleMotorFeedforward,
   private val controller: () -> PIDController,
-  private val cameras: MutableList<VisionCamera> = mutableListOf()
+  private val cameras: List<VisionCamera> = mutableListOf()
 ) : HolonomicDrive, SubsystemBase(), Loggable {
 
   private val flController = controller()
@@ -67,7 +69,7 @@ open class MecanumDrive(
     kinematics,
     ahrs.heading,
     getPositions(),
-    DriveConstants.INITAL_POSE,
+    DriveConstants.INITIAL_POSE,
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005), // [x, y, theta] other estimates
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005) // [x, y, theta] vision estimates
   )
@@ -86,7 +88,7 @@ open class MecanumDrive(
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
-    desiredWheelSpeeds.desaturate(DriveConstants.MAX_ATTAINABLE_MK4I_SPEED)
+    desiredWheelSpeeds.desaturate(MecanumConstants.MAX_ATTAINABLE_WHEEL_SPEED)
   }
 
   override fun stop() {
@@ -166,20 +168,20 @@ open class MecanumDrive(
     /** Create a new Mecanum Drive from DriveConstants */
     fun createMecanum(ahrs: AHRS): MecanumDrive {
       return MecanumDrive(
-        createSparkMax("frontLeft", DriveConstants.DRIVE_MOTOR_FL, NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING)),
-        createSparkMax("frontRight", DriveConstants.DRIVE_MOTOR_FR, NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING), inverted = true),
-        createSparkMax("backLeft", DriveConstants.DRIVE_MOTOR_BL, NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING)),
-        createSparkMax("backRight", DriveConstants.DRIVE_MOTOR_BR, NEOEncoder.creator(DriveConstants.DRIVE_UPR, DriveConstants.DRIVE_GEARING), inverted = true),
-        Translation2d(DriveConstants.WHEELBASE / 2, DriveConstants.TRACKWIDTH / 2),
-        Translation2d(DriveConstants.WHEELBASE / 2, -DriveConstants.TRACKWIDTH / 2),
-        Translation2d(-DriveConstants.WHEELBASE / 2, DriveConstants.TRACKWIDTH / 2),
-        Translation2d(-DriveConstants.WHEELBASE / 2, -DriveConstants.TRACKWIDTH / 2),
+        createSparkMax("frontLeft", MecanumConstants.DRIVE_MOTOR_FL, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING)),
+        createSparkMax("frontRight", MecanumConstants.DRIVE_MOTOR_FR, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING), inverted = true),
+        createSparkMax("backLeft", MecanumConstants.DRIVE_MOTOR_BL, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING)),
+        createSparkMax("backRight", MecanumConstants.DRIVE_MOTOR_BR, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING), inverted = true),
+        Translation2d(MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),
+        Translation2d(MecanumConstants.WHEELBASE / 2, -MecanumConstants.TRACKWIDTH / 2),
+        Translation2d(-MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),
+        Translation2d(-MecanumConstants.WHEELBASE / 2, -MecanumConstants.TRACKWIDTH / 2),
         ahrs,
         DriveConstants.MAX_LINEAR_SPEED,
         DriveConstants.MAX_ROT_SPEED,
-        SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV, DriveConstants.DRIVE_KA),
-        { PIDController(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD) },
-        mutableListOf(VisionCamera(DriveConstants.CAM_NAME, DriveConstants.ROBOT_TO_CAM, DriveConstants.TAG_LAYOUT))
+        SimpleMotorFeedforward(MecanumConstants.DRIVE_KS, MecanumConstants.DRIVE_KV, MecanumConstants.DRIVE_KA),
+        { PIDController(MecanumConstants.DRIVE_KP, MecanumConstants.DRIVE_KI, MecanumConstants.DRIVE_KD) },
+        VisionConstants.CAMERAS
       )
     }
   }

@@ -48,9 +48,10 @@ class RobotLoop : TimedRobot() {
   }
 
   override fun autonomousInit() {
-    val routine = autoChooser.selected
-    if (routine != null) {
-      this.autoCommand = routine.cmd
+    /** Every time auto starts, we update the chosen auto command */
+    val cmd = autoChooser.selected
+    if (cmd != null) {
+      this.autoCommand = cmd
       CommandScheduler.getInstance().schedule(this.autoCommand)
     }
   }
