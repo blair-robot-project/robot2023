@@ -1,4 +1,4 @@
-package frc.team449.robot2022.vision
+package frc.team449.robot2022.constants
 
 import edu.wpi.first.apriltag.AprilTag
 import edu.wpi.first.apriltag.AprilTagFieldLayout

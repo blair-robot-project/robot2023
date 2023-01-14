@@ -10,7 +10,7 @@ import frc.team449.control.DriveCommand
 import frc.team449.robot2022.Robot
 import frc.team449.robot2022.auto.AutoChooser
 import frc.team449.robot2022.auto.Paths
-import frc.team449.robot2022.drive.ControllerBindings
+import frc.team449.robot2022.commands.ControllerBindings
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
