@@ -5,9 +5,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
 import frc.team449.control.OI
-import frc.team449.robot2022.drive.DifferentialConstants
-import frc.team449.robot2022.drive.DriveConstants
-import frc.team449.robot2022.drive.MecanumConstants
+import frc.team449.robot2022.RobotConstants
 
 /**
  * Helper class to create OIs for a differential drivetrain (arcade, curvature,
@@ -98,9 +96,9 @@ object DifferentialOIs {
   ): OI = OI {
     drive.kinematics.toChassisSpeeds(
       DifferentialDriveWheelSpeeds(
-        leftRamp.calculate(leftThrottle() * DriveConstants.MAX_LINEAR_SPEED),
+        leftRamp.calculate(leftThrottle() * RobotConstants.MAX_LINEAR_SPEED),
         rightRamp.calculate(
-          rightThrottle() * DriveConstants.MAX_LINEAR_SPEED
+          rightThrottle() * RobotConstants.MAX_LINEAR_SPEED
         )
       )
     )
@@ -127,8 +125,8 @@ object DifferentialOIs {
     ramp: SlewRateLimiter,
     rotRamp: SlewRateLimiter
   ): ChassisSpeeds {
-    val leftVel = wheelThrottles.left * DriveConstants.MAX_LINEAR_SPEED
-    val rightVel = wheelThrottles.right * DriveConstants.MAX_LINEAR_SPEED
+    val leftVel = wheelThrottles.left * RobotConstants.MAX_LINEAR_SPEED
+    val rightVel = wheelThrottles.right * RobotConstants.MAX_LINEAR_SPEED
     val chassisSpeeds = kinematics.toChassisSpeeds(
       DifferentialDriveWheelSpeeds(leftVel, rightVel)
     )

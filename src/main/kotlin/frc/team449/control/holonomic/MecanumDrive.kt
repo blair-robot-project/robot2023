@@ -12,7 +12,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.team449.robot2022.drive.DriveConstants
+import frc.team449.robot2022.RobotConstants
 import frc.team449.robot2022.drive.MecanumConstants
 import frc.team449.robot2022.vision.VisionConstants
 import frc.team449.system.AHRS
@@ -69,7 +69,7 @@ open class MecanumDrive(
     kinematics,
     ahrs.heading,
     getPositions(),
-    DriveConstants.INITIAL_POSE,
+    RobotConstants.INITIAL_POSE,
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005), // [x, y, theta] other estimates
     MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .0005) // [x, y, theta] vision estimates
   )
@@ -177,8 +177,8 @@ open class MecanumDrive(
         Translation2d(-MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),
         Translation2d(-MecanumConstants.WHEELBASE / 2, -MecanumConstants.TRACKWIDTH / 2),
         ahrs,
-        DriveConstants.MAX_LINEAR_SPEED,
-        DriveConstants.MAX_ROT_SPEED,
+        RobotConstants.MAX_LINEAR_SPEED,
+        RobotConstants.MAX_ROT_SPEED,
         SimpleMotorFeedforward(MecanumConstants.DRIVE_KS, MecanumConstants.DRIVE_KV, MecanumConstants.DRIVE_KA),
         { PIDController(MecanumConstants.DRIVE_KP, MecanumConstants.DRIVE_KI, MecanumConstants.DRIVE_KD) },
         VisionConstants.CAMERAS

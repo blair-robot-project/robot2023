@@ -10,8 +10,7 @@ import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
 import frc.team449.control.OI
-import frc.team449.robot2022.drive.DriveConstants
-import frc.team449.robot2022.drive.MecanumConstants
+import frc.team449.robot2022.RobotConstants
 import java.util.function.DoubleSupplier
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -130,11 +129,11 @@ class OIHolonomic(
     fun createHolonomicOI(drive: HolonomicDrive, driveController: XboxController): OIHolonomic {
       return OIHolonomic(
         drive,
-        { if (abs(driveController.leftY) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
-        { if (abs(driveController.leftX) < DriveConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
-        { if (abs(driveController.getRawAxis(4)) < DriveConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
-        SlewRateLimiter(DriveConstants.RATE_LIMIT),
-        DriveConstants.MAX_ACCEL,
+        { if (abs(driveController.leftY) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
+        { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
+        { if (abs(driveController.getRawAxis(4)) < RobotConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
+        SlewRateLimiter(RobotConstants.RATE_LIMIT),
+        RobotConstants.MAX_ACCEL,
         { true }
       )
     }

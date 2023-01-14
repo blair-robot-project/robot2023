@@ -1,9 +1,9 @@
-package frc.team449.robot2022.drive
+package frc.team449.robot2022
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 
-object DriveConstants {
+object RobotConstants {
 
   /** Controller Configurations */
   const val RATE_LIMIT = 1.5
