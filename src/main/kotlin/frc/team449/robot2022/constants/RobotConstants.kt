@@ -1,9 +1,13 @@
-package frc.team449.robot2022
+package frc.team449.robot2022.constants
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 
 object RobotConstants {
+
+  /** Other CAN ID */
+  const val PDP_CAN = 1
+  const val PCM_MODULE = 0
 
   /** Controller Configurations */
   const val RATE_LIMIT = 1.5

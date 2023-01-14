@@ -6,15 +6,14 @@ import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
 import frc.team449.control.holonomic.MecanumDrive
 import frc.team449.control.holonomic.OIHolonomic.Companion.createHolonomicOI
+import frc.team449.robot2022.constants.RobotConstants
 // import frc.team449.control.holonomic.SwerveDrive.Companion.swerveDrive
 import frc.team449.system.AHRS
 import io.github.oblarg.oblog.annotations.Log
 
 class Robot : RobotBase() {
 
-  // Other CAN ID
-  private val PDP_CAN = 1
-  private val PCM_MODULE = 0
+
 
   val driveController = XboxController(0)
 
@@ -22,7 +21,7 @@ class Robot : RobotBase() {
 
   // Instantiate/declare PDP and other stuff here
 
-  override val powerDistribution: PowerDistribution = PowerDistribution(PDP_CAN, PowerDistribution.ModuleType.kCTRE)
+  override val powerDistribution: PowerDistribution = PowerDistribution(RobotConstants.PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
   override val drive = MecanumDrive.createMecanum(ahrs)
 

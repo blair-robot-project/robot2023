@@ -5,7 +5,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds
 import frc.team449.control.OI
-import frc.team449.robot2022.RobotConstants
+import frc.team449.robot2022.constants.RobotConstants
 
 /**
  * Helper class to create OIs for a differential drivetrain (arcade, curvature,
