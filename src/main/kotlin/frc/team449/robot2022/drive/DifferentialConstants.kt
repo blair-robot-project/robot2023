@@ -40,6 +40,5 @@ object DifferentialConstants {
   val DRIVE_UPR = 2 * PI * DRIVE_WHEEL_RADIUS
   const val DRIVE_CURRENT_LIM = 35
   const val DRIVE_ENC_VEL_THRESHOLD = 999999.0
-  const val MAX_LINEAR_SPEED = 0.3 // m/s
   const val TRACK_WIDTH = .615 // m
 }
