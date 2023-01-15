@@ -51,7 +51,7 @@ class BackupEncoder(
       fallbackCreator: EncoderCreator<T>,
       velThreshold: Double,
     ): EncoderCreator<T> = EncoderCreator {
-        name, motor, inverted ->
+      name, motor, inverted ->
       BackupEncoder(
         primaryCreator.create("primary_$name", motor, inverted),
         fallbackCreator.create("fallback_$name", motor, inverted),

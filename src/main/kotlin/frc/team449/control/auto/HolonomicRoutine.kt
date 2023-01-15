@@ -45,13 +45,13 @@ class HolonomicRoutine(
       xController,
       yController,
       thetaController,
-      false,
       Pose2d(
         translationTol,
         translationTol,
         Rotation2d(thetaTol)
       ),
-      timeout
+      timeout,
+      resetPose = false
     )
   }
 

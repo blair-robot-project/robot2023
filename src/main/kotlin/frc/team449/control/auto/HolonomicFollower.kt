@@ -5,7 +5,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
@@ -28,9 +27,9 @@ class HolonomicFollower(
   private val xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
   private val yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
   private val thetaController: PIDController = PIDController(AutoConstants.DEFAULT_ROTATION_KP, 0.0, 0.0),
-  private val resetPose: Boolean = false,
   poseTol: Pose2d = Pose2d(0.05, 0.05, Rotation2d(0.05)),
-  private val timeout: Double = 1.0
+  private val timeout: Double = 1.0,
+  private val resetPose: Boolean = false
 ) : CommandBase() {
 
   private val timer = Timer()

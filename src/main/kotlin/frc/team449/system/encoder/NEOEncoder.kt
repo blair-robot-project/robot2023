@@ -27,7 +27,7 @@ class NEOEncoder(
     const val NEO_ENCODER_CPR = 1
 
     fun creator(unitPerRotation: Double, gearing: Double): EncoderCreator<CANSparkMax> = EncoderCreator {
-        name, motor, _ ->
+      name, motor, _ ->
       NEOEncoder(name, motor.encoder, unitPerRotation, gearing)
     }
   }

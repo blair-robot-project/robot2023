@@ -40,7 +40,8 @@ class PoseAlign(
       yController,
       thetaController,
       poseTolerance,
-      timeout
+      timeout,
+      resetPose = false
     )
 
     cmd.addRequirements(robot.drive)
