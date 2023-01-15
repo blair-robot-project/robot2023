@@ -46,6 +46,8 @@ open class SwerveDrive(
   @Log.ToString
   private var camPose = Pose2d()
 
+  private var currentSpeeds = ChassisSpeeds()
+
   private val poseEstimator = SwerveDrivePoseEstimator(
     kinematics,
     ahrs.heading,
@@ -85,14 +87,25 @@ open class SwerveDrive(
   override fun periodic() {
     val currTime = Timer.getFPGATimestamp()
 
+    currentSpeeds = kinematics.toChassisSpeeds(
+      modules[0].state,
+      modules[1].state,
+      modules[2].state,
+      modules[3].state
+    )
+
     val desiredModuleStates =
       this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
 
     /** If any module is going faster than the max speed,
-     *  apply scaling down */
+     *  apply scaling down and make sure there isn't
+     *  any early desaturation */
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED
+      currentSpeeds,
+      SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED,
+      RobotConstants.MAX_LINEAR_SPEED,
+      RobotConstants.MAX_ROT_SPEED
     )
 
     for (i in this.modules.indices) {
