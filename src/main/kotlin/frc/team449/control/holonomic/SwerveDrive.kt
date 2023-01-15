@@ -1,4 +1,3 @@
-
 package frc.team449.control.holonomic
 
 import edu.wpi.first.math.MatBuilder
@@ -196,7 +195,7 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          Translation2d(SwerveConstants.WHEELBASE / 2, - SwerveConstants.TRACKWIDTH / 2)
+          Translation2d(SwerveConstants.WHEELBASE / 2, -SwerveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "BLModule",
@@ -216,7 +215,7 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          Translation2d(- SwerveConstants.WHEELBASE / 2, SwerveConstants.TRACKWIDTH / 2)
+          Translation2d(-SwerveConstants.WHEELBASE / 2, SwerveConstants.TRACKWIDTH / 2)
         ),
         SwerveModule.create(
           "BRModule",
@@ -236,7 +235,7 @@ open class SwerveDrive(
           driveMotorController(),
           turnMotorController(),
           driveFeedforward,
-          Translation2d(- SwerveConstants.WHEELBASE / 2, - SwerveConstants.TRACKWIDTH / 2)
+          Translation2d(-SwerveConstants.WHEELBASE / 2, -SwerveConstants.TRACKWIDTH / 2)
         )
       )
       return SwerveDrive(
