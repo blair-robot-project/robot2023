@@ -2,20 +2,12 @@ package frc.team449.control.auto
 
 import com.pathplanner.lib.PathPlannerTrajectory
 import com.pathplanner.lib.auto.BaseAutoBuilder
-import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
-import frc.team449.control.holonomic.HolonomicDrive
-import frc.team449.robot2023.auto.AutoConstants
-import io.github.oblarg.oblog.annotations.Config
+import frc.team449.control.differential.DifferentialDrive
 
 /**
- * @param xController The PID controller used to correct X translation error when following a trajectory
- * @param yController The PID controller used to correct Y translation error when following a trajectory
- * @param thetaController The PID controller used to correct rotational  error when following a trajectory
  * @param drive The holonomic drive subsystem to be used when following a trajectory
  * @param eventMap A hash map of event marker names paired with the command you want to run that cannot require drive
  * @param driveEventMap A hash map of the stop point number (the first stop point is the start of the path) paired with the command you want to run that may require drive
@@ -24,33 +16,24 @@ import io.github.oblarg.oblog.annotations.Config
  * @param resetPosition Whether to reset your position to the initial pose in the first trajectory
  * @param timeout Maximum time in seconds for the path follower to correct itself after EACH trajectory is done
  */
-class HolonomicRoutine(
-  @field:Config.PIDController(name = "X PID") var xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
-  @field:Config.PIDController(name = "Y PID") var yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
-  @field:Config.PIDController(name = "Rotation PID") var thetaController: PIDController = PIDController(AutoConstants.DEFAULT_ROTATION_KP, 0.0, 0.0),
-  private val drive: HolonomicDrive,
+class DifferentialRoutine(
+  private val drive: DifferentialDrive,
   eventMap: HashMap<String, Command>,
   private val driveEventMap: HashMap<Int, Command>,
   private val translationTol: Double = 0.05,
   private val thetaTol: Double = 0.05,
   private val resetPosition: Boolean = false,
   private val timeout: Double = 1.0
-) : BaseAutoBuilder(drive::pose, eventMap, DrivetrainType.HOLONOMIC) {
+) : BaseAutoBuilder(drive::pose, eventMap, DrivetrainType.STANDARD) {
 
   /** What command you want to use to follow a given trajectory */
   override fun followPath(trajectory: PathPlannerTrajectory): CommandBase {
-    return HolonomicFollower(
+    return DifferentialFollower(
       drive,
       trajectory,
-      xController,
-      yController,
-      thetaController,
       false,
-      Pose2d(
-        translationTol,
-        translationTol,
-        Rotation2d(thetaTol)
-      ),
+      translationTol,
+      thetaTol,
       timeout
     )
   }
