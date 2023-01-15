@@ -4,7 +4,7 @@ plugins {
   id "java"
   id "idea"
   id "org.jetbrains.kotlin.jvm" version "1.6.21"
-  id "edu.wpi.first.GradleRIO" version "2023.1.1"
+  id "edu.wpi.first.GradleRIO" version "2023.2.1"
   id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
   id "org.jetbrains.dokka" version "1.6.20"
 }
@@ -48,7 +48,7 @@ def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 dependencies {
   testImplementation 'junit:junit:4.13.2'
 
-  compileOnly 'org.jetbrains:annotations:23.0.0'
+  compileOnly 'org.jetbrains:annotations:23.1.0'
 
   implementation 'com.github.Oblarg:Oblog:5.1.0'
 

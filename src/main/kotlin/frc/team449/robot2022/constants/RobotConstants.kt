@@ -19,5 +19,4 @@ object RobotConstants {
   const val MAX_ROT_SPEED = .1 // rad/s
   const val MAX_ACCEL = 5.0 // m/s/s
   val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(-180.0))
-
 }

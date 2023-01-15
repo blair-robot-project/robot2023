@@ -13,8 +13,8 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2022.constants.RobotConstants
-import frc.team449.robot2022.constants.MecanumConstants
-import frc.team449.robot2022.constants.VisionConstants
+import frc.team449.robot2022.constants.drives.MecanumConstants
+import frc.team449.robot2022.constants.vision.VisionConstants
 import frc.team449.system.AHRS
 import frc.team449.system.VisionCamera
 import frc.team449.system.encoder.NEOEncoder

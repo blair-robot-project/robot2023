@@ -13,8 +13,6 @@ import io.github.oblarg.oblog.annotations.Log
 
 class Robot : RobotBase() {
 
-
-
   val driveController = XboxController(0)
 
   private val ahrs = AHRS(SerialPort.Port.kMXP)
