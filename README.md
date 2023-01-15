@@ -1,5 +1,5 @@
-# framework2022
-Framework rewrite after 2022 season
+# Charged Up
+Our robot for the 2023 season
 
 ---
 
@@ -10,4 +10,4 @@ There are currently three workflows, `run-tests.yml` to run tests, `ktlint.yml` 
 - It's triggered whenever you push to `main`
 - It runs `./gradlew dokkaHtml` to generate HTML from all our doc comments
 - The generated HTML is uploaded and deployed to GitHub Pages
-- The documentation is then accessible at https://blair-robot-project.github.io/framework2022/.
+- The documentation is then accessible at https://blair-robot-project.github.io/robot2023/.

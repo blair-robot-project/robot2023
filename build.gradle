@@ -6,11 +6,11 @@ plugins {
   id "org.jetbrains.kotlin.jvm" version "1.6.21"
   id "edu.wpi.first.GradleRIO" version "2023.2.1"
   id "org.jlleitschuh.gradle.ktlint" version "10.2.1"
-  id "org.jetbrains.dokka" version "1.6.20"
+  id "org.jetbrains.dokka" version "1.7.20"
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 def ROBOT_MAIN_CLASS = "frc.team449.Main"
 
@@ -108,7 +108,7 @@ jar {
 }
 
 wrapper {
-  gradleVersion = '7.4.2'
+  gradleVersion = '7.6'
 }
 
 compileJava {
@@ -117,7 +117,7 @@ compileJava {
 }
 
 ktlint {
-  version = "0.45.2"
+  version = "0.48.1"
 }
 
 // pre-commit hook to format
@@ -128,7 +128,7 @@ tasks.register('updateGitHooks', Copy) {
 
 compileKotlin {
   kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
   }
   dependsOn updateGitHooks
 }
@@ -136,13 +136,13 @@ compileKotlin {
 dokkaHtml.configure {
   dokkaSourceSets {
     all {
-      jdkVersion.set(11)
+      jdkVersion.set(17)
       platform.set(org.jetbrains.dokka.Platform.jvm)
 
       sourceLink {
         localDirectory.set(file("src/main/kotlin"))
         remoteUrl.set(new URL(
-                "https://github.com/blair-robot-project/framework2022/blob/main/src/main/kotlin"))
+                "https://github.com/blair-robot-project/robot2023/blob/main/src/main/kotlin"))
         remoteLineSuffix.set("#L")
       }
 

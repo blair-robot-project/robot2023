@@ -1,8 +1,8 @@
-package frc.team449.robot2022.auto
+package frc.team449.robot2023.auto
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj2.command.Command
-import frc.team449.robot2022.Robot
+import frc.team449.robot2023.Robot
 
 class AutoChooser(robot: Robot) : SendableChooser<Command>() {
   init {

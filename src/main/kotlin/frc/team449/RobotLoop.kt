@@ -7,10 +7,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import frc.team449.control.DriveCommand
-import frc.team449.robot2022.Robot
-import frc.team449.robot2022.auto.AutoChooser
-import frc.team449.robot2022.auto.Paths
-import frc.team449.robot2022.subsystems.ControllerBindings
+import frc.team449.robot2023.Robot
+import frc.team449.robot2023.auto.AutoChooser
+import frc.team449.robot2023.auto.Paths
+import frc.team449.robot2023.subsystems.ControllerBindings
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
