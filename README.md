@@ -1,5 +1,5 @@
 # robot2023
-Our code for our 2023 robot **TBA** for the FRC Charged Up Game!
+Our code for our 2023 robot *TBA* for the FRC Charged Up Game!
 
 ---
 
