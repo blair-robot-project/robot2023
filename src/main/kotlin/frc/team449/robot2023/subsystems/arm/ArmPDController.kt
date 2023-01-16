@@ -21,10 +21,11 @@ class ArmPDController(
   fun calculate(state: Matrix<N4, N1>, reference: Matrix<N4, N1>): Matrix<N2, N1> {
     setpoint = reference
     val err = reference - state
-    return mat(N2.instance, N1.instance).fill(
-      kP1 * err[0, 0] + kD1 * err[1, 0],
-      kP2 * err[2, 0] + kD2 * err[3, 0]
+    val K = mat(N2.instance, N4.instance).fill(
+      kP1, 0.0, kD1, 0.0,
+      0.0, kP2, 0.0, kD2
     )
+    return K * err
   }
 
   /**
