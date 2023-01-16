@@ -47,7 +47,7 @@ class ArmKinematics(
     /** linear velocities in form [x-dot, z-dot] */
     val linear = jacobian * angular
     val xSpeed = linear[0, 0]
-    val zSpeed = linear[0, 1]
+    val zSpeed = linear[1, 0]
 
     return CartesianArmState(x, z, xSpeed, zSpeed)
   }
