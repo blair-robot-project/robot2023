@@ -7,11 +7,11 @@ import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N4
 
 /** Describes the arm with the joint angles */
-data class ArmState (
+data class ArmState(
   var theta: Rotation2d = Rotation2d(),
   var beta: Rotation2d = Rotation2d(),
-  var thetaVel : Double = 0.0,
-  var betaVel : Double = 0.0
+  var thetaVel: Double = 0.0,
+  var betaVel: Double = 0.0
 ) {
   val matrix: Matrix<N4, N1>
     get() {
@@ -20,6 +20,6 @@ data class ArmState (
     }
 
   override fun toString(): String {
-    return "(Joint 1: ${theta.toString()}, Joint 2 : ${beta.toString()}, theta speed : ${thetaVel}, beta speed ${betaVel})"
+    return "(Joint 1: $theta, Joint 2 : $beta, theta speed : $thetaVel, beta speed $betaVel)"
   }
 }

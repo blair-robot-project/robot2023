@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.system.motor.WrappedMotor
 
-class Arm (
+class Arm(
   private val baseMotor: WrappedMotor,
   private val pivotMotor: WrappedMotor,
   pivotToJoint: Double,
@@ -21,8 +21,8 @@ class Arm (
     Rotation2d(pivotMotor.position)
   )
 
-  var state : ArmState
-    get() = ArmState (
+  var state: ArmState
+    get() = ArmState(
       Rotation2d(baseMotor.position),
       Rotation2d(pivotMotor.position),
       baseMotor.velocity,

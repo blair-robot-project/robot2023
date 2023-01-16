@@ -7,10 +7,10 @@ import edu.wpi.first.math.numbers.N4
 
 /** Describes where the end effector of the arm is in space */
 data class CartesianArmState(
-  val x : Double,
-  val z : Double,
-  val xSpeed : Double,
-  val zSpeed : Double
+  val x: Double,
+  val z: Double,
+  val xSpeed: Double,
+  val zSpeed: Double
 ) {
   val matrix: Matrix<N4, N1>
     get() {
@@ -19,6 +19,6 @@ data class CartesianArmState(
     }
 
   override fun toString(): String {
-    return "(x: ${x}, z : ${z}, x speed : ${xSpeed}, z speed ${zSpeed})"
+    return "(x: $x, z : $z, x speed : $xSpeed, z speed $zSpeed)"
   }
 }

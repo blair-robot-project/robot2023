@@ -152,6 +152,5 @@ class ArmKinematics(
         l1 * c1 + l2 * c12, l2 * c12
       )
     }
-
   }
 }
