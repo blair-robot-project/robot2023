@@ -26,7 +26,6 @@ class TwoJointArmFeedForward(
   private val r1 = distanceFromPivot.first
   private val r2 = distanceFromPivot.second
   private val l1 = lengths.first
-  val l2 = lengths.second
   private val i1 = momentOfInertia.first
   private val i2 = momentOfInertia.second
   private val g1 = gearing.first
