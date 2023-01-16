@@ -18,6 +18,7 @@ class Arm(
   private val pivotMotor: WrappedMotor,
   private val jointMotor: WrappedMotor,
   private val feedForward: TwoJointArmFeedForward,
+  private val controller: ArmPDController,
   pivotToJoint: Double,
   jointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
@@ -57,9 +58,9 @@ class Arm(
     get() = kinematics.toCartesian(state)
 
   override fun periodic() {
-    /** TODO PID */
-    val u = feedForward.calculate(desiredState.matrix)
-
+    val ff = feedForward.calculate(desiredState.matrix)
+    val pid = controller.calculate(state.matrix, desiredState.matrix)
+    val u = ff + pid
     pivotMotor.setVoltage(u[0, 0])
     jointMotor.setVoltage(u[1, 0])
   }

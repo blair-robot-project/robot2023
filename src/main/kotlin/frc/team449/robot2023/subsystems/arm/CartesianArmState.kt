@@ -5,7 +5,7 @@ import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N4
 
-/** Describes where the end effector of the arm is in space */
+/** Describes where the end effector of the arm is in space (x,z) */
 data class CartesianArmState(
   val x: Double,
   val z: Double,

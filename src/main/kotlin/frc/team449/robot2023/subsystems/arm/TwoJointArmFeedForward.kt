@@ -44,7 +44,7 @@ class TwoJointArmFeedForward(
    * @return voltage matrix for the two joint motors in form [joint1Voltage, joint2Voltage] A.K.A. u
    */
   fun calculate(reference: Matrix<N4, N1>, accelReference: Matrix<N2, N1>): Matrix<N2, N1> {
-    /** slice the reference state matrix in half*/
+    /** slice the reference state matrix in half */
     // [theta, beta]
     val angles = reference.block<N2, N1>(2, 1, 0, 0)
     // [theta-dot, beta-dot]
@@ -54,13 +54,13 @@ class TwoJointArmFeedForward(
     val thetaDot = angularVelocities[0, 0]
     val betaDot = angularVelocities[1, 0]
 
-    /** pre-computed cosines and sines*/
+    /** pre-computed cosines and sines */
     val c1 = cos(theta)
     val c2 = cos(beta)
     val s2 = sin(beta)
     val c12 = cos(theta + beta)
 
-    /** matrix builders for 2x1 and 2x2*/
+    /** matrix builders for 2x1 and 2x2 */
     val builder2x1 = mat(N2.instance, N1.instance)
     val builder2x2 = mat(N2.instance, N2.instance)
 
@@ -96,13 +96,13 @@ class TwoJointArmFeedForward(
 
     /** Solve equation
      * @see <a href = "https://www.chiefdelphi.com/uploads/short-url/pfucQonJecNeM7gvH57SpOOgPyR.pdf">White paper</a>
-     * */
-    val dTimesAccel = D.times(accelReference)
-    val cTimesVel = C.times(angularVelocities)
-    val kbTimesVel = Kb.times(angularVelocities)
+     */
+    val dTimesAccel = D * accelReference
+    val cTimesVel = C * angularVelocities
+    val kbTimesVel = Kb * angularVelocities
 
     /** return u = Km ^ -1 * [D * accel + C * vel + Tg + Kb * vel] */
-    return Km.solve(dTimesAccel.plus(cTimesVel).plus(Tg).plus(kbTimesVel))
+    return Km.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel)
   }
 
   fun calculate(reference: Matrix<N4, N1>): Matrix<N2, N1> {
