@@ -7,8 +7,8 @@ import frc.team449.system.motor.WrappedMotor
 class Arm (
   private val baseMotor: WrappedMotor,
   private val pivotMotor: WrappedMotor,
-  private val pivotToJoint: Double,
-  private val jointToEndEffector: Double
+  pivotToJoint: Double,
+  jointToEndEffector: Double
 ) : SubsystemBase() {
 
   private val kinematics = ArmKinematics(
