@@ -6,6 +6,14 @@ import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 
+/**
+ * Controllable two-jointed arm
+ * @param pivotMotor main motor that moves the whole arm
+ * @param jointMotor main motor at the joint that moves the second segment of the arm
+ * @param feedForward the calculator for voltages based on a desired state
+ * @param pivotToJoint length from the pivot motor to joint motor in METERS
+ * @param jointToEndEffector length from the joint motor to the end-effector of the arm in METERS
+ */
 class Arm(
   private val pivotMotor: WrappedMotor,
   private val jointMotor: WrappedMotor,
@@ -14,16 +22,21 @@ class Arm(
   jointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
 
+  /** kinematics that converts between (x, y) <-> (theta, beta) coordinates */
   private val kinematics = ArmKinematics(
     pivotToJoint,
     jointToEndEffector
   )
 
+  /** desired arm state */
   private var desiredState = ArmState(
     Rotation2d(pivotMotor.position),
     Rotation2d(jointMotor.position)
   )
 
+  /**
+   * the current state of the arm in [ArmState]
+   */
   @get:Log.ToString
   var state: ArmState
     get() = ArmState(
@@ -36,6 +49,9 @@ class Arm(
       desiredState = state
     }
 
+  /**
+   * The current state of the arm in [CartesianArmState]
+   */
   @get:Log.ToString
   val coordinate: CartesianArmState
     get() = kinematics.toCartesian(state)

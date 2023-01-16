@@ -5,12 +5,13 @@ import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
+import frc.team449.robot2023.constants.arm.ArmConstants
 import kotlin.math.cos
 import kotlin.math.sin
 
 class TwoJointArmFeedForward(
-  masses: Pair<Double, Double>,
   lengths: Pair<Double, Double>,
+  masses: Pair<Double, Double>,
   distanceFromPivot: Pair<Double, Double>,
   momentOfInertia: Pair<Double, Double>,
   gearing: Pair<Double, Double>,
@@ -36,6 +37,12 @@ class TwoJointArmFeedForward(
   private val kV = freeSpeed / 12.0
   private val kR = 12.0 / stallCurrent
 
+  /**
+   * Computes the voltage for each joint based on a desired state
+   * @param reference the matrix of the desired state matrix in form [theta, beta, theta-dot, beta-dot]
+   * @param accelReference desired acceleration for the two joints in form [thetaAccel, betaAccel]
+   * @return voltage matrix for the two joint motors in form [joint1Voltage, joint2Voltage] A.K.A. u
+   */
   fun calculate(reference: Matrix<N4, N1>, accelReference: Matrix<N2, N1>): Matrix<N2, N1> {
     /** slice the reference state matrix in half*/
     // [theta, beta]
@@ -105,5 +112,24 @@ class TwoJointArmFeedForward(
       0.0
     )
     return calculate(reference, acceleration)
+  }
+
+  companion object {
+    /**
+     * Uses [ArmConstants] to create an arm feed forward object
+     */
+    fun createFromConstants(): TwoJointArmFeedForward {
+      return TwoJointArmFeedForward(
+        ArmConstants.LENGTH_1 to ArmConstants.LENGTH_2,
+        ArmConstants.MASS_1 to ArmConstants.MASS_2,
+        ArmConstants.R1 to ArmConstants.R2,
+        ArmConstants.I1 to ArmConstants.I2,
+        ArmConstants.G1 to ArmConstants.G2,
+        ArmConstants.N1 to ArmConstants.N2,
+        ArmConstants.STALL_TORQUE,
+        ArmConstants.FREE_SPEED,
+        ArmConstants.STALL_CURRENT
+      )
+    }
   }
 }

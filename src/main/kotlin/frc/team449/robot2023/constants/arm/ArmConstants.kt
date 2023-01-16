@@ -26,7 +26,7 @@ object ArmConstants {
   const val N2 = 0.0
 
   // Motor characteristics
-  private const val STALL_TORQUE = 0.0
-  private const val FREE_SPEED = 0.0
-  private const val STALL_CURRENT = 1.0
+  const val STALL_TORQUE = 0.0
+  const val FREE_SPEED = 0.0
+  const val STALL_CURRENT = 1.0
 }
