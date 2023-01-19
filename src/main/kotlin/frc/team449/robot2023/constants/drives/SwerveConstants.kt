@@ -4,14 +4,14 @@ import edu.wpi.first.math.util.Units
 
 object SwerveConstants {
   /** Drive motor ports */
-  const val DRIVE_MOTOR_FL = 1
+  const val DRIVE_MOTOR_FL = 7
   const val DRIVE_MOTOR_FR = 3
-  const val DRIVE_MOTOR_BL = 5
-  const val DRIVE_MOTOR_BR = 7
-  const val TURN_MOTOR_FL = 2
+  const val DRIVE_MOTOR_BL = 8
+  const val DRIVE_MOTOR_BR = 1
+  const val TURN_MOTOR_FL = 11
   const val TURN_MOTOR_FR = 4
-  const val TURN_MOTOR_BL = 6
-  const val TURN_MOTOR_BR = 8
+  const val TURN_MOTOR_BL = 12
+  const val TURN_MOTOR_BR = 2
 
   /** Turning encoder channels */
   const val TURN_ENC_CHAN_FL = 1
