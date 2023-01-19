@@ -166,13 +166,28 @@ open class MecanumDrive(
   }
 
   companion object {
+
+    /** Helper method to create a motor for each wheel */
+    private fun createCorner(name: String, motorID: Int, inverted: Boolean): WrappedMotor {
+      return createSparkMax(
+        name,
+        motorID,
+        NEOEncoder.creator(
+          MecanumConstants.DRIVE_UPR,
+          MecanumConstants.DRIVE_GEARING
+        ),
+        inverted = inverted,
+        currentLimit = MecanumConstants.CURRENT_LIM
+      )
+    }
+
     /** Create a new Mecanum Drive from DriveConstants */
     fun createMecanum(ahrs: AHRS): MecanumDrive {
       return MecanumDrive(
-        createSparkMax("frontLeft", MecanumConstants.DRIVE_MOTOR_FL, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING)),
-        createSparkMax("frontRight", MecanumConstants.DRIVE_MOTOR_FR, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING), inverted = true),
-        createSparkMax("backLeft", MecanumConstants.DRIVE_MOTOR_BL, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING)),
-        createSparkMax("backRight", MecanumConstants.DRIVE_MOTOR_BR, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING), inverted = true),
+        createCorner("frontLeft", MecanumConstants.DRIVE_MOTOR_FL, false),
+        createCorner("frontRight", MecanumConstants.DRIVE_MOTOR_FR, true),
+        createCorner("backLeft", MecanumConstants.DRIVE_MOTOR_BL, false),
+        createCorner("backRight", MecanumConstants.DRIVE_MOTOR_BR, true),
         Translation2d(MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),
         Translation2d(MecanumConstants.WHEELBASE / 2, -MecanumConstants.TRACKWIDTH / 2),
         Translation2d(-MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),

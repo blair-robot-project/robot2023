@@ -152,7 +152,7 @@ open class SwerveDrive(
 
   companion object {
     /** Create a swerve drivetrain using DriveConstants */
-    fun swerveDrive(ahrs: AHRS): SwerveDrive {
+    fun createSwerve(ahrs: AHRS): SwerveDrive {
       val driveMotorController = { PIDController(SwerveConstants.DRIVE_KP, SwerveConstants.DRIVE_KI, SwerveConstants.DRIVE_KD) }
       val turnMotorController = { PIDController(SwerveConstants.TURN_KP, SwerveConstants.TURN_KI, SwerveConstants.TURN_KD) }
       val driveFeedforward = SimpleMotorFeedforward(SwerveConstants.DRIVE_KS, SwerveConstants.DRIVE_KV, SwerveConstants.DRIVE_KA)
@@ -262,7 +262,8 @@ open class SwerveDrive(
         NEOEncoder.creator(
           SwerveConstants.DRIVE_UPR,
           SwerveConstants.DRIVE_GEARING
-        )
+        ),
+        currentLimit = SwerveConstants.DRIVE_CURRENT_LIM
       )
 
     /** Helper to make turning motors for swerve */
@@ -284,7 +285,8 @@ open class SwerveDrive(
           offset,
           SwerveConstants.TURN_UPR,
           sensorPhase
-        )
+        ),
+        currentLimit = SwerveConstants.STEERING_CURRENT_LIM
       )
   }
 }
