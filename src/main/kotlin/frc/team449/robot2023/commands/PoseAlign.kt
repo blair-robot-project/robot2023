@@ -8,12 +8,12 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import frc.team449.control.auto.HolonomicFollower
-import frc.team449.robot2023.Robot
+import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import io.github.oblarg.oblog.annotations.Config
 
 class PoseAlign(
-  private val robot: Robot,
+  private val drive: HolonomicDrive,
   private val targetPose: Pose2d,
   @field:Config.PIDController(name = "Pose Align X PID") var xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
   @field:Config.PIDController(name = "Pose Align Y PID") var yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
@@ -24,17 +24,17 @@ class PoseAlign(
 ) {
 
   fun generateCommand(): Command {
-    val startPointRotation = targetPose.translation.minus(robot.drive.pose.translation).angle
-    val endPointRotation = robot.drive.pose.translation.minus(targetPose.translation).angle
+    val startPointRotation = targetPose.translation.minus(drive.pose.translation).angle
+    val endPointRotation = drive.pose.translation.minus(targetPose.translation).angle
 
     val traj = PathPlanner.generatePath(
       maxSpeeds,
-      PathPoint(robot.drive.pose.translation, startPointRotation, robot.drive.pose.rotation),
+      PathPoint(drive.pose.translation, startPointRotation, drive.pose.rotation),
       PathPoint(targetPose.translation, endPointRotation, targetPose.rotation)
     )
 
     val cmd = HolonomicFollower(
-      robot.drive,
+      drive,
       traj,
       xController,
       yController,
@@ -44,7 +44,7 @@ class PoseAlign(
       resetPose = false
     )
 
-    cmd.addRequirements(robot.drive)
+    cmd.addRequirements(drive)
 
     return cmd
   }
