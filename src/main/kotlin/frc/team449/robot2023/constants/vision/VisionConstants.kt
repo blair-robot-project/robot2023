@@ -4,7 +4,6 @@ import edu.wpi.first.apriltag.AprilTag
 import edu.wpi.first.apriltag.AprilTagFieldLayout
 import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.Pose3d
-import edu.wpi.first.math.geometry.Transform3d
 import frc.team449.system.VisionCamera
 
 /** Constants that have anything to do with vision */
@@ -19,16 +18,16 @@ object VisionConstants {
   )
 
   /** WPILib's AprilTagFieldLayout for the 2023 Charged Up Game */
-  private val TAG_LAYOUT: AprilTagFieldLayout = AprilTagFieldLayout(
-    AprilTagFields.k2023ChargedUp.name
+  private val TAG_LAYOUT: AprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(
+    AprilTagFields.k2023ChargedUp.m_resourceFile
   )
 
   /** List of cameras that we want to use*/
-  val CAMERAS = listOf(
-    VisionCamera(
-      "limelight",
-      Transform3d(),
-      TEST_TAG_LAYOUT
-    )
+  val CAMERAS = listOf<VisionCamera>(
+//    VisionCamera(
+//      "limelight",
+//      Transform3d(),
+//      TEST_TAG_LAYOUT
+//    )
   )
 }

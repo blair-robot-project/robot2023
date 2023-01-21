@@ -14,7 +14,7 @@ import io.github.oblarg.oblog.annotations.Log
  * @param pivotToJoint length from the pivot motor to joint motor in METERS
  * @param jointToEndEffector length from the joint motor to the end-effector of the arm in METERS
  */
-class Arm(
+open class Arm(
   private val pivotMotor: WrappedMotor,
   private val jointMotor: WrappedMotor,
   private val feedForward: TwoJointArmFeedForward,
@@ -23,14 +23,20 @@ class Arm(
   jointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
 
+  /** visual of the arm as a Mechanism2d object */
+  val visual = ArmVisual(
+    pivotToJoint,
+    jointToEndEffector
+  )
+
   /** kinematics that converts between (x, y) <-> (theta, beta) coordinates */
-  private val kinematics = ArmKinematics(
+  val kinematics = ArmKinematics(
     pivotToJoint,
     jointToEndEffector
   )
 
   /** desired arm state */
-  private var desiredState = ArmState(
+  var desiredState = ArmState(
     Rotation2d(pivotMotor.position),
     Rotation2d(jointMotor.position)
   )
@@ -39,7 +45,7 @@ class Arm(
    * the current state of the arm in [ArmState]
    */
   @get:Log.ToString
-  var state: ArmState
+  open var state: ArmState
     get() = ArmState(
       Rotation2d(pivotMotor.position),
       Rotation2d(jointMotor.position),
@@ -54,14 +60,29 @@ class Arm(
    * The current state of the arm in [CartesianArmState]
    */
   @get:Log.ToString
-  val coordinate: CartesianArmState
+  var coordinate: CartesianArmState
     get() = kinematics.toCartesian(state)
+    set(coordinate) {
+      /**
+       * null safety, return if the angular state is null
+       */
+      val angular = kinematics.toAngularState(coordinate, state) ?: return
+      state = angular
+    }
 
+  /**
+   * Mitigate any speed on the joints
+   */
+  fun stop() {
+    desiredState.thetaVel = 0.0
+    desiredState.betaVel = 0.0
+  }
   override fun periodic() {
     val ff = feedForward.calculate(desiredState.matrix)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
     pivotMotor.setVoltage(u[0, 0])
     jointMotor.setVoltage(u[1, 0])
+    visual.setState(state)
   }
 }

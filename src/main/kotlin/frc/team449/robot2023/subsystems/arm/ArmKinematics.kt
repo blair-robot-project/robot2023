@@ -5,6 +5,7 @@ import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
+import org.ejml.data.SingularMatrixException
 import kotlin.math.*
 
 /**
@@ -119,8 +120,15 @@ class ArmKinematics(
       zSpeed
     )
 
-    /** [q = pseudoInverse(J) * x] */
-    val angular = jacobian.solve(linear)
+    val angular: Matrix<N2, N1>
+
+    /** [q = pseudoInverse(J) * x], catch singularities */
+    try {
+      angular = jacobian.solve(linear)
+    } catch (e: SingularMatrixException) {
+      return null
+    }
+
     val thetaVel = angular[0, 0]
     val betaVel = angular[1, 0]
 
