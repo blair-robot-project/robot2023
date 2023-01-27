@@ -11,7 +11,6 @@ import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoChooser
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.subsystems.ControllerBindings
-import frc.team449.robot2023.subsystems.arm.ArmJoystickControl
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
@@ -64,11 +63,6 @@ class RobotLoop : TimedRobot() {
       CommandScheduler.getInstance().cancel(autoCommand)
     }
     robot.drive.defaultCommand = DriveCommand(robot.drive, robot.oi)
-    robot.arm.defaultCommand = ArmJoystickControl(
-      robot.arm,
-      { robot.driveController.getRawAxis(0) },
-      { robot.driveController.getRawAxis(1) }
-    )
   }
 
   override fun teleopPeriodic() {

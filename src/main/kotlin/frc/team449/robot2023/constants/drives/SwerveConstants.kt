@@ -6,7 +6,7 @@ object SwerveConstants {
   /** Drive motor ports */
   const val DRIVE_MOTOR_FL = 1
   const val DRIVE_MOTOR_FR = 3
-  const val DRIVE_MOTOR_BL = 5
+  const val DRIVE_MOTOR_BL = 10
   const val DRIVE_MOTOR_BR = 7
   const val TURN_MOTOR_FL = 2
   const val TURN_MOTOR_FR = 4
