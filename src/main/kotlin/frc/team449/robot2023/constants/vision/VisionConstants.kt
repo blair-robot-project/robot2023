@@ -19,8 +19,8 @@ object VisionConstants {
   )
 
   /** WPILib's AprilTagFieldLayout for the 2023 Charged Up Game */
-  private val TAG_LAYOUT: AprilTagFieldLayout = AprilTagFieldLayout(
-    AprilTagFields.k2023ChargedUp.name
+  private val TAG_LAYOUT: AprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(
+    AprilTagFields.k2023ChargedUp.m_resourceFile
   )
 
   /** List of cameras that we want to use*/

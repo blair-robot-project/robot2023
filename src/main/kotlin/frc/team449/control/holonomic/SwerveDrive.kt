@@ -101,10 +101,7 @@ open class SwerveDrive(
      *  any early desaturation */
     SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredModuleStates,
-      currentSpeeds,
-      SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED,
-      RobotConstants.MAX_LINEAR_SPEED,
-      RobotConstants.MAX_ROT_SPEED
+      SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED
     )
 
     for (i in this.modules.indices) {
@@ -278,7 +275,7 @@ open class SwerveDrive(
       createSparkMax(
         name = name + "Turn",
         id = motorId,
-        enableBrakeMode = true,
+        enableBrakeMode = false,
         inverted = inverted,
         encCreator = AbsoluteEncoder.creator(
           encoderChannel,

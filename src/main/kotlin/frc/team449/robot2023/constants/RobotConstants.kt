@@ -10,13 +10,13 @@ object RobotConstants {
   const val PCM_MODULE = 0
 
   /** Controller Configurations */
-  const val RATE_LIMIT = 1.5
+  const val RATE_LIMIT = 3.0
   const val TRANSLATION_DEADBAND = .125
   const val ROTATION_DEADBAND = .125
 
   /** Drive configuration */
   const val MAX_LINEAR_SPEED = 1.5 // m/s
-  const val MAX_ROT_SPEED = .1 // rad/s
-  const val MAX_ACCEL = 5.0 // m/s/s
+  const val MAX_ROT_SPEED = Math.PI // rad/s
+  const val MAX_ACCEL = 4.0 // m/s/s
   val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(-180.0))
 }
