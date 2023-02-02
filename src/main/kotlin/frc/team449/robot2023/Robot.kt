@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
-import frc.team449.control.holonomic.OIHolonomic.Companion.createHolonomicOI
-import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.*
@@ -13,7 +11,6 @@ import frc.team449.robot2023.subsystems.arm.*
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
-import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
 
 class Robot : RobotBase() {
@@ -26,10 +23,10 @@ class Robot : RobotBase() {
 
   override val powerDistribution: PowerDistribution = PowerDistribution(RobotConstants.PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
-  override val drive = SwerveDrive.swerveDrive(ahrs)
-
-  @Log(name = "Joystick Input")
-  override val oi = createHolonomicOI(drive, driveController)
+//  override val drive = SwerveDrive.swerveDrive(ahrs)
+//
+//  @Log(name = "Joystick Input")
+//  override val oi = createHolonomicOI(drive, driveController)
 
   private val pivotMotor = createSparkMax(
     "Pivot Motor",
@@ -37,7 +34,8 @@ class Robot : RobotBase() {
     NEOEncoder.creator(
       2 * PI,
       ArmConstants.G1
-    )
+    ),
+    enableBrakeMode = false
   )
 
   private val jointMotor = createSparkMax(
@@ -46,10 +44,11 @@ class Robot : RobotBase() {
     NEOEncoder.creator(
       2 * PI,
       ArmConstants.G2
-    )
+    ),
+    enableBrakeMode = false
   )
 
-  val arm = ArmSim(
+  val arm = Arm(
     pivotMotor,
     jointMotor,
     TwoJointArmFeedForward.createFromConstants(),

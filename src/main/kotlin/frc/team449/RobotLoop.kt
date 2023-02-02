@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import frc.team449.control.DriveCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoChooser
 import frc.team449.robot2023.auto.Paths
@@ -44,7 +43,7 @@ class RobotLoop : TimedRobot() {
 
     Logger.updateEntries()
 
-    robot.field.robotPose = robot.drive.pose
+//    robot.field.robotPose = robot.drive.pose
   }
 
   override fun autonomousInit() {
@@ -62,14 +61,14 @@ class RobotLoop : TimedRobot() {
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand)
     }
-    robot.drive.defaultCommand = DriveCommand(robot.drive, robot.oi)
+//    robot.drive.defaultCommand = DriveCommand(robot.drive, robot.oi)
   }
 
   override fun teleopPeriodic() {
   }
 
   override fun disabledInit() {
-    robot.drive.stop()
+//    robot.drive.stop()
   }
 
   override fun disabledPeriodic() {}

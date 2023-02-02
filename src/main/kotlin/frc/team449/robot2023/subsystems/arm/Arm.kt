@@ -22,7 +22,10 @@ open class Arm(
   pivotToJoint: Double,
   jointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
-
+  init {
+    pivotMotor.encoder.resetPosition(0.0)
+    jointMotor.encoder.resetPosition(0.0)
+  }
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
     pivotToJoint,
