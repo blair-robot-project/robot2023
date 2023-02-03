@@ -32,8 +32,8 @@ object ArmConstants {
   val I2 = 1.0 / 12 * MASS_1 * LENGTH_1 * LENGTH_1
 
   // Gearing of motors
-  const val G1 = 81.0
-  const val G2 = 81.0
+  const val G1 = 1 / 81.0
+  const val G2 = 1 / 81.0
 
   // Number of motors in each gearbox
   const val N1 = 1.0
