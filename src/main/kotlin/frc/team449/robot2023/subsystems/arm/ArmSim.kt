@@ -33,6 +33,7 @@ class ArmSim(
       pivotEncoder.position = desiredState.theta.radians
       jointEncoder.position = desiredState.beta.radians
     }
+
   override fun periodic() {
     super.periodic()
     pivotEncoder.position = pivotEncoder.position + pivotEncoder.velocity * .02

@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.subsystems.arm.ArmFollower
+import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.ArmState
 
 class ControllerBindings(
@@ -57,8 +59,11 @@ class ControllerBindings(
           0.0,
           0.0
         )
-      }
-      )
+      })
+    )
+
+    JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(
+      ArmFollower(robot.arm, ArmPaths.TEST)
     )
   }
 }

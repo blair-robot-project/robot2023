@@ -1,14 +1,14 @@
 package frc.team449.robot2023
 
+// import frc.team449.control.holonomic.SwerveDrive.Companion.swerveDrive
 import edu.wpi.first.wpilibj.PowerDistribution
-import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.arm.ArmConstants
-import frc.team449.robot2023.subsystems.arm.*
-// import frc.team449.control.holonomic.SwerveDrive.Companion.swerveDrive
-import frc.team449.system.AHRS
+import frc.team449.robot2023.subsystems.arm.ArmPDController
+import frc.team449.robot2023.subsystems.arm.ArmSim
+import frc.team449.robot2023.subsystems.arm.TwoJointArmFeedForward
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import kotlin.math.PI
@@ -17,7 +17,7 @@ class Robot : RobotBase() {
 
   val driveController = XboxController(0)
 
-  private val ahrs = AHRS(SerialPort.Port.kMXP)
+//  private val ahrs = AHRS(SerialPort.Port.kMXP)
 
   // Instantiate/declare PDP and other stuff here
 
@@ -48,7 +48,7 @@ class Robot : RobotBase() {
     enableBrakeMode = false
   )
 
-  val arm = Arm(
+  val arm = ArmSim(
     pivotMotor,
     jointMotor,
     TwoJointArmFeedForward.createFromConstants(),

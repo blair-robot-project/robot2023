@@ -13,6 +13,7 @@ class ArmPDController(
   private val kD2: Double
 ) {
   private var setpoint: Matrix<N4, N1>? = null
+
   /**
    * @param state the current state observed of the system from sensors
    * @param reference the desired state where the system should be
