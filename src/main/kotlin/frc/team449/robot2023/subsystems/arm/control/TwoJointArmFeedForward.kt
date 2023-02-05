@@ -68,7 +68,7 @@ class TwoJointArmFeedForward(
 
     /** C matrix in equation: Centrifugal and Coriolis forces */
     val C = builder2x2.fill(
-      (-m2 * l1 * r2 * s2 * betaDot), (-m2 * r2 * r2 + i2 + m2 * l1 * r2 * c2),
+      (-m2 * l1 * r2 * s2 * betaDot), (-m2 * l1 * r2 * s2 * thetaDot - m2 * l1 * r2 * s2 * betaDot),
       (m2 * l1 * r2 * s2 * thetaDot), (0.0)
     )
 
