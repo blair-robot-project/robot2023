@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.arm.ArmConstants
-import frc.team449.robot2023.subsystems.arm.ArmPDController
 import frc.team449.robot2023.subsystems.arm.ArmSim
-import frc.team449.robot2023.subsystems.arm.TwoJointArmFeedForward
+import frc.team449.robot2023.subsystems.arm.control.ArmPDController
+import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import kotlin.math.PI

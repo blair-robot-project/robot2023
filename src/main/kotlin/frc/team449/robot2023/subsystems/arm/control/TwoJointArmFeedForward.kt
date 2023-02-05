@@ -1,4 +1,4 @@
-package frc.team449.robot2023.subsystems.arm
+package frc.team449.robot2023.subsystems.arm.control
 
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Matrix.mat
@@ -13,12 +13,14 @@ class TwoJointArmFeedForward(
   lengths: Pair<Double, Double>,
   masses: Pair<Double, Double>,
   distanceFromPivot: Pair<Double, Double>,
-  momentOfInertia: Pair<Double, Double>,
-  gearing: Pair<Double, Double>,
-  numMotors: Pair<Double, Double>,
-  stallTorque: Double,
-  freeSpeed: Double,
-  stallCurrent: Double
+  private val ks1: Double,
+  private val kv1: Double,
+  ka1: Double,
+  kg1: Double,
+  private val ks2: Double,
+  private val kv2: Double,
+  ka2: Double,
+  kg2: Double
 ) {
   private val gravity = 9.8
   private val m1 = masses.first
@@ -26,15 +28,10 @@ class TwoJointArmFeedForward(
   private val r1 = distanceFromPivot.first
   private val r2 = distanceFromPivot.second
   private val l1 = lengths.first
-  private val i1 = momentOfInertia.first
-  private val i2 = momentOfInertia.second
-  private val g1 = gearing.first
-  private val g2 = gearing.second
-  private val n1 = numMotors.first
-  private val n2 = numMotors.second
-  private val kT = stallTorque / stallCurrent
-  private val kV = freeSpeed / 12.0
-  private val kR = 12.0 / stallCurrent
+  private val b11 = m1 * r1 + m2 * (l1 + r2) * gravity / kg1
+  private val b22 = m2 * r2 * gravity / kg2
+  private val i2 = b22 * ka2 - m2 * r2 * r2
+  private val i1 = b11 * ka1 - m1 * r1 * r1 - m2 * (l1 * l1 + r2 * r2) - i2 - 2 * m2 * l1 * r2
 
   /**
    * Computes the voltage for each joint based on a desired state
@@ -63,49 +60,59 @@ class TwoJointArmFeedForward(
     val builder2x1 = mat(N2.instance, N1.instance)
     val builder2x2 = mat(N2.instance, N2.instance)
 
-    /** D matrix in equation */
-    val D = builder2x2.fill(
+    /** M matrix in equation: Inertia */
+    val M = builder2x2.fill(
       (m1 * r1 * r1 + m2 * (l1 * l1 + r2 * r2) + i1 + i2 + 2 * m2 * l1 * r2 * c2), (m2 * r2 * r2 + i2 + m2 * l1 * r2 * c2),
       (m2 * r2 * r2 + i2 + m2 * l1 + r2 * c2), (m2 * r2 * r2 + i2)
     )
 
-    /** C matrix in equation */
+    /** C matrix in equation: Centrifugal and Coriolis forces */
     val C = builder2x2.fill(
       (-m2 * l1 * r2 * s2 * betaDot), (-m2 * r2 * r2 + i2 + m2 * l1 * r2 * c2),
       (m2 * l1 * r2 * s2 * thetaDot), (0.0)
     )
 
-    /** Tau g matrix in equation */
+    /** Tau g matrix in equation: Torque on each joint */
     val Tg = builder2x1.fill(
       (gravity * c1) * (m1 * r1 + m2 * l1) + m2 * r2 * gravity * c12,
       m2 * r2 * gravity * c12
     )
 
-    /** Km matrix in equation */
-    val Km = builder2x2.fill(
-      g1 * n1 * kT / kR, 0.0,
-      0.0, g2 * n2 * kT / kR
+    /** B matrix in equation: Motor torque */
+    val B = builder2x2.fill(
+      b11, 0.0,
+      0.0, b22
     )
 
-    /** Kb matrix in equation */
+    /** Kb matrix in equation: Back-emf */
     val Kb = builder2x2.fill(
-      (g1 * g1 * n1 * kT) / (kV * kR), 0.0,
-      0.0, (g2 * g2 * n2 * kT) / (kV * kR)
+      b11 * kv1, 0.0,
+      0.0, b22 * kv2
+    )
+
+    /** Ks matrix in equation: Overcome static friction */
+    val Ks = builder2x1.fill(
+      ks1,
+      ks2
     )
 
     /** Solve equation
      * @see <a href = "https://www.chiefdelphi.com/uploads/short-url/pfucQonJecNeM7gvH57SpOOgPyR.pdf">White paper</a>
      */
-    val dTimesAccel = D * accelReference
+    val dTimesAccel = M * accelReference
     val cTimesVel = C * angularVelocities
     val kbTimesVel = Kb * angularVelocities
 
     /** return u = Km ^ -1 * [D * accel + C * vel + Tg + Kb * vel] */
-    return Km.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel)
+    return B.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel) + Ks
   }
 
+  /**
+   * Computes the voltage for each joint based on a desired state with no acceleration
+   * @param reference the matrix of the desired state matrix in form [theta, beta, theta-dot, beta-dot]
+   * @return voltage matrix for the two joint motors in form [joint1Voltage, joint2Voltage] A.K.A. u
+   */
   fun calculate(reference: Matrix<N4, N1>): Matrix<N2, N1> {
-    // no acceleration
     val acceleration = mat(N2.instance, N1.instance).fill(
       0.0,
       0.0
@@ -122,12 +129,14 @@ class TwoJointArmFeedForward(
         ArmConstants.LENGTH_1 to ArmConstants.LENGTH_2,
         ArmConstants.MASS_1 to ArmConstants.MASS_2,
         ArmConstants.R1 to ArmConstants.R2,
-        ArmConstants.I1 to ArmConstants.I2,
-        ArmConstants.G1 to ArmConstants.G2,
-        ArmConstants.N1 to ArmConstants.N2,
-        ArmConstants.STALL_TORQUE,
-        ArmConstants.FREE_SPEED,
-        ArmConstants.STALL_CURRENT
+        ArmConstants.KS1,
+        ArmConstants.KV1,
+        ArmConstants.KA1,
+        ArmConstants.KG1,
+        ArmConstants.KS2,
+        ArmConstants.KV2,
+        ArmConstants.KA2,
+        ArmConstants.KG2
       )
     }
   }

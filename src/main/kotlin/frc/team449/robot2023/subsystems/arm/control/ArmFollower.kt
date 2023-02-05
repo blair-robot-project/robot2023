@@ -1,7 +1,8 @@
-package frc.team449.robot2023.subsystems.arm
+package frc.team449.robot2023.subsystems.arm.control
 
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
+import frc.team449.robot2023.subsystems.arm.Arm
 
 class ArmFollower(
   private val arm: Arm,

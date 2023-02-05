@@ -1,4 +1,4 @@
-package frc.team449.robot2023.subsystems.arm
+package frc.team449.robot2023.subsystems.arm.control
 
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Matrix.mat
