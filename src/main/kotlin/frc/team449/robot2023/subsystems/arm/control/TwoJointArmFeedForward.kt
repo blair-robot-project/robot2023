@@ -13,14 +13,10 @@ class TwoJointArmFeedForward(
   lengths: Pair<Double, Double>,
   masses: Pair<Double, Double>,
   distanceFromPivot: Pair<Double, Double>,
-  private val ks1: Double,
-  private val kv1: Double,
-  ka1: Double,
-  kg1: Double,
-  private val ks2: Double,
-  private val kv2: Double,
-  ka2: Double,
-  kg2: Double
+  private val ks: Pair<Double, Double>,
+  private val kv: Pair<Double, Double>,
+  ka: Pair<Double, Double>,
+  kg: Pair<Double, Double>
 ) {
   private val gravity = 9.8
   private val m1 = masses.first
@@ -28,10 +24,11 @@ class TwoJointArmFeedForward(
   private val r1 = distanceFromPivot.first
   private val r2 = distanceFromPivot.second
   private val l1 = lengths.first
-  private val b11 = m1 * r1 + m2 * (l1 + r2) * gravity / kg1
-  private val b22 = m2 * r2 * gravity / kg2
-  private val i2 = b22 * ka2 - m2 * r2 * r2
-  private val i1 = b11 * ka1 - m1 * r1 * r1 - m2 * (l1 * l1 + r2 * r2) - i2 - 2 * m2 * l1 * r2
+  private val h = m2 * l1 * r2
+  private val b11 = m1 * r1 + m2 * (l1 + r2) * gravity / kg.first
+  private val b22 = m2 * r2 * gravity / kg.second
+  private val i2 = b22 * ka.second - m2 * r2 * r2
+  private val i1 = b11 * ka.first - m1 * r1 * r1 - m2 * (l1 * l1 + r2 * r2) - i2 - 2 * h
 
   /**
    * Computes the voltage for each joint based on a desired state
@@ -62,14 +59,14 @@ class TwoJointArmFeedForward(
 
     /** M matrix in equation: Inertia */
     val M = builder2x2.fill(
-      (m1 * r1 * r1 + m2 * (l1 * l1 + r2 * r2) + i1 + i2 + 2 * m2 * l1 * r2 * c2), (m2 * r2 * r2 + i2 + m2 * l1 * r2 * c2),
+      (m1 * r1 * r1 + m2 * (l1 * l1 + r2 * r2) + i1 + i2 + 2 * h * c2), (m2 * r2 * r2 + i2 + h * c2),
       (m2 * r2 * r2 + i2 + m2 * l1 + r2 * c2), (m2 * r2 * r2 + i2)
     )
 
     /** C matrix in equation: Centrifugal and Coriolis forces */
     val C = builder2x2.fill(
-      (-m2 * l1 * r2 * s2 * betaDot), (-m2 * l1 * r2 * s2 * thetaDot - m2 * l1 * r2 * s2 * betaDot),
-      (m2 * l1 * r2 * s2 * thetaDot), (0.0)
+      (-h * s2 * betaDot), (-h * s2 * thetaDot - h * s2 * betaDot),
+      (h * s2 * thetaDot), (0.0)
     )
 
     /** Tau g matrix in equation: Torque on each joint */
@@ -86,14 +83,14 @@ class TwoJointArmFeedForward(
 
     /** Kb matrix in equation: Back-emf */
     val Kb = builder2x2.fill(
-      b11 * kv1, 0.0,
-      0.0, b22 * kv2
+      b11 * kv.first, 0.0,
+      0.0, b22 * kv.second
     )
 
     /** Ks matrix in equation: Overcome static friction */
     val Ks = builder2x1.fill(
-      ks1,
-      ks2
+      ks.first,
+      ks.second
     )
 
     /** Solve equation
@@ -129,14 +126,10 @@ class TwoJointArmFeedForward(
         ArmConstants.LENGTH_1 to ArmConstants.LENGTH_2,
         ArmConstants.MASS_1 to ArmConstants.MASS_2,
         ArmConstants.R1 to ArmConstants.R2,
-        ArmConstants.KS1,
-        ArmConstants.KV1,
-        ArmConstants.KA1,
-        ArmConstants.KG1,
-        ArmConstants.KS2,
-        ArmConstants.KV2,
-        ArmConstants.KA2,
-        ArmConstants.KG2
+        ArmConstants.KS1 to ArmConstants.KS2,
+        ArmConstants.KV1 to ArmConstants.KV2,
+        ArmConstants.KA1 to ArmConstants.KA2,
+        ArmConstants.KG1 to ArmConstants.KG2
       )
     }
   }
