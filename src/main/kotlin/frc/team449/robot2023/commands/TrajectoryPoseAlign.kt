@@ -8,12 +8,22 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import frc.team449.control.auto.HolonomicFollower
-import frc.team449.robot2023.Robot
+import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import io.github.oblarg.oblog.annotations.Config
 
-class PoseAlign(
-  private val robot: Robot,
+/**
+ * @param drive The holonomic drive you want to align with
+ * @param targetPose The pose you want to drive up to
+ * @param xController The profiled PID controller with constraints you want to use for fixing X error
+ * @param yController The profiled PID controller with constraints you want to use for fixing Y error
+ * @param thetaController The non-Profiled PID controller you want to use for fixing rotational error
+ * @param poseTolerance The allowed tolerance from the targetPose
+ * @param timeout Maximum time to wait after the estimated time for the trajectory to finish is done
+ * @param maxSpeeds Maximum speeds and acceleration to run the path at
+ */
+class TrajectoryPoseAlign(
+  private val drive: HolonomicDrive,
   private val targetPose: Pose2d,
   @field:Config.PIDController(name = "Pose Align X PID") var xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
   @field:Config.PIDController(name = "Pose Align Y PID") var yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
@@ -24,17 +34,20 @@ class PoseAlign(
 ) {
 
   fun generateCommand(): Command {
-    val startPointRotation = targetPose.translation.minus(robot.drive.pose.translation).angle
-    val endPointRotation = robot.drive.pose.translation.minus(targetPose.translation).angle
+    // Make the start and end poses point at each other
+    val startPointRotation = targetPose.translation.minus(drive.pose.translation).angle
+    val endPointRotation = drive.pose.translation.minus(targetPose.translation).angle
 
+    // Generate a PathPlanner trajectory on the fly
     val traj = PathPlanner.generatePath(
       maxSpeeds,
-      PathPoint(robot.drive.pose.translation, startPointRotation, robot.drive.pose.rotation),
+      PathPoint(drive.pose.translation, startPointRotation, drive.pose.rotation),
       PathPoint(targetPose.translation, endPointRotation, targetPose.rotation)
     )
 
-    val cmd = HolonomicFollower(
-      robot.drive,
+    // Return a command that follows the trajectory
+    return HolonomicFollower(
+      drive,
       traj,
       xController,
       yController,
@@ -43,9 +56,5 @@ class PoseAlign(
       timeout,
       resetPose = false
     )
-
-    cmd.addRequirements(robot.drive)
-
-    return cmd
   }
 }

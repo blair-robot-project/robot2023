@@ -6,6 +6,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.DriveSubsystem
 
+/**
+ * @param drive The holonomic drive you want to align with
+ * @param point The point in 2d space you want the drivetrain to face towards
+ * @param headingPID The non-Profiled PID controller you want to use for fixing rotational error
+ */
 class HeadingAlign(
   private val drive: DriveSubsystem,
   private val point: Translation2d,
