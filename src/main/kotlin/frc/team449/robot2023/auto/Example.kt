@@ -1,8 +1,12 @@
 package frc.team449.robot2023.auto
 
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.PrintCommand
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.commands.HeadingAlign
 
 class Example(
   private val robot: Robot
@@ -11,14 +15,12 @@ class Example(
   fun routine(): Command {
     val routine =
       HolonomicRoutine(
-        resetPosition = true,
         drive = robot.drive,
         eventMap = hashMapOf(
-          // "printIntake" to PrintCommand("Intaking.... WOAH"),
-          // "stopIntake" to PrintCommand("STOPPING INTAKE!")
+          "event" to PrintCommand("woah I can run a subsystem command here"),
         ),
         driveEventMap = hashMapOf(
-          // 1 to HeadingAlign(robot.drive, Translation2d(), PIDController(1.0, 0.0, 0.0))
+          1 to HeadingAlign(robot.drive, Translation2d(), PIDController(1.0, 0.0, 0.0))
         )
       )
 

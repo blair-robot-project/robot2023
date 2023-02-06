@@ -28,7 +28,6 @@ class DifferentialFollower(
 ) : CommandBase() {
 
   private val timer = Timer()
-  private var prevTime = 0.0
 
   private val controller = RamseteController()
 
@@ -59,8 +58,6 @@ class DifferentialFollower(
         reference
       )
     )
-
-    prevTime = currTime
   }
 
   override fun isFinished(): Boolean {
