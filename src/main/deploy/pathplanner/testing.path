@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 2.0,
-        "y": 1.0
+        "y": 0.5
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.0941648727750475,
-        "y": 1.0
+        "y": 0.5
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -25,11 +25,11 @@
     {
       "anchorPoint": {
         "x": 4.0,
-        "y": 1.0
+        "y": 0.5
       },
       "prevControl": {
-        "x": 3.9832359675074884,
-        "y": 1.0
+        "x": 4.723224853607991,
+        "y": 0.4999999999999999
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -38,8 +38,12 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "stopIntake",
+          "faceTag",
+          "shoot"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -47,9 +51,15 @@
   ],
   "markers": [
     {
-      "position": 0.2181818181818142,
+      "position": 0.28181818181818186,
       "names": [
-        "printIntake"
+        "runIntake"
+      ]
+    },
+    {
+      "position": 0.0,
+      "names": [
+        "event"
       ]
     }
   ]
