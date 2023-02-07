@@ -14,7 +14,7 @@ import frc.team449.control.DriveSubsystem
 class HeadingAlign(
   private val drive: DriveSubsystem,
   private val point: Translation2d,
-  private val headingPID: PIDController
+  private val headingPID: PIDController = PIDController(1.0, 0.0, 0.0)
 ) : CommandBase() {
 
   init {

@@ -2,12 +2,12 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.0,
+        "x": 3.0,
         "y": 0.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0941648727750475,
+        "x": 3.0941648727750475,
         "y": 0.5
       },
       "holonomicAngle": 0.0,
@@ -24,11 +24,11 @@
     },
     {
       "anchorPoint": {
-        "x": 4.0,
+        "x": 1.5,
         "y": 0.5
       },
       "prevControl": {
-        "x": 4.723224853607991,
+        "x": 2.2232248536079906,
         "y": 0.4999999999999999
       },
       "nextControl": null,
@@ -44,14 +44,14 @@
           "shoot"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "after",
+        "waitTime": 3.0
       }
     }
   ],
   "markers": [
     {
-      "position": 0.28181818181818186,
+      "position": 0.30545454545454265,
       "names": [
         "runIntake"
       ]

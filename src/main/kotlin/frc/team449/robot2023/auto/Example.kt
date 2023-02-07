@@ -1,9 +1,8 @@
 package frc.team449.robot2023.auto
 
-import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.PrintCommand
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.HeadingAlign
@@ -17,13 +16,17 @@ class Example(
       HolonomicRoutine(
         drive = robot.drive,
         eventMap = hashMapOf(
-          "event" to PrintCommand("woah I can run a subsystem command here"),
-        ),
-        driveEventMap = hashMapOf(
-          1 to HeadingAlign(robot.drive, Translation2d(), PIDController(1.0, 0.0, 0.0))
+          "runIntake" to InstantCommand(robot.intake::runIntakeForward),
+          "stopIntake" to InstantCommand(robot.intake::stopIntake),
+          "faceTag" to HeadingAlign(robot.drive, Translation2d()),
+          "shoot" to InstantCommand(robot.shooter::runShooter)
         )
       )
 
-    return routine.constructRoutine(Paths.TEST)
+    return routine.fullAuto(Paths.TEST).andThen(
+      InstantCommand(
+        robot.shooter::stopShooter
+      )
+    )
   }
 }
