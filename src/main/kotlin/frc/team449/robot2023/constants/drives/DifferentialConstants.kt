@@ -8,12 +8,12 @@ import java.lang.Math.PI
 object DifferentialConstants {
 
   /** Drive motor CAN ID */
-  const val DRIVE_MOTOR_L = 2
+  const val DRIVE_MOTOR_L = 3
   const val DRIVE_MOTOR_L1 = 4
-  const val DRIVE_MOTOR_L2 = 3
-  const val DRIVE_MOTOR_R = 1
+  const val DRIVE_MOTOR_L2 = 4
+  const val DRIVE_MOTOR_R = 7
   const val DRIVE_MOTOR_R1 = 11
-  const val DRIVE_MOTOR_R2 = 7
+  const val DRIVE_MOTOR_R2 = 11
 
   /** Information for how the robot rotates (for simulation) */
   const val DRIVE_ANGLE_FF_KS = 0.20112
