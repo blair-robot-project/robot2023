@@ -16,54 +16,23 @@ class ControllerBindings(
 
   fun bindButtons() {
     JoystickButton(controller, XboxController.Button.kA.value).onTrue(
-      InstantCommand({
-        robot.arm.state = ArmState(
-          Rotation2d(),
-          Rotation2d(),
-          0.0,
-          0.0
-        )
-      }
-      )
+      ArmFollower(robot.arm, ArmPaths.ZERO_STOW)
     )
 
     JoystickButton(controller, XboxController.Button.kX.value).onTrue(
-      InstantCommand({
-        robot.arm.state = ArmState(
-          Rotation2d.fromDegrees(10.0),
-          Rotation2d.fromDegrees(10.0),
-          0.0,
-          0.0
-        )
-      }
-      )
+      ArmFollower(robot.arm, ArmPaths.STATION_STOW)
     )
 
     JoystickButton(controller, XboxController.Button.kB.value).onTrue(
-      InstantCommand({
-        robot.arm.state = ArmState(
-          Rotation2d.fromDegrees(45.0),
-          Rotation2d.fromDegrees(45.0),
-          0.0,
-          0.0
-        )
-      }
-      )
+      ArmFollower(robot.arm, ArmPaths.STOW_STATION)
     )
 
     JoystickButton(controller, XboxController.Button.kY.value).onTrue(
-      InstantCommand({
-        robot.arm.state = ArmState(
-          Rotation2d.fromDegrees(90.0),
-          Rotation2d.fromDegrees(-45.0),
-          0.0,
-          0.0
-        )
-      })
+      ArmFollower(robot.arm, ArmPaths.STOW_MID1)
     )
 
     JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(
-      ArmFollower(robot.arm, ArmPaths.TEST)
+      InstantCommand({ robot.arm.state = ArmState(Rotation2d(), Rotation2d(), 0.0, 0.0) })
     )
   }
 }

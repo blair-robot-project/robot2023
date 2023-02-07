@@ -34,8 +34,7 @@ class Robot : RobotBase() {
     NEOEncoder.creator(
       2 * PI,
       ArmConstants.G1
-    ),
-    enableBrakeMode = false
+    )
   )
 
   private val jointMotor = createSparkMax(
@@ -44,15 +43,14 @@ class Robot : RobotBase() {
     NEOEncoder.creator(
       2 * PI,
       ArmConstants.G2
-    ),
-    enableBrakeMode = false
+    )
   )
 
   val arm = ArmSim(
     pivotMotor,
     jointMotor,
     TwoJointArmFeedForward.createFromConstants(),
-    ArmPDController(ArmConstants.kP1, ArmConstants.kP2, ArmConstants.kD1, ArmConstants.kD2),
+    ArmPDController(ArmConstants.kP1, ArmConstants.kP2, ArmConstants.kD1, ArmConstants.kD2, ArmConstants.kI1, ArmConstants.kI2),
     ArmConstants.LENGTH_1,
     ArmConstants.LENGTH_2
   )

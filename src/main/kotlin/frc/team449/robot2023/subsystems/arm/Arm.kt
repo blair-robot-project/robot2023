@@ -44,6 +44,7 @@ open class Arm(
   )
 
   /** desired arm state */
+  @Log.ToString
   var desiredState = ArmState(
     Rotation2d(pivotMotor.position),
     Rotation2d(jointMotor.position)

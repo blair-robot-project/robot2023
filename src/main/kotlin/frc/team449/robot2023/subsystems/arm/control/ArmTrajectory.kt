@@ -6,16 +6,18 @@ import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N4
+import edu.wpi.first.wpilibj.Filesystem
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import java.io.File
 import java.io.FileReader
 
 class ArmTrajectory(
   filename: String
 ) {
-  private val pathPrefix = "src\\main\\kotlin\\frc\\team449\\robot2023\\subsystems\\arm\\trajectories\\"
-  private var jaMorant = JSONParser().parse(FileReader(pathPrefix + filename)) as JSONArray
+  private val path = Filesystem.getDeployDirectory().absolutePath.plus("/trajectories/$filename")
+  private var jaMorant = JSONParser().parse(FileReader(File(path).absolutePath)) as JSONArray
   private var stateMap: InterpolatingMatrixTreeMap<Double, N4, N1> = InterpolatingMatrixTreeMap()
   var totalTime: Double
 
