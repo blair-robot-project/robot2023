@@ -1,6 +1,7 @@
 package frc.team449.control.auto
 
 import com.pathplanner.lib.PathPlannerTrajectory
+import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.math.controller.RamseteController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -31,6 +32,12 @@ class DifferentialFollower(
 
   private val controller = RamseteController()
 
+  // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
+  private val transformedTrajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(
+    trajectory,
+    DriverStation.getAlliance()
+  )
+
   override fun initialize() {
     controller.setTolerance(Pose2d(Translation2d(translationTol, translationTol), Rotation2d(angleTol)))
     if (resetPose) {
@@ -45,12 +52,17 @@ class DifferentialFollower(
   override fun execute() {
     val currTime = timer.get()
 
-    val reference = PathPlannerTrajectory.transformStateForAlliance(
-      trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState,
-      DriverStation.getAlliance()
-    )
+    val reference = transformedTrajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
 
     val currentPose = drivetrain.pose
+
+    PathPlannerServer.sendPathFollowingData(
+      Pose2d(
+        reference.poseMeters.translation,
+        reference.holonomicRotation
+      ),
+      currentPose
+    )
 
     drivetrain.set(
       controller.calculate(
