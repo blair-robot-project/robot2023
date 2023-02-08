@@ -46,6 +46,8 @@ class DifferentialFollower(
     }
     controller.setTolerance(Pose2d(translationTol, translationTol, Rotation2d(angleTol)))
 
+    PathPlannerServer.sendActivePath(transformedTrajectory.states)
+
     timer.start()
   }
 
