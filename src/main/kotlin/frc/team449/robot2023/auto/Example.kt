@@ -1,5 +1,6 @@
 package frc.team449.robot2023.auto
 
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
@@ -14,6 +15,7 @@ class Example(
   fun routine(): Command {
     val routine =
       HolonomicRoutine(
+        yController = PIDController(1.25, 0.0, 0.0),
         drive = robot.drive,
         eventMap = hashMapOf(
           "runIntake" to InstantCommand(robot.intake::runIntakeForward),

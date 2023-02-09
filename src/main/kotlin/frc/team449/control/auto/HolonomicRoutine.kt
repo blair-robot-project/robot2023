@@ -48,7 +48,8 @@ class HolonomicRoutine(
         Rotation2d(thetaTol)
       ),
       timeout,
-      resetPose = false
+      // TODO: Revert back to false when we have limelight reflashed
+      resetPose = true
     )
   }
 }
