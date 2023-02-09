@@ -22,6 +22,7 @@ import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
+import org.photonvision.PhotonPoseEstimator
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -34,7 +35,7 @@ open class SwerveDrive(
   private val ahrs: AHRS,
   override val maxLinearSpeed: Double,
   override val maxRotSpeed: Double,
-  private val cameras: List<VisionCamera> = mutableListOf()
+  private val cameras: List<PhotonPoseEstimator> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
 
   private val kinematics = SwerveDriveKinematics(
@@ -137,11 +138,11 @@ open class SwerveDrive(
 
   private fun localize() {
     for (camera in cameras) {
-      if (camera.hasTarget()) {
-        camPose = camera.camPose().toPose2d()
+      val result = camera.update()
+      if (result.isPresent) {
         poseEstimator.addVisionMeasurement(
-          camPose,
-          camera.timestamp()
+          result.get().estimatedPose.toPose2d(),
+          result.get().timestampSeconds
         )
       }
     }
@@ -240,7 +241,7 @@ open class SwerveDrive(
         ahrs,
         RobotConstants.MAX_LINEAR_SPEED,
         RobotConstants.MAX_ROT_SPEED,
-        VisionConstants.CAMERAS
+        VisionConstants.ESTIMATORS
       )
     }
 
