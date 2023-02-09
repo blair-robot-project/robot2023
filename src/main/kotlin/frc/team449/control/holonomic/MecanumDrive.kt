@@ -23,6 +23,7 @@ import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
+import org.photonvision.PhotonPoseEstimator
 
 /**
  * @param frontLeftMotor the front left motor
@@ -52,7 +53,7 @@ open class MecanumDrive(
   override val maxRotSpeed: Double,
   private val feedForward: SimpleMotorFeedforward,
   private val controller: () -> PIDController,
-  private val cameras: List<VisionCamera> = mutableListOf()
+  private val cameras: List<PhotonPoseEstimator> = mutableListOf()
 ) : HolonomicDrive, SubsystemBase(), Loggable {
 
   private val flController = controller()
@@ -156,10 +157,11 @@ open class MecanumDrive(
 
   private fun localize() {
     for (camera in cameras) {
-      if (camera.hasTarget()) {
+      val result = camera.update()
+      if (result.isPresent) {
         poseEstimator.addVisionMeasurement(
-          camera.camPose().toPose2d(),
-          camera.timestamp()
+          result.get().estimatedPose.toPose2d(),
+          result.get().timestampSeconds
         )
       }
     }
@@ -197,7 +199,7 @@ open class MecanumDrive(
         RobotConstants.MAX_ROT_SPEED,
         SimpleMotorFeedforward(MecanumConstants.DRIVE_KS, MecanumConstants.DRIVE_KV, MecanumConstants.DRIVE_KA),
         { PIDController(MecanumConstants.DRIVE_KP, MecanumConstants.DRIVE_KI, MecanumConstants.DRIVE_KD) },
-        VisionConstants.CAMERAS
+        VisionConstants.ESTIMATORS
       )
     }
   }

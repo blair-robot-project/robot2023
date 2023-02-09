@@ -6,6 +6,9 @@ import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Transform3d
 import frc.team449.system.VisionCamera
+import org.opencv.photo.Photo
+import org.photonvision.PhotonCamera
+import org.photonvision.PhotonPoseEstimator
 
 /** Constants that have anything to do with vision */
 object VisionConstants {
@@ -23,12 +26,16 @@ object VisionConstants {
     AprilTagFields.k2023ChargedUp.m_resourceFile
   )
 
-  /** List of cameras that we want to use*/
-  val CAMERAS = listOf(
-    VisionCamera(
-      "limelight",
-      Transform3d(),
-      TEST_TAG_LAYOUT
+  /** Robot to Camera distance */
+  private val robotToCamera = Transform3d()
+
+  /** List of cameras that we want to use */
+  val ESTIMATORS = listOf(
+    PhotonPoseEstimator(
+      TAG_LAYOUT,
+      PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
+      PhotonCamera("limelight"),
+      robotToCamera
     )
   )
 }
