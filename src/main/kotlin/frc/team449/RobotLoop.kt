@@ -1,5 +1,6 @@
 package frc.team449
 
+import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
@@ -31,6 +32,9 @@ class RobotLoop : TimedRobot() {
 //      instance.stopServer()
 //      instance.startClient4("localhost")
     }
+
+    PathPlannerServer.startServer(5811)
+
     Logger.configureLoggingAndConfig(robot, false)
     Logger.configureLoggingAndConfig(Paths, false)
     SmartDashboard.putData("Field", robot.field)
