@@ -17,8 +17,8 @@ object ArmConstants {
   const val kI2 = .00
 
   // Length of segments
-  val LENGTH_1 = Units.inchesToMeters(15.0)
-  val LENGTH_2 = Units.inchesToMeters(10.25)
+  val LENGTH_1 = Units.inchesToMeters(32.0)
+  val LENGTH_2 = Units.inchesToMeters(36.5)
 
   // Mass of segments
   const val MASS_1 = 2.6
@@ -28,7 +28,7 @@ object ArmConstants {
   const val G1 = 1 / 81.0
   const val G2 = 1 / 81.0
 
-  // Distance from pivot to CG for each segment
+  // Distance from pivot to the Center of Grav for each segment
   val R1 = Units.inchesToMeters(9.97)
   val R2 = Units.inchesToMeters(3.75)
 
