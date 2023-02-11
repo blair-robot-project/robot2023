@@ -17,20 +17,20 @@ object ArmConstants {
   const val kI2 = .00
 
   // Length of segments
-  val LENGTH_1 = Units.inchesToMeters(32.0)
-  val LENGTH_2 = Units.inchesToMeters(36.5)
+  val LENGTH_1 = Units.inchesToMeters(37.5)
+  val LENGTH_2 = Units.inchesToMeters(34.0)
 
   // Mass of segments
-  const val MASS_1 = 2.6
-  const val MASS_2 = 3.5 - 2.6
+  const val MASS_1 = 6.944561
+  const val MASS_2 = 6.062712
 
   // Gearing of motors
-  const val G1 = 1 / 81.0
+  const val G1 = 1 / 25.0
   const val G2 = 1 / 81.0
 
   // Distance from pivot to the Center of Grav for each segment
   val R1 = Units.inchesToMeters(9.97)
-  val R2 = Units.inchesToMeters(3.75)
+  val R2 = Units.inchesToMeters(25.0)
 
   // Feedforward constants of first joint in arm
   const val KS1 = 0.21992 // 0.21992
