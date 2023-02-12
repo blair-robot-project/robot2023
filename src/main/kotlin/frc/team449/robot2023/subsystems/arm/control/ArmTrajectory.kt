@@ -29,18 +29,20 @@ class ArmTrajectory(
     var total = 0.0
 
     jaMorant.forEach() {
-      it as JSONObject
-      val currTime = it["t"].toString().toDouble()
-      total = currTime
+      try {
+        it as JSONObject
+        val currTime = it["t"].toString().toDouble()
+        total = currTime
 
-      val currArmState = ArmState(
-        Rotation2d(it["q1"].toString().toDouble()),
-        Rotation2d(it["q2"].toString().toDouble()),
-        it["q1d"].toString().toDouble(),
-        it["q2d"].toString().toDouble()
-      )
-      val currArmStateMatrix = currArmState.matrix
-      stateMap.put(currTime, currArmStateMatrix)
+        val currArmState = ArmState(
+          Rotation2d(it["q1"].toString().toDouble()),
+          Rotation2d(it["q2"].toString().toDouble()),
+          it["q1d"].toString().toDouble(),
+          it["q2d"].toString().toDouble()
+        )
+        val currArmStateMatrix = currArmState.matrix
+        stateMap.put(currTime, currArmStateMatrix)
+      } catch (_: Exception) {}
     }
     return total
   }
