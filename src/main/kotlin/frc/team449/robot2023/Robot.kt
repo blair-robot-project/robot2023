@@ -34,6 +34,10 @@ class Robot : RobotBase() {
     NEOEncoder.creator(
       2 * PI,
       ArmConstants.G1
+    ),
+    inverted = false,
+    slaveSparks = mapOf(
+      Pair(ArmConstants.PIVOT_MOTOR_ID_2, true) // inversions might be the other way around
     )
   )
 
@@ -43,7 +47,7 @@ class Robot : RobotBase() {
     NEOEncoder.creator(
       2 * PI,
       ArmConstants.G2
-    )
+    ),
   )
 
   val arm = ArmSim(
