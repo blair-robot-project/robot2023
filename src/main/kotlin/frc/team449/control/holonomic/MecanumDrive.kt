@@ -17,7 +17,6 @@ import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.drives.MecanumConstants
 import frc.team449.robot2023.constants.vision.VisionConstants
 import frc.team449.system.AHRS
-import frc.team449.system.VisionCamera
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
