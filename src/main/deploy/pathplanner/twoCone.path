@@ -1,0 +1,139 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.7118758907656704,
+        "y": 0.7667168494059209
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.4831737892642454,
+        "y": 0.6581633822989862
+      },
+      "holonomicAngle": -180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "dropCone"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.752189651948749,
+        "y": 0.9223565426297514
+      },
+      "prevControl": {
+        "x": 5.7942284999153335,
+        "y": 0.8789235581943384
+      },
+      "nextControl": {
+        "x": 5.7942284999153335,
+        "y": 0.8789235581943384
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "startGroundIntake"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.7133255898456243,
+        "y": 1.3148190775548219
+      },
+      "prevControl": {
+        "x": 2.2070351085146616,
+        "y": 1.3050191117743337
+      },
+      "nextControl": {
+        "x": 2.2070351085146616,
+        "y": 1.3050191117743337
+      },
+      "holonomicAngle": -180.0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "dropCone"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 2.4239100908757374,
+        "y": 1.924330558730562
+      },
+      "prevControl": {
+        "x": 2.291712761975255,
+        "y": 1.4968925286190002
+      },
+      "nextControl": {
+        "x": 2.446525396523015,
+        "y": 1.997453380323427
+      },
+      "holonomicAngle": -180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 2.42,
+        "y": 1.92
+      },
+      "prevControl": {
+        "x": 2.694573005743233,
+        "y": 1.9095621666243332
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "chargeStation"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 1.2450284090909058,
+      "names": [
+        "stopGroundIntake"
+      ]
+    }
+  ]
+}
