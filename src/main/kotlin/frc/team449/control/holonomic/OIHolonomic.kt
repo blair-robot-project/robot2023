@@ -130,7 +130,7 @@ class OIHolonomic(
       return OIHolonomic(
         drive,
         { if (abs(driveController.leftY) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
-        { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
+        { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else driveController.leftX },
         { if (abs(driveController.getRawAxis(4)) < RobotConstants.ROTATION_DEADBAND) .0 else driveController.getRawAxis(4) },
         SlewRateLimiter(RobotConstants.RATE_LIMIT),
         RobotConstants.MAX_ACCEL,
