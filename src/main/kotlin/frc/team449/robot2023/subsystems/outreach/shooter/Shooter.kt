@@ -38,6 +38,10 @@ class Shooter(
     runShoot = false
   }
 
+  fun runShooterReverse() {
+    shooterMotor.setVoltage(-7.0)
+  }
+
   private fun shooterAtSpeed(desiredSpeed: Double): Boolean {
     if (abs(shooterMotor.encoder.velocity - desiredSpeed) <= ShooterConstants.TOLERANCE) {
       return true
@@ -49,6 +53,7 @@ class Shooter(
   override fun periodic() {
     shooterSpeed = shooterMotor.velocity
     if (runShoot) {
+
       val shooterPID = shooterController.calculate(shooterMotor.velocity, ShooterConstants.SHOOTER_VEL)
       val shooterFF = shooterFF.calculate(ShooterConstants.SHOOTER_VEL)
 

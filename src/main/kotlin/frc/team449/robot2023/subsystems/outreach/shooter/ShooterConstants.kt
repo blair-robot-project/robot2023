@@ -18,7 +18,7 @@ object ShooterConstants {
   const val SHOOTER_KD = 0.0
 
   /** Feeder (green) values. */
-  const val FEEDER_VOLTAGE = 7.0 // TODO - test for the values
+  const val FEEDER_VOLTAGE = 12.0 // TODO - test for the values
   const val FEEDER_ID = 13
   const val FEEDER_UPR = 1.0
   const val FEEDER_GEARING = 1.0
