@@ -1,10 +1,12 @@
 package frc.team449.robot2023.subsystems.arm.control
 
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sign
@@ -26,7 +28,13 @@ class ArmPDController(
    */
   fun calculate(state: Matrix<N4, N1>, reference: Matrix<N4, N1>): Matrix<N2, N1> {
     setpoint = reference
-    val err = reference - state
+    val err = mat(N4.instance, N1.instance).fill(
+      MathUtil.inputModulus((reference - state)[0, 0], -PI, PI),
+      MathUtil.inputModulus((reference - state)[1, 0], -PI, PI),
+      (reference - state)[2, 0],
+      (reference - state)[3, 0]
+    )
+    println(err)
     errorSum = err + errorSum
 
     val I = mat(N2.instance, N4.instance).fill(

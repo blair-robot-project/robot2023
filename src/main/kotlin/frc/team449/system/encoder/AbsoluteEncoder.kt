@@ -25,9 +25,9 @@ class AbsoluteEncoder(
   @Log
   override fun getPositionNative(): Double {
     return if (inverted) {
-      1 - (enc.absolutePosition - offset) % 1
+      (1 - (enc.absolutePosition - offset) % 1) - 0.5
     } else {
-      (enc.absolutePosition - offset) % 1
+      ((enc.absolutePosition - offset) % 1) - 0.5
     }
   }
 
