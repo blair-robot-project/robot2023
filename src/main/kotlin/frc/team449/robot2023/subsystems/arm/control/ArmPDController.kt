@@ -6,6 +6,7 @@ import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
+import io.github.oblarg.oblog.Loggable
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min
@@ -28,14 +29,15 @@ class ArmPDController(
    */
   fun calculate(state: Matrix<N4, N1>, reference: Matrix<N4, N1>): Matrix<N2, N1> {
     setpoint = reference
-    val err = mat(N4.instance, N1.instance).fill(
-      MathUtil.inputModulus((reference - state)[0, 0], -PI, PI),
-      MathUtil.inputModulus((reference - state)[1, 0], -PI, PI),
-      (reference - state)[2, 0],
-      (reference - state)[3, 0]
+    val err = reference - state
+    val wrappedErr = mat(N4.instance, N1.instance).fill(
+      MathUtil.inputModulus(err[0, 0], -PI, PI),
+      MathUtil.inputModulus(err[1, 0], -PI, PI),
+      err[2, 0],
+      err[3, 0]
     )
-    println(err)
-    errorSum = err + errorSum
+    println("Wrapped error for joint 1 : ${wrappedErr[0, 0]},\n Set point : ${reference[0, 0]},\n Measurement ${state[0, 0]}")
+    errorSum = wrappedErr + errorSum
 
     val I = mat(N2.instance, N4.instance).fill(
       kI1, 0.0, 0.0, 0.0,
@@ -46,10 +48,10 @@ class ArmPDController(
       kP1, 0.0, kD1, 0.0,
       0.0, kP2, 0.0, kD2
     )
-    val output = K * err + I * errorSum
+    val output = K * wrappedErr + I * errorSum
     val u1 = output[0, 0]
     val u2 = output[1, 0]
-    output[0, 0] = sign(u1) * min(3.0, abs(u1))
+    output[0, 0] = sign(u1) * min(6.0, abs(u1))
     output[1, 0] = sign(u2) * min(3.0, abs(u2))
 
     return output
@@ -59,7 +61,7 @@ class ArmPDController(
    * calculate using saved setpoint from last calculation
    */
   fun calculate(state: Matrix<N4, N1>): Matrix<N2, N1> {
-    // !! to assert that setpoint shouldn't be null
+    // !! to assert that set point shouldn't be null
     return calculate(state, setpoint!!)
   }
 }

@@ -10,6 +10,9 @@ import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.PI
+import kotlin.math.min
+import kotlin.math.sign
 
 /**
  * Controllable two-jointed arm
@@ -43,8 +46,8 @@ open class Arm(
   /** desired arm state */
   @Log.ToString
   var desiredState = ArmState(
-    Rotation2d(firstJoint.position),
-    Rotation2d(secondJoint.position)
+    Rotation2d(0.0),
+    Rotation2d(0.0)
   )
 
   /**
@@ -87,8 +90,8 @@ open class Arm(
     val ff = feedForward.calculate(desiredState.matrix)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
-//    firstJoint.setVoltage(u[0, 0])
-    secondJoint.setVoltage(u[1, 0])
+    firstJoint.setVoltage(u[0, 0])
+//    secondJoint.setVoltage(u[1, 0])
     visual.setState(state)
   }
 }

@@ -10,7 +10,7 @@ import io.github.oblarg.oblog.annotations.Log
  *
  * @param offset This must be in rotations of how much the offset of the ENCODER should be.
  */
-class AbsoluteEncoder(
+open class AbsoluteEncoder(
   name: String,
   private val enc: DutyCycleEncoder,
   unitPerRotation: Double,
@@ -25,9 +25,9 @@ class AbsoluteEncoder(
   @Log
   override fun getPositionNative(): Double {
     return if (inverted) {
-      (1 - (enc.absolutePosition - offset) % 1) - 0.5
+      1 - (enc.absolutePosition - offset) % 1
     } else {
-      ((enc.absolutePosition - offset) % 1) - 0.5
+      (enc.absolutePosition - offset) % 1
     }
   }
 
