@@ -5,14 +5,21 @@ import edu.wpi.first.math.util.Units
 object ArmConstants {
 
   // Motor CAN ID
-  const val PIVOT_MOTOR_ID = 1
-  const val JOINT_MOTOR_ID = 2
+  const val PIVOT_MOTOR_ID1 = 5
+  const val PIVOT_MOTOR_ID2 = 6
+  const val JOINT_MOTOR_ID = 7
+
+  // Encoder constants
+  const val PIVOT_ENCODER_CHAN = 8
+  const val JOINT_ENCODER_CHAN = 1
+  const val PIVOT_ENCODER_OFFSET = 0.356848
+  const val JOINT_ENCODER_OFFSET = 1 - 0.854323 // 0.855081
 
   // PD Controller Constants
-  const val kP1 = 2.0
-  const val kP2 = 1.7
-  const val kD1 = 0.0 // .1
-  const val kD2 = 0.0 // .1
+  const val kP1 = .00
+  const val kP2 = .01
+  const val kD1 = .00
+  const val kD2 = .00
   const val kI1 = .00
   const val kI2 = .00
 
@@ -33,14 +40,14 @@ object ArmConstants {
   val R2 = Units.inchesToMeters(25.0)
 
   // Feedforward constants of first joint in arm
-  const val KS1 = 0.21992 // 0.21992
-  const val KV1 = 0.79172 // 0.79172
-  const val KA1 = 0.035016 // 0.035016
-  const val KG1 = 0.165 // .31923
+  const val KS1 = 1.7589
+  const val KV1 = 2.128
+  const val KA1 = 3.200
+  const val KG1 = 4.000
 
   // Feedforward constants of second joint in arm
-  const val KS2 = 0.16758 // 0.16758
-  const val KV2 = 0.74909 // 0.74909
-  const val KA2 = 0.028384 // 0.028384
-  const val KG2 = 0.020424 // 0.020424
+  const val KS2 = 0.4588
+  const val KV2 = 0.59783
+  const val KA2 = 3.2914
+  const val KG2 = 0.46
 }

@@ -5,19 +5,19 @@ import edu.wpi.first.math.util.Units
 object SwerveConstants {
   /** Drive motor ports */
   const val DRIVE_MOTOR_FL = 1
-  const val DRIVE_MOTOR_FR = 3
-  const val DRIVE_MOTOR_BL = 10
-  const val DRIVE_MOTOR_BR = 7
-  const val TURN_MOTOR_FL = 2
-  const val TURN_MOTOR_FR = 4
-  const val TURN_MOTOR_BL = 6
-  const val TURN_MOTOR_BR = 8
+  const val DRIVE_MOTOR_FR = 2
+  const val DRIVE_MOTOR_BL = 3
+  const val DRIVE_MOTOR_BR = 4
+  const val TURN_MOTOR_FL = 11
+  const val TURN_MOTOR_FR = 12
+  const val TURN_MOTOR_BL = 13
+  const val TURN_MOTOR_BR = 14
 
   /** Turning encoder channels */
-  const val TURN_ENC_CHAN_FL = 1
+  const val TURN_ENC_CHAN_FL = 0
   const val TURN_ENC_CHAN_FR = 0
-  const val TURN_ENC_CHAN_BL = 3
-  const val TURN_ENC_CHAN_BR = 2
+  const val TURN_ENC_CHAN_BL = 0
+  const val TURN_ENC_CHAN_BR = 0
 
   /** Offsets for the absolute encoders in rotations */
   const val TURN_ENC_OFFSET_FL = 0.035288
@@ -48,6 +48,6 @@ object SwerveConstants {
 
   /** Wheelbase = wheel-to-wheel distance from the side of the robot */
   /** Trackwidth = wheel-to-wheel distance from the front/back of the robot */
-  val WHEELBASE = Units.inchesToMeters(21.75)
-  val TRACKWIDTH = Units.inchesToMeters(21.75)
+  val WHEELBASE = Units.inchesToMeters(32.0)
+  val TRACKWIDTH = Units.inchesToMeters(27.75)
 }

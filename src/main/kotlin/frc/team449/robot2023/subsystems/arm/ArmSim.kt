@@ -11,36 +11,36 @@ import frc.team449.system.motor.WrappedMotor
  * Simulate an arm to check logic of code or visualize trajectory
  */
 class ArmSim(
-  pivotMotor: WrappedMotor,
-  jointMotor: WrappedMotor,
+  firstJoint: WrappedMotor,
+  secondJoint: WrappedMotor,
   feedForward: TwoJointArmFeedForward,
   controller: ArmPDController,
-  pivotToJoint: Double,
-  jointToEndEffector: Double
-) : Arm(pivotMotor, jointMotor, feedForward, controller, pivotToJoint, jointToEndEffector) {
+  firstToSecondJoint: Double,
+  secondJointToEndEffector: Double
+) : Arm(firstJoint, secondJoint, feedForward, controller, firstToSecondJoint, secondJointToEndEffector) {
 
-  private val pivotEncoder = Encoder.SimController(pivotMotor.encoder)
-  private val jointEncoder = Encoder.SimController(jointMotor.encoder)
+  private val firstJointEncoder = Encoder.SimController(firstJoint.encoder)
+  private val secondJointEncoder = Encoder.SimController(secondJoint.encoder)
   override var state: ArmState
     get() =
       ArmState(
-        Rotation2d(pivotEncoder.position),
-        Rotation2d(jointEncoder.position),
-        pivotEncoder.velocity,
-        jointEncoder.velocity
+        Rotation2d(firstJointEncoder.position),
+        Rotation2d(secondJointEncoder.position),
+        firstJointEncoder.velocity,
+        secondJointEncoder.velocity
       )
     set(value) {
       super.state = value
-      pivotEncoder.velocity = desiredState.thetaVel
-      jointEncoder.velocity = desiredState.betaVel
-      pivotEncoder.position = desiredState.theta.radians
-      jointEncoder.position = desiredState.beta.radians
+      firstJointEncoder.velocity = desiredState.thetaVel
+      secondJointEncoder.velocity = desiredState.betaVel
+      firstJointEncoder.position = desiredState.theta.radians
+      secondJointEncoder.position = desiredState.beta.radians
     }
 
   override fun periodic() {
     super.periodic()
-    pivotEncoder.position = pivotEncoder.position + pivotEncoder.velocity * .02
-    jointEncoder.position = jointEncoder.position + jointEncoder.velocity * .02
+    firstJointEncoder.position = firstJointEncoder.position + firstJointEncoder.velocity * .02
+    secondJointEncoder.position = secondJointEncoder.position + secondJointEncoder.velocity * .02
     visual.setState(state)
   }
 }
