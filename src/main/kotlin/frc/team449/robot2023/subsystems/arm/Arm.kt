@@ -10,9 +10,6 @@ import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
-import kotlin.math.PI
-import kotlin.math.min
-import kotlin.math.sign
 
 /**
  * Controllable two-jointed arm

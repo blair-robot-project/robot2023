@@ -1,13 +1,7 @@
 package frc.team449.robot2023.subsystems
 
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.robot2023.Robot
-import frc.team449.robot2023.subsystems.arm.ArmPaths
-import frc.team449.robot2023.subsystems.arm.control.ArmFollower
-import frc.team449.robot2023.subsystems.arm.control.ArmState
 
 class ControllerBindings(
   private val controller: XboxController,
@@ -15,6 +9,7 @@ class ControllerBindings(
 ) {
 
   fun bindButtons() {
+//    /**  test trajectories */
 //    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
 //      ArmFollower(robot.arm, ArmPaths.ZERO_STOW)
 //    )
@@ -22,18 +17,5 @@ class ControllerBindings(
 //    JoystickButton(controller, XboxController.Button.kB.value).onTrue(
 //      ArmFollower(robot.arm, ArmPaths.STOW_ZERO)
 //    )
-
-    JoystickButton(controller, XboxController.Button.kRightBumper.value).onTrue(
-      InstantCommand(robot.motors::runMotorPositive)
-    ).onFalse(
-      InstantCommand(robot.motors::stopMotors)
-    )
-
-    JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(
-      InstantCommand(robot.motors::runOtherMotorPositive)
-    ).onFalse(
-      InstantCommand(robot.motors::stopMotors)
-    )
-
   }
 }

@@ -6,13 +6,11 @@ import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.arm.ArmConstants
-import frc.team449.robot2023.subsystems.arm.Arm
-import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
-import frc.team449.robot2023.subsystems.arm.control.ArmPDController
-import frc.team449.robot2023.subsystems.arm.control.MotorInversionTest
-import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.AHRS
+import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
+import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.PI
 
 class Robot : RobotBase() {
 
@@ -54,32 +52,27 @@ class Robot : RobotBase() {
 //    ),
 //    currentLimit = 40
 //  )
-
-  private val motor1 = createSparkMax(
-    "motor1",
+  @Log
+  private val motorFive = createSparkMax(
+    "SPARK MAX ID 5",
     ArmConstants.PIVOT_MOTOR_ID1,
-    ArmEncoder.creator(
-      ArmConstants.PIVOT_ENCODER_CHAN,
-      ArmConstants.PIVOT_ENCODER_OFFSET,
-      true
+    NEOEncoder.creator(
+      2 * PI,
+      ArmConstants.G1
     ),
-    currentLimit = 40,
-    inverted = false
+    currentLimit = 40
   )
 
-  private val motor2 = createSparkMax(
-  " Motor 2",
-  ArmConstants.PIVOT_MOTOR_ID2,
-  ArmEncoder.creator(
-    ArmConstants.PIVOT_ENCODER_CHAN,
-    ArmConstants.PIVOT_ENCODER_OFFSET,
-    true
-  ),
-  currentLimit = 40,
-  inverted = false
+  @Log
+  private val motorSix = createSparkMax(
+    "SPARK MAX ID 6",
+    ArmConstants.PIVOT_MOTOR_ID2,
+    NEOEncoder.creator(
+      2 * PI,
+      ArmConstants.G1
+    ),
+    currentLimit = 40
   )
-
-  val motors = MotorInversionTest(motor1, motor2)
 //  val arm = Arm(
 //    pivotMotor,
 //    jointMotor,

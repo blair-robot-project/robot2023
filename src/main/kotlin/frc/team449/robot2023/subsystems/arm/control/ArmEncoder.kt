@@ -12,7 +12,7 @@ class ArmEncoder(
   encoder: DutyCycleEncoder,
   inverted: Boolean,
   offset: Double
-): AbsoluteEncoder(name, encoder, 2 * PI, inverted, offset) {
+) : AbsoluteEncoder(name, encoder, 2 * PI, inverted, offset) {
 
   override fun getPositionNative(): Double {
     return MathUtil.inputModulus(super.getPositionNative(), -0.5, 0.5)

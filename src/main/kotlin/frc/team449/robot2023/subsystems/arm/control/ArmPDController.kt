@@ -6,7 +6,6 @@ import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
-import io.github.oblarg.oblog.Loggable
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min
