@@ -35,7 +35,7 @@ class ArmPDController(
       err[2, 0],
       err[3, 0]
     )
-    println("Wrapped error for joint 1 : ${wrappedErr[0, 0]},\n Set point : ${reference[0, 0]},\n Measurement ${state[0, 0]}")
+//    println("Wrapped error for joint 1 : ${wrappedErr[0, 0]},\n Set point : ${reference[0, 0]},\n Measurement ${state[0, 0]}")
     errorSum = wrappedErr + errorSum
 
     val I = mat(N2.instance, N4.instance).fill(

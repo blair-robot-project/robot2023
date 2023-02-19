@@ -11,10 +11,8 @@ import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.robot2023.subsystems.intake.Intake
 import frc.team449.robot2023.subsystems.intake.IntakeConstants
 import frc.team449.system.AHRS
-import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
-import kotlin.math.PI
 
 class Robot : RobotBase() {
 
@@ -31,8 +29,8 @@ class Robot : RobotBase() {
 //  @Log(name = "Joystick Input")
 //  override val oi = createHolonomicOI(drive, driveController)
 
-  private val pivotMotor = createSparkMax(
-    "Pivot Motor",
+  private val firstJointMotor = createSparkMax(
+    "First Joint Motor",
     ArmConstants.PIVOT_MOTOR_ID1,
     ArmEncoder.creator(
       ArmConstants.PIVOT_ENCODER_CHAN,
@@ -46,8 +44,8 @@ class Robot : RobotBase() {
     inverted = true
   )
 
-  private val jointMotor = createSparkMax(
-    "Joint Motor",
+  private val secondJointMotor = createSparkMax(
+    "Second Joint Motor",
     ArmConstants.JOINT_MOTOR_ID,
     ArmEncoder.creator(
       ArmConstants.JOINT_ENCODER_CHAN,
@@ -57,19 +55,9 @@ class Robot : RobotBase() {
     currentLimit = 40
   )
 
-  @Log
-  private val motorSix = createSparkMax(
-    "SPARK MAX ID 6",
-    ArmConstants.PIVOT_MOTOR_ID2,
-    NEOEncoder.creator(
-      2 * PI,
-      ArmConstants.G1
-    ),
-    currentLimit = 40
-  )
   val arm = Arm(
-    pivotMotor,
-    jointMotor,
+    firstJointMotor,
+    secondJointMotor,
     TwoJointArmFeedForward.createFromConstants(),
     ArmPDController(ArmConstants.kP1, ArmConstants.kP2, ArmConstants.kD1, ArmConstants.kD2, ArmConstants.kI1, ArmConstants.kI2),
     ArmConstants.LENGTH_1,
@@ -87,6 +75,7 @@ class Robot : RobotBase() {
     IntakeConstants.SENSOR_CHANNEL
   )
 
+  @Log(name = "Intake")
   val intake = Intake(
     intakeClamp,
     infrared

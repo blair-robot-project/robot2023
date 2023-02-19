@@ -1,5 +1,7 @@
 package frc.team449.robot2023.subsystems.intake
 
+import edu.wpi.first.util.sendable.Sendable
+import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj2.command.SubsystemBase
@@ -7,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 class Intake(
   private val intakePiston: DoubleSolenoid,
   private val sensor: DigitalInput
-) : SubsystemBase() {
+) : SubsystemBase(), Sendable {
 
   private var sensorVal = false
   private var previousVal = false
@@ -29,5 +31,10 @@ class Intake(
       pistonOn()
     }
     previousVal = sensorVal
+  }
+
+  override fun initSendable(builder: SendableBuilder) {
+    builder.addBooleanProperty("sensor", { sensor.get() }, null)
+    builder.addStringProperty("piston", { intakePiston.get().name }, null)
   }
 }

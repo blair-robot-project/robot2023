@@ -40,14 +40,14 @@ object ArmConstants {
   val R2 = Units.inchesToMeters(25.0)
 
   // Feedforward constants of first joint in arm
-  const val KS1 = 1.7589
-  const val KV1 = 2.128
-  const val KA1 = 3.200
-  const val KG1 = 1.0
+  const val KS1 = 0.49035
+  const val KV1 = 0.54671
+  const val KA1 = 1.8353
+  const val KG1 = 0.69519
 
   // Feedforward constants of second joint in arm
   const val KS2 = 0.4588
   const val KV2 = 0.59783
   const val KA2 = 3.2914
-  const val KG2 = 0.145 // 0.36
+  const val KG2 = 0.145
 }
