@@ -35,7 +35,7 @@ class ArmVisual(
       "first segment of arm",
       baseToPivot,
       0.0,
-      15.0,
+      5.0,
       Color8Bit(Color.kOrange)
     )
   )
@@ -46,7 +46,7 @@ class ArmVisual(
       "second segment of arm",
       pivotToEnd,
       0.0,
-      15.0,
+      5.0,
       Color8Bit(Color.kNavy)
     )
   )
