@@ -1,6 +1,7 @@
 package frc.team449.robot2023.subsystems
 
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.subsystems.arm.ArmPaths
@@ -27,6 +28,14 @@ class ControllerBindings(
 
     JoystickButton(controller, XboxController.Button.kY.value).onTrue(
       ArmFollower(robot.arm, ArmPaths.STOW_EXTEND)
+    )
+
+    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
+      InstantCommand(robot.intake::pistonRev)
+    )
+
+    JoystickButton(controller, XboxController.Button.kB.value).onTrue(
+      InstantCommand(robot.intake::pistonOn)
     )
   }
 }

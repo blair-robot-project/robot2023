@@ -2,6 +2,8 @@ package frc.team449.robot2023
 
 import edu.wpi.first.wpilibj.*
 import frc.team449.RobotBase
+import frc.team449.control.holonomic.OIHolonomic.Companion.createHolonomicOI
+import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.Arm
@@ -24,10 +26,10 @@ class Robot : RobotBase() {
 
   override val powerDistribution: PowerDistribution = PowerDistribution(RobotConstants.PDP_CAN, PowerDistribution.ModuleType.kCTRE)
 
-//  override val drive = SwerveDrive.swerveDrive(ahrs)
-//
-//  @Log(name = "Joystick Input")
-//  override val oi = createHolonomicOI(drive, driveController)
+  override val drive = SwerveDrive.swerveDrive(ahrs)
+
+  @Log(name = "Joystick Input")
+  override val oi = createHolonomicOI(drive, driveController)
 
   private val firstJointMotor = createSparkMax(
     "First Joint Motor",
@@ -41,7 +43,8 @@ class Robot : RobotBase() {
       ArmConstants.PIVOT_MOTOR_ID2 to true
     ),
     currentLimit = 40,
-    inverted = true
+    inverted = true,
+    enableBrakeMode = true
   )
 
   private val secondJointMotor = createSparkMax(
@@ -52,7 +55,8 @@ class Robot : RobotBase() {
       ArmConstants.JOINT_ENCODER_OFFSET,
       inverted = true
     ),
-    currentLimit = 40
+    currentLimit = 40,
+    enableBrakeMode = true
   )
 
   val arm = Arm(

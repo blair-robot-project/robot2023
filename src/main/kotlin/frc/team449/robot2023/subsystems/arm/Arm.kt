@@ -45,7 +45,7 @@ open class Arm(
   @Log.ToString
   var desiredState = ArmState(
     Rotation2d(PI / 4),
-    Rotation2d(-PI / 4)
+    Rotation2d(0.0)
   )
 
   /**

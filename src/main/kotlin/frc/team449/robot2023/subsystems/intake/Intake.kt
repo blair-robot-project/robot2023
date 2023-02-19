@@ -10,7 +10,9 @@ class Intake(
   private val intakePiston: DoubleSolenoid,
   private val sensor: DigitalInput
 ) : SubsystemBase(), Sendable {
-
+  init {
+    intakePiston.set(DoubleSolenoid.Value.kOff)
+  }
   private var sensorVal = false
   private var previousVal = false
   init {
