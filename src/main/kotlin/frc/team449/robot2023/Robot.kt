@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
 import frc.team449.control.differential.DifferentialDrive.Companion.createDifferentialDrive
 import frc.team449.control.differential.DifferentialOIs
+import frc.team449.robot2023.constants.IntakeConstants
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.subsystems.GroundIntake
 import frc.team449.system.AHRS
@@ -37,7 +38,7 @@ class Robot : RobotBase() {
   )
 
   override val intake = GroundIntake(
-    createSparkMax("leftIntake", 6, NEOEncoder.creator(1.0, 1.0)),
-    createSparkMax("leftIntake", 6, NEOEncoder.creator(1.0, 1.0), inverted = true),
+    createSparkMax("leftIntake", IntakeConstants.LEFT_MOTOR, NEOEncoder.creator(1.0, 1.0)),
+    createSparkMax("rightIntake", IntakeConstants.RIGHT_MOTOR, NEOEncoder.creator(1.0, 1.0), inverted = true),
   )
 }
