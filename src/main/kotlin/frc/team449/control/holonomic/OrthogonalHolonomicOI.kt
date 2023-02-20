@@ -108,22 +108,22 @@ class OrthogonalHolonomicOI(
       rotScaled = controller.calculate(
         drive.pose.rotation.radians,
         (0.0 + allianceCompensation) % 2 * PI
-      )
+      ) * drive.maxRotSpeed
     } else if (xButton.asBoolean) {
       rotScaled = controller.calculate(
         drive.pose.rotation.radians,
         (PI / 2 + allianceCompensation) % 2 * PI
-      )
+      ) * drive.maxRotSpeed
     } else if (aButton.asBoolean) {
       rotScaled = controller.calculate(
         drive.pose.rotation.radians,
         (PI + allianceCompensation) % 2 * PI
-      )
+      ) * drive.maxRotSpeed
     } else if (bButton.asBoolean) {
       rotScaled = controller.calculate(
         drive.pose.rotation.radians,
         (3 * PI / 2 + allianceCompensation) % 2 * PI
-      )
+      ) * drive.maxRotSpeed
     } else {
       controller.calculate(
         0.0,
@@ -134,7 +134,7 @@ class OrthogonalHolonomicOI(
     rotScaled = if (!controller.atSetpoint()) {
       rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed)
     } else {
-      controller.calculate(drive.pose.rotation.radians)
+      controller.calculate(drive.pose.rotation.radians) * drive.maxRotSpeed
     }
 
     // translation velocity vector
