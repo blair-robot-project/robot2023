@@ -72,7 +72,7 @@ class OrthogonalHolonomicOI(
   private var magAccClamped = 0.0
 
   private var rotScaled = 0.0
-  private val allianceCompensation = if (DriverStation.getAlliance() == DriverStation.Alliance.Red) 0.0 else PI
+  private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
 
   /**
    * @return The [ChassisSpeeds] for the given x, y and

@@ -42,9 +42,6 @@ open class SwerveDrive(
       .map { it.location }.toTypedArray()
   )
 
-  @Log.ToString
-  private var camPose = Pose2d()
-
   private var currentSpeeds = ChassisSpeeds()
 
   private val poseEstimator = SwerveDrivePoseEstimator(

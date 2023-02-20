@@ -6,10 +6,10 @@ import edu.wpi.first.math.controller.RamseteController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.differential.DifferentialDrive
+import frc.team449.robot2023.constants.RobotConstants
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -35,7 +35,7 @@ class DifferentialFollower(
   // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
   private val transformedTrajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(
     trajectory,
-    DriverStation.getAlliance()
+    RobotConstants.ALLIANCE_COLOR
   )
 
   override fun initialize() {

@@ -3,6 +3,7 @@ package frc.team449.robot2023.constants
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.DriverStation
 
 object RobotConstants {
 
@@ -23,4 +24,6 @@ object RobotConstants {
 
   /** PID controller for Orthogonal turning */
   val ORTHOGONAL_CONRTOLLER = PIDController(1.0, 0.0, 0.0)
+
+  var ALLIANCE_COLOR: DriverStation.Alliance = DriverStation.getAlliance()
 }
