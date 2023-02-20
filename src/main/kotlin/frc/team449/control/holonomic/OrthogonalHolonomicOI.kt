@@ -131,8 +131,10 @@ class OrthogonalHolonomicOI(
       )
     }
 
-    if (!controller.atSetpoint()) {
-      rotScaled = rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed)
+    rotScaled = if (!controller.atSetpoint()) {
+      rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed)
+    } else {
+      controller.calculate(drive.pose.rotation.radians)
     }
 
     // translation velocity vector
