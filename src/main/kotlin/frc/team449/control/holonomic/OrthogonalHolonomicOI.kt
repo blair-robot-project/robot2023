@@ -73,6 +73,7 @@ class OrthogonalHolonomicOI(
 
   private var rotScaled = 0.0
   private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
+  private val forwardCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 1.0 else -1.0
 
   /**
    * @return The [ChassisSpeeds] for the given x, y and
@@ -101,8 +102,8 @@ class OrthogonalHolonomicOI(
     val xClamped = prevX + dxClamped
     val yClamped = prevY + dyClamped
 
-    this.prevX = xClamped
-    this.prevY = yClamped
+    this.prevX = xClamped * forwardCompensation
+    this.prevY = yClamped * forwardCompensation
 
     /** Based on which button was pressed, give in the setpoint to the PID controller.
      *  You must use calculate because the atSetpoint() method requires there to have
@@ -110,22 +111,22 @@ class OrthogonalHolonomicOI(
     if (yButton.asBoolean) {
       controller.calculate(
         drive.pose.rotation.radians,
-        (0.0 + allianceCompensation) % 2 * PI
+        MathUtil.inputModulus(0.0 + allianceCompensation, 0.0, 2 * PI)
       ) * drive.maxRotSpeed
     } else if (xButton.asBoolean) {
       controller.calculate(
         drive.pose.rotation.radians,
-        (PI / 2 + allianceCompensation) % 2 * PI
+        MathUtil.inputModulus(PI / 2 + allianceCompensation, 0.0, 2 * PI)
       ) * drive.maxRotSpeed
     } else if (aButton.asBoolean) {
       controller.calculate(
         drive.pose.rotation.radians,
-        (PI + allianceCompensation) % 2 * PI
+        MathUtil.inputModulus(PI + allianceCompensation, 0.0, 2 * PI)
       ) * drive.maxRotSpeed
     } else if (bButton.asBoolean) {
       controller.calculate(
         drive.pose.rotation.radians,
-        (3 * PI / 2 + allianceCompensation) % 2 * PI
+        MathUtil.inputModulus(3 * PI / 2 + allianceCompensation, 0.0, 2 * PI)
       ) * drive.maxRotSpeed
     } else {
       controller.calculate(
@@ -137,7 +138,7 @@ class OrthogonalHolonomicOI(
     /** If the PID controller is at its setpoint, then allow the driver to control rotation,
      * otherwise let the PID do its thing. */
     rotScaled = if (controller.atSetpoint()) {
-      rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed)
+      rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed) * forwardCompensation
     } else {
       controller.calculate(drive.pose.rotation.radians) * drive.maxRotSpeed
     }
