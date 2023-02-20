@@ -31,7 +31,7 @@ object VisionConstants {
   val ESTIMATORS = listOf(
     PhotonPoseEstimator(
       TAG_LAYOUT,
-      PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
+      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
       PhotonCamera("limelight"),
       robotToCamera
     )
