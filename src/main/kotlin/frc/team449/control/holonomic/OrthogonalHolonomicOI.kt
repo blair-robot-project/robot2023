@@ -104,23 +104,26 @@ class OrthogonalHolonomicOI(
     this.prevX = xClamped
     this.prevY = yClamped
 
+    /** Based on which button was pressed, give in the setpoint to the PID controller.
+     *  You must use calculate because the atSetpoint() method requires there to have
+     *  been a measurement and setpoint. */
     if (yButton.asBoolean) {
-      rotScaled = controller.calculate(
+      controller.calculate(
         drive.pose.rotation.radians,
         (0.0 + allianceCompensation) % 2 * PI
       ) * drive.maxRotSpeed
     } else if (xButton.asBoolean) {
-      rotScaled = controller.calculate(
+      controller.calculate(
         drive.pose.rotation.radians,
         (PI / 2 + allianceCompensation) % 2 * PI
       ) * drive.maxRotSpeed
     } else if (aButton.asBoolean) {
-      rotScaled = controller.calculate(
+      controller.calculate(
         drive.pose.rotation.radians,
         (PI + allianceCompensation) % 2 * PI
       ) * drive.maxRotSpeed
     } else if (bButton.asBoolean) {
-      rotScaled = controller.calculate(
+      controller.calculate(
         drive.pose.rotation.radians,
         (3 * PI / 2 + allianceCompensation) % 2 * PI
       ) * drive.maxRotSpeed
@@ -131,7 +134,9 @@ class OrthogonalHolonomicOI(
       )
     }
 
-    rotScaled = if (!controller.atSetpoint()) {
+    /** If the PID controller is at its setpoint, then allow the driver to control rotation,
+     * otherwise let the PID do its thing. */
+    rotScaled = if (controller.atSetpoint()) {
       rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed)
     } else {
       controller.calculate(drive.pose.rotation.radians) * drive.maxRotSpeed
