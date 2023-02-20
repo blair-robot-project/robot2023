@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
-import frc.team449.control.holonomic.OIHolonomic.Companion.createHolonomicOI
+import frc.team449.control.holonomic.OrthogonalHolonomicOI.Companion.createOrthogonalHolonomicOI
 import frc.team449.control.holonomic.SwerveDrive.Companion.createSwerve
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.system.AHRS
@@ -23,5 +23,5 @@ class Robot : RobotBase() {
   override val drive = createSwerve(ahrs)
 
   @Log(name = "Joystick Input")
-  override val oi = createHolonomicOI(drive, driveController)
+  override val oi = createOrthogonalHolonomicOI(drive, driveController)
 }

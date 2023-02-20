@@ -32,7 +32,7 @@ import kotlin.math.hypot
  * @param fieldOriented Whether the OI x and y translation should
  * be relative to the field rather than relative to the robot. This better be true.
  */
-class OIHolonomic(
+class HolonomicOI(
   private val drive: HolonomicDrive,
   private val xThrottle: DoubleSupplier,
   private val yThrottle: DoubleSupplier,
@@ -126,8 +126,8 @@ class OIHolonomic(
   }
 
   companion object {
-    fun createHolonomicOI(drive: HolonomicDrive, driveController: XboxController): OIHolonomic {
-      return OIHolonomic(
+    fun createHolonomicOI(drive: HolonomicDrive, driveController: XboxController): HolonomicOI {
+      return HolonomicOI(
         drive,
         { if (abs(driveController.leftY) < RobotConstants.TRANSLATION_DEADBAND) .0 else driveController.leftY },
         { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else driveController.leftX },
