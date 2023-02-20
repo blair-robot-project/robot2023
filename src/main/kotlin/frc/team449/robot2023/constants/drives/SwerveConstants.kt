@@ -20,10 +20,10 @@ object SwerveConstants {
   const val TURN_ENC_CHAN_BR = 0
 
   /** Offsets for the absolute encoders in rotations */
-  const val TURN_ENC_OFFSET_FL = 0.369667
-  const val TURN_ENC_OFFSET_FR = 0.790026
-  const val TURN_ENC_OFFSET_BL = 0.212865
-  const val TURN_ENC_OFFSET_BR = 0.620506
+  const val TURN_ENC_OFFSET_FL = 0.369667 + .5
+  const val TURN_ENC_OFFSET_FR = 0.790026 - .5
+  const val TURN_ENC_OFFSET_BL = 0.212865 + .5
+  const val TURN_ENC_OFFSET_BR = 0.620506 - .5
 
   /** PID gains for turning each module */
   const val TURN_KP = 0.75
@@ -48,6 +48,6 @@ object SwerveConstants {
 
   /** Wheelbase = wheel-to-wheel distance from the side of the robot */
   /** Trackwidth = wheel-to-wheel distance from the front/back of the robot */
-  val WHEELBASE = Units.inchesToMeters(32.0)
-  val TRACKWIDTH = Units.inchesToMeters(27.75)
+  val WHEELBASE = Units.inchesToMeters(30.0)
+  val TRACKWIDTH = Units.inchesToMeters(27.00)
 }

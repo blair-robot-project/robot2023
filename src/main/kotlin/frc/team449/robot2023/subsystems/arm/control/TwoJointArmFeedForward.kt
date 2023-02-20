@@ -16,7 +16,9 @@ class TwoJointArmFeedForward(
   private val ks: Pair<Double, Double>,
   private val kv: Pair<Double, Double>,
   ka: Pair<Double, Double>,
-  kg: Pair<Double, Double>
+  kg: Pair<Double, Double>,
+  private val kg1: Pair<Double, Double>,
+  private val kg2: Pair<Double, Double>
 ) {
   private val gravity = 9.8
   private val m1 = masses.first
@@ -29,14 +31,13 @@ class TwoJointArmFeedForward(
   private val b22 = m2 * r2 * gravity / kg.second
   private val i2 = b22 * ka.second - m2 * r2 * r2
   private val i1 = b11 * ka.first - m1 * r1 * r1 - m2 * (l1 * l1 + r2 * r2) - i2 - 2 * h
-
   /**
    * Computes the voltage for each joint based on a desired state
    * @param reference the matrix of the desired state matrix in form [theta, beta, theta-dot, beta-dot]
    * @param accelReference desired acceleration for the two joints in form [thetaAccel, betaAccel]
    * @return voltage matrix for the two joint motors in form [joint1Voltage, joint2Voltage] A.K.A. u
    */
-  fun calculate(reference: Matrix<N4, N1>, accelReference: Matrix<N2, N1>): Matrix<N2, N1> {
+  fun calculate(reference: Matrix<N4, N1>, accelReference: Matrix<N2, N1>, singleJointCharacterized: Boolean): Matrix<N2, N1> {
     /** slice the reference state matrix in half */
     // [theta, beta]
     val angles = reference.block<N2, N1>(2, 1, 0, 0)
@@ -93,6 +94,18 @@ class TwoJointArmFeedForward(
       ks.second
     )
 
+    /** cos matrix to multiply B^-1(Tg) term */
+    val cos = builder2x1.fill(
+      c1,
+      c12
+    )
+    val G = builder2x2.fill(
+      kg1.first, kg1.second,
+      kg2.first, kg2.second
+    )
+
+    val tau = G * cos
+
     /** Solve equation
      * @see <a href = "https://www.chiefdelphi.com/uploads/short-url/pfucQonJecNeM7gvH57SpOOgPyR.pdf">White paper</a>
      */
@@ -101,7 +114,9 @@ class TwoJointArmFeedForward(
     val kbTimesVel = Kb * angularVelocities
 
     /** return u = Km ^ -1 * [D * accel + C * vel + Tg + Kb * vel] */
-    return B.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel) + Ks
+    return if (singleJointCharacterized) B.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel) + Ks
+    /** return u = b^-1(tg) + b^-1(M + C + Kb) + kS */
+    else tau + B.solve(dTimesAccel + cTimesVel + kbTimesVel) + Ks
   }
 
   /**
@@ -109,12 +124,12 @@ class TwoJointArmFeedForward(
    * @param reference the matrix of the desired state matrix in form [theta, beta, theta-dot, beta-dot]
    * @return voltage matrix for the two joint motors in form [joint1Voltage, joint2Voltage] A.K.A. u
    */
-  fun calculate(reference: Matrix<N4, N1>): Matrix<N2, N1> {
+  fun calculate(reference: Matrix<N4, N1>, singleJointCharacterized: Boolean): Matrix<N2, N1> {
     val acceleration = mat(N2.instance, N1.instance).fill(
       0.0,
       0.0
     )
-    return calculate(reference, acceleration)
+    return calculate(reference, acceleration, singleJointCharacterized)
   }
 
   companion object {
@@ -129,7 +144,9 @@ class TwoJointArmFeedForward(
         ArmConstants.KS1 to ArmConstants.KS2,
         ArmConstants.KV1 to ArmConstants.KV2,
         ArmConstants.KA1 to ArmConstants.KA2,
-        ArmConstants.KG1 to ArmConstants.KG2
+        ArmConstants.KG1 to ArmConstants.KG2,
+        ArmConstants.KG11 to ArmConstants.KG12,
+        ArmConstants.KG21 to ArmConstants.KG22
       )
     }
   }

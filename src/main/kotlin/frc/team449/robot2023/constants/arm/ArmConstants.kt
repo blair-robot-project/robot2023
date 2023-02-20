@@ -45,6 +45,12 @@ object ArmConstants {
   const val KA1 = 1.8353
   const val KG1 = 0.19519
 
+  // Characterized values
+  const val KG11 = 0.0
+  const val KG12 = 0.0
+  const val KG21 = 0.0
+  const val KG22 = 0.0
+
   // Feedforward constants of second joint in arm
   const val KS2 = 0.4588
   const val KV2 = 0.59783
