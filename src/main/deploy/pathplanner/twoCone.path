@@ -2,21 +2,23 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 0.33,
-        "y": 0.0
+        "x": 1.7118758907656704,
+        "y": 0.7667168494059209
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.33,
-        "y": 0.0
+        "x": 2.4831737892642454,
+        "y": 0.6581633822989862
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": -180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "dropCone"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -24,24 +26,26 @@
     },
     {
       "anchorPoint": {
-        "x": 1.0902483343428224,
-        "y": -0.011723100369276863
+        "x": 6.752189651948749,
+        "y": 0.9223565426297514
       },
       "prevControl": {
-        "x": 0.8322898038225728,
-        "y": -0.15083393010381826
+        "x": 5.7942284999153335,
+        "y": 0.8789235581943384
       },
       "nextControl": {
-        "x": 1.8293605048748556,
-        "y": 0.3868623121861642
+        "x": 5.7942284999153335,
+        "y": 0.8789235581943384
       },
       "holonomicAngle": 0,
-      "isReversal": false,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "startGroundIntake"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -49,24 +53,26 @@
     },
     {
       "anchorPoint": {
-        "x": 1.172310036927766,
-        "y": 0.6447705203102713
+        "x": 1.7133255898456243,
+        "y": 1.3148190775548219
       },
       "prevControl": {
-        "x": 1.346385960466457,
-        "y": 0.4358794120638434
+        "x": 2.2070351085146616,
+        "y": 1.3050191117743337
       },
       "nextControl": {
-        "x": 0.8792325276958239,
-        "y": 0.9964635313885994
+        "x": 2.2070351085146616,
+        "y": 1.3050191117743337
       },
-      "holonomicAngle": 90.0,
-      "isReversal": false,
+      "holonomicAngle": -180.0,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "dropCone"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -74,18 +80,18 @@
     },
     {
       "anchorPoint": {
-        "x": 0.6447705203102712,
-        "y": 0.7268322228952151
+        "x": 2.4239100908757374,
+        "y": 1.924330558730562
       },
       "prevControl": {
-        "x": 0.9730173306500451,
-        "y": 0.9730173306500456
+        "x": 2.291712761975255,
+        "y": 1.4968925286190002
       },
       "nextControl": {
-        "x": 0.2987821246972726,
-        "y": 0.4673409261854664
+        "x": 2.446525396523015,
+        "y": 1.997453380323427
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": -180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -99,12 +105,12 @@
     },
     {
       "anchorPoint": {
-        "x": 0.33,
-        "y": 0.0
+        "x": 2.42,
+        "y": 1.92
       },
       "prevControl": {
-        "x": 0.8692626169867723,
-        "y": 0.5275395166174969
+        "x": 2.694573005743233,
+        "y": 1.9095621666243332
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -113,15 +119,21 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "chargeStation"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": 2.5,
-  "maxAcceleration": null,
-  "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 1.2450284090909058,
+      "names": [
+        "stopGroundIntake"
+      ]
+    }
+  ]
 }

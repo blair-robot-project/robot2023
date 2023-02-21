@@ -2,6 +2,7 @@ package frc.team449.control.auto
 
 import com.pathplanner.lib.PathPlannerTrajectory
 import com.pathplanner.lib.controllers.PPHolonomicDriveController
+import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -9,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
+import frc.team449.robot2023.constants.RobotConstants
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -22,7 +24,7 @@ import frc.team449.robot2023.auto.AutoConstants
  */
 class HolonomicFollower(
   private val drivetrain: HolonomicDrive,
-  private val trajectory: PathPlannerTrajectory,
+  trajectory: PathPlannerTrajectory,
   private val xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
   private val yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
   private val thetaController: PIDController = PIDController(AutoConstants.DEFAULT_ROTATION_KP, 0.0, 0.0),
@@ -36,6 +38,12 @@ class HolonomicFollower(
 
   private val controller = PPHolonomicDriveController(
     xController, yController, thetaController
+  )
+
+  // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
+  private val transformedTrajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(
+    trajectory,
+    RobotConstants.ALLIANCE_COLOR
   )
 
   init {
@@ -56,6 +64,8 @@ class HolonomicFollower(
     yController.reset()
     thetaController.reset()
 
+    PathPlannerServer.sendActivePath(transformedTrajectory.states)
+
     // reset timer from last run and restart for this run
     timer.reset()
     timer.start()
@@ -64,15 +74,17 @@ class HolonomicFollower(
   override fun execute() {
     val currTime = timer.get()
 
-    // TODO: Uncomment once creating paths for competition use instead of testing
-    // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
-//    val reference = PathPlannerTrajectory.transformStateForAlliance(
-//      trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState,
-//      DriverStation.getAlliance()
-//    )
-    val reference = trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
+    val reference = transformedTrajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
 
     val currentPose = drivetrain.pose
+
+    PathPlannerServer.sendPathFollowingData(
+      Pose2d(
+        reference.poseMeters.translation,
+        reference.holonomicRotation
+      ),
+      currentPose
+    )
 
     drivetrain.set(
       controller.calculate(
@@ -88,8 +100,8 @@ class HolonomicFollower(
    * @return if the robot reached ending position by estimated end time
    */
   override fun isFinished(): Boolean {
-    return (timer.hasElapsed(trajectory.totalTimeSeconds) && controller.atReference()) ||
-      timer.hasElapsed(trajectory.totalTimeSeconds + timeout)
+    return (timer.hasElapsed(transformedTrajectory.totalTimeSeconds) && controller.atReference()) ||
+      timer.hasElapsed(transformedTrajectory.totalTimeSeconds + timeout)
   }
 
   override fun end(interrupted: Boolean) {

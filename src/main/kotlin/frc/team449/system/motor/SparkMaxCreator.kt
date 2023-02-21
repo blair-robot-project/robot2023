@@ -13,6 +13,8 @@ import frc.team449.system.encoder.EncoderCreator
  * @param name The motor's name
  * @param id The motor's CAN ID
  */
+
+// TODO: Test if disabling voltage compensation helps reduce brownouts
 fun createSparkMax(
   name: String,
   id: Int,
@@ -20,7 +22,7 @@ fun createSparkMax(
   enableBrakeMode: Boolean = true,
   inverted: Boolean = false,
   currentLimit: Int = 0,
-  enableVoltageComp: Boolean = true,
+  enableVoltageComp: Boolean = false,
   slaveSparks: Map<Int, Boolean> = mapOf(),
   controlFrameRateMillis: Int = -1,
   statusFrameRatesMillis: Map<CANSparkMaxLowLevel.PeriodicFrame, Int> = mapOf()

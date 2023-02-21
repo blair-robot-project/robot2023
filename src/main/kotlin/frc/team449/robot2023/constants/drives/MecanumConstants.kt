@@ -26,4 +26,5 @@ object MecanumConstants {
   const val MAX_ATTAINABLE_WHEEL_SPEED = (12 - DRIVE_KS) / DRIVE_KV
   val WHEELBASE = Units.inchesToMeters(21.426)
   val TRACKWIDTH = Units.inchesToMeters(21.000)
+  const val CURRENT_LIM = 40
 }

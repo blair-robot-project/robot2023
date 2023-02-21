@@ -17,11 +17,11 @@ import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.drives.SwerveConstants
 import frc.team449.robot2023.constants.vision.VisionConstants
 import frc.team449.system.AHRS
-import frc.team449.system.VisionCamera
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
+import org.photonvision.PhotonPoseEstimator
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -34,16 +34,13 @@ open class SwerveDrive(
   private val ahrs: AHRS,
   override val maxLinearSpeed: Double,
   override val maxRotSpeed: Double,
-  private val cameras: List<VisionCamera> = mutableListOf()
+  private val cameras: List<PhotonPoseEstimator> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
 
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
-
-  @Log.ToString
-  private var camPose = Pose2d()
 
   private var currentSpeeds = ChassisSpeeds()
 
@@ -137,11 +134,11 @@ open class SwerveDrive(
 
   private fun localize() {
     for (camera in cameras) {
-      if (camera.hasTarget()) {
-        camPose = camera.camPose().toPose2d()
+      val result = camera.update()
+      if (result.isPresent) {
         poseEstimator.addVisionMeasurement(
-          camPose,
-          camera.timestamp()
+          result.get().estimatedPose.toPose2d(),
+          result.get().timestampSeconds
         )
       }
     }
@@ -149,7 +146,7 @@ open class SwerveDrive(
 
   companion object {
     /** Create a swerve drivetrain using DriveConstants */
-    fun swerveDrive(ahrs: AHRS): SwerveDrive {
+    fun createSwerve(ahrs: AHRS): SwerveDrive {
       val driveMotorController = { PIDController(SwerveConstants.DRIVE_KP, SwerveConstants.DRIVE_KI, SwerveConstants.DRIVE_KD) }
       val turnMotorController = { PIDController(SwerveConstants.TURN_KP, SwerveConstants.TURN_KI, SwerveConstants.TURN_KD) }
       val driveFeedforward = SimpleMotorFeedforward(SwerveConstants.DRIVE_KS, SwerveConstants.DRIVE_KV, SwerveConstants.DRIVE_KA)
@@ -240,7 +237,7 @@ open class SwerveDrive(
         ahrs,
         RobotConstants.MAX_LINEAR_SPEED,
         RobotConstants.MAX_ROT_SPEED,
-        VisionConstants.CAMERAS
+        VisionConstants.ESTIMATORS
       )
     }
 
@@ -259,7 +256,8 @@ open class SwerveDrive(
         NEOEncoder.creator(
           SwerveConstants.DRIVE_UPR,
           SwerveConstants.DRIVE_GEARING
-        )
+        ),
+        currentLimit = SwerveConstants.DRIVE_CURRENT_LIM
       )
 
     /** Helper to make turning motors for swerve */
@@ -281,7 +279,8 @@ open class SwerveDrive(
           offset,
           SwerveConstants.TURN_UPR,
           sensorPhase
-        )
+        ),
+        currentLimit = SwerveConstants.STEERING_CURRENT_LIM
       )
   }
 }

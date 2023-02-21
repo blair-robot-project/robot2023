@@ -133,10 +133,7 @@ open class DifferentialDrive(
         id = motorId,
         enableBrakeMode = true,
         inverted = inverted,
-        enableVoltageComp = false,
-        encCreator =
-
-        QuadEncoder.creator(
+        encCreator = QuadEncoder.creator(
           wpiEnc,
           DifferentialConstants.DRIVE_EXT_ENC_CPR,
           DifferentialConstants.DRIVE_UPR,

@@ -1,24 +1,29 @@
 package frc.team449.control.holonomic
 
 import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
 import frc.team449.control.OI
 import frc.team449.robot2023.constants.RobotConstants
+import java.util.function.BooleanSupplier
 import java.util.function.DoubleSupplier
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.hypot
 
 /**
- * Create an OI for controlling a holonomic drivetrain (probably swerve).
+ * Create an OI for controlling a holonomic drivetrain.
  * The x and y axes on one joystick are used to control x and y velocity (m/s),
  * while the x axis on another joystick is used to control rotational velocity (m/s).
+ * This OI will also map A, X, B, and Y to 90 degree setpoints.
  * <p> The magnitude of the acceleration is clamped
  * <p>Note that the joystick's X
  * axis corresponds to the robot's/field's Y and vice versa
@@ -32,15 +37,25 @@ import kotlin.math.hypot
  * @param fieldOriented Whether the OI x and y translation should
  * be relative to the field rather than relative to the robot. This better be true.
  */
-class OIHolonomic(
+class OrthogonalHolonomicOI(
   private val drive: HolonomicDrive,
   private val xThrottle: DoubleSupplier,
   private val yThrottle: DoubleSupplier,
   private val rotThrottle: DoubleSupplier,
   private val rotRamp: SlewRateLimiter,
   private val maxAccel: Double,
-  private val fieldOriented: () -> Boolean
+  private val fieldOriented: () -> Boolean,
+  private val controller: PIDController,
+  private val yButton: BooleanSupplier,
+  private val xButton: BooleanSupplier,
+  private val aButton: BooleanSupplier,
+  private val bButton: BooleanSupplier,
 ) : OI, Sendable {
+
+  init {
+    controller.enableContinuousInput(-PI, PI)
+    controller.setTolerance(0.1)
+  }
 
   /** Previous x velocity (scaled and clamped) */
   private var prevX = 0.0
@@ -55,6 +70,10 @@ class OIHolonomic(
   private var magAcc = 0.0
   private var dt = 0.0
   private var magAccClamped = 0.0
+
+  private var rotScaled = 0.0
+  private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
+  private val forwardCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 1.0 else -1.0
 
   /**
    * @return The [ChassisSpeeds] for the given x, y and
@@ -83,11 +102,46 @@ class OIHolonomic(
     val xClamped = prevX + dxClamped
     val yClamped = prevY + dyClamped
 
-    this.prevX = xClamped
-    this.prevY = yClamped
+    this.prevX = xClamped * forwardCompensation
+    this.prevY = yClamped * forwardCompensation
 
-    val rotRaw = rotThrottle.asDouble
-    val rotScaled = rotRamp.calculate(rotRaw * drive.maxRotSpeed)
+    /** Based on which button was pressed, give in the setpoint to the PID controller.
+     *  You must use calculate because the atSetpoint() method requires there to have
+     *  been a measurement and setpoint. */
+    if (yButton.asBoolean) {
+      controller.calculate(
+        drive.heading.radians,
+        MathUtil.inputModulus(0.0 + allianceCompensation, -PI, PI)
+      ) * drive.maxRotSpeed
+    } else if (xButton.asBoolean) {
+      controller.calculate(
+        drive.heading.radians,
+        MathUtil.inputModulus(PI / 2 + allianceCompensation, -PI, PI)
+      ) * drive.maxRotSpeed
+    } else if (aButton.asBoolean) {
+      controller.calculate(
+        drive.heading.radians,
+        MathUtil.inputModulus(PI + allianceCompensation, -PI, PI)
+      ) * drive.maxRotSpeed
+    } else if (bButton.asBoolean) {
+      controller.calculate(
+        drive.heading.radians,
+        MathUtil.inputModulus(3 * PI / 2 + allianceCompensation, -PI, PI)
+      ) * drive.maxRotSpeed
+    } else {
+      controller.calculate(
+        0.0,
+        0.0
+      )
+    }
+
+    /** If the PID controller is at its setpoint, then allow the driver to control rotation,
+     * otherwise let the PID do its thing. */
+    rotScaled = if (controller.atSetpoint()) {
+      rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed) * forwardCompensation
+    } else {
+      controller.calculate(drive.heading.radians) * drive.maxRotSpeed
+    }
 
     // translation velocity vector
     val vel = Translation2d(xClamped, yClamped)
@@ -101,7 +155,7 @@ class OIHolonomic(
         vel.x,
         vel.y,
         rotScaled,
-        drive.pose.rotation
+        drive.heading
       )
     } else {
       ChassisSpeeds(
@@ -126,15 +180,20 @@ class OIHolonomic(
   }
 
   companion object {
-    fun createHolonomicOI(drive: HolonomicDrive, driveController: XboxController): OIHolonomic {
-      return OIHolonomic(
+    fun createOrthogonalHolonomicOI(drive: HolonomicDrive, driveController: XboxController): OrthogonalHolonomicOI {
+      return OrthogonalHolonomicOI(
         drive,
         { if (abs(driveController.leftY) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
         { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
         { if (abs(driveController.getRawAxis(4)) < RobotConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
         SlewRateLimiter(RobotConstants.RATE_LIMIT),
         RobotConstants.MAX_ACCEL,
-        { true }
+        { !driveController.leftBumper },
+        RobotConstants.ORTHOGONAL_CONRTOLLER,
+        { driveController.yButtonPressed },
+        { driveController.xButtonPressed },
+        { driveController.aButtonPressed },
+        { driveController.bButtonPressed }
       )
     }
   }

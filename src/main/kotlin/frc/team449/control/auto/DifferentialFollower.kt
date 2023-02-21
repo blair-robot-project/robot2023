@@ -1,14 +1,14 @@
 package frc.team449.control.auto
 
 import com.pathplanner.lib.PathPlannerTrajectory
+import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.math.controller.RamseteController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.differential.DifferentialDrive
+import frc.team449.robot2023.constants.RobotConstants
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -28,17 +28,24 @@ class DifferentialFollower(
 ) : CommandBase() {
 
   private val timer = Timer()
-  private var prevTime = 0.0
 
   private val controller = RamseteController()
 
+  // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
+  private val transformedTrajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(
+    trajectory,
+    RobotConstants.ALLIANCE_COLOR
+  )
+
   override fun initialize() {
-    controller.setTolerance(Pose2d(Translation2d(translationTol, translationTol), Rotation2d(angleTol)))
     if (resetPose) {
       // reset the position of the robot to where we start this path(trajectory)
       drivetrain.pose = trajectory.initialState.poseMeters
     }
+
     controller.setTolerance(Pose2d(translationTol, translationTol, Rotation2d(angleTol)))
+
+    PathPlannerServer.sendActivePath(transformedTrajectory.states)
 
     timer.start()
   }
@@ -46,12 +53,17 @@ class DifferentialFollower(
   override fun execute() {
     val currTime = timer.get()
 
-    val reference = PathPlannerTrajectory.transformStateForAlliance(
-      trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState,
-      DriverStation.getAlliance()
-    )
+    val reference = transformedTrajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
 
     val currentPose = drivetrain.pose
+
+    PathPlannerServer.sendPathFollowingData(
+      Pose2d(
+        reference.poseMeters.translation,
+        reference.holonomicRotation
+      ),
+      currentPose
+    )
 
     drivetrain.set(
       controller.calculate(
@@ -59,8 +71,6 @@ class DifferentialFollower(
         reference
       )
     )
-
-    prevTime = currTime
   }
 
   override fun isFinished(): Boolean {

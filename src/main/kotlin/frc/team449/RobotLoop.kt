@@ -1,5 +1,6 @@
 package frc.team449
 
+import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
@@ -10,6 +11,7 @@ import frc.team449.control.DriveCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoChooser
 import frc.team449.robot2023.auto.Paths
+import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
 import io.github.oblarg.oblog.Logger
 
@@ -31,6 +33,9 @@ class RobotLoop : TimedRobot() {
 //      instance.stopServer()
 //      instance.startClient4("localhost")
     }
+
+    PathPlannerServer.startServer(5811)
+
     Logger.configureLoggingAndConfig(robot, false)
     Logger.configureLoggingAndConfig(Paths, false)
     SmartDashboard.putData("Field", robot.field)
@@ -54,6 +59,9 @@ class RobotLoop : TimedRobot() {
       this.autoCommand = cmd
       CommandScheduler.getInstance().schedule(this.autoCommand)
     }
+
+    /** At the start of auto we poll the alliance color given by the FMS */
+    RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
   }
 
   override fun autonomousPeriodic() {}

@@ -17,12 +17,12 @@ import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.drives.MecanumConstants
 import frc.team449.robot2023.constants.vision.VisionConstants
 import frc.team449.system.AHRS
-import frc.team449.system.VisionCamera
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
+import org.photonvision.PhotonPoseEstimator
 
 /**
  * @param frontLeftMotor the front left motor
@@ -52,7 +52,7 @@ open class MecanumDrive(
   override val maxRotSpeed: Double,
   private val feedForward: SimpleMotorFeedforward,
   private val controller: () -> PIDController,
-  private val cameras: List<VisionCamera> = mutableListOf()
+  private val cameras: List<PhotonPoseEstimator> = mutableListOf()
 ) : HolonomicDrive, SubsystemBase(), Loggable {
 
   private val flController = controller()
@@ -156,23 +156,39 @@ open class MecanumDrive(
 
   private fun localize() {
     for (camera in cameras) {
-      if (camera.hasTarget()) {
+      val result = camera.update()
+      if (result.isPresent) {
         poseEstimator.addVisionMeasurement(
-          camera.camPose().toPose2d(),
-          camera.timestamp()
+          result.get().estimatedPose.toPose2d(),
+          result.get().timestampSeconds
         )
       }
     }
   }
 
   companion object {
+
+    /** Helper method to create a motor for each wheel */
+    private fun createCorner(name: String, motorID: Int, inverted: Boolean): WrappedMotor {
+      return createSparkMax(
+        name,
+        motorID,
+        NEOEncoder.creator(
+          MecanumConstants.DRIVE_UPR,
+          MecanumConstants.DRIVE_GEARING
+        ),
+        inverted = inverted,
+        currentLimit = MecanumConstants.CURRENT_LIM
+      )
+    }
+
     /** Create a new Mecanum Drive from DriveConstants */
     fun createMecanum(ahrs: AHRS): MecanumDrive {
       return MecanumDrive(
-        createSparkMax("frontLeft", MecanumConstants.DRIVE_MOTOR_FL, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING)),
-        createSparkMax("frontRight", MecanumConstants.DRIVE_MOTOR_FR, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING), inverted = true),
-        createSparkMax("backLeft", MecanumConstants.DRIVE_MOTOR_BL, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING)),
-        createSparkMax("backRight", MecanumConstants.DRIVE_MOTOR_BR, NEOEncoder.creator(MecanumConstants.DRIVE_UPR, MecanumConstants.DRIVE_GEARING), inverted = true),
+        createCorner("frontLeft", MecanumConstants.DRIVE_MOTOR_FL, false),
+        createCorner("frontRight", MecanumConstants.DRIVE_MOTOR_FR, true),
+        createCorner("backLeft", MecanumConstants.DRIVE_MOTOR_BL, false),
+        createCorner("backRight", MecanumConstants.DRIVE_MOTOR_BR, true),
         Translation2d(MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),
         Translation2d(MecanumConstants.WHEELBASE / 2, -MecanumConstants.TRACKWIDTH / 2),
         Translation2d(-MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),
@@ -182,7 +198,7 @@ open class MecanumDrive(
         RobotConstants.MAX_ROT_SPEED,
         SimpleMotorFeedforward(MecanumConstants.DRIVE_KS, MecanumConstants.DRIVE_KV, MecanumConstants.DRIVE_KA),
         { PIDController(MecanumConstants.DRIVE_KP, MecanumConstants.DRIVE_KI, MecanumConstants.DRIVE_KD) },
-        VisionConstants.CAMERAS
+        VisionConstants.ESTIMATORS
       )
     }
   }
