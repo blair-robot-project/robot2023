@@ -27,11 +27,11 @@ class ControllerBindings(
 //    )
 
     JoystickButton(controller, XboxController.Button.kX.value).onTrue(
-      TrajCharacterizer(robot.arm, ArmPaths.EXTEND_STOW)
+      TrajCharacterizer(robot.arm, ArmPaths.EXTEND_STOW, 90, 1.0)
     )
 
     JoystickButton(controller, XboxController.Button.kY.value).onTrue(
-      TrajCharacterizer(robot.arm, ArmPaths.STOW_EXTEND)
+      TrajCharacterizer(robot.arm, ArmPaths.STOW_EXTEND, 90, 1.0)
     )
 
     JoystickButton(controller, XboxController.Button.kA.value).onTrue(

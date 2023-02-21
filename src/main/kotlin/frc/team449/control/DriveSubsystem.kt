@@ -1,16 +1,18 @@
 package frc.team449.control
 
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.Subsystem
 import io.github.oblarg.oblog.Loggable
+import kotlin.math.PI
 
 /** A drivetrain that uses closed-loop velocity control. */
 interface DriveSubsystem : Subsystem, Loggable {
   var heading: Rotation2d
-    get() = this.pose.rotation
+    get() = Rotation2d(MathUtil.inputModulus(this.pose.rotation.radians, -PI, PI))
     set(value) {
       this.pose = Pose2d(Translation2d(this.pose.x, this.pose.y), value)
     }

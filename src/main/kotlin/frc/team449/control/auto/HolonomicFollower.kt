@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
-import kotlin.math.PI
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -46,9 +45,6 @@ class HolonomicFollower(
     if (resetPose) {
       drivetrain.pose = trajectory.initialHolonomicPose
     }
-
-    // controlling heading which is circular, [0, 2*PI)
-    thetaController.enableContinuousInput(.0, 2 * PI)
 
     controller.setTolerance(poseTol)
   }

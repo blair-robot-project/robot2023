@@ -14,7 +14,7 @@ class TurnCommand(
 ) : CommandBase() {
   override fun initialize() {
     addRequirements(drive)
-    controller.enableContinuousInput(0.0, 2 * PI)
+    controller.enableContinuousInput(-PI, PI)
     controller.setpoint = setpoint
     controller.setTolerance(0.1)
     controller.reset()
@@ -35,6 +35,4 @@ class TurnCommand(
   override fun end(interrupted: Boolean) {
     drive.stop()
   }
-
-  // TODO: fix the problem with the robot moving with the rotation
 }
