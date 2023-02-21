@@ -41,7 +41,7 @@ class TrajectoryPoseAlign(
     // Generate a PathPlanner trajectory on the fly
     val traj = PathPlanner.generatePath(
       maxSpeeds,
-      PathPoint(drive.pose.translation, startPointRotation, drive.pose.rotation),
+      PathPoint(drive.pose.translation, startPointRotation, drive.heading.radians),
       PathPoint(targetPose.translation, endPointRotation, targetPose.rotation)
     )
 

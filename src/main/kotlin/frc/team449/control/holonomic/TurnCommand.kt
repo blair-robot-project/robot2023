@@ -16,7 +16,7 @@ class TurnCommand(
 ) : CommandBase() {
   init {
     addRequirements(drive)
-    controller.enableContinuousInput(0.0, 2 * PI)
+    controller.enableContinuousInput(-PI, PI)
     controller.setSetpoint(setpoint)
     controller.setTolerance(0.1)
   }
@@ -25,7 +25,7 @@ class TurnCommand(
     val inputs = ChassisSpeeds(
       oi.get().vxMetersPerSecond,
       oi.get().vyMetersPerSecond,
-      controller.calculate(drive.pose.rotation.radians) * RobotConstants.MAX_ROT_SPEED
+      controller.calculate(drive.heading.radians) * RobotConstants.MAX_ROT_SPEED
     )
     drive.set(inputs)
   }

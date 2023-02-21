@@ -5,7 +5,6 @@ import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.math.controller.RamseteController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.differential.DifferentialDrive
@@ -39,11 +38,11 @@ class DifferentialFollower(
   )
 
   override fun initialize() {
-    controller.setTolerance(Pose2d(Translation2d(translationTol, translationTol), Rotation2d(angleTol)))
     if (resetPose) {
       // reset the position of the robot to where we start this path(trajectory)
       drivetrain.pose = trajectory.initialState.poseMeters
     }
+
     controller.setTolerance(Pose2d(translationTol, translationTol, Rotation2d(angleTol)))
 
     PathPlannerServer.sendActivePath(transformedTrajectory.states)

@@ -43,9 +43,9 @@ class ProfiledPoseAlign(
     // Calculate the feedback for X, Y, and theta using their respective controllers
     val xFeedback = xPID.calculate(drive.pose.x)
     val yFeedback = yPID.calculate(drive.pose.y)
-    val headingFeedback = headingPID.calculate(drive.pose.rotation.radians)
+    val headingFeedback = headingPID.calculate(drive.heading.radians)
 
-    drive.set(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, headingFeedback, drive.pose.rotation))
+    drive.set(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, headingFeedback, drive.heading))
   }
 
   override fun isFinished(): Boolean {

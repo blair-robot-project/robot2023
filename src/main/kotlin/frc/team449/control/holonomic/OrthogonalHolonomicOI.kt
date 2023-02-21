@@ -53,7 +53,7 @@ class OrthogonalHolonomicOI(
 ) : OI, Sendable {
 
   init {
-    controller.enableContinuousInput(0.0, 2 * PI)
+    controller.enableContinuousInput(-PI, PI)
     controller.setTolerance(0.1)
   }
 
@@ -110,23 +110,23 @@ class OrthogonalHolonomicOI(
      *  been a measurement and setpoint. */
     if (yButton.asBoolean) {
       controller.calculate(
-        drive.pose.rotation.radians,
-        MathUtil.inputModulus(0.0 + allianceCompensation, 0.0, 2 * PI)
+        drive.heading.radians,
+        MathUtil.inputModulus(0.0 + allianceCompensation, -PI, PI)
       ) * drive.maxRotSpeed
     } else if (xButton.asBoolean) {
       controller.calculate(
-        drive.pose.rotation.radians,
-        MathUtil.inputModulus(PI / 2 + allianceCompensation, 0.0, 2 * PI)
+        drive.heading.radians,
+        MathUtil.inputModulus(PI / 2 + allianceCompensation, -PI, PI)
       ) * drive.maxRotSpeed
     } else if (aButton.asBoolean) {
       controller.calculate(
-        drive.pose.rotation.radians,
-        MathUtil.inputModulus(PI + allianceCompensation, 0.0, 2 * PI)
+        drive.heading.radians,
+        MathUtil.inputModulus(PI + allianceCompensation, -PI, PI)
       ) * drive.maxRotSpeed
     } else if (bButton.asBoolean) {
       controller.calculate(
-        drive.pose.rotation.radians,
-        MathUtil.inputModulus(3 * PI / 2 + allianceCompensation, 0.0, 2 * PI)
+        drive.heading.radians,
+        MathUtil.inputModulus(3 * PI / 2 + allianceCompensation, -PI, PI)
       ) * drive.maxRotSpeed
     } else {
       controller.calculate(
@@ -140,7 +140,7 @@ class OrthogonalHolonomicOI(
     rotScaled = if (controller.atSetpoint()) {
       rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed) * forwardCompensation
     } else {
-      controller.calculate(drive.pose.rotation.radians) * drive.maxRotSpeed
+      controller.calculate(drive.heading.radians) * drive.maxRotSpeed
     }
 
     // translation velocity vector
@@ -155,7 +155,7 @@ class OrthogonalHolonomicOI(
         vel.x,
         vel.y,
         rotScaled,
-        drive.pose.rotation
+        drive.heading
       )
     } else {
       ChassisSpeeds(
