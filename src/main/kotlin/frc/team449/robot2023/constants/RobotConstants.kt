@@ -9,7 +9,6 @@ object RobotConstants {
 
   /** Other CAN ID */
   const val PDP_CAN = 1
-  const val PCM_MODULE = 0
 
   /** Controller Configurations */
   const val RATE_LIMIT = 3.5
