@@ -21,8 +21,8 @@ import kotlin.math.PI
  * @param secondJointToEndEffector length from the joint motor to the end-effector of the arm in METERS
  */
 open class Arm(
-  private val firstJoint: WrappedMotor,
-  private val secondJoint: WrappedMotor,
+  val firstJoint: WrappedMotor,
+  val secondJoint: WrappedMotor,
   private val feedForward: TwoJointArmFeedForward,
   private val controller: ArmPDController,
   firstToSecondJoint: Double,

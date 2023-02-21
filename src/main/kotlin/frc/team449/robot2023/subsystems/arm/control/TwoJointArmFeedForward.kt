@@ -27,7 +27,7 @@ class TwoJointArmFeedForward(
   private val r2 = distanceFromPivot.second
   private val l1 = lengths.first
   private val h = m2 * l1 * r2
-  private val b11 = m1 * r1 + m2 * (l1 + r2) * gravity / kg.first
+  private val b11 = (m1 * r1 + m2 * (l1 + r2)) * gravity / kg.first
   private val b22 = m2 * r2 * gravity / kg.second
   private val i2 = b22 * ka.second - m2 * r2 * r2
   private val i1 = b11 * ka.first - m1 * r1 * r1 - m2 * (l1 * l1 + r2 * r2) - i2 - 2 * h
@@ -61,12 +61,12 @@ class TwoJointArmFeedForward(
     /** M matrix in equation: Inertia */
     val M = builder2x2.fill(
       (m1 * r1 * r1 + m2 * (l1 * l1 + r2 * r2) + i1 + i2 + 2 * h * c2), (m2 * r2 * r2 + i2 + h * c2),
-      (m2 * r2 * r2 + i2 + m2 * l1 + r2 * c2), (m2 * r2 * r2 + i2)
+      (m2 * r2 * r2 + i2 + h * c2), (m2 * r2 * r2 + i2)
     )
 
     /** C matrix in equation: Centrifugal and Coriolis forces */
     val C = builder2x2.fill(
-      (-h * s2 * betaDot), (-h * s2 * thetaDot - h * s2 * betaDot),
+      (-h * s2 * betaDot), (-h * s2 * (thetaDot + betaDot)),
       (h * s2 * thetaDot), (0.0)
     )
 

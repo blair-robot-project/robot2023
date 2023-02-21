@@ -4,13 +4,12 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.robot2023.subsystems.arm.Arm
 
-class ArmFollower(
+open class ArmFollower(
   private val arm: Arm,
   private val trajectory: ArmTrajectory
 ) : CommandBase() {
 
-  private val timer = Timer()
-  private var prevTime = 0.0
+  val timer = Timer()
 
   override fun initialize() {
     addRequirements(arm)
@@ -24,8 +23,6 @@ class ArmFollower(
     val reference: ArmState = trajectory.sample(currTime)
 
     arm.state = reference
-
-    prevTime = currTime
   }
 
   override fun isFinished(): Boolean {

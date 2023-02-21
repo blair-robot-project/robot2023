@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.control.TurnCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.subsystems.arm.ArmPaths
-import frc.team449.robot2023.subsystems.arm.control.ArmFollower
+import frc.team449.robot2023.subsystems.arm.control.TrajCharacterizer
 import kotlin.math.PI
 
 class ControllerBindings(
@@ -27,11 +27,11 @@ class ControllerBindings(
 //    )
 
     JoystickButton(controller, XboxController.Button.kX.value).onTrue(
-      ArmFollower(robot.arm, ArmPaths.EXTEND_STOW)
+      TrajCharacterizer(robot.arm, ArmPaths.EXTEND_STOW)
     )
 
     JoystickButton(controller, XboxController.Button.kY.value).onTrue(
-      ArmFollower(robot.arm, ArmPaths.STOW_EXTEND)
+      TrajCharacterizer(robot.arm, ArmPaths.STOW_EXTEND)
     )
 
     JoystickButton(controller, XboxController.Button.kA.value).onTrue(
