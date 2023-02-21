@@ -7,7 +7,6 @@ import frc.team449.robot2023.subsystems.arm.Arm
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import java.io.FileWriter
-import kotlin.math.abs
 
 class TrajCharacterizer(
   private val arm: Arm,
@@ -28,7 +27,7 @@ class TrajCharacterizer(
     val currState = arm.state
     val desiredState = arm.desiredState
 
-    if (currTime != 0.0 && abs(currState.betaVel) < .003 && abs(currState.thetaVel) < .003) {
+    if (currTime != 0.0) {
       val currData = JSONObject()
 
       currData["t"] = currTime
