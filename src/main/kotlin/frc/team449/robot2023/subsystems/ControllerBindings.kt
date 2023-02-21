@@ -33,16 +33,16 @@ class ControllerBindings(
     JoystickButton(controller, XboxController.Button.kY.value).onTrue(
       TrajCharacterizer(robot.arm, ArmPaths.STOW_EXTEND, 90, 1.0)
     )
-
-    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
-      InstantCommand(robot.intake::pistonRev)
-    )
+//
+//    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
+//      InstantCommand(robot.intake::pistonRev)
+//    )
 
     JoystickButton(controller, XboxController.Button.kB.value).onTrue(
       InstantCommand(robot.intake::pistonOn)
     )
 
-    JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(
+    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
       TurnCommand(
         robot.drive,
         robot.oi,
