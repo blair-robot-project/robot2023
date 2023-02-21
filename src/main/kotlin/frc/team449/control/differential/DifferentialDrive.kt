@@ -155,6 +155,7 @@ open class DifferentialDrive(
           wpiEnc = DifferentialConstants.DRIVE_ENC_LEFT,
           followers = mapOf(
             DifferentialConstants.DRIVE_MOTOR_L1 to false
+            // DifferentialConstants.DRIVE_MOTOR_L2 to false
           )
         ),
         rightLeader = makeSide(
@@ -165,6 +166,7 @@ open class DifferentialDrive(
           wpiEnc = DifferentialConstants.DRIVE_ENC_RIGHT,
           followers = mapOf(
             DifferentialConstants.DRIVE_MOTOR_R1 to false
+            // DifferentialConstants.DRIVE_MOTOR_R2 to false
           )
         ),
         ahrs,

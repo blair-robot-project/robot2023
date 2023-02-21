@@ -29,8 +29,8 @@ object DifferentialConstants {
   const val DRIVE_FF_KA = 0.44982
 
   /** Encoder Characteristics */
-  val DRIVE_ENC_RIGHT = Encoder(4, 5)
-  val DRIVE_ENC_LEFT = Encoder(6, 7)
+  val DRIVE_ENC_RIGHT = Encoder(2, 3)
+  val DRIVE_ENC_LEFT = Encoder(0, 1)
   const val NEO_ENCODER_CPR = 1
   const val DRIVE_EXT_ENC_CPR = 256
 
