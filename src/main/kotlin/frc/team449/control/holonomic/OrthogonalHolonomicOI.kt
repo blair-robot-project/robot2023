@@ -111,22 +111,22 @@ class OrthogonalHolonomicOI(
     if (yButton.asBoolean) {
       controller.calculate(
         drive.heading.radians,
-        MathUtil.inputModulus(0.0 + allianceCompensation, -PI, PI)
+        MathUtil.angleModulus(0.0 + allianceCompensation)
       ) * drive.maxRotSpeed
     } else if (xButton.asBoolean) {
       controller.calculate(
         drive.heading.radians,
-        MathUtil.inputModulus(PI / 2 + allianceCompensation, -PI, PI)
+        MathUtil.angleModulus(PI / 2 + allianceCompensation)
       ) * drive.maxRotSpeed
     } else if (aButton.asBoolean) {
       controller.calculate(
         drive.heading.radians,
-        MathUtil.inputModulus(PI + allianceCompensation, -PI, PI)
+        MathUtil.angleModulus(PI + allianceCompensation)
       ) * drive.maxRotSpeed
     } else if (bButton.asBoolean) {
       controller.calculate(
         drive.heading.radians,
-        MathUtil.inputModulus(3 * PI / 2 + allianceCompensation, -PI, PI)
+        MathUtil.angleModulus(3 * PI / 2 + allianceCompensation)
       ) * drive.maxRotSpeed
     } else {
       controller.calculate(
@@ -189,7 +189,7 @@ class OrthogonalHolonomicOI(
         SlewRateLimiter(RobotConstants.RATE_LIMIT),
         RobotConstants.MAX_ACCEL,
         { !driveController.leftBumper },
-        RobotConstants.ORTHOGONAL_CONRTOLLER,
+        RobotConstants.ORTHOGONAL_CONTROLLER,
         { driveController.yButtonPressed },
         { driveController.xButtonPressed },
         { driveController.aButtonPressed },

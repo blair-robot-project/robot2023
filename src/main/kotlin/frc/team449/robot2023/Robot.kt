@@ -2,11 +2,11 @@ package frc.team449.robot2023
 
 import edu.wpi.first.wpilibj.*
 import frc.team449.RobotBase
-import frc.team449.control.holonomic.HolonomicOI.Companion.createHolonomicOI
+import frc.team449.control.holonomic.OrthogonalHolonomicOI.Companion.createOrthogonalHolonomicOI
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.arm.ArmConstants
-import frc.team449.robot2023.subsystems.arm.ArmSim
+import frc.team449.robot2023.subsystems.arm.Arm
 import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
 import frc.team449.robot2023.subsystems.arm.control.ArmPDController
 import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
@@ -29,7 +29,7 @@ class Robot : RobotBase() {
   override val drive = SwerveDrive.createSwerve(ahrs)
 
   @Log(name = "Joystick Input")
-  override val oi = createHolonomicOI(drive, driveController)
+  override val oi = createOrthogonalHolonomicOI(drive, driveController)
 
   private val firstJointMotor = createSparkMax(
     "First Joint Motor",
@@ -59,7 +59,7 @@ class Robot : RobotBase() {
     enableBrakeMode = true
   )
 
-  val arm = ArmSim(
+  val arm = Arm(
     firstJointMotor,
     secondJointMotor,
     TwoJointArmFeedForward.createFromConstants(),

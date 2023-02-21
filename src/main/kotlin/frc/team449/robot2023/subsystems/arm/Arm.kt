@@ -10,7 +10,6 @@ import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
-import kotlin.math.PI
 
 /**
  * Controllable two-jointed arm
@@ -44,8 +43,8 @@ open class Arm(
   /** desired arm state */
   @Log.ToString
   var desiredState = ArmState(
-    Rotation2d(PI / 4),
-    Rotation2d(0.0)
+    Rotation2d(1.63),
+    Rotation2d(-2.51)
   )
 
   /**

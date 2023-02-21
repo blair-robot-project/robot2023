@@ -6,7 +6,6 @@ import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
-import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sign
@@ -30,8 +29,8 @@ class ArmPDController(
     setpoint = reference
     val err = reference - state
     val wrappedErr = mat(N4.instance, N1.instance).fill(
-      MathUtil.inputModulus(err[0, 0], -PI, PI),
-      MathUtil.inputModulus(err[1, 0], -PI, PI),
+      MathUtil.angleModulus(err[0, 0]),
+      MathUtil.angleModulus(err[1, 0]),
       err[2, 0],
       err[3, 0]
     )
