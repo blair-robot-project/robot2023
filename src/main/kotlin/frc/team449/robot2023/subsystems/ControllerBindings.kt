@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.control.TurnCommand
 import frc.team449.robot2023.Robot
-import frc.team449.robot2023.subsystems.arm.ArmPaths
-import frc.team449.robot2023.subsystems.arm.control.TrajCharacterizer
 import kotlin.math.PI
 
 class ControllerBindings(
@@ -25,14 +23,6 @@ class ControllerBindings(
 //    JoystickButton(controller, XboxController.Button.kB.value).onTrue(
 //      ArmFollower(robot.arm, ArmPaths.STOW_ZERO)
 //    )
-
-    JoystickButton(controller, XboxController.Button.kX.value).onTrue(
-      TrajCharacterizer(robot.arm, ArmPaths.EXTEND_STOW, 90, 1.0)
-    )
-
-    JoystickButton(controller, XboxController.Button.kY.value).onTrue(
-      TrajCharacterizer(robot.arm, ArmPaths.STOW_EXTEND, 90, 1.0)
-    )
 
     JoystickButton(controller, XboxController.Button.kA.value).onTrue(
       InstantCommand(robot.intake::pistonRev)
