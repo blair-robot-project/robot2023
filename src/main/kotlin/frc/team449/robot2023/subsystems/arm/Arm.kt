@@ -1,15 +1,17 @@
 package frc.team449.robot2023.subsystems.arm
 
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.team449.robot2023.subsystems.arm.control.ArmKinematics
-import frc.team449.robot2023.subsystems.arm.control.ArmPDController
-import frc.team449.robot2023.subsystems.arm.control.ArmState
-import frc.team449.robot2023.subsystems.arm.control.CartesianArmState
-import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
+import frc.team449.robot2023.constants.arm.ArmConstants
+import frc.team449.robot2023.subsystems.arm.control.*
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
+import java.time.Instant
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Controllable two-jointed arm
@@ -90,5 +92,81 @@ open class Arm(
     firstJoint.setVoltage(u[0, 0])
     secondJoint.setVoltage(u[1, 0])
     visual.setState(state)
+  }
+
+  private fun getClosestState(point: ArmState): ArmState? {
+    var closestState: ArmState? = null
+    var closestDistance = Double.MAX_VALUE
+
+    for (state in ArmConstants.STATES) {
+      val distanceToState = distanceBetweenStates(point, state)
+
+      if (distanceToState < closestDistance) {
+        closestDistance = distanceToState
+        closestState = state
+      }
+    }
+
+    return closestState
+  }
+
+  private fun distanceBetweenStates(state1: ArmState, state2: ArmState): Double {
+    return sqrt(
+      (state1.theta.degrees - state2.theta.degrees).pow(2.0) + (state1.beta.degrees - state1.beta.degrees).pow(2.0)
+    )
+  }
+  fun chooseTraj(endpoint: ArmState): Command {
+    val startPoint = getClosestState(this.state)
+    if (startPoint == ArmConstants.STOW) {
+      return when (endpoint) {
+        ArmConstants.HIGH -> ArmFollower(
+          this,
+          ArmPaths.STOW_HIGH
+        )
+        ArmConstants.MID -> ArmFollower(
+          this,
+          ArmPaths.STOW_MID
+        )
+        ArmConstants.LOW -> ArmFollower(
+          this,
+          ArmPaths.STOW_LOW
+        )
+        ArmConstants.CUBE -> ArmFollower(
+          this,
+          ArmPaths.STOW_CUBE
+        )
+        ArmConstants.CONE -> ArmFollower(
+          this,
+          ArmPaths.STOW_CONE
+        )
+        else -> InstantCommand()
+      }
+    }
+    else {
+      return when (startPoint) {
+        ArmConstants.HIGH -> ArmFollower(
+          this,
+          ArmPaths.HIGH_STOW
+        )
+        ArmConstants.MID -> ArmFollower(
+          this,
+          ArmPaths.MID_STOW
+        )
+        ArmConstants.LOW -> ArmFollower(
+          this,
+          ArmPaths.LOW_STOW
+        )
+        ArmConstants.CUBE -> ArmFollower(
+          this,
+          ArmPaths.CUBE_STOW
+        )
+        ArmConstants.CONE -> ArmFollower(
+          this,
+          ArmPaths.CONE_STOW
+        )
+        else -> InstantCommand()
+      }
+    }
+    return InstantCommand()
   }
 }
