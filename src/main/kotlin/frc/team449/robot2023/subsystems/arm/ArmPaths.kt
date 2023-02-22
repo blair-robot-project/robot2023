@@ -6,8 +6,6 @@ object ArmPaths {
   // intaking trajs
   var CONE_STOW = ArmTrajectory("Cone_Stow.json")
   var STOW_CONE = ArmTrajectory("Stow_Cone.json")
-  var CUBE_STOW = ArmTrajectory("Cube_Stow.json")
-  var STOW_CUBE = ArmTrajectory("Stow_Cube.json")
 
   // scoring trajs
   var LOW_STOW = ArmTrajectory("Low_Stow.json")

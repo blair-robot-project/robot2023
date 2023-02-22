@@ -78,12 +78,6 @@ object ArmConstants {
     0.0,
     0.0
   )
-  val CUBE = ArmState(
-    Rotation2d.fromDegrees(58.43),
-    Rotation2d.fromDegrees(-121.81),
-    0.0,
-    0.0
-  )
   val CONE = ArmState(
     Rotation2d.fromDegrees(63.35),
     Rotation2d.fromDegrees(-124.77),
@@ -97,5 +91,5 @@ object ArmConstants {
     0.0
   )
 
-  val STATES = listOf<ArmState>(HIGH, MID, LOW, CUBE, CONE, STOW)
+  val STATES = listOf(HIGH, MID, LOW, CONE, STOW)
 }

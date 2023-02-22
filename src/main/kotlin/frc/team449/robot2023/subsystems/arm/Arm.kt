@@ -131,10 +131,6 @@ open class Arm(
           this,
           ArmPaths.STOW_LOW
         )
-        ArmConstants.CUBE -> ArmFollower(
-          this,
-          ArmPaths.STOW_CUBE
-        )
         ArmConstants.CONE -> ArmFollower(
           this,
           ArmPaths.STOW_CONE
@@ -156,10 +152,6 @@ open class Arm(
           this,
           ArmPaths.LOW_STOW
         )
-        ArmConstants.CUBE -> ArmFollower(
-          this,
-          ArmPaths.CUBE_STOW
-        )
         ArmConstants.CONE -> ArmFollower(
           this,
           ArmPaths.CONE_STOW
@@ -167,6 +159,5 @@ open class Arm(
         else -> InstantCommand()
       }
     }
-    return InstantCommand()
   }
 }

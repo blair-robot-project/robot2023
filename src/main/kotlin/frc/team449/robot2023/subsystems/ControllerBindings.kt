@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.control.TurnCommand
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.constants.arm.ArmConstants
 import kotlin.math.PI
 
 class ControllerBindings(
@@ -25,11 +26,19 @@ class ControllerBindings(
 //    )
 
     JoystickButton(controller, XboxController.Button.kA.value).onTrue(
-      InstantCommand(robot.intake::pistonRev)
+      robot.arm.chooseTraj(ArmConstants.MID)
     )
 
     JoystickButton(controller, XboxController.Button.kB.value).onTrue(
-      InstantCommand(robot.intake::pistonOn)
+      robot.arm.chooseTraj(ArmConstants.CONE)
+    )
+
+    JoystickButton(controller, XboxController.Button.kX.value).onTrue(
+      robot.arm.chooseTraj(ArmConstants.STOW)
+    )
+
+    JoystickButton(controller, XboxController.Button.kY.value).onTrue(
+      robot.arm.chooseTraj(ArmConstants.HIGH)
     )
 
     JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(
