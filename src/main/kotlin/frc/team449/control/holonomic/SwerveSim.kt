@@ -15,8 +15,6 @@ class SwerveSim(
 ) : SwerveDrive(modules, ahrs, maxLinearSpeed, maxRotSpeed, cameras) {
   private var lastTime = getFPGATimestamp()
 
-
-
   override var heading = Rotation2d(0.0)
 
   override fun periodic() {
