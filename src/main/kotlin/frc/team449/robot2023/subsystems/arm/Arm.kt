@@ -64,15 +64,8 @@ open class Arm(
    * The current state of the arm in [CartesianArmState]
    */
   @get:Log.ToString
-  var coordinate: CartesianArmState
+  val coordinate: CartesianArmState
     get() = kinematics.toCartesian(state)
-    set(coordinate) {
-      /**
-       * null safety, return if the angular state is null
-       */
-      val angular = kinematics.toAngularState(coordinate, state) ?: return
-      state = angular
-    }
 
   /**
    * Mitigate any speed on the joints
