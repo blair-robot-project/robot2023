@@ -1,15 +1,11 @@
 package frc.team449.robot2023.subsystems.arm
 
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.arm.ArmConstants
-import frc.team449.robot2023.subsystems.arm.control.*
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
-import java.time.Instant
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -112,51 +108,33 @@ open class Arm(
 
   private fun distanceBetweenStates(state1: ArmState, state2: ArmState): Double {
     return sqrt(
-      (state1.theta.degrees - state2.theta.degrees).pow(2.0) + (state1.beta.degrees - state1.beta.degrees).pow(2.0)
+      (state1.theta.degrees - state2.theta.degrees).pow(2.0) + (state1.beta.degrees - state2.beta.degrees).pow(2.0)
     )
   }
-  fun chooseTraj(endpoint: ArmState): Command {
+  fun chooseTraj(endpoint: ArmState): ArmTrajectory? {
     val startPoint = getClosestState(this.state)
+    if (endpoint == startPoint) return null
     if (startPoint == ArmConstants.STOW) {
       return when (endpoint) {
-        ArmConstants.HIGH -> ArmFollower(
-          this,
+        ArmConstants.HIGH ->
           ArmPaths.STOW_HIGH
-        )
-        ArmConstants.MID -> ArmFollower(
-          this,
+        ArmConstants.MID ->
           ArmPaths.STOW_MID
-        )
-        ArmConstants.LOW -> ArmFollower(
-          this,
+        ArmConstants.LOW ->
           ArmPaths.STOW_LOW
-        )
-        ArmConstants.CONE -> ArmFollower(
-          this,
+        else ->
           ArmPaths.STOW_CONE
-        )
-        else -> InstantCommand()
       }
-    }
-    else {
+    } else {
       return when (startPoint) {
-        ArmConstants.HIGH -> ArmFollower(
-          this,
+        ArmConstants.HIGH ->
           ArmPaths.HIGH_STOW
-        )
-        ArmConstants.MID -> ArmFollower(
-          this,
+        ArmConstants.MID ->
           ArmPaths.MID_STOW
-        )
-        ArmConstants.LOW -> ArmFollower(
-          this,
+        ArmConstants.LOW ->
           ArmPaths.LOW_STOW
-        )
-        ArmConstants.CONE -> ArmFollower(
-          this,
+        else ->
           ArmPaths.CONE_STOW
-        )
-        else -> InstantCommand()
       }
     }
   }

@@ -6,12 +6,13 @@ import frc.team449.robot2023.subsystems.arm.Arm
 
 open class ArmFollower(
   private val arm: Arm,
-  private val trajectory: ArmTrajectory
+  private val trajectoryFun: () -> ArmTrajectory?
 ) : CommandBase() {
 
   val timer = Timer()
-
+  private var trajectory: ArmTrajectory? = null
   override fun initialize() {
+    trajectory = trajectoryFun()
     addRequirements(arm)
     timer.reset()
     timer.start()
@@ -20,13 +21,14 @@ open class ArmFollower(
   override fun execute() {
     val currTime = timer.get()
 
-    val reference: ArmState = trajectory.sample(currTime)
-
-    arm.state = reference
+    if (trajectory != null) {
+      val reference: ArmState = trajectory!!.sample(currTime)
+      arm.state = reference
+    }
   }
 
   override fun isFinished(): Boolean {
-    return timer.get() > trajectory.totalTime
+    return trajectory == null || timer.get() > trajectory!!.totalTime
   }
 
   override fun end(interrupted: Boolean) {

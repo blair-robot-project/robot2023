@@ -3,11 +3,13 @@ package frc.team449.robot2023.subsystems
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.control.TurnCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.constants.arm.ArmConstants
+import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import kotlin.math.PI
 
 class ControllerBindings(
@@ -26,19 +28,23 @@ class ControllerBindings(
 //    )
 
     JoystickButton(controller, XboxController.Button.kA.value).onTrue(
-      robot.arm.chooseTraj(ArmConstants.MID)
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.LOW) }
+        .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
     JoystickButton(controller, XboxController.Button.kB.value).onTrue(
-      robot.arm.chooseTraj(ArmConstants.CONE)
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
+        .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
     JoystickButton(controller, XboxController.Button.kX.value).onTrue(
-      robot.arm.chooseTraj(ArmConstants.STOW)
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }
+        .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
     JoystickButton(controller, XboxController.Button.kY.value).onTrue(
-      robot.arm.chooseTraj(ArmConstants.HIGH)
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
+        .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
     JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(

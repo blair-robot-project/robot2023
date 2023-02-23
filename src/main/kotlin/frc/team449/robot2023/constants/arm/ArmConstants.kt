@@ -18,10 +18,10 @@ object ArmConstants {
   const val JOINT_ENCODER_OFFSET = 1 - 0.854323 // 0.855081
 
   // PD Controller Constants
-  const val kP1 = 2.0
-  const val kP2 = 2.7
+  const val kP1 = 9.7
+  const val kP2 = 9.7
   const val kD1 = .0
-  const val kD2 = .05
+  const val kD2 = .00
   const val kI1 = .000
   const val kI2 = .000
 
