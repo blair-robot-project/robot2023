@@ -6,7 +6,6 @@ import frc.team449.control.holonomic.OrthogonalHolonomicOI.Companion.createOrtho
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.arm.ArmConstants
-import frc.team449.robot2023.subsystems.arm.Arm
 import frc.team449.robot2023.subsystems.arm.ArmSim
 import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
 import frc.team449.robot2023.subsystems.arm.control.ArmPDController
@@ -60,7 +59,7 @@ class Robot : RobotBase() {
     enableBrakeMode = true
   )
 
-  val arm = Arm(
+  val arm = ArmSim(
     firstJointMotor,
     secondJointMotor,
     TwoJointArmFeedForward.createFromConstants(),

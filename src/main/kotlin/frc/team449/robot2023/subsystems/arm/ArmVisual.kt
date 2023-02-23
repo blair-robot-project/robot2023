@@ -23,11 +23,6 @@ class ArmVisual(
     2 * (baseToPivot + pivotToEnd)
   )
 
-  private val desiredInstance = Mechanism2d(
-    2 * (baseToPivot + pivotToEnd),
-    2 * (baseToPivot + pivotToEnd)
-  )
-
   /** This contains the root/ where the arm is going to start */
   private val arm = instance.getRoot(
     "arm",
