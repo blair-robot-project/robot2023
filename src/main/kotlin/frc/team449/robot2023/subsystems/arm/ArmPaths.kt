@@ -3,8 +3,15 @@ package frc.team449.robot2023.subsystems.arm
 import frc.team449.robot2023.subsystems.arm.control.ArmTrajectory
 
 object ArmPaths {
-  var ZERO_STOW = ArmTrajectory("zero_stow.json")
-  var STOW_ZERO = ArmTrajectory("stow_zero.json")
-  var EXTEND_STOW = ArmTrajectory("extend_stow.json")
-  var STOW_EXTEND = ArmTrajectory("stow_extend.json")
+  // intaking trajs
+  var CONE_STOW = ArmTrajectory("Cone_Stow.json")
+  var STOW_CONE = ArmTrajectory("Stow_Cone.json")
+
+  // scoring trajs
+  var LOW_STOW = ArmTrajectory("Low_Stow.json")
+  var STOW_LOW = ArmTrajectory("Stow_Low.json")
+  var MID_STOW = ArmTrajectory("Mid_Stow.json")
+  var STOW_MID = ArmTrajectory("Stow_Mid.json")
+  var HIGH_STOW = ArmTrajectory("High_Stow.json")
+  var STOW_HIGH = ArmTrajectory("Stow_High.json")
 }

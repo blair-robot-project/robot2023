@@ -1,6 +1,8 @@
 package frc.team449.robot2023.constants.arm
 
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
+import frc.team449.robot2023.subsystems.arm.control.ArmState
 
 object ArmConstants {
 
@@ -16,10 +18,10 @@ object ArmConstants {
   const val JOINT_ENCODER_OFFSET = 1 - 0.854323 // 0.855081
 
   // PD Controller Constants
-  const val kP1 = 2.0
-  const val kP2 = 2.7
+  const val kP1 = 9.7
+  const val kP2 = 9.7
   const val kD1 = .0
-  const val kD2 = .05
+  const val kD2 = .00
   const val kI1 = .000
   const val kI2 = .000
 
@@ -56,4 +58,38 @@ object ArmConstants {
   const val KV2 = 0.59783
   const val KA2 = 3.2914
   const val KG2 = 0.145
+
+  // Arm States corresponding to points.
+  val HIGH = ArmState(
+    Rotation2d.fromDegrees(128.96),
+    Rotation2d.fromDegrees(18.56),
+    0.0,
+    0.0
+  )
+  val MID = ArmState(
+    Rotation2d.fromDegrees(86.96),
+    Rotation2d.fromDegrees(98.80),
+    0.0,
+    0.0
+  )
+  val LOW = ArmState(
+    Rotation2d.fromDegrees(96.96),
+    Rotation2d.fromDegrees(154.15),
+    0.0,
+    0.0
+  )
+  val CONE = ArmState(
+    Rotation2d.fromDegrees(63.35),
+    Rotation2d.fromDegrees(-124.77),
+    0.0,
+    0.0
+  )
+  val STOW = ArmState(
+    Rotation2d.fromDegrees(93.27),
+    Rotation2d.fromDegrees(-144.07),
+    0.0,
+    0.0
+  )
+
+  val STATES = listOf(HIGH, MID, LOW, CONE, STOW)
 }

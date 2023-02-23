@@ -31,13 +31,13 @@ class ArmSim(
       )
     set(value) {
       super.state = value
-      firstJointEncoder.velocity = desiredState.thetaVel
-      secondJointEncoder.velocity = desiredState.betaVel
-      firstJointEncoder.position = desiredState.theta.radians
-      secondJointEncoder.position = desiredState.beta.radians
     }
 
   override fun periodic() {
+    firstJointEncoder.velocity = desiredState.thetaVel
+    secondJointEncoder.velocity = desiredState.betaVel
+    firstJointEncoder.position = desiredState.theta.radians
+    secondJointEncoder.position = desiredState.beta.radians
     super.periodic()
     firstJointEncoder.position = firstJointEncoder.position + firstJointEncoder.velocity * .02
     secondJointEncoder.position = secondJointEncoder.position + secondJointEncoder.velocity * .02
