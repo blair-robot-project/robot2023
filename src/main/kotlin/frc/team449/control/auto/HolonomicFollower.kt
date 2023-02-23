@@ -50,10 +50,6 @@ class HolonomicFollower(
     // require the drivetrain to interrupt
     addRequirements(drivetrain)
 
-    if (resetPose) {
-      drivetrain.pose = trajectory.initialHolonomicPose
-    }
-
     controller.setTolerance(poseTol)
   }
 
@@ -69,6 +65,14 @@ class HolonomicFollower(
     // reset timer from last run and restart for this run
     timer.reset()
     timer.start()
+
+    for (s in transformedTrajectory.states) {
+      s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, -s.poseMeters.rotation)
+    }
+
+    if (resetPose) {
+      drivetrain.pose = transformedTrajectory.initialHolonomicPose
+    }
   }
 
   override fun execute() {
