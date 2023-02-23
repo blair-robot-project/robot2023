@@ -41,6 +41,6 @@ class ArmSim(
     super.periodic()
     firstJointEncoder.position = firstJointEncoder.position + firstJointEncoder.velocity * .02
     secondJointEncoder.position = secondJointEncoder.position + secondJointEncoder.velocity * .02
-    visual.setState(state)
+    visual.setState(state, desiredState)
   }
 }

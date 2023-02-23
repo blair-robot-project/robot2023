@@ -31,7 +31,8 @@ open class Arm(
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
     firstToSecondJoint,
-    secondJointToEndEffector
+    secondJointToEndEffector,
+    "Arm Visual :)"
   )
 
   /** kinematics that converts between (x, y) <-> (theta, beta) coordinates */
@@ -89,6 +90,6 @@ open class Arm(
     val u = ff + pid
     firstJoint.setVoltage(u[0, 0])
     secondJoint.setVoltage(u[1, 0])
-    visual.setState(state)
+    visual.setState(state, desiredState)
   }
 }
