@@ -10,49 +10,49 @@ import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class ControllerBindings(
-  private val controller: XboxController,
+  private val drivecontroller: XboxController,
+  private val mechanismcontroller: XboxController,
   private val robot: Robot
 ) {
 
   fun bindButtons() {
     /**  test trajectories */
-//    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
+//    JoystickButton(drivecontroller, XboxController.Button.kA.value).onTrue(
 //      ArmFollower(robot.arm, ArmPaths.ZERO_STOW)
 //    )
 //
-//    JoystickButton(controller, XboxController.Button.kB.value).onTrue(
+//    JoystickButton(drivecontroller, XboxController.Button.kB.value).onTrue(
 //      ArmFollower(robot.arm, ArmPaths.STOW_ZERO)
 //    )
 
-    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
+    JoystickButton(mechanismcontroller, XboxController.Button.kA.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.LOW) }
         .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
-    JoystickButton(controller, XboxController.Button.kB.value).onTrue(
+    JoystickButton(mechanismcontroller, XboxController.Button.kB.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
         .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
-    JoystickButton(controller, XboxController.Button.kX.value).onTrue(
+    JoystickButton(mechanismcontroller, XboxController.Button.kX.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }
         .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
-    JoystickButton(controller, XboxController.Button.kY.value).onTrue(
+    JoystickButton(mechanismcontroller, XboxController.Button.kY.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
         .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
-    JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(
+    JoystickButton(mechanismcontroller, XboxController.Button.kLeftBumper.value).onTrue(
       InstantCommand(robot.intake::pistonRev)
         .andThen(
           ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
-            .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
-        )
+        ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming)
     )
 
-    JoystickButton(controller, XboxController.Button.kStart.value).onTrue(
+    JoystickButton(drivecontroller, XboxController.Button.kStart.value).onTrue(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })
     )
   }

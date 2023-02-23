@@ -54,7 +54,7 @@ class OrthogonalHolonomicOI(
 
   init {
     controller.enableContinuousInput(-PI, PI)
-    controller.setTolerance(0.1)
+    controller.setTolerance(0.05) // ~3 degrees of tolerance
   }
 
   /** Previous x velocity (scaled and clamped) */

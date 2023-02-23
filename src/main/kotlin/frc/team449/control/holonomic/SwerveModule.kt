@@ -24,7 +24,7 @@ import kotlin.math.abs
  * @param location the location of the module in reference to the center of the robot
  * NOTE: In relation to the robot [+X is forward, +Y is left, and +THETA is Counter Clock-Wise].
  */
-open class SwerveModule constructor(
+open class SwerveModule(
   private val name: String,
   private val drivingMotor: WrappedMotor,
   private val turningMotor: WrappedMotor,
@@ -39,7 +39,7 @@ open class SwerveModule constructor(
     turnController.reset()
   }
 
-  private var desiredSpeed = 0.0
+  var desiredSpeed = 0.0
 
   open var state: SwerveModuleState
     get() {
@@ -165,6 +165,7 @@ class SwerveModuleSim(
       Rotation2d(turningMotorEncoder.position)
     )
     set(desiredState) {
+      super.state = desiredState
       turningMotorEncoder.position = desiredState.angle.radians
       driveEncoder.velocity = desiredState.speedMetersPerSecond
     }
@@ -175,7 +176,6 @@ class SwerveModuleSim(
     )
 
   override fun update() {
-    // update drive encoder
     val currTime = Timer.getFPGATimestamp()
     driveEncoder.position = driveEncoder.position + driveEncoder.velocity * (currTime - prevTime)
     prevTime = currTime

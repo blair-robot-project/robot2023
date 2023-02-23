@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.wpilibj.RobotBase.isReal
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.RobotConstants
@@ -232,13 +233,22 @@ open class SwerveDrive(
           Translation2d(-SwerveConstants.WHEELBASE / 2, -SwerveConstants.TRACKWIDTH / 2)
         )
       )
-      return SwerveDrive(
-        modules,
-        ahrs,
-        RobotConstants.MAX_LINEAR_SPEED,
-        RobotConstants.MAX_ROT_SPEED,
-        VisionConstants.ESTIMATORS
-      )
+      return if (isReal())
+        SwerveDrive(
+          modules,
+          ahrs,
+          RobotConstants.MAX_LINEAR_SPEED,
+          RobotConstants.MAX_ROT_SPEED,
+          VisionConstants.ESTIMATORS
+        )
+      else
+        SwerveSim(
+          modules,
+          ahrs,
+          RobotConstants.MAX_LINEAR_SPEED,
+          RobotConstants.MAX_ROT_SPEED,
+          VisionConstants.ESTIMATORS
+        )
     }
 
     /** Helper to make turning motors for swerve */

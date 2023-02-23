@@ -30,7 +30,7 @@ abstract class Encoder(
   /** An offset added to the position to allow resetting position. */
   private var positionOffset = 0.0
 
-  /** Whether or not this encoder is being simulated */
+  /** Whether this encoder is being simulated */
   private var simulated = false
 
   /** Simulated position set by SimEncoderController */

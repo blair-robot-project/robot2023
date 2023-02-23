@@ -107,8 +107,10 @@ open class Arm(
   }
 
   private fun distanceBetweenStates(state1: ArmState, state2: ArmState): Double {
+    val coordinate1 = kinematics.toCartesian(state1)
+    val coordinate2 = kinematics.toCartesian(state2)
     return sqrt(
-      (state1.theta.degrees - state2.theta.degrees).pow(2.0) + (state1.beta.degrees - state2.beta.degrees).pow(2.0)
+      (coordinate1.x - coordinate2.x).pow(2.0) + (coordinate1.z - coordinate2.z).pow(2.0)
     )
   }
   fun chooseTraj(endpoint: ArmState): ArmTrajectory? {

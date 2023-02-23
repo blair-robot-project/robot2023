@@ -1,14 +1,12 @@
 package frc.team449.robot2023.subsystems.arm.control
 
 import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
-import kotlin.math.abs
-import kotlin.math.min
-import kotlin.math.sign
 
 class ArmPDController(
   private val kP1: Double,
@@ -47,10 +45,9 @@ class ArmPDController(
       0.0, kP2, 0.0, kD2
     )
     val output = K * wrappedErr + I * errorSum
-    val u1 = output[0, 0]
-    val u2 = output[1, 0]
-    output[0, 0] = sign(u1) * min(6.0, abs(u1))
-    output[1, 0] = sign(u2) * min(3.0, abs(u2))
+
+    output[0, 0] = clamp(output[0, 0], -6.0, 6.0)
+    output[1, 0] = clamp(output[1, 0], -6.0, 6.0)
 
     return output
   }
