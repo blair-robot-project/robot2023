@@ -66,8 +66,12 @@ class HolonomicFollower(
     timer.reset()
     timer.start()
 
-    for (s in transformedTrajectory.states) {
-      s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, -s.poseMeters.rotation)
+    if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) {
+      for (s in transformedTrajectory.states) {
+        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, -s.poseMeters.rotation)
+        s.velocityMetersPerSecond = -s.velocityMetersPerSecond
+        s.accelerationMetersPerSecondSq = -s.accelerationMetersPerSecondSq
+      }
     }
 
     if (resetPose) {
