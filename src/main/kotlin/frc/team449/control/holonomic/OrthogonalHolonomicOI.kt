@@ -1,11 +1,12 @@
 package frc.team449.control.holonomic
 
 import edu.wpi.first.math.MathUtil
-import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj.DriverStation
@@ -45,7 +46,7 @@ class OrthogonalHolonomicOI(
   private val rotRamp: SlewRateLimiter,
   private val maxAccel: Double,
   private val fieldOriented: () -> Boolean,
-  private val controller: PIDController,
+  private val controller: ProfiledPIDController,
   private val yButton: BooleanSupplier,
   private val xButton: BooleanSupplier,
   private val aButton: BooleanSupplier,
@@ -110,16 +111,16 @@ class OrthogonalHolonomicOI(
     /** Based on which button was pressed, give in the setpoint to the PID controller. */
     if (yButton.asBoolean) {
       atSetpoint = false
-      controller.setpoint = MathUtil.angleModulus(0.0 + allianceCompensation)
+      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation), 0.0)
     } else if (xButton.asBoolean) {
       atSetpoint = false
-      controller.setpoint = MathUtil.angleModulus(PI / 2 + allianceCompensation)
+      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation), 0.0)
     } else if (aButton.asBoolean) {
       atSetpoint = false
-      controller.setpoint = MathUtil.angleModulus(PI + allianceCompensation)
+      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation), 0.0)
     } else if (bButton.asBoolean) {
       atSetpoint = false
-      controller.setpoint = MathUtil.angleModulus(3 * PI / 2 + allianceCompensation)
+      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation), 0.0)
     }
 
     /** If the PID controller is at its setpoint, then allow the driver to control rotation,

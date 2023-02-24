@@ -7,6 +7,6 @@ import frc.team449.robot2023.Robot
 class AutoChooser(robot: Robot) : SendableChooser<Command>() {
   init {
     /** Add auto options here */
-//    this.setDefaultOption("Example Auto :]", Example(robot = robot).routine())
+    this.setDefaultOption("Example Auto :]", Example(robot = robot).routine())
   }
 }

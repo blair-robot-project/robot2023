@@ -61,8 +61,6 @@ class HolonomicFollower(
     yController.reset()
     thetaController.reset()
 
-    PathPlannerServer.sendActivePath(transformedTrajectory.states)
-
     // reset timer from last run and restart for this run
     timer.reset()
     timer.start()
@@ -70,10 +68,10 @@ class HolonomicFollower(
     if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) {
       for (s in transformedTrajectory.states) {
         s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, -s.poseMeters.rotation)
-        s.velocityMetersPerSecond = -s.velocityMetersPerSecond
-        s.accelerationMetersPerSecondSq = -s.accelerationMetersPerSecondSq
       }
     }
+
+    PathPlannerServer.sendActivePath(transformedTrajectory.states)
 
     if (resetPose) {
       drivetrain.pose = transformedTrajectory.initialHolonomicPose
