@@ -21,7 +21,7 @@ import frc.team449.robot2023.constants.RobotConstants
  */
 class DifferentialFollower(
   private val drivetrain: DifferentialDrive,
-  private val trajectory: PathPlannerTrajectory,
+  trajectory: PathPlannerTrajectory,
   private val resetPose: Boolean,
   private val translationTol: Double = 0.1,
   private val angleTol: Double = 0.5,
@@ -87,8 +87,8 @@ class DifferentialFollower(
   }
 
   override fun isFinished(): Boolean {
-    return timer.hasElapsed(trajectory.totalTimeSeconds) && controller.atReference() ||
-      (timer.hasElapsed(trajectory.totalTimeSeconds + timeout))
+    return timer.hasElapsed(transformedTrajectory.totalTimeSeconds) && controller.atReference() ||
+      (timer.hasElapsed(transformedTrajectory.totalTimeSeconds + timeout))
   }
 
   override fun end(interrupted: Boolean) {
