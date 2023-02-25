@@ -15,16 +15,16 @@ object ArmConstants {
   const val PIVOT_ENCODER_CHAN = 8
   const val JOINT_ENCODER_CHAN = 1
   const val PIVOT_ENCODER_OFFSET = 0.357825
-  const val JOINT_ENCODER_OFFSET = 1 - 0.854323 // 0.855081
+  const val JOINT_ENCODER_OFFSET = .171312 // 0.855081
 
   // PD Controller Constants
-  const val kP1 = 11.0
-  const val kP2 = 10.0
+  const val kP1 = 9.0
+  const val kP2 = 8.0
   const val kD1 = .0
   const val kD2 = .00
-  const val kI1 = .000
-  const val kI2 = .000
-
+  const val kI1 = .10
+  const val kI2 = 1.5
+  const val kMaxErrSum = 1.0 // rad
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(37.5)
   val LENGTH_2 = Units.inchesToMeters(34.0)
@@ -61,35 +61,41 @@ object ArmConstants {
 
   // Arm States corresponding to points.
   val HIGH = ArmState(
-    Rotation2d.fromDegrees(128.96),
-    Rotation2d.fromDegrees(18.56),
+    Rotation2d.fromDegrees(131.29),
+    Rotation2d.fromDegrees(15.09),
     0.0,
     0.0
   )
   val MID = ArmState(
-    Rotation2d.fromDegrees(86.96),
-    Rotation2d.fromDegrees(98.80),
+    Rotation2d.fromDegrees(62.64),
+    Rotation2d.fromDegrees(-52.2),
     0.0,
     0.0
   )
   val LOW = ArmState(
-    Rotation2d.fromDegrees(96.96),
-    Rotation2d.fromDegrees(154.15),
+    Rotation2d.fromDegrees(73.39),
+    Rotation2d.fromDegrees(-127.10),
     0.0,
     0.0
   )
-  val CONE = ArmState(
-    Rotation2d.fromDegrees(63.35),
-    Rotation2d.fromDegrees(-124.77),
+  val INTAKE = ArmState(
+    Rotation2d.fromDegrees(62.72),
+    Rotation2d.fromDegrees(-126.09),
     0.0,
     0.0
   )
   val STOW = ArmState(
-    Rotation2d.fromDegrees(93.27),
-    Rotation2d.fromDegrees(-144.07),
+    Rotation2d.fromDegrees(95.90),
+    Rotation2d.fromDegrees(-159.39),
+    0.0,
+    0.0
+  )
+  val PICKUP = ArmState(
+    Rotation2d.fromDegrees(85.64),
+    Rotation2d.fromDegrees(-87.31),
     0.0,
     0.0
   )
 
-  val STATES = listOf(HIGH, MID, LOW, CONE, STOW)
+  val STATES = listOf(HIGH, MID, LOW, INTAKE, STOW, PICKUP)
 }

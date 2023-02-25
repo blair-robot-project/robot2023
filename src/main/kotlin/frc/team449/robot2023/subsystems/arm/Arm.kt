@@ -27,7 +27,7 @@ open class Arm(
   val firstJoint: WrappedMotor,
   val secondJoint: WrappedMotor,
   private val feedForward: TwoJointArmFeedForward,
-  private val controller: ArmPDController,
+  @field:Log val controller: ArmPDController,
   firstToSecondJoint: Double,
   secondJointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
@@ -48,8 +48,8 @@ open class Arm(
   /** desired arm state */
   @Log.ToString
   var desiredState = ArmState(
-    Rotation2d(1.63),
-    Rotation2d(-2.51)
+    Rotation2d(1.67),
+    Rotation2d(-2.78)
   )
 
   /**
@@ -64,6 +64,8 @@ open class Arm(
       secondJoint.velocity
     )
     set(state) {
+
+      controller.reset()
       desiredState = state
     }
 
@@ -81,6 +83,7 @@ open class Arm(
     desiredState.thetaVel = 0.0
     desiredState.betaVel = 0.0
   }
+
   override fun periodic() {
     val ff = feedForward.calculate(desiredState.matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
@@ -114,7 +117,7 @@ open class Arm(
     )
   }
   fun chooseTraj(endpoint: ArmState): ArmTrajectory? {
-    val startPoint = getClosestState(this.state)
+    val startPoint = getClosestState(this.desiredState)
     if (endpoint == startPoint) return null
     if (startPoint == ArmConstants.STOW) {
       return when (endpoint) {
@@ -124,8 +127,10 @@ open class Arm(
           ArmPaths.STOW_MID
         ArmConstants.LOW ->
           ArmPaths.STOW_LOW
+        ArmConstants.PICKUP ->
+          ArmPaths.STOW_PICKUP
         else ->
-          ArmPaths.STOW_CONE
+          ArmPaths.STOW_INTAKE
       }
     } else {
       return when (startPoint) {
@@ -135,8 +140,10 @@ open class Arm(
           ArmPaths.MID_STOW
         ArmConstants.LOW ->
           ArmPaths.LOW_STOW
+        ArmConstants.PICKUP ->
+          ArmPaths.PICKUP_STOW
         else ->
-          ArmPaths.CONE_STOW
+          ArmPaths.INTAKE_STOW
       }
     }
   }

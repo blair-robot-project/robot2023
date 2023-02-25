@@ -6,9 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.constants.arm.ArmConstants
-import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
-import frc.team449.robot2023.subsystems.arm.control.TrajCharacterizer
 
 class ControllerBindings(
   private val drivecontroller: XboxController,
@@ -26,7 +24,7 @@ class ControllerBindings(
 //      ArmFollower(robot.arm, ArmPaths.STOW_ZERO)
 //    )
 
-    JoystickButton(mechanismcontroller, XboxController.Button.kStart.value).onTrue(
+    JoystickButton(mechanismcontroller, XboxController.Button.kB.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.LOW) }
     )
 
@@ -38,7 +36,7 @@ class ControllerBindings(
       InstantCommand(robot.intake::pistonRev)
     )
 
-    JoystickButton(mechanismcontroller, XboxController.Button.kB.value).onTrue(
+    JoystickButton(mechanismcontroller, XboxController.Button.kStart.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
     )
 
@@ -53,12 +51,12 @@ class ControllerBindings(
     JoystickButton(mechanismcontroller, XboxController.Button.kA.value).onTrue(
       InstantCommand(robot.intake::pistonRev)
         .andThen(
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
+          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.INTAKE) }
         )
     )
 
     JoystickButton(mechanismcontroller, XboxController.Button.kBack.value).onTrue(
-      TrajCharacterizer(robot.arm, ArmPaths.STOW_MID, 90, 2.0)
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.PICKUP) }
     )
 
     JoystickButton(drivecontroller, XboxController.Button.kStart.value).onTrue(

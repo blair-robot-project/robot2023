@@ -1,12 +1,17 @@
 package frc.team449.robot2023.subsystems.arm.control
 
 import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.MathUtil.applyDeadband
 import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.Matrix.mat
+import edu.wpi.first.math.Nat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
+import edu.wpi.first.util.sendable.Sendable
+import edu.wpi.first.util.sendable.SendableBuilder
+import kotlin.math.PI
 
 class ArmPDController(
   private val kP1: Double,
@@ -14,9 +19,11 @@ class ArmPDController(
   private val kD1: Double,
   private val kD2: Double,
   private val kI1: Double,
-  private val kI2: Double
-) {
+  private val kI2: Double,
+  private val maxErr: Double
+) : Sendable {
   private var setpoint: Matrix<N4, N1>? = null
+
   private var errorSum = mat(N4.instance, N1.instance).fill(0.0, 0.0, 0.0, 0.0)
   /**
    * @param state the current state observed of the system from sensors
@@ -33,7 +40,12 @@ class ArmPDController(
       err[3, 0]
     )
 //    println("Wrapped error for joint 1 : ${wrappedErr[0, 0]},\n Set point : ${reference[0, 0]},\n Measurement ${state[0, 0]}")
-    errorSum = wrappedErr + errorSum
+    errorSum = mat(N4.instance, N1.instance).fill(
+      clamp(applyDeadband(errorSum[0, 0] + wrappedErr[0, 0], 1 * PI / 180.0), -maxErr, maxErr),
+      clamp(applyDeadband(errorSum[1, 0] + wrappedErr[1, 0], 1 * PI / 180.0), -maxErr, maxErr),
+      clamp(applyDeadband(errorSum[2, 0] + wrappedErr[2, 0], 1 * PI / 180.0), -maxErr, maxErr),
+      clamp(applyDeadband(errorSum[3, 0] + wrappedErr[3, 0], 1 * PI / 180.0), -maxErr, maxErr)
+    )
 
     val I = mat(N2.instance, N4.instance).fill(
       kI1, 0.0, 0.0, 0.0,
@@ -46,8 +58,8 @@ class ArmPDController(
     )
     val output = K * wrappedErr + I * errorSum
 
-    output[0, 0] = clamp(output[0, 0], -6.0, 6.0)
-    output[1, 0] = clamp(output[1, 0], -6.0, 6.0)
+    output[0, 0] = clamp(output[0, 0], -6.0, 6.0) // first joint PID is bounded 6V min -6V
+    output[1, 0] = clamp(output[1, 0], -6.0, 6.0) // second joint PID is bounded 6V min -6V
 
     return output
   }
@@ -58,5 +70,16 @@ class ArmPDController(
   fun calculate(state: Matrix<N4, N1>): Matrix<N2, N1> {
     // !! to assert that set point shouldn't be null
     return calculate(state, setpoint!!)
+  }
+
+  fun reset() {
+    errorSum = mat(Nat.N4(), Nat.N1()).fill(0.0, 0.0, 0.0, 0.0)
+  }
+
+  override fun initSendable(builder: SendableBuilder?) {
+    builder!!.addDoubleProperty("err q1", { errorSum[0, 0] }, null)
+    builder.addDoubleProperty("err q2", { errorSum[1, 0] }, null)
+    builder.addDoubleProperty("err q1d", { errorSum[2, 0] }, null)
+    builder.addDoubleProperty("err q2d", { errorSum[3, 0] }, null)
   }
 }

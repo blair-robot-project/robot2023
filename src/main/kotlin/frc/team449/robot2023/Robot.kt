@@ -48,7 +48,7 @@ class Robot : RobotBase() {
     ),
     currentLimit = 40,
     inverted = true,
-    enableBrakeMode = true
+    enableBrakeMode = false
   )
 
   private val secondJointMotor = createSparkMax(
@@ -60,7 +60,7 @@ class Robot : RobotBase() {
       inverted = true
     ),
     currentLimit = 40,
-    enableBrakeMode = true
+    enableBrakeMode = false
   )
 
   val arm = if (isReal())
@@ -68,7 +68,15 @@ class Robot : RobotBase() {
       firstJointMotor,
       secondJointMotor,
       TwoJointArmFeedForward.createFromConstants(),
-      ArmPDController(ArmConstants.kP1, ArmConstants.kP2, ArmConstants.kD1, ArmConstants.kD2, ArmConstants.kI1, ArmConstants.kI2),
+      ArmPDController(
+        ArmConstants.kP1,
+        ArmConstants.kP2,
+        ArmConstants.kD1,
+        ArmConstants.kD2,
+        ArmConstants.kI1,
+        ArmConstants.kI2,
+        ArmConstants.kMaxErrSum
+      ),
       ArmConstants.LENGTH_1,
       ArmConstants.LENGTH_2
     )
@@ -77,7 +85,15 @@ class Robot : RobotBase() {
       firstJointMotor,
       secondJointMotor,
       TwoJointArmFeedForward.createFromConstants(),
-      ArmPDController(ArmConstants.kP1, ArmConstants.kP2, ArmConstants.kD1, ArmConstants.kD2, ArmConstants.kI1, ArmConstants.kI2),
+      ArmPDController(
+        ArmConstants.kP1,
+        ArmConstants.kP2,
+        ArmConstants.kD1,
+        ArmConstants.kD2,
+        ArmConstants.kI1,
+        ArmConstants.kI2,
+        ArmConstants.kMaxErrSum
+      ),
       ArmConstants.LENGTH_1,
       ArmConstants.LENGTH_2
     )
