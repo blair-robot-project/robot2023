@@ -18,8 +18,8 @@ object ArmConstants {
   const val JOINT_ENCODER_OFFSET = 1 - 0.854323 // 0.855081
 
   // PD Controller Constants
-  const val kP1 = 9.7
-  const val kP2 = 9.7
+  const val kP1 = 11.0
+  const val kP2 = 10.0
   const val kD1 = .0
   const val kD2 = .00
   const val kI1 = .000
@@ -42,19 +42,19 @@ object ArmConstants {
   val R2 = Units.inchesToMeters(25.0)
 
   // Feedforward constants of first joint in arm
-  const val KS1 = 0.39035
+  const val KS1 = .0789162
   const val KV1 = 0.54671
   const val KA1 = 1.8353
-  const val KG1 = 0.19519
+  const val KG1 = 0.25519
 
   // Characterized values
-  const val KG11 = 0.0
+  const val KG11 = .161436
   const val KG12 = 0.0
   const val KG21 = 0.0
-  const val KG22 = 0.0
+  const val KG22 = .382553
 
   // Feedforward constants of second joint in arm
-  const val KS2 = 0.4588
+  const val KS2 = .218338
   const val KV2 = 0.59783
   const val KA2 = 3.2914
   const val KG2 = 0.145

@@ -82,7 +82,7 @@ open class Arm(
     desiredState.betaVel = 0.0
   }
   override fun periodic() {
-    val ff = feedForward.calculate(desiredState.matrix, true)
+    val ff = feedForward.calculate(desiredState.matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
     firstJoint.setVoltage(u[0, 0])
