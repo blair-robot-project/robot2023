@@ -55,7 +55,8 @@ class HolonomicFollower(
     controller.setTolerance(poseTol)
 
     if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) {
-      for (s in transformedTrajectory.states as List<PathPlannerTrajectory.PathPlannerState>) {
+      for (s in transformedTrajectory.states) {
+        s as PathPlannerTrajectory.PathPlannerState
         s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
         s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
       }
