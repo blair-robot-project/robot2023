@@ -23,7 +23,7 @@ import kotlin.math.PI
  * @param eventMap A hash map of event marker names paired with the command you want to run that cannot require drive
  * @param translationTol Allowed error in meters when following a trajectory
  * @param thetaTol Allowed error in radians when following a trajectory
- * @param resetPosition Whether to reset your position to the initial pose in the first trajectory
+ * @param resetPosition Whether to reset your position to the initial pose for all parts of the trajectory
  * @param timeout Maximum time in seconds for the path follower to correct itself after EACH trajectory is done
  */
 class HolonomicRoutine(
@@ -52,7 +52,7 @@ class HolonomicRoutine(
         Rotation2d(thetaTol)
       ),
       timeout,
-      resetPose = false
+      resetPose = resetPosition
     )
   }
 

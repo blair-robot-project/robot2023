@@ -44,7 +44,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -69,9 +69,9 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "dropCone"
+          "dropCube"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -93,8 +93,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "chargeStation",
-          "stowArm2"
+          "balanceStation"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -107,21 +106,21 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 1.0363636363636364,
+      "position": 1.0909090909090353,
       "names": [
-        "stowArm"
+        "stowAndHigh"
       ]
     },
     {
-      "position": 0.3545454545454546,
+      "position": 0.21818181818183052,
       "names": [
         "stowAndGround"
       ]
     },
     {
-      "position": 1.3363636363636366,
+      "position": 2.2472727272726147,
       "names": [
-        "highArm"
+        "stowArm"
       ]
     }
   ]
