@@ -8,7 +8,7 @@ object Paths {
   /** Description of path: Just a test path man */
   val TEST: MutableList<PathPlannerTrajectory> =
     PathPlanner.loadPathGroup(
-      "twoCone",
+      "wallConeCubeStation",
       PathConstraints(
         2.5,
         0.75 // Once worked out, at least 3.5
