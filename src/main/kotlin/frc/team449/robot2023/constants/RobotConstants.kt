@@ -20,7 +20,7 @@ object RobotConstants {
   const val MAX_LINEAR_SPEED = 2.0 // m/s
   const val MAX_ROT_SPEED = Math.PI // rad/s
   const val MAX_ACCEL = 5.0 // m/s/s
-  val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(-180.0))
+  val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
 
   /** PID controller for Orthogonal turning */
   val ORTHOGONAL_CONTROLLER = ProfiledPIDController(

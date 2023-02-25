@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import frc.team449.robot2023.constants.RobotConstants
+import kotlin.math.PI
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -52,10 +53,18 @@ class HolonomicFollower(
     addRequirements(drivetrain)
 
     controller.setTolerance(poseTol)
+
+    if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) {
+      for (s in transformedTrajectory.states as List<PathPlannerTrajectory.PathPlannerState>) {
+        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
+        s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
+      }
+    }
+
+    PathPlannerServer.sendActivePath(transformedTrajectory.states)
   }
 
   override fun initialize() {
-
     // reset the controllers so that the error from last run doesn't transfer
     xController.reset()
     yController.reset()
@@ -64,14 +73,6 @@ class HolonomicFollower(
     // reset timer from last run and restart for this run
     timer.reset()
     timer.start()
-
-    if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) {
-      for (s in transformedTrajectory.states) {
-        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, -s.poseMeters.rotation)
-      }
-    }
-
-    PathPlannerServer.sendActivePath(transformedTrajectory.states)
 
     if (resetPose) {
       drivetrain.pose = transformedTrajectory.initialHolonomicPose
@@ -82,6 +83,8 @@ class HolonomicFollower(
     val currTime = timer.get()
 
     val reference = transformedTrajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
+
+    println(reference)
 
     val currentPose = drivetrain.pose
 
