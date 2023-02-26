@@ -1,11 +1,13 @@
 package frc.team449.control.holonomic
 
 import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
@@ -62,6 +64,11 @@ open class SwerveDrive(
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
   }
+
+  val pitch: Rotation2d
+    get() = Rotation2d(MathUtil.angleModulus(ahrs.pitch.radians))
+  val roll: Rotation2d
+    get() = Rotation2d(MathUtil.angleModulus(ahrs.roll.radians))
 
   /** The x y theta location of the robot on the field */
   override var pose: Pose2d
