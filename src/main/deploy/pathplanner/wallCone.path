@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7592431676091396,
-        "y": 0.5077782085388741
+        "x": 2.76582044392159,
+        "y": 0.5893925822939372
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -16,7 +16,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "dropCone"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -24,12 +26,12 @@
     },
     {
       "anchorPoint": {
-        "x": 5.749279217856682,
-        "y": 0.5259147360399987
+        "x": 6.492876845402814,
+        "y": 0.9249183410647529
       },
       "prevControl": {
-        "x": 4.749279217856682,
-        "y": 0.5259147360399987
+        "x": 5.477231305339805,
+        "y": 0.8160991760580018
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -45,5 +47,15 @@
       }
     }
   ],
-  "markers": []
+  "maxVelocity": 4.0,
+  "maxAcceleration": null,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.17454545454544457,
+      "names": [
+        "stowAndGround"
+      ]
+    }
+  ]
 }
