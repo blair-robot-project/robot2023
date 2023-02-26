@@ -6,13 +6,10 @@ import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
-import frc.team449.robot2023.constants.RobotConstants
-import kotlin.math.PI
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -26,7 +23,7 @@ import kotlin.math.PI
  */
 class HolonomicFollower(
   private val drivetrain: HolonomicDrive,
-  trajectory: PathPlannerTrajectory,
+  private val trajectory: PathPlannerTrajectory,
   private val xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
   private val yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
   private val thetaController: PIDController = PIDController(AutoConstants.DEFAULT_ROTATION_KP, 0.0, 0.0),
@@ -42,27 +39,11 @@ class HolonomicFollower(
     xController, yController, thetaController
   )
 
-  // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
-  private val transformedTrajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(
-    trajectory,
-    RobotConstants.ALLIANCE_COLOR
-  )
-
   init {
     // require the drivetrain to interrupt
     addRequirements(drivetrain)
 
     controller.setTolerance(poseTol)
-
-    if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) {
-      for (s in transformedTrajectory.states) {
-        s as PathPlannerTrajectory.PathPlannerState
-        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
-        s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
-      }
-    }
-
-    PathPlannerServer.sendActivePath(transformedTrajectory.states)
   }
 
   override fun initialize() {
@@ -75,17 +56,17 @@ class HolonomicFollower(
     timer.reset()
     timer.start()
 
+    PathPlannerServer.sendActivePath(trajectory.states)
+
     if (resetPose) {
-      drivetrain.pose = transformedTrajectory.initialHolonomicPose
+      drivetrain.pose = trajectory.initialHolonomicPose
     }
   }
 
   override fun execute() {
     val currTime = timer.get()
 
-    val reference = transformedTrajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
-
-    println(reference)
+    val reference = trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
 
     val currentPose = drivetrain.pose
 
@@ -111,8 +92,8 @@ class HolonomicFollower(
    * @return if the robot reached ending position by estimated end time
    */
   override fun isFinished(): Boolean {
-    return (timer.hasElapsed(transformedTrajectory.totalTimeSeconds) && controller.atReference()) ||
-      timer.hasElapsed(transformedTrajectory.totalTimeSeconds + timeout)
+    return (timer.hasElapsed(trajectory.totalTimeSeconds) && controller.atReference()) ||
+      timer.hasElapsed(trajectory.totalTimeSeconds + timeout)
   }
 
   override fun end(interrupted: Boolean) {

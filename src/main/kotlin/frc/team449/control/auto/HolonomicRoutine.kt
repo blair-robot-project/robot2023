@@ -5,15 +5,12 @@ import com.pathplanner.lib.auto.BaseAutoBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
-import frc.team449.robot2023.constants.RobotConstants
 import io.github.oblarg.oblog.annotations.Config
-import kotlin.math.PI
 
 /**
  * @param xController The PID controller used to correct X translation error when following a trajectory
@@ -56,21 +53,8 @@ class HolonomicRoutine(
     )
   }
 
-  // TODO: If target is in starting pos either delete resetPose from fullAuto, or make this method do nothing
+  // TODO: If AprilTag is in sight at starting pos: either delete resetPose from fullAuto, or make this method do nothing
   override fun resetPose(trajectory: PathPlannerTrajectory): CommandBase {
-    val transformedTrajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(
-      trajectory,
-      RobotConstants.ALLIANCE_COLOR
-    )
-
-    if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) {
-      for (s in transformedTrajectory.states) {
-        s as PathPlannerTrajectory.PathPlannerState
-        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
-        s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
-      }
-    }
-
-    return InstantCommand({ drive.pose = transformedTrajectory.initialHolonomicPose })
+    return InstantCommand({ drive.pose = trajectory.initialHolonomicPose })
   }
 }

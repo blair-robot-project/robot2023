@@ -76,7 +76,7 @@ class OrthogonalHolonomicOI(
   private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
   private val forwardCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 1.0 else -1.0
 
-  private var atSetpoint = true
+  private var atGoal = true
 
   /**
    * @return The [ChassisSpeeds] for the given x, y and
@@ -110,26 +110,26 @@ class OrthogonalHolonomicOI(
 
     /** Based on which button was pressed, give in the setpoint to the PID controller. */
     if (yButton.asBoolean) {
-      atSetpoint = false
+      atGoal = false
       controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation), 0.0)
     } else if (xButton.asBoolean) {
-      atSetpoint = false
+      atGoal = false
       controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation), 0.0)
     } else if (aButton.asBoolean) {
-      atSetpoint = false
+      atGoal = false
       controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation), 0.0)
     } else if (bButton.asBoolean) {
-      atSetpoint = false
+      atGoal = false
       controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation), 0.0)
     }
 
     /** If the PID controller is at its setpoint, then allow the driver to control rotation,
      * otherwise let the PID do its thing. */
-    if (atSetpoint) {
+    if (atGoal) {
       rotScaled = rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed) * forwardCompensation
     } else {
       rotScaled = controller.calculate(drive.heading.radians) * drive.maxRotSpeed
-      atSetpoint = controller.atSetpoint()
+      atGoal = controller.atGoal()
     }
 
     // translation velocity vector

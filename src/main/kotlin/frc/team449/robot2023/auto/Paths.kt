@@ -16,7 +16,7 @@ object Paths {
     )
 
   /** Description of path: Wall side path that scores a cone, then a cube, and then balances on the station */
-  val WALLCONECUBESTATION: MutableList<PathPlannerTrajectory> =
+  val CONECUBESTATION: MutableList<PathPlannerTrajectory> =
     PathPlanner.loadPathGroup(
       "wallConeCubeStation",
       PathConstraints(
@@ -26,7 +26,7 @@ object Paths {
     )
 
   /** Description of path: Wall side path that scores a cone and then balances on the station */
-  val WALLCONESTATION: MutableList<PathPlannerTrajectory> =
+  val CONESTATION: MutableList<PathPlannerTrajectory> =
     PathPlanner.loadPathGroup(
       "wallConeStation",
       PathConstraints(
@@ -36,7 +36,7 @@ object Paths {
     )
 
   /** Description of path: Wall side path that scores a cone, then a cube */
-  val WALLCONECUBE: MutableList<PathPlannerTrajectory> =
+  val CONECUBE: MutableList<PathPlannerTrajectory> =
     PathPlanner.loadPathGroup(
       "wallConeCube",
       PathConstraints(
@@ -46,47 +46,7 @@ object Paths {
     )
 
   /** Description of path: Wall side path that scores a cone and aligns up to a game piece for teleop */
-  val WALLCONE: MutableList<PathPlannerTrajectory> =
-    PathPlanner.loadPathGroup(
-      "wallCone",
-      PathConstraints(
-        2.5,
-        0.75 // Once worked out, at least 3.5
-      )
-    )
-
-  /** Description of path: Far (near center of field) side path that scores a cone, then a cube, and then balances on the station */
-  val FARCONECUBESTATION: MutableList<PathPlannerTrajectory> =
-    PathPlanner.loadPathGroup(
-      "farConeCubeStation",
-      PathConstraints(
-        2.5,
-        0.75 // Once worked out, at least 3.5
-      )
-    )
-
-  /** Description of path: Far (near center of field) side path that scores a cone, and then balances on the station */
-  val FARCONESTATION: MutableList<PathPlannerTrajectory> =
-    PathPlanner.loadPathGroup(
-      "farConeStation",
-      PathConstraints(
-        2.5,
-        0.75 // Once worked out, at least 3.5
-      )
-    )
-
-  /** Description of path: Far (near center of field) side path that scores a cone, then a cube */
-  val FARCONECUBE: MutableList<PathPlannerTrajectory> =
-    PathPlanner.loadPathGroup(
-      "wallCone",
-      PathConstraints(
-        2.5,
-        0.75 // Once worked out, at least 3.5
-      )
-    )
-
-  /** Description of path: Far (near center of field) side path that scores a cone, and aligns up to a game piece for teleop */
-  val FARCONE: MutableList<PathPlannerTrajectory> =
+  val CONE: MutableList<PathPlannerTrajectory> =
     PathPlanner.loadPathGroup(
       "wallCone",
       PathConstraints(
