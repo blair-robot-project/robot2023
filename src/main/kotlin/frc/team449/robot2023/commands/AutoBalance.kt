@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.SwerveDrive
+import frc.team449.robot2023.auto.AutoConstants
 import kotlin.math.PI
 
 class AutoBalance(
@@ -13,6 +14,7 @@ class AutoBalance(
 ) : CommandBase() {
 
   override fun initialize() {
+    addRequirements(drive)
     controller.enableContinuousInput(-PI, PI)
     controller.setTolerance(0.05) // .05 rad tolerance ~3 degrees
   }
@@ -28,5 +30,15 @@ class AutoBalance(
 
   override fun isFinished(): Boolean {
     return controller.atSetpoint()
+  }
+
+  companion object {
+    fun create(drive: SwerveDrive): AutoBalance {
+      return AutoBalance(
+        PIDController(AutoConstants.AUTO_BAL_KP, AutoConstants.AUTO_BAL_KD, 0.0),
+        drive,
+        AutoConstants.ADJUST_SPEED
+      )
+    }
   }
 }
