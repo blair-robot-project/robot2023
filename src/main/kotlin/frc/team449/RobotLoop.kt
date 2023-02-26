@@ -57,11 +57,9 @@ class RobotLoop : TimedRobot() {
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
 
     /** Every time auto starts, we update the chosen auto command */
-    val cmd = autoChooser.selected
-    if (cmd != null) {
-      this.autoCommand = cmd
-      CommandScheduler.getInstance().schedule(this.autoCommand)
-    }
+    val cmd = autoChooser.selected.createCommand()
+    this.autoCommand = cmd
+    CommandScheduler.getInstance().schedule(this.autoCommand)
   }
 
   override fun autonomousPeriodic() {}

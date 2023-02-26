@@ -5,12 +5,13 @@ import com.pathplanner.lib.auto.BaseAutoBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.CommandBase
-import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj2.command.*
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import io.github.oblarg.oblog.annotations.Config
+import java.util.function.BooleanSupplier
+import kotlin.math.PI
 
 /**
  * @param xController The PID controller used to correct X translation error when following a trajectory
@@ -56,5 +57,42 @@ class HolonomicRoutine(
   // TODO: If AprilTag is in sight at starting pos: either delete resetPose from fullAuto, or make this method do nothing
   override fun resetPose(trajectory: PathPlannerTrajectory): CommandBase {
     return InstantCommand({ drive.pose = trajectory.initialHolonomicPose })
+  }
+
+  override fun fullAuto(pathGroup: MutableList<PathPlannerTrajectory>): CommandBase {
+    val commands = SequentialCommandGroup()
+
+    commands.addCommands(resetPose(transformForAlliance(pathGroup, 0) { DriverStation.getAlliance() == DriverStation.Alliance.Red }))
+
+    for ((index, traj) in pathGroup.withIndex()) {
+      commands.addCommands(stopEventGroup(pathGroup[index].startStopEvent))
+      val wantedTrajectory = if (index == 0) traj else transformForAlliance(pathGroup, index) { DriverStation.getAlliance() == DriverStation.Alliance.Red }
+      commands.addCommands(
+        followPathWithEvents(
+          wantedTrajectory
+        )
+      )
+    }
+
+    commands.addCommands(stopEventGroup(pathGroup[pathGroup.size - 1].endStopEvent))
+
+    return commands
+  }
+
+  private fun transformForAlliance(pathGroup: MutableList<PathPlannerTrajectory>, index: Int, isRed: BooleanSupplier): PathPlannerTrajectory {
+    println("HEY THIS IS THE THING" + isRed.asBoolean)
+    if (isRed.asBoolean) {
+        pathGroup[index] = PathPlannerTrajectory.transformTrajectoryForAlliance(
+          pathGroup[index],
+          DriverStation.getAlliance()
+        )
+
+        for (s in pathGroup[index].states) {
+          s as PathPlannerTrajectory.PathPlannerState
+          s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
+          s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
+        }
+    }
+    return pathGroup[index]
   }
 }
