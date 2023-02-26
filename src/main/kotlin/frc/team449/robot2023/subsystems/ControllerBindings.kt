@@ -4,10 +4,12 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.POVButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import kotlin.math.abs
@@ -52,6 +54,10 @@ class ControllerBindings(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
     )
 
+    JoystickButton(drivecontroller, XboxController.Button.kBack.value).onTrue(
+      AutoBalance.create(robot.drive)
+    )
+
     JoystickButton(mechanismcontroller, XboxController.Button.kA.value).onTrue(
       InstantCommand(robot.intake::pistonRev)
         .andThen(
@@ -60,18 +66,18 @@ class ControllerBindings(
     )
 
     Trigger { abs(mechanismcontroller.leftY) > 0.3 || abs(mechanismcontroller.rightY) > 0.3 }.whileTrue(
-      InstantCommand(
-        {
-          val s = robot.arm.state
-          s.beta =
-            Rotation2d(s.beta.radians - MathUtil.applyDeadband(mechanismcontroller.leftY, .3) * .005)
-          s.theta =
-            Rotation2d(s.theta.radians - MathUtil.applyDeadband(mechanismcontroller.rightY, .3) * .005)
-          robot.arm.state = s
-        }
-      )
-        .repeatedly()
-        .until { abs(mechanismcontroller.leftY) <= 0.3 && abs(mechanismcontroller.rightY) <= 0.3 }
+      RepeatCommand(
+        InstantCommand(
+          {
+            val s = robot.arm.state
+            s.beta =
+              Rotation2d(s.beta.radians - MathUtil.applyDeadband(mechanismcontroller.leftY, .3) * .005)
+            s.theta =
+              Rotation2d(s.theta.radians - MathUtil.applyDeadband(mechanismcontroller.rightY, .3) * .005)
+            robot.arm.state = s
+          }
+        )
+      ).until { abs(mechanismcontroller.leftY) <= 0.3 && abs(mechanismcontroller.rightY) <= 0.3 }
     )
 
     POVButton(mechanismcontroller, 0).onTrue(

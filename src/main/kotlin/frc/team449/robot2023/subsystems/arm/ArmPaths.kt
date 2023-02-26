@@ -19,4 +19,19 @@ object ArmPaths {
   var STOW_MID = ArmTrajectory("Stow_Mid.json")
   var HIGH_STOW = ArmTrajectory("High_Stow.json")
   var STOW_HIGH = ArmTrajectory("Stow_High.json")
+
+  fun parseTrajectories() {
+    CUBE_STOW.parse()
+    STOW_CUBE.parse()
+    CONE_STOW.parse()
+    STOW_CONE.parse()
+    MID_STOW.parse()
+    STOW_MID.parse()
+    LOW_STOW.parse()
+    STOW_LOW.parse()
+    PICKUP_STOW.parse()
+    STOW_PICKUP.parse()
+    HIGH_STOW.parse()
+    STOW_HIGH.parse()
+  }
 }

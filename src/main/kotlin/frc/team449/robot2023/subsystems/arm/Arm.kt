@@ -1,6 +1,5 @@
 package frc.team449.robot2023.subsystems.arm
 
-import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.arm.ArmConstants
@@ -63,9 +62,9 @@ open class Arm(
     )
     set(state) {
       // cap q2 between its hard limits
-      state.beta = Rotation2d.fromDegrees(
-        clamp(state.beta.degrees, -156.8, 151.15)
-      )
+//      state.beta = Rotation2d.fromDegrees(
+//        clamp(state.beta.degrees, -156.8, 151.15)
+//      )
       // continue if state is same as last desired state
       if (state == desiredState) return
       controller.reset()

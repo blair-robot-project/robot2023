@@ -19,13 +19,9 @@ class ArmTrajectory(
   private val path = Filesystem.getDeployDirectory().absolutePath.plus("/trajectories/$filename")
   private var jaMorant = JSONParser().parse(FileReader(File(path).absolutePath)) as JSONObject
   private var stateMap: InterpolatingMatrixTreeMap<Double, N4, N1> = InterpolatingMatrixTreeMap()
-  var totalTime: Double
+  var totalTime: Double = 0.0
 
-  init {
-    totalTime = parse()
-  }
-
-  private fun parse(): Double {
+  fun parse() {
     var total = 0.0
     val states = jaMorant["states"] as JSONArray
     states.forEach { state ->
@@ -42,7 +38,7 @@ class ArmTrajectory(
       val currArmStateMatrix = currArmState.matrix
       stateMap.put(currTime, currArmStateMatrix)
     }
-    return total
+    totalTime = total
   }
 
   fun Matrix<N4, N1>.state(): ArmState {

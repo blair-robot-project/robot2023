@@ -10,14 +10,8 @@ class Intake(
   private val intakePiston: DoubleSolenoid,
   private val sensor: DigitalInput
 ) : SubsystemBase(), Sendable {
-  init {
-    intakePiston.set(DoubleSolenoid.Value.kForward)
-  }
   private var sensorVal = false
   private var previousVal = false
-  init {
-    intakePiston.set(DoubleSolenoid.Value.kReverse)
-  }
 
   fun pistonOn() {
     intakePiston.set(DoubleSolenoid.Value.kForward)
@@ -28,11 +22,11 @@ class Intake(
   }
 
   override fun periodic() {
-    sensorVal = !sensor.get()
-    if (sensorVal != previousVal && sensorVal) {
-      pistonOn()
-    }
-    previousVal = sensorVal
+//    sensorVal = !sensor.get()
+//    if (sensorVal != previousVal && sensorVal) {
+//      pistonOn()
+//    }
+//    previousVal = sensorVal
   }
 
   override fun initSendable(builder: SendableBuilder) {

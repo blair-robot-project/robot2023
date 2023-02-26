@@ -14,7 +14,7 @@ import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 class ConeCube(
   private val robot: Robot,
   private val farSide: Boolean
-): RoutineStructure {
+) : RoutineStructure {
 
   override val routine =
     HolonomicRoutine(

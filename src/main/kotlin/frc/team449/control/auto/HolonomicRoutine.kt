@@ -82,16 +82,16 @@ class HolonomicRoutine(
   private fun transformForAlliance(pathGroup: MutableList<PathPlannerTrajectory>, index: Int, isRed: BooleanSupplier): PathPlannerTrajectory {
     println("HEY THIS IS THE THING" + isRed.asBoolean)
     if (isRed.asBoolean) {
-        pathGroup[index] = PathPlannerTrajectory.transformTrajectoryForAlliance(
-          pathGroup[index],
-          DriverStation.getAlliance()
-        )
+      pathGroup[index] = PathPlannerTrajectory.transformTrajectoryForAlliance(
+        pathGroup[index],
+        DriverStation.getAlliance()
+      )
 
-        for (s in pathGroup[index].states) {
-          s as PathPlannerTrajectory.PathPlannerState
-          s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
-          s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
-        }
+      for (s in pathGroup[index].states) {
+        s as PathPlannerTrajectory.PathPlannerState
+        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
+        s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
+      }
     }
     return pathGroup[index]
   }

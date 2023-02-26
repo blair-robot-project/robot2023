@@ -10,12 +10,13 @@ object ArmConstants {
   const val PIVOT_MOTOR_ID1 = 5
   const val PIVOT_MOTOR_ID2 = 6
   const val JOINT_MOTOR_ID = 7
-
+  // -
+  // 0.430809
   // Encoder constants
   const val PIVOT_ENCODER_CHAN = 8
   const val JOINT_ENCODER_CHAN = 1
-  const val PIVOT_ENCODER_OFFSET = 0.357825
-  const val JOINT_ENCODER_OFFSET = .171312 // 0.855081
+  const val PIVOT_ENCODER_OFFSET = .25 + 0.106746
+  const val JOINT_ENCODER_OFFSET = 0.430809 // 0.855081
 
   // PD Controller Constants
   const val kP1 = 9.0
@@ -23,7 +24,7 @@ object ArmConstants {
   const val kD1 = .0
   const val kD2 = .00
   const val kI1 = .001
-  const val kI2 = .005
+  const val kI2 = .1
   const val kErrDeadband = .1 // rad
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(37.5)

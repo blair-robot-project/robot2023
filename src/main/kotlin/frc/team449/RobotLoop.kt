@@ -4,6 +4,7 @@ import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
@@ -13,6 +14,7 @@ import frc.team449.robot2023.auto.AutoChooser
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
+import frc.team449.robot2023.subsystems.arm.ArmPaths
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
@@ -34,6 +36,9 @@ class RobotLoop : TimedRobot() {
 //      instance.startClient4("localhost")
     }
 
+    println("Parsing Trajectories : ${Timer.getFPGATimestamp()}")
+    ArmPaths.parseTrajectories()
+    println("DONE Parsing Trajectories : ${Timer.getFPGATimestamp()}")
     PathPlannerServer.startServer(5811)
 
     Logger.configureLoggingAndConfig(robot, false)
@@ -41,7 +46,7 @@ class RobotLoop : TimedRobot() {
     SmartDashboard.putData("Field", robot.field)
     SmartDashboard.putData("Auto Chooser", autoChooser)
 
-    ControllerBindings(robot.driveController, robot.turnController, robot).bindButtons()
+    ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
   }
 
   override fun robotPeriodic() {

@@ -35,7 +35,7 @@ class AutoBalance(
   companion object {
     fun create(drive: SwerveDrive): AutoBalance {
       return AutoBalance(
-        PIDController(AutoConstants.AUTO_BAL_KP, AutoConstants.AUTO_BAL_KD, 0.0),
+        PIDController(AutoConstants.AUTO_BAL_KP, 0.0, AutoConstants.AUTO_BAL_KD),
         drive,
         AutoConstants.ADJUST_SPEED
       )

@@ -14,13 +14,13 @@ import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 class Cone(
   private val robot: Robot,
   private val farSide: Boolean
-): RoutineStructure {
+) : RoutineStructure {
 
   override val routine =
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
+        "dropCone" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }
           .andThen(WaitCommand(3.0))
           .andThen(InstantCommand({ robot.intake.pistonRev() })),
         "stowAndGround" to SequentialCommandGroup(
@@ -32,5 +32,4 @@ class Cone(
 
   override val trajectory: MutableList<PathPlannerTrajectory>
     get() = if (farSide) Paths.FARCONE else Paths.WALLCONE
-
 }
