@@ -47,10 +47,7 @@ open class Arm(
 
   /** desired arm state */
   @Log.ToString
-  var desiredState = ArmState(
-    Rotation2d(1.67),
-    Rotation2d(-2.78)
-  )
+  var desiredState = ArmConstants.STOW
 
   /**
    * the current state of the arm in [ArmState]
@@ -64,7 +61,8 @@ open class Arm(
       secondJoint.velocity
     )
     set(state) {
-
+      // TODO: cap q2 between its hard stops
+      // TODO: add filtering for desired state here, continue if same as last desired state
       controller.reset()
       desiredState = state
     }
@@ -129,8 +127,10 @@ open class Arm(
           ArmPaths.STOW_LOW
         ArmConstants.PICKUP ->
           ArmPaths.STOW_PICKUP
+        ArmConstants.CONE ->
+          ArmPaths.STOW_CONE
         else ->
-          ArmPaths.STOW_INTAKE
+          ArmPaths.STOW_CUBE
       }
     } else {
       return when (startPoint) {
@@ -142,8 +142,10 @@ open class Arm(
           ArmPaths.LOW_STOW
         ArmConstants.PICKUP ->
           ArmPaths.PICKUP_STOW
+        ArmConstants.CONE ->
+          ArmPaths.CONE_STOW
         else ->
-          ArmPaths.INTAKE_STOW
+          ArmPaths.CUBE_STOW
       }
     }
   }

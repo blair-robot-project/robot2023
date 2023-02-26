@@ -20,7 +20,7 @@ class ArmPDController(
   private val kD2: Double,
   private val kI1: Double,
   private val kI2: Double,
-  private val maxErr: Double
+  private val errDeadband: Double
 ) : Sendable {
   private var setpoint: Matrix<N4, N1>? = null
 
@@ -34,17 +34,18 @@ class ArmPDController(
     setpoint = reference
     val err = reference - state
     val wrappedErr = mat(N4.instance, N1.instance).fill(
-      MathUtil.angleModulus(err[0, 0]),
-      MathUtil.angleModulus(err[1, 0]),
+      MathUtil.angleModulus(applyDeadband(err[0, 0], errDeadband * PI / 180.0)),
+      MathUtil.angleModulus(applyDeadband(err[1, 0], errDeadband * PI / 180.0)),
       err[2, 0],
       err[3, 0]
     )
-//    println("Wrapped error for joint 1 : ${wrappedErr[0, 0]},\n Set point : ${reference[0, 0]},\n Measurement ${state[0, 0]}")
+
+    // deadband of
     errorSum = mat(N4.instance, N1.instance).fill(
-      clamp(applyDeadband(errorSum[0, 0] + wrappedErr[0, 0], 1 * PI / 180.0), -maxErr, maxErr),
-      clamp(applyDeadband(errorSum[1, 0] + wrappedErr[1, 0], 1 * PI / 180.0), -maxErr, maxErr),
-      clamp(applyDeadband(errorSum[2, 0] + wrappedErr[2, 0], 1 * PI / 180.0), -maxErr, maxErr),
-      clamp(applyDeadband(errorSum[3, 0] + wrappedErr[3, 0], 1 * PI / 180.0), -maxErr, maxErr)
+      errorSum[0, 0] + wrappedErr[0, 0],
+      errorSum[1, 0] + wrappedErr[1, 0],
+      errorSum[2, 0] + wrappedErr[2, 0],
+      errorSum[3, 0] + wrappedErr[3, 0]
     )
 
     val I = mat(N2.instance, N4.instance).fill(

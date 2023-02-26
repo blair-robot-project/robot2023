@@ -17,7 +17,7 @@ class ArmTrajectory(
   filename: String
 ) {
   private val path = Filesystem.getDeployDirectory().absolutePath.plus("/trajectories/$filename")
-  private var jaMorant = JSONParser().parse(FileReader(File(path).absolutePath)) as JSONArray
+  private var jaMorant = JSONParser().parse(FileReader(File(path).absolutePath)) as JSONObject
   private var stateMap: InterpolatingMatrixTreeMap<Double, N4, N1> = InterpolatingMatrixTreeMap()
   var totalTime: Double
 
@@ -27,22 +27,20 @@ class ArmTrajectory(
 
   private fun parse(): Double {
     var total = 0.0
+    val states = jaMorant["states"] as JSONArray
+    states.forEach { state ->
+      state as JSONObject
+      val currTime = state["t"].toString().toDouble()
+      total = currTime
 
-    jaMorant.forEach() {
-      try {
-        it as JSONObject
-        val currTime = it["t"].toString().toDouble()
-        total = currTime
-
-        val currArmState = ArmState(
-          Rotation2d(it["q1"].toString().toDouble()),
-          Rotation2d(it["q2"].toString().toDouble()),
-          it["q1d"].toString().toDouble(),
-          it["q2d"].toString().toDouble()
-        )
-        val currArmStateMatrix = currArmState.matrix
-        stateMap.put(currTime, currArmStateMatrix)
-      } catch (_: Exception) {}
+      val currArmState = ArmState(
+        Rotation2d(state["q1"].toString().toDouble()),
+        Rotation2d(state["q2"].toString().toDouble()),
+        state["q1d"].toString().toDouble(),
+        state["q2d"].toString().toDouble()
+      )
+      val currArmStateMatrix = currArmState.matrix
+      stateMap.put(currTime, currArmStateMatrix)
     }
     return total
   }

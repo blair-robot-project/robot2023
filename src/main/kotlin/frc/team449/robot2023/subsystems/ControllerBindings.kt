@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
+import edu.wpi.first.wpilibj2.command.button.POVButton
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -51,8 +52,12 @@ class ControllerBindings(
     JoystickButton(mechanismcontroller, XboxController.Button.kA.value).onTrue(
       InstantCommand(robot.intake::pistonRev)
         .andThen(
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.INTAKE) }
+          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }
         )
+    )
+
+    POVButton(mechanismcontroller, 0).onTrue(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
     )
 
     JoystickButton(mechanismcontroller, XboxController.Button.kBack.value).onTrue(

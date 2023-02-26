@@ -75,7 +75,7 @@ class Robot : RobotBase() {
         ArmConstants.kD2,
         ArmConstants.kI1,
         ArmConstants.kI2,
-        ArmConstants.kMaxErrSum
+        ArmConstants.kErrDeadband
       ),
       ArmConstants.LENGTH_1,
       ArmConstants.LENGTH_2
@@ -92,7 +92,7 @@ class Robot : RobotBase() {
         ArmConstants.kD2,
         ArmConstants.kI1,
         ArmConstants.kI2,
-        ArmConstants.kMaxErrSum
+        ArmConstants.kErrDeadband
       ),
       ArmConstants.LENGTH_1,
       ArmConstants.LENGTH_2

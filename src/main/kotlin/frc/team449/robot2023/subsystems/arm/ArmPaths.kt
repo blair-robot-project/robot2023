@@ -3,9 +3,12 @@ package frc.team449.robot2023.subsystems.arm
 import frc.team449.robot2023.subsystems.arm.control.ArmTrajectory
 
 object ArmPaths {
+
   // intaking trajs
-  var INTAKE_STOW = ArmTrajectory("Intake_Stow.json")
-  var STOW_INTAKE = ArmTrajectory("Stow_Intake.json")
+  var CUBE_STOW = ArmTrajectory("Cube_Stow.json")
+  var STOW_CUBE = ArmTrajectory("Stow_Cube.json")
+  var CONE_STOW = ArmTrajectory("Cone_Stow.json")
+  var STOW_CONE = ArmTrajectory("Stow_Cone.json")
   var PICKUP_STOW = ArmTrajectory("Pickup_Stow.json")
   var STOW_PICKUP = ArmTrajectory("Stow_Pickup.json")
 

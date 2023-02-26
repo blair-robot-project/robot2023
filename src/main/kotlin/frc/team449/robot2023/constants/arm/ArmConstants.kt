@@ -22,9 +22,9 @@ object ArmConstants {
   const val kP2 = 8.0
   const val kD1 = .0
   const val kD2 = .00
-  const val kI1 = .10
-  const val kI2 = 1.5
-  const val kMaxErrSum = 1.0 // rad
+  const val kI1 = .001
+  const val kI2 = .005
+  const val kErrDeadband = .1 // rad
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(37.5)
   val LENGTH_2 = Units.inchesToMeters(34.0)
@@ -61,8 +61,8 @@ object ArmConstants {
 
   // Arm States corresponding to points.
   val HIGH = ArmState(
-    Rotation2d.fromDegrees(131.29),
-    Rotation2d.fromDegrees(15.09),
+    Rotation2d.fromDegrees(126.79),
+    Rotation2d.fromDegrees(17.28),
     0.0,
     0.0
   )
@@ -78,15 +78,15 @@ object ArmConstants {
     0.0,
     0.0
   )
-  val INTAKE = ArmState(
+  val CUBE = ArmState(
     Rotation2d.fromDegrees(62.72),
     Rotation2d.fromDegrees(-126.09),
     0.0,
     0.0
   )
   val STOW = ArmState(
-    Rotation2d.fromDegrees(95.90),
-    Rotation2d.fromDegrees(-159.39),
+    Rotation2d.fromDegrees(93.27),
+    Rotation2d.fromDegrees(-143.07),
     0.0,
     0.0
   )
@@ -96,6 +96,12 @@ object ArmConstants {
     0.0,
     0.0
   )
+  val CONE = ArmState(
+    Rotation2d.fromDegrees(63.52),
+    Rotation2d.fromDegrees(-132.3),
+    0.0,
+    0.0
+  )
 
-  val STATES = listOf(HIGH, MID, LOW, INTAKE, STOW, PICKUP)
+  val STATES = listOf(HIGH, MID, LOW, CUBE, STOW, PICKUP, CONE)
 }
