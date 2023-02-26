@@ -57,7 +57,6 @@ class RobotLoop : TimedRobot() {
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
 
     /** Every time auto starts, we update the chosen auto command */
-    autoChooser.updateOptions()
     val cmd = autoChooser.selected
     if (cmd != null) {
       this.autoCommand = cmd
