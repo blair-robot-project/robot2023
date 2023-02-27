@@ -1,8 +1,10 @@
 package frc.team449
 
+import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
@@ -10,7 +12,9 @@ import frc.team449.control.DriveCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoChooser
 import frc.team449.robot2023.auto.Paths
+import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
+import frc.team449.robot2023.subsystems.arm.ArmPaths
 import io.github.oblarg.oblog.Logger
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
@@ -31,12 +35,18 @@ class RobotLoop : TimedRobot() {
 //      instance.stopServer()
 //      instance.startClient4("localhost")
     }
+
+    println("Parsing Trajectories : ${Timer.getFPGATimestamp()}")
+    ArmPaths.parseTrajectories()
+    println("DONE Parsing Trajectories : ${Timer.getFPGATimestamp()}")
+    PathPlannerServer.startServer(5811)
+
     Logger.configureLoggingAndConfig(robot, false)
     Logger.configureLoggingAndConfig(Paths, false)
     SmartDashboard.putData("Field", robot.field)
     SmartDashboard.putData("Auto Chooser", autoChooser)
 
-    ControllerBindings(robot.driveController, robot).bindButtons()
+    ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
   }
 
   override fun robotPeriodic() {
@@ -48,17 +58,19 @@ class RobotLoop : TimedRobot() {
   }
 
   override fun autonomousInit() {
+    /** At the start of auto we poll the alliance color given by the FMS */
+    RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
+
     /** Every time auto starts, we update the chosen auto command */
-    val cmd = autoChooser.selected
-    if (cmd != null) {
-      this.autoCommand = cmd
-      CommandScheduler.getInstance().schedule(this.autoCommand)
-    }
+    val cmd = autoChooser.selected.createCommand()
+    this.autoCommand = cmd
+    CommandScheduler.getInstance().schedule(this.autoCommand)
   }
 
   override fun autonomousPeriodic() {}
 
   override fun teleopInit() {
+    robot.arm.controller.reset()
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand)
     }

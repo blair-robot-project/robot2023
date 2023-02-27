@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.Timer
+import frc.team449.system.encoder.Encoder
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import kotlin.math.PI
@@ -22,7 +24,7 @@ import kotlin.math.abs
  * @param location the location of the module in reference to the center of the robot
  * NOTE: In relation to the robot [+X is forward, +Y is left, and +THETA is Counter Clock-Wise].
  */
-open class SwerveModule constructor(
+open class SwerveModule(
   private val name: String,
   private val drivingMotor: WrappedMotor,
   private val turningMotor: WrappedMotor,
@@ -37,7 +39,7 @@ open class SwerveModule constructor(
     turnController.reset()
   }
 
-  private var desiredSpeed = 0.0
+  var desiredSpeed = 0.0
 
   open var state: SwerveModuleState
     get() {
@@ -75,7 +77,7 @@ open class SwerveModule constructor(
   }
   override fun configureLogName() = this.name
 
-  fun update() {
+  open fun update() {
 
     /** CONTROL speed of module */
     val drivePid = driveController.calculate(
@@ -154,10 +156,28 @@ class SwerveModuleSim(
   driveFeedforward,
   location
 ) {
-
-  init {
-  }
-  override var state = SwerveModuleState()
+  private val turningMotorEncoder = Encoder.SimController(turningMotor.encoder)
+  private val driveEncoder = Encoder.SimController(drivingMotor.encoder)
+  private var prevTime = Timer.getFPGATimestamp()
+  override var state: SwerveModuleState
+    get() = SwerveModuleState(
+      driveEncoder.velocity,
+      Rotation2d(turningMotorEncoder.position)
+    )
+    set(desiredState) {
+      super.state = desiredState
+      turningMotorEncoder.position = desiredState.angle.radians
+      driveEncoder.velocity = desiredState.speedMetersPerSecond
+    }
   override val position: SwerveModulePosition
-    get() = super.position
+    get() = SwerveModulePosition(
+      driveEncoder.position,
+      Rotation2d(turningMotorEncoder.position)
+    )
+
+  override fun update() {
+    val currTime = Timer.getFPGATimestamp()
+    driveEncoder.position = driveEncoder.position + driveEncoder.velocity * (currTime - prevTime)
+    prevTime = currTime
+  }
 }

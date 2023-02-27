@@ -11,7 +11,7 @@ abstract class RobotBase {
 
   abstract val powerDistribution: PowerDistribution
 
-  abstract val drive: HolonomicDrive
+  abstract val drive: HolonomicDrive?
 
   abstract val oi: OI
 }

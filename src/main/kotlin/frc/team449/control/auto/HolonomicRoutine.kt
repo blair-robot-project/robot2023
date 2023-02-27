@@ -5,12 +5,16 @@ import com.pathplanner.lib.auto.BaseAutoBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import io.github.oblarg.oblog.annotations.Config
+import java.util.function.BooleanSupplier
+import kotlin.math.PI
 
 /**
  * @param xController The PID controller used to correct X translation error when following a trajectory
@@ -18,10 +22,9 @@ import io.github.oblarg.oblog.annotations.Config
  * @param thetaController The PID controller used to correct rotational  error when following a trajectory
  * @param drive The holonomic drive subsystem to be used when following a trajectory
  * @param eventMap A hash map of event marker names paired with the command you want to run that cannot require drive
- * @param driveEventMap A hash map of the stop point number (the first stop point is the start of the path) paired with the command you want to run that may require drive
  * @param translationTol Allowed error in meters when following a trajectory
  * @param thetaTol Allowed error in radians when following a trajectory
- * @param resetPosition Whether to reset your position to the initial pose in the first trajectory
+ * @param resetPosition Whether to reset your position to the initial pose for all parts of the trajectory
  * @param timeout Maximum time in seconds for the path follower to correct itself after EACH trajectory is done
  */
 class HolonomicRoutine(
@@ -30,7 +33,6 @@ class HolonomicRoutine(
   @field:Config.PIDController(name = "Rotation PID") var thetaController: PIDController = PIDController(AutoConstants.DEFAULT_ROTATION_KP, 0.0, 0.0),
   private val drive: HolonomicDrive,
   eventMap: HashMap<String, Command>,
-  private val driveEventMap: HashMap<Int, Command>,
   private val translationTol: Double = 0.05,
   private val thetaTol: Double = 0.05,
   private val resetPosition: Boolean = false,
@@ -51,32 +53,49 @@ class HolonomicRoutine(
         Rotation2d(thetaTol)
       ),
       timeout,
-      resetPose = false
+      resetPose = resetPosition
     )
   }
 
-  /** Return a command that follows the path with events, stops at stop points,
-   *    and does any drive-requiring commands */
-  fun constructRoutine(pathGroup: MutableList<PathPlannerTrajectory>): CommandBase {
-    val command = SequentialCommandGroup()
+  // TODO: If AprilTag is in sight at starting pos: either delete resetPose from fullAuto, or make this method do nothing
+  override fun resetPose(trajectory: PathPlannerTrajectory): CommandBase {
+    return InstantCommand({ drive.pose = trajectory.initialHolonomicPose })
+  }
 
-    if (resetPosition) {
-      // Assume the initial position of the robot is the first pose in the path group
-      drive.pose = pathGroup[0].initialHolonomicPose
+  override fun fullAuto(pathGroup: MutableList<PathPlannerTrajectory>): CommandBase {
+    val commands = SequentialCommandGroup()
+
+    commands.addCommands(resetPose(transformForAlliance(pathGroup, 0) { DriverStation.getAlliance() == DriverStation.Alliance.Red }))
+
+    for ((index, traj) in pathGroup.withIndex()) {
+      commands.addCommands(stopEventGroup(pathGroup[index].startStopEvent))
+      val wantedTrajectory = if (index == 0) traj else transformForAlliance(pathGroup, index) { DriverStation.getAlliance() == DriverStation.Alliance.Red }
+      commands.addCommands(
+        followPathWithEvents(
+          wantedTrajectory
+        )
+      )
     }
 
-    // For every path in the path group, stop at stop points, run a drive-requiring command, and then run the trajectory segment
-    for (index in 0 until pathGroup.size) {
-      command.addCommands(stopEventGroup(pathGroup[index].startStopEvent))
-      if (driveEventMap.containsKey(index)) {
-        command.addCommands(driveEventMap.getValue(index))
+    commands.addCommands(stopEventGroup(pathGroup[pathGroup.size - 1].endStopEvent))
+
+    return commands
+  }
+
+  private fun transformForAlliance(pathGroup: MutableList<PathPlannerTrajectory>, index: Int, isRed: BooleanSupplier): PathPlannerTrajectory {
+    println("HEY THIS IS THE THING" + isRed.asBoolean)
+    if (isRed.asBoolean) {
+      pathGroup[index] = PathPlannerTrajectory.transformTrajectoryForAlliance(
+        pathGroup[index],
+        DriverStation.getAlliance()
+      )
+
+      for (s in pathGroup[index].states) {
+        s as PathPlannerTrajectory.PathPlannerState
+        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
+        s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
       }
-      command.addCommands(followPathWithEvents(pathGroup[index]))
     }
-
-    // Stop the last trajectory following command
-    command.addCommands(stopEventGroup(pathGroup[pathGroup.size - 1].endStopEvent))
-
-    return command
+    return pathGroup[index]
   }
 }

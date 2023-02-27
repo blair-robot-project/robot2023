@@ -2,6 +2,7 @@ package frc.team449.control.auto
 
 import com.pathplanner.lib.PathPlannerTrajectory
 import com.pathplanner.lib.controllers.PPHolonomicDriveController
+import com.pathplanner.lib.server.PathPlannerServer
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -9,7 +10,6 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
-import kotlin.math.PI
 
 /**
  * @param drivetrain Holonomic Drivetrain used
@@ -43,18 +43,10 @@ class HolonomicFollower(
     // require the drivetrain to interrupt
     addRequirements(drivetrain)
 
-    if (resetPose) {
-      drivetrain.pose = trajectory.initialHolonomicPose
-    }
-
-    // controlling heading which is circular, [0, 2*PI)
-    thetaController.enableContinuousInput(.0, 2 * PI)
-
     controller.setTolerance(poseTol)
   }
 
   override fun initialize() {
-
     // reset the controllers so that the error from last run doesn't transfer
     xController.reset()
     yController.reset()
@@ -63,20 +55,28 @@ class HolonomicFollower(
     // reset timer from last run and restart for this run
     timer.reset()
     timer.start()
+
+    PathPlannerServer.sendActivePath(trajectory.states)
+
+    if (resetPose) {
+      drivetrain.pose = trajectory.initialHolonomicPose
+    }
   }
 
   override fun execute() {
     val currTime = timer.get()
 
-    // TODO: Uncomment once creating paths for competition use instead of testing
-    // MAKE SURE YOUR ORIGINAL PATH IS FOR THE BLUE ALLIANCE
-//    val reference = PathPlannerTrajectory.transformStateForAlliance(
-//      trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState,
-//      DriverStation.getAlliance()
-//    )
     val reference = trajectory.sample(currTime) as PathPlannerTrajectory.PathPlannerState
 
     val currentPose = drivetrain.pose
+
+    PathPlannerServer.sendPathFollowingData(
+      Pose2d(
+        reference.poseMeters.translation,
+        reference.holonomicRotation
+      ),
+      currentPose
+    )
 
     drivetrain.set(
       controller.calculate(

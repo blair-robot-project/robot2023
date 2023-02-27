@@ -1,27 +1,30 @@
 package frc.team449.control.holonomic
 
 import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.wpilibj.RobotBase.isReal
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.drives.SwerveConstants
 import frc.team449.robot2023.constants.vision.VisionConstants
 import frc.team449.system.AHRS
-import frc.team449.system.VisionCamera
 import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
+import org.photonvision.PhotonPoseEstimator
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -34,16 +37,13 @@ open class SwerveDrive(
   private val ahrs: AHRS,
   override val maxLinearSpeed: Double,
   override val maxRotSpeed: Double,
-  private val cameras: List<VisionCamera> = mutableListOf()
+  private val cameras: List<PhotonPoseEstimator> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
 
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
-
-  @Log.ToString
-  private var camPose = Pose2d()
 
   private var currentSpeeds = ChassisSpeeds()
 
@@ -64,6 +64,11 @@ open class SwerveDrive(
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
   }
+
+  val pitch: Rotation2d
+    get() = Rotation2d(MathUtil.angleModulus(ahrs.pitch.radians))
+  val roll: Rotation2d
+    get() = Rotation2d(MathUtil.angleModulus(ahrs.roll.radians))
 
   /** The x y theta location of the robot on the field */
   override var pose: Pose2d
@@ -137,11 +142,11 @@ open class SwerveDrive(
 
   private fun localize() {
     for (camera in cameras) {
-      if (camera.hasTarget()) {
-        camPose = camera.camPose().toPose2d()
+      val result = camera.update()
+      if (result.isPresent) {
         poseEstimator.addVisionMeasurement(
-          camPose,
-          camera.timestamp()
+          result.get().estimatedPose.toPose2d(),
+          result.get().timestampSeconds
         )
       }
     }
@@ -235,13 +240,22 @@ open class SwerveDrive(
           Translation2d(-SwerveConstants.WHEELBASE / 2, -SwerveConstants.TRACKWIDTH / 2)
         )
       )
-      return SwerveDrive(
-        modules,
-        ahrs,
-        RobotConstants.MAX_LINEAR_SPEED,
-        RobotConstants.MAX_ROT_SPEED,
-        VisionConstants.CAMERAS
-      )
+      return if (isReal())
+        SwerveDrive(
+          modules,
+          ahrs,
+          RobotConstants.MAX_LINEAR_SPEED,
+          RobotConstants.MAX_ROT_SPEED,
+          VisionConstants.ESTIMATORS
+        )
+      else
+        SwerveSim(
+          modules,
+          ahrs,
+          RobotConstants.MAX_LINEAR_SPEED,
+          RobotConstants.MAX_ROT_SPEED,
+          VisionConstants.ESTIMATORS
+        )
     }
 
     /** Helper to make turning motors for swerve */

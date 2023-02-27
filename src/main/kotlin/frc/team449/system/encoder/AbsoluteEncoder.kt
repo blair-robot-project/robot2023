@@ -10,7 +10,7 @@ import io.github.oblarg.oblog.annotations.Log
  *
  * @param offset This must be in rotations of how much the offset of the ENCODER should be.
  */
-class AbsoluteEncoder(
+open class AbsoluteEncoder(
   name: String,
   private val enc: DutyCycleEncoder,
   unitPerRotation: Double,

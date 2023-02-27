@@ -14,13 +14,13 @@ import frc.team449.control.DriveSubsystem
 class HeadingAlign(
   private val drive: DriveSubsystem,
   private val point: Translation2d,
-  private val headingPID: PIDController
+  private val headingPID: PIDController = PIDController(1.5, 0.0, 0.0)
 ) : CommandBase() {
 
   init {
     addRequirements(drive)
     headingPID.enableContinuousInput(-Math.PI, Math.PI)
-    headingPID.setTolerance(0.05)
+    headingPID.setTolerance(0.075)
   }
 
   private var fieldToRobot = Translation2d()

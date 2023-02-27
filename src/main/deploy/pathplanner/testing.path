@@ -2,21 +2,23 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 2.0,
-        "y": 1.0
+        "x": 3.0,
+        "y": 0.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0941648727750475,
-        "y": 1.0
+        "x": 3.0941648727750475,
+        "y": 0.5
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "runIntake"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -25,31 +27,35 @@
     {
       "anchorPoint": {
         "x": 4.0,
-        "y": 1.0
+        "y": 0.5
       },
       "prevControl": {
-        "x": 3.9832359675074884,
-        "y": 1.0
+        "x": 3.935594764054449,
+        "y": 0.5
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "names": [
+          "stopIntake",
+          "faceTag",
+          "shoot"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 7.5
       }
     }
   ],
   "markers": [
     {
-      "position": 0.2181818181818142,
+      "position": 0.0,
       "names": [
-        "printIntake"
+        "event"
       ]
     }
   ]
