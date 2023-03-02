@@ -22,7 +22,7 @@ class ControllerBindings(
     JoystickButton(driveController, XboxController.Button.kA.value).onTrue(
       ProfiledPoseAlign(
         robot.drive,
-        Pose2d(1.0, 0.0, Rotation2d(PI / 2)),
+        Pose2d(2.0, 0.0, Rotation2d(PI)),
         ProfiledPIDController(
           1.0,
           0.0,
@@ -30,7 +30,7 @@ class ControllerBindings(
           TrapezoidProfile.Constraints(1.0, 1.0)
         ),
         ProfiledPIDController(
-          1.0,
+          1.5,
           0.0,
           0.0,
           TrapezoidProfile.Constraints(1.0, 1.0)
@@ -46,7 +46,7 @@ class ControllerBindings(
     JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
       TrajectoryPoseAlign(
         robot.drive,
-        Pose2d(1.0, 0.0, Rotation2d(PI / 2))
+        Pose2d(1.0, 0.0, Rotation2d(PI))
       ).generateCommand()
     )
   }
