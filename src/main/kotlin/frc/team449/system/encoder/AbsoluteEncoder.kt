@@ -15,7 +15,7 @@ open class AbsoluteEncoder(
   private val enc: DutyCycleEncoder,
   unitPerRotation: Double,
   private val inverted: Boolean,
-  private val offset: Double,
+  private var offset: Double,
   pollTime: Double = .02
 ) : Encoder(name, 1, unitPerRotation, 1.0, pollTime) {
   private var prevPos = Double.NaN
@@ -29,6 +29,10 @@ open class AbsoluteEncoder(
     } else {
       (enc.absolutePosition - offset) % 1
     }
+  }
+
+  override fun resetPosition(pos: Double) {
+    offset += getPositionNative() - pos
   }
 
   /** This returns the rotational velocity (on vertical axis) of the module */

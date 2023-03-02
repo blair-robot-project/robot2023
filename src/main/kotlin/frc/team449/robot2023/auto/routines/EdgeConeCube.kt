@@ -8,12 +8,13 @@ import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.Paths
+import frc.team449.robot2023.auto.PositionChooser
 import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
-class ConeCube(
-  private val robot: Robot,
-  private val farSide: Boolean
+class EdgeConeCube(
+  robot: Robot,
+  position: PositionChooser.POSITIONS
 ) : RoutineStructure {
 
   override val routine =
@@ -36,8 +37,8 @@ class ConeCube(
       )
     )
 
-  override val trajectory: MutableList<PathPlannerTrajectory>
-    get() = if (farSide) {
+  override val trajectory: MutableList<PathPlannerTrajectory> =
+    if (position == PositionChooser.POSITIONS.FAR) {
       Paths.FARCONECUBE
     } else {
       Paths.WALLCONECUBE

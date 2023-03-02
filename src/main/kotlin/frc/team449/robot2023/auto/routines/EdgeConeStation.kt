@@ -5,11 +5,12 @@ import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.Paths
+import frc.team449.robot2023.auto.PositionChooser
 import frc.team449.robot2023.commands.AutoBalance
 
-class ConeStation(
-  private val robot: Robot,
-  private val farSide: Boolean
+class EdgeConeStation(
+  robot: Robot,
+  position: PositionChooser.POSITIONS
 ) : RoutineStructure {
 
   override val routine =
@@ -24,8 +25,8 @@ class ConeStation(
       )
     )
 
-  override val trajectory: MutableList<PathPlannerTrajectory>
-    get() = if (farSide) {
+  override val trajectory: MutableList<PathPlannerTrajectory> =
+    if (position == PositionChooser.POSITIONS.FAR) {
       Paths.FARCONESTATION
     } else {
       Paths.WALLCONESTATION

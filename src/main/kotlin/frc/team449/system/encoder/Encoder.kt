@@ -67,7 +67,7 @@ abstract class Encoder(
   /**
    * Update the position offset to treat the current position as [pos]
    */
-  fun resetPosition(pos: Double) {
+  open fun resetPosition(pos: Double) {
     this.positionOffset = pos - this.getPositionDirect()
   }
 
