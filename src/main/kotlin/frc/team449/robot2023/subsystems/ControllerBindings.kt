@@ -17,14 +17,14 @@ class ControllerBindings(
     JoystickButton(controller, XboxController.Button.kX.value).onTrue(
       HeadingAlign(robot.drive, Translation2d(), PIDController(1.0, 0.0, 0.0))
     )
-    JoystickButton(controller, XboxController.Button.kA.value).onTrue(
+    JoystickButton(controller, XboxController.Button.kA.value).toggleOnTrue(
       InstantCommand(robot.intake::run)
-    ).onFalse(
+    ).toggleOnFalse(
       InstantCommand(robot.intake::stop)
     )
-    JoystickButton(controller, XboxController.Button.kB.value).onTrue(
+    JoystickButton(controller, XboxController.Button.kB.value).toggleOnTrue(
       InstantCommand(robot.intake::runReverse)
-    ).onFalse(
+    ).toggleOnFalse(
       InstantCommand(robot.intake::stop)
     )
   }
