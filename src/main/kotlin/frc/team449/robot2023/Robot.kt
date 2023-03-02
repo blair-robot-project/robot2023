@@ -13,7 +13,6 @@ import frc.team449.robot2023.subsystems.GroundIntake
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
-import io.github.oblarg.oblog.annotations.Log
 
 class Robot : RobotBase() {
 
@@ -27,16 +26,14 @@ class Robot : RobotBase() {
 
   override val drive = createDifferentialDrive(ahrs)
 
-  @Log(name = "Joystick Input")
   override val oi = DifferentialOIs.createCurvature(
     drive,
     { driveController.rightTriggerAxis - driveController.leftTriggerAxis },
-    { driveController.leftX },
+    { -driveController.leftX },
     SlewRateLimiter(RobotConstants.MAX_ACCEL),
     SlewRateLimiter(RobotConstants.RATE_LIMIT),
     { true }
   )
-
   override val intake = GroundIntake(
     createSparkMax("leftIntake", IntakeConstants.LEFT_MOTOR, NEOEncoder.creator(1.0, 1.0)),
     createSparkMax("rightIntake", IntakeConstants.RIGHT_MOTOR, NEOEncoder.creator(1.0, 1.0), inverted = true),
