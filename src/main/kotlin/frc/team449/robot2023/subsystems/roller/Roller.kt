@@ -7,7 +7,7 @@ import frc.team449.system.motor.WrappedMotor
 class Roller(
   private val rollerMotor: WrappedMotor,
   private val arm: Arm
-  ): SubsystemBase() {
+) : SubsystemBase() {
 
   fun runIntake() {
     rollerMotor.setVoltage(RollerConstants.INTAKE_VOLTAGE)
@@ -20,6 +20,4 @@ class Roller(
   fun stop() {
     rollerMotor.stopMotor()
   }
-
-
 }

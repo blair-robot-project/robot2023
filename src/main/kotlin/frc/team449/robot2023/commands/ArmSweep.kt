@@ -9,7 +9,7 @@ import frc.team449.robot2023.subsystems.arm.control.CartesianArmState
 
 class ArmSweep(
   private val arm: Arm,
-  private val target: Double,
+  private val input: () -> Double,
   private val PID: ProfiledPIDController,
   private val tolerance: Double
 ) : CommandBase() {
@@ -20,6 +20,8 @@ class ArmSweep(
     addRequirements(arm)
 
     PID.setTolerance(tolerance)
+
+    val target = (ArmConstants.LENGTH_1 + ArmConstants.LENGTH_2) / 2 * input()
 
     PID.setGoal(target)
   }
