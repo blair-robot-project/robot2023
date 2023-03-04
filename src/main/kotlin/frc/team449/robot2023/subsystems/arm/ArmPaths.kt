@@ -9,8 +9,6 @@ object ArmPaths {
   var STOW_CUBE = ArmTrajectory("Stow_Cube.json")
   var CONE_STOW = ArmTrajectory("Cone_Stow.json")
   var STOW_CONE = ArmTrajectory("Stow_Cone.json")
-  var PICKUP_STOW = ArmTrajectory("Pickup_Stow.json")
-  var STOW_PICKUP = ArmTrajectory("Stow_Pickup.json")
 
   // scoring trajs
   var LOW_STOW = ArmTrajectory("Low_Stow.json")
@@ -29,8 +27,6 @@ object ArmPaths {
     STOW_MID.parse()
     LOW_STOW.parse()
     STOW_LOW.parse()
-    PICKUP_STOW.parse()
-    STOW_PICKUP.parse()
     HIGH_STOW.parse()
     STOW_HIGH.parse()
   }

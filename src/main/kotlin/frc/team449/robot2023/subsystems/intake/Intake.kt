@@ -22,11 +22,11 @@ class Intake(
   }
 
   override fun periodic() {
-//    sensorVal = !sensor.get()
-//    if (sensorVal != previousVal && sensorVal) {
-//      pistonOn()
-//    }
-//    previousVal = sensorVal
+    sensorVal = !sensor.get()
+    if (sensorVal != previousVal && sensorVal) {
+      pistonOn()
+    }
+    previousVal = sensorVal
   }
 
   override fun initSendable(builder: SendableBuilder) {

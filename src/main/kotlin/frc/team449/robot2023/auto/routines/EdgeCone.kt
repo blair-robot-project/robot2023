@@ -21,7 +21,7 @@ class EdgeCone(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }
+        "dropCone" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
           .andThen(WaitCommand(3.0))
           .andThen(InstantCommand({ robot.intake.pistonRev() })),
         "stowAndGround" to SequentialCommandGroup(

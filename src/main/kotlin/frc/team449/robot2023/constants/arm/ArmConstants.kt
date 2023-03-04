@@ -13,10 +13,10 @@ object ArmConstants {
   // -
   // 0.430809
   // Encoder constants
-  const val PIVOT_ENCODER_CHAN = 8
+  const val PIVOT_ENCODER_CHAN = 3
   const val JOINT_ENCODER_CHAN = 1
-  const val PIVOT_ENCODER_OFFSET = .25 + 0.106746
-  const val JOINT_ENCODER_OFFSET = 0.430809 // 0.855081
+  const val PIVOT_ENCODER_OFFSET = 0.25 - (-0.102613)
+  const val JOINT_ENCODER_OFFSET = -0.180810 // 0.855081
 
   // PD Controller Constants
   const val kP1 = 9.0
@@ -63,46 +63,46 @@ object ArmConstants {
   // Arm States corresponding to points.
   val HIGH = ArmState(
     Rotation2d.fromDegrees(126.79),
-    Rotation2d.fromDegrees(17.28),
+    Rotation2d.fromDegrees(11.71),
     0.0,
     0.0
   )
   val MID = ArmState(
-    Rotation2d.fromDegrees(62.64),
-    Rotation2d.fromDegrees(-52.2),
+    Rotation2d.fromDegrees(56.28),
+    Rotation2d.fromDegrees(-36.97),
     0.0,
     0.0
   )
   val LOW = ArmState(
-    Rotation2d.fromDegrees(73.39),
-    Rotation2d.fromDegrees(-127.10),
+    Rotation2d.fromDegrees(67.54),
+    Rotation2d.fromDegrees(-115.97),
     0.0,
     0.0
   )
   val CUBE = ArmState(
-    Rotation2d.fromDegrees(62.72),
-    Rotation2d.fromDegrees(-126.09),
+    Rotation2d.fromDegrees(56.39),
+    Rotation2d.fromDegrees(-120.93),
     0.0,
     0.0
   )
   val STOW = ArmState(
-    Rotation2d.fromDegrees(93.27),
-    Rotation2d.fromDegrees(-143.07),
+    Rotation2d.fromDegrees(96.93),
+    Rotation2d.fromDegrees(-136.55),
     0.0,
     0.0
   )
-  val PICKUP = ArmState(
-    Rotation2d.fromDegrees(85.64),
-    Rotation2d.fromDegrees(-87.31),
-    0.0,
-    0.0
-  )
+//  val PICKUP = ArmState(
+//    Rotation2d.fromDegrees(85.64),
+//    Rotation2d.fromDegrees(-87.31),
+//    0.0,
+//    0.0
+//  )
   val CONE = ArmState(
-    Rotation2d.fromDegrees(63.52),
-    Rotation2d.fromDegrees(-132.3),
+    Rotation2d.fromDegrees(62.62),
+    Rotation2d.fromDegrees(-124.44),
     0.0,
     0.0
   )
 
-  val STATES = listOf(HIGH, MID, LOW, CUBE, STOW, PICKUP, CONE)
+  val STATES = listOf(HIGH, MID, LOW, CUBE, STOW, CONE)
 }

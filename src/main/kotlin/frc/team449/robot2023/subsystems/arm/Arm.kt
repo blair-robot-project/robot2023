@@ -129,8 +129,6 @@ open class Arm(
           ArmPaths.STOW_MID
         ArmConstants.LOW ->
           ArmPaths.STOW_LOW
-        ArmConstants.PICKUP ->
-          ArmPaths.STOW_PICKUP
         ArmConstants.CONE ->
           ArmPaths.STOW_CONE
         else ->
@@ -144,8 +142,6 @@ open class Arm(
           ArmPaths.MID_STOW
         ArmConstants.LOW ->
           ArmPaths.LOW_STOW
-        ArmConstants.PICKUP ->
-          ArmPaths.PICKUP_STOW
         ArmConstants.CONE ->
           ArmPaths.CONE_STOW
         else ->
