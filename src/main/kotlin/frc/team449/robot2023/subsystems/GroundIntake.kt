@@ -13,12 +13,12 @@ class GroundIntake(
   }
 
   fun run() {
-    leftMotor.set(0.2)
-    rightMotor.set(0.2)
+    leftMotor.set(0.1)
+    rightMotor.set(0.1)
   }
 
   fun runReverse() {
-    leftMotor.set(-0.2)
-    rightMotor.set(-0.2)
+    leftMotor.set(-0.05)
+    rightMotor.set(-0.05)
   }
 }

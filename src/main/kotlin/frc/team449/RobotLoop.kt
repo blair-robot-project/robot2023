@@ -36,7 +36,7 @@ class RobotLoop : TimedRobot() {
     SmartDashboard.putData("Field", robot.field)
     SmartDashboard.putData("Auto Chooser", autoChooser)
 
-    ControllerBindings(robot.driveController, robot).bindButtons()
+    ControllerBindings(robot.driveController, robot.driveController, robot).bindButtons()
   }
 
   override fun robotPeriodic() {
