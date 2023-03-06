@@ -1,48 +1,31 @@
 package frc.team449.robot2023.commands
 
-import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.CommandBase
-import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.Arm
-import frc.team449.robot2023.subsystems.arm.control.ArmKinematics
-import frc.team449.robot2023.subsystems.arm.control.CartesianArmState
+import frc.team449.robot2023.subsystems.arm.control.ArmState
 
 class ArmSweep(
   private val arm: Arm,
   private val input: () -> Double,
-  private val PID: ProfiledPIDController,
-  private val tolerance: Double
+  private var sweepBeta: Rotation2d
 ) : CommandBase() {
 
-  private val kinematics = ArmKinematics(ArmConstants.LENGTH_1, ArmConstants.LENGTH_2)
+  private lateinit var startState: ArmState
 
   init {
     addRequirements(arm)
-
-    PID.setTolerance(tolerance)
-
-    val target = (ArmConstants.LENGTH_1 + ArmConstants.LENGTH_2) / 2 * input()
-
-    PID.setGoal(target)
   }
 
+  override fun initialize() {
+    startState = arm.desiredState.copy()
+    if (startState.beta.degrees < 0) sweepBeta = -sweepBeta // go opposite direction
+  }
   override fun execute() {
-    arm.desiredState = kinematics.toAngularState(
-      CartesianArmState(
-        PID.calculate(arm.coordinate.x),
-        arm.coordinate.z,
-        0.0,
-        0.0
-      ),
-      arm.state
-    )!!
+    arm.desiredState.beta = startState.beta + sweepBeta * input()
   }
 
   override fun isFinished(): Boolean {
-    return PID.atGoal()
-  }
-
-  override fun end(interrupted: Boolean) {
-    arm.stop()
+    return false
   }
 }

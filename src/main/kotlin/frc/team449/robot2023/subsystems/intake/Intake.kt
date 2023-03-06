@@ -22,10 +22,10 @@ class Intake(
   }
 
   override fun periodic() {
-    sensorVal = !sensor.get()
-    if (sensorVal != previousVal && sensorVal) {
-      pistonOn()
-    }
+//    sensorVal = !sensor.get()
+//    if (sensorVal != previousVal && sensorVal) {
+//      pistonOn()
+//    }
     previousVal = sensorVal
   }
 

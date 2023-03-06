@@ -1,5 +1,7 @@
 package frc.team449.robot2023.subsystems.arm
 
+import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.arm.ArmConstants
@@ -9,9 +11,11 @@ import frc.team449.robot2023.subsystems.arm.control.ArmState
 import frc.team449.robot2023.subsystems.arm.control.ArmTrajectory
 import frc.team449.robot2023.subsystems.arm.control.CartesianArmState
 import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
+import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
+import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -26,12 +30,20 @@ import kotlin.math.sqrt
 open class Arm(
   val firstJoint: WrappedMotor,
   val secondJoint: WrappedMotor,
+  private val firstJointEncoder: QuadEncoder,
+  private val secondJointEncoder: QuadEncoder,
   private val feedForward: TwoJointArmFeedForward,
   @field:Log val controller: ArmPDController,
   firstToSecondJoint: Double,
-  secondJointToEndEffector: Double
+  secondJointToEndEffector: Double,
+  private val numSamples: Int = 150
 ) : Loggable, SubsystemBase() {
 
+  /** PWM signal measurement samples */
+  private var firstJointSamples = mutableListOf<Double>()
+  private var secondJointSamples = mutableListOf<Double>()
+  @Log
+  private var calibrated = false
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
     firstToSecondJoint,
@@ -55,16 +67,16 @@ open class Arm(
   @get:Log.ToString
   open var state: ArmState
     get() = ArmState(
-      Rotation2d(firstJoint.position),
-      Rotation2d(secondJoint.position),
-      firstJoint.velocity,
-      secondJoint.velocity
+      Rotation2d(MathUtil.inputModulus(firstJointEncoder.position, -PI, PI)),
+      Rotation2d(MathUtil.inputModulus(secondJointEncoder.position, -PI, PI)),
+      firstJointEncoder.velocity,
+      secondJointEncoder.velocity
     )
     set(state) {
-      // cap q2 between its hard limits
-//      state.beta = Rotation2d.fromDegrees(
-//        clamp(state.beta.degrees, -156.8, 151.15)
-//      )
+//    cap q2 between its hard limits
+      state.beta = Rotation2d.fromDegrees(
+        clamp(state.beta.degrees, -156.8, 151.15)
+      )
       // continue if state is same as last desired state
       if (state == desiredState) return
       controller.reset()
@@ -86,7 +98,33 @@ open class Arm(
     desiredState.betaVel = 0.0
   }
 
+  /**
+   * **!!! THE ARM BETTER BE STATIONARY WHEN DOING THIS !!!**
+   * Quadrature is better at measuring position but cannot measure absolute
+   * Read 500 PWM signals and take the high pulse readings to apply initial measurement for quad
+   */
+  fun resetQuadrature() {
+    firstJointSamples.removeAll { true }
+    secondJointSamples.removeAll { true }
+    calibrated = false
+  }
   override fun periodic() {
+    if (firstJointSamples.size < numSamples) {
+      firstJointSamples.add(firstJoint.position)
+      secondJointSamples.add(secondJoint.position)
+      return
+    }
+    if (firstJointSamples.size == numSamples && !calibrated) {
+      // update encoder reading of quad
+      firstJointSamples.sort()
+      secondJointSamples.sort()
+      val firstJointPos = firstJointSamples[(firstJointSamples.size * .9).toInt()]
+      val secondJointPos = secondJointSamples[(secondJointSamples.size * .9).toInt()]
+      firstJointEncoder.resetPosition(firstJointPos)
+      secondJointEncoder.resetPosition(secondJointPos)
+      calibrated = true
+      println("***** Finished Calibrating Quadrature reading *****")
+    }
     val ff = feedForward.calculate(desiredState.matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid

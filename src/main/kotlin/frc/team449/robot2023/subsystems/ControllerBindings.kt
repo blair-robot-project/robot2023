@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.POVButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.arm.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -59,16 +60,24 @@ class ControllerBindings(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }.withInterruptBehavior(kCancelIncoming)
     )
 
-    Trigger { abs(mechanismcontroller.leftY) > 0.3 || abs(mechanismcontroller.rightY) > 0.3 }.whileTrue(
+    Trigger { abs(mechanismcontroller.rightTriggerAxis) > 0.1 }.onTrue(
+      ArmSweep(
+        robot.arm,
+        { mechanismcontroller.rightTriggerAxis },
+        Rotation2d.fromDegrees(6.0)
+      )
+    )
+
+    Trigger { abs(mechanismcontroller.leftY) > 0.3 || abs(mechanismcontroller.rightY) > 0.3 }.onTrue(
       RepeatCommand(
         InstantCommand(
           {
-            val s = robot.arm.state
-            s.beta =
-              Rotation2d(s.beta.radians - MathUtil.applyDeadband(mechanismcontroller.leftY, .3) * .005)
-            s.theta =
-              Rotation2d(s.theta.radians - MathUtil.applyDeadband(mechanismcontroller.rightY, .3) * .005)
-            robot.arm.state = s
+            val newState = robot.arm.desiredState.copy()
+            newState.beta =
+              Rotation2d(newState.beta.radians - MathUtil.applyDeadband(mechanismcontroller.leftY, .3) * .005)
+            newState.theta =
+              Rotation2d(newState.theta.radians - MathUtil.applyDeadband(mechanismcontroller.rightY, .3) * .005)
+            robot.arm.state = newState
           }
         )
       ).until { abs(mechanismcontroller.leftY) <= 0.3 && abs(mechanismcontroller.rightY) <= 0.3 }

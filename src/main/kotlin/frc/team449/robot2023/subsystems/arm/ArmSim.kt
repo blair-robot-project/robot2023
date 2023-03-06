@@ -5,6 +5,7 @@ import frc.team449.robot2023.subsystems.arm.control.ArmPDController
 import frc.team449.robot2023.subsystems.arm.control.ArmState
 import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.encoder.Encoder
+import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
 
 /**
@@ -13,34 +14,35 @@ import frc.team449.system.motor.WrappedMotor
 class ArmSim(
   firstJoint: WrappedMotor,
   secondJoint: WrappedMotor,
+  firstJointEncoder: QuadEncoder,
+  secondJointEncoder: QuadEncoder,
   feedForward: TwoJointArmFeedForward,
   controller: ArmPDController,
   firstToSecondJoint: Double,
   secondJointToEndEffector: Double
-) : Arm(firstJoint, secondJoint, feedForward, controller, firstToSecondJoint, secondJointToEndEffector) {
+) : Arm(firstJoint, secondJoint, firstJointEncoder, secondJointEncoder, feedForward, controller, firstToSecondJoint, secondJointToEndEffector) {
 
-  private val firstJointEncoder = Encoder.SimController(firstJoint.encoder)
-  private val secondJointEncoder = Encoder.SimController(secondJoint.encoder)
+  private val firstJointEnc = Encoder.SimController(firstJoint.encoder)
+  private val secondJointEnc = Encoder.SimController(secondJoint.encoder)
   override var state: ArmState
     get() =
       ArmState(
-        Rotation2d(firstJointEncoder.position),
-        Rotation2d(secondJointEncoder.position),
-        firstJointEncoder.velocity,
-        secondJointEncoder.velocity
+        Rotation2d(firstJointEnc.position),
+        Rotation2d(secondJointEnc.position),
+        firstJointEnc.velocity,
+        secondJointEnc.velocity
       )
     set(value) {
-      super.state = value
+      desiredState = value
     }
 
   override fun periodic() {
-    firstJointEncoder.velocity = desiredState.thetaVel
-    secondJointEncoder.velocity = desiredState.betaVel
-    firstJointEncoder.position = desiredState.theta.radians
-    secondJointEncoder.position = desiredState.beta.radians
-    super.periodic()
-    firstJointEncoder.position = firstJointEncoder.position + firstJointEncoder.velocity * .02
-    secondJointEncoder.position = secondJointEncoder.position + secondJointEncoder.velocity * .02
+    firstJointEnc.velocity = desiredState.thetaVel
+    secondJointEnc.velocity = desiredState.betaVel
+    firstJointEnc.position = desiredState.theta.radians
+    secondJointEnc.position = desiredState.beta.radians
+    firstJointEnc.position = firstJointEnc.position + firstJointEnc.velocity * .02
+    secondJointEnc.position = secondJointEnc.position + secondJointEnc.velocity * .02
     visual.setState(state, desiredState)
   }
 }
