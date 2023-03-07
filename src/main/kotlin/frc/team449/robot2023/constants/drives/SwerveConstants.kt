@@ -17,7 +17,7 @@ object SwerveConstants {
   const val TURN_ENC_CHAN_FL = 8
   const val TURN_ENC_CHAN_FR = 7
   const val TURN_ENC_CHAN_BL = 9
-  const val TURN_ENC_CHAN_BR = 10
+  const val TURN_ENC_CHAN_BR = 6
 
   // BL 0.205474
   // BR 0.620525

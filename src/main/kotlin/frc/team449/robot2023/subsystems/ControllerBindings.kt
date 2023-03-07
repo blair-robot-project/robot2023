@@ -24,6 +24,27 @@ class ControllerBindings(
 
   fun bindButtons() {
 
+    JoystickButton(drivecontroller, XboxController.Button.kLeftBumper.value).onTrue(
+      InstantCommand(robot.groundIntake::runIntakeReverse)
+    ).onFalse(
+      InstantCommand(robot.groundIntake::stop)
+    )
+
+    JoystickButton(drivecontroller, XboxController.Button.kRightBumper.value).onTrue(
+      InstantCommand(robot.groundIntake::runIntake)
+    ).onFalse(
+      InstantCommand(robot.groundIntake::stop)
+    )
+
+
+    POVButton(drivecontroller, 0).onTrue(
+      InstantCommand(robot.groundIntake::retract)
+    )
+
+    POVButton(drivecontroller, 180).onTrue(
+      InstantCommand(robot.groundIntake::deploy)
+    )
+
     JoystickButton(mechanismcontroller, XboxController.Button.kB.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.LOW) }.withInterruptBehavior(kCancelIncoming)
     )

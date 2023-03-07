@@ -12,9 +12,11 @@ import frc.team449.robot2023.subsystems.arm.ArmSim
 import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
 import frc.team449.robot2023.subsystems.arm.control.ArmPDController
 import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
-import frc.team449.robot2023.subsystems.intake.Intake
-import frc.team449.robot2023.subsystems.intake.IntakeConstants
+import frc.team449.robot2023.subsystems.endEffector.EndEffector
+import frc.team449.robot2023.subsystems.endEffector.EndEffectorConstants
+import frc.team449.robot2023.subsystems.groundIntake.GroundIntake
 import frc.team449.system.AHRS
+import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
@@ -123,17 +125,45 @@ class Robot : RobotBase() {
   // create intake
   private val intakeClamp = DoubleSolenoid(
     PneumaticsModuleType.CTREPCM,
-    IntakeConstants.FORWARD_CHANNEL,
-    IntakeConstants.REVERSE_CHANNEL
+    EndEffectorConstants.FORWARD_CHANNEL,
+    EndEffectorConstants.REVERSE_CHANNEL
+  )
+
+  // create ground intake motors
+  private val groundIntakeMotor = createSparkMax(
+    "rightGroundIntake",
+    20,
+    NEOEncoder.creator(
+      2 * PI,
+      1.0 / 3.0
+    ),
+    inverted = false,
+    currentLimit = 20,
+    slaveSparks = mapOf(
+      21 to true
+    )
+  )
+
+  // create ground intake pistons
+  private val groundIntakePiston = DoubleSolenoid(
+    PneumaticsModuleType.CTREPCM,
+    7,
+    0
   )
 
   private val infrared = DigitalInput(
-    IntakeConstants.SENSOR_CHANNEL
+    EndEffectorConstants.SENSOR_CHANNEL
   )
 
   @Log(name = "Intake")
-  val intake = Intake(
+  val intake = EndEffector(
     intakeClamp,
     infrared
+  )
+
+  val groundIntake = GroundIntake(
+    groundIntakeMotor,
+    groundIntakePiston,
+    arm
   )
 }
