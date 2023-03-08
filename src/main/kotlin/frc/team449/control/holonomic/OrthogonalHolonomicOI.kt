@@ -176,7 +176,7 @@ class OrthogonalHolonomicOI(
         { if (abs(driveController.getRawAxis(4)) < RobotConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
         SlewRateLimiter(RobotConstants.RATE_LIMIT),
         RobotConstants.MAX_ACCEL,
-        { !driveController.leftBumper },
+        { driveController.leftTriggerAxis < 0.8 },
         RobotConstants.ORTHOGONAL_CONTROLLER,
         { driveController.yButtonPressed },
         { driveController.xButtonPressed },

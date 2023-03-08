@@ -2,6 +2,7 @@ package frc.team449.robot2023.subsystems.groundIntake
 
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.arm.Arm
 import frc.team449.system.motor.WrappedMotor
 

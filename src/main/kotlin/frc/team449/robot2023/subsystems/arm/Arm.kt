@@ -4,7 +4,7 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.team449.robot2023.constants.arm.ArmConstants
+import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmKinematics
 import frc.team449.robot2023.subsystems.arm.control.ArmPDController
 import frc.team449.robot2023.subsystems.arm.control.ArmState

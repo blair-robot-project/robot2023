@@ -6,14 +6,15 @@ import frc.team449.RobotBase
 import frc.team449.control.holonomic.OrthogonalHolonomicOI.Companion.createOrthogonalHolonomicOI
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.constants.RobotConstants
-import frc.team449.robot2023.constants.arm.ArmConstants
+import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.Arm
 import frc.team449.robot2023.subsystems.arm.ArmSim
 import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
 import frc.team449.robot2023.subsystems.arm.control.ArmPDController
 import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.robot2023.subsystems.endEffector.EndEffector
-import frc.team449.robot2023.subsystems.endEffector.EndEffectorConstants
+import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
+import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.groundIntake.GroundIntake
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.NEOEncoder
@@ -122,17 +123,17 @@ class Robot : RobotBase() {
       ArmConstants.LENGTH_2
     )
 
-  // create intake
-  private val intakeClamp = DoubleSolenoid(
+  // create end effector
+  private val endEffectorClamp = DoubleSolenoid(
     PneumaticsModuleType.CTREPCM,
     EndEffectorConstants.FORWARD_CHANNEL,
     EndEffectorConstants.REVERSE_CHANNEL
   )
 
-  // create ground intake motors
+  // create ground end effector motors
   private val groundIntakeMotor = createSparkMax(
-    "rightGroundIntake",
-    20,
+    "GroundIntake",
+    GroundIntakeConstants.INTAKE_RIGHT,
     NEOEncoder.creator(
       2 * PI,
       1.0 / 3.0
@@ -140,7 +141,7 @@ class Robot : RobotBase() {
     inverted = false,
     currentLimit = 20,
     slaveSparks = mapOf(
-      21 to true
+      GroundIntakeConstants.INTAKE_LEFT to true
     )
   )
 
@@ -155,9 +156,9 @@ class Robot : RobotBase() {
     EndEffectorConstants.SENSOR_CHANNEL
   )
 
-  @Log(name = "Intake")
-  val intake = EndEffector(
-    intakeClamp,
+  @Log(name = "End Effector")
+  val endEffector = EndEffector(
+    endEffectorClamp,
     infrared
   )
 

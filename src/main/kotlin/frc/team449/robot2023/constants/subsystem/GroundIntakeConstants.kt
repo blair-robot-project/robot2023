@@ -1,4 +1,4 @@
-package frc.team449.robot2023.subsystems.groundIntake
+package frc.team449.robot2023.constants.subsystem
 
 object GroundIntakeConstants {
 

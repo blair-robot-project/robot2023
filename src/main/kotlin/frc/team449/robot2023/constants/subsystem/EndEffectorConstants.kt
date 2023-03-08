@@ -1,4 +1,4 @@
-package frc.team449.robot2023.subsystems.endEffector
+package frc.team449.robot2023.constants.subsystem
 
 object EndEffectorConstants {
   const val FORWARD_CHANNEL = 5

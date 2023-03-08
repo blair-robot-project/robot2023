@@ -5,7 +5,7 @@ import edu.wpi.first.math.Matrix.mat
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
-import frc.team449.robot2023.constants.arm.ArmConstants
+import frc.team449.robot2023.constants.subsystem.ArmConstants
 import kotlin.math.cos
 import kotlin.math.sin
 
