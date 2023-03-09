@@ -18,8 +18,8 @@ object ArmConstants {
   const val SECOND_ENCODER_CHAN = 0
   const val FIRST_ENCODER_OFFSET = 0.25 - (-0.102613)
   const val SECOND_ENCODER_OFFSET = -0.180810 // 0.855081
-  val FIRSTJ_QUAD_ENCODER = Encoder(5, 4)
-  val SECONDJ_QUAD_ENCODER = Encoder(2, 1)
+  val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
+  val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
   // PD Controller Constants
   const val kP1 = 10.0
   const val kP2 = 10.0
@@ -93,7 +93,14 @@ object ArmConstants {
     0.0,
     0.0
   )
-//  val PICKUP = ArmState(
+
+  val FORWARD = ArmState(
+    Rotation2d.fromDegrees(90.22),
+    Rotation2d.fromDegrees(-124.9),
+    0.0,
+    0.0
+  )
+  //  val PICKUP = ArmState(
 //    Rotation2d.fromDegrees(85.64),
 //    Rotation2d.fromDegrees(-87.31),
 //    0.0,
@@ -106,5 +113,5 @@ object ArmConstants {
     0.0
   )
 
-  val STATES = listOf(HIGH, MID, LOW, CUBE, STOW, CONE)
+  val STATES = listOf(HIGH, MID, LOW, CUBE, STOW)
 }
