@@ -14,6 +14,8 @@ import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
+import frc.team449.robot2023.subsystems.groundIntake.GroundIntake
+import java.time.Instant
 import kotlin.math.abs
 
 class ControllerBindings(
@@ -24,26 +26,19 @@ class ControllerBindings(
 
   fun bindButtons() {
 
-    JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
-      InstantCommand(robot.groundIntake::runIntakeReverse)
-    ).onFalse(
-      InstantCommand(robot.groundIntake::stop)
-    )
-
     JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
-      InstantCommand(robot.groundIntake::runIntake)
-    ).onFalse(
-      InstantCommand(robot.groundIntake::stop)
-    )
+      InstantCommand(robot.groundIntake::deploy).andThen(
+        InstantCommand(robot.groundIntake::runIntake)
+      )).onFalse(
+      InstantCommand(robot.groundIntake::stop).andThen(
+        InstantCommand(robot.groundIntake::retract)
+      ))
 
 
-    POVButton(driveController, 0).onTrue(
-      InstantCommand(robot.groundIntake::retract)
+    JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
+        robot.groundIntake.handoff()
     )
 
-    POVButton(driveController, 180).onTrue(
-      InstantCommand(robot.groundIntake::deploy)
-    )
 
     JoystickButton(mechanismController, XboxController.Button.kB.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.LOW) }.withInterruptBehavior(kCancelIncoming)

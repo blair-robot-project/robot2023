@@ -88,8 +88,8 @@ object ArmConstants {
     0.0
   )
   val STOW = ArmState(
-    Rotation2d.fromDegrees(108.69),
-    Rotation2d.fromDegrees(-144.79),
+    Rotation2d.fromDegrees(106.94),
+    Rotation2d.fromDegrees(-141.78),
     0.0,
     0.0
   )
