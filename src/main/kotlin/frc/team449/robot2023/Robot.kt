@@ -165,6 +165,7 @@ class Robot : RobotBase() {
   val groundIntake = GroundIntake(
     groundIntakeMotor,
     groundIntakePiston,
-    arm
+    arm,
+    endEffector
   )
 }

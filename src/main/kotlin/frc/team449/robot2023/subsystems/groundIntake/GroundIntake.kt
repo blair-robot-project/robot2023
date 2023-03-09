@@ -45,15 +45,15 @@ class GroundIntake(
   }
 
   fun handoff(): Command {
-    if (arm.state == ArmConstants.STOW && this.retracted) {
-      return InstantCommand(this::runIntakeReverse).andThen(
+    return if (arm.state == ArmConstants.STOW && this.retracted) {
+      InstantCommand(this::runIntakeReverse).andThen(
         WaitCommand(0.1)
       ).andThen(
         endEffector::pistonOn
       )
     }
     else {
-      return InstantCommand()
+      InstantCommand()
     }
   }
 
