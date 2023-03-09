@@ -159,31 +159,19 @@ open class Arm(
   fun chooseTraj(endpoint: ArmState): ArmTrajectory? {
     val startPoint = getClosestState(this.desiredState)
     if (endpoint == startPoint) return null
-    if (startPoint == ArmConstants.STOW) {
-      return when (endpoint) {
+    return if (startPoint == ArmConstants.STOW) {
+      when (endpoint) {
         ArmConstants.HIGH ->
           ArmPaths.STOW_HIGH
-        ArmConstants.MID ->
-          ArmPaths.STOW_MID
-        ArmConstants.LOW ->
-          ArmPaths.STOW_LOW
-        ArmConstants.CONE ->
-          ArmPaths.STOW_CONE
         else ->
-          ArmPaths.STOW_CUBE
+          ArmPaths.STOW_MID
       }
     } else {
-      return when (startPoint) {
+      when (startPoint) {
         ArmConstants.HIGH ->
           ArmPaths.HIGH_STOW
-        ArmConstants.MID ->
-          ArmPaths.MID_STOW
-        ArmConstants.LOW ->
-          ArmPaths.LOW_STOW
-        ArmConstants.CONE ->
-          ArmPaths.CONE_STOW
         else ->
-          ArmPaths.CUBE_STOW
+          ArmPaths.MID_STOW
       }
     }
   }

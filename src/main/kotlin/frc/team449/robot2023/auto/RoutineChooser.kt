@@ -3,7 +3,6 @@ package frc.team449.robot2023.auto
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
-import frc.team449.robot2023.auto.routines.*
 
 class RoutineChooser(private val robot: Robot, position: PositionChooser) : SendableChooser<RoutineStructure>() {
   init {
@@ -18,6 +17,5 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
     this.addOption("Cone and Cube", EdgeConeCube(robot, position))
     this.addOption("Cone and Balance", EdgeConeStation(robot, position))
     this.addOption("Cone Cube and Balance", EdgeConeCubeStation(robot, position))
-
   }
 }

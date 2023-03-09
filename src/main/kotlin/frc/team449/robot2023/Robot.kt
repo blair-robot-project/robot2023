@@ -7,14 +7,14 @@ import frc.team449.control.holonomic.OrthogonalHolonomicOI.Companion.createOrtho
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
+import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.arm.Arm
 import frc.team449.robot2023.subsystems.arm.ArmSim
 import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
 import frc.team449.robot2023.subsystems.arm.control.ArmPDController
 import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.robot2023.subsystems.endEffector.EndEffector
-import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
-import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.groundIntake.GroundIntake
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.NEOEncoder

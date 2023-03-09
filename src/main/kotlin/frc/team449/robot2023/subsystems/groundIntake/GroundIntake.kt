@@ -38,25 +38,27 @@ class GroundIntake(
   fun toggleRollerState() {
     if (retracted) {
       deploy()
-    }
-    else {
+    } else {
       retract()
     }
   }
 
   fun handoff(): Command {
     return if (arm.state == ArmConstants.STOW && this.retracted) {
-      InstantCommand(this::runIntakeReverse).andThen(
+      InstantCommand(::runIntakeReverse).andThen(
         WaitCommand(0.1)
       ).andThen(
         endEffector::pistonOn
       )
-    }
-    else {
+    } else {
       InstantCommand()
     }
   }
 
+  fun scoreLow(): Command {
+    return InstantCommand(::deploy)
+      .andThen(::runIntakeReverse)
+  }
   fun stop() {
     intakeMotor.stopMotor()
   }

@@ -7,9 +7,9 @@ import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoUtil
 
-class DropCone (
+class DropCone(
   private val robot: Robot
-): RoutineStructure {
+) : RoutineStructure {
 
   override val routine = HolonomicRoutine(
     drive = robot.drive,

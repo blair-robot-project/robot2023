@@ -14,8 +14,6 @@ import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
-import frc.team449.robot2023.subsystems.groundIntake.GroundIntake
-import java.time.Instant
 import kotlin.math.abs
 
 class ControllerBindings(
@@ -29,19 +27,19 @@ class ControllerBindings(
     JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
       InstantCommand(robot.groundIntake::deploy).andThen(
         InstantCommand(robot.groundIntake::runIntake)
-      )).onFalse(
+      )
+    ).onFalse(
       InstantCommand(robot.groundIntake::stop).andThen(
         InstantCommand(robot.groundIntake::retract)
-      ))
-
-
-    JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
-        robot.groundIntake.handoff()
+      )
     )
 
+    JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
+      robot.groundIntake.handoff()
+    )
 
     JoystickButton(mechanismController, XboxController.Button.kB.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.LOW) }.withInterruptBehavior(kCancelIncoming)
+      robot.groundIntake.scoreLow()
     )
 
     JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
@@ -64,14 +62,6 @@ class ControllerBindings(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming)
     )
 
-    JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
-      InstantCommand(robot.endEffector::pistonRev)
-        .andThen(
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }
-        )
-        .withInterruptBehavior(kCancelIncoming)
-    )
-
     POVButton(mechanismController, 0).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }.withInterruptBehavior(kCancelIncoming)
     )
@@ -80,7 +70,7 @@ class ControllerBindings(
       ArmSweep(
         robot.arm,
         { mechanismController.rightTriggerAxis },
-        Rotation2d.fromDegrees(6.0)
+        Rotation2d.fromDegrees(5.0)
       )
     )
 
