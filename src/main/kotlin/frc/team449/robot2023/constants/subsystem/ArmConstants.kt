@@ -65,7 +65,7 @@ object ArmConstants {
   // Arm States corresponding to points.
   val HIGH = ArmState(
     Rotation2d.fromDegrees(128.12),
-    Rotation2d.fromDegrees(13.50),
+    Rotation2d(0.205619455575943),
     0.0,
     0.0
   )

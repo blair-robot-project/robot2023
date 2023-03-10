@@ -35,8 +35,8 @@ import org.photonvision.PhotonPoseEstimator
 open class SwerveDrive(
   private val modules: List<SwerveModule>,
   private val ahrs: AHRS,
-  override val maxLinearSpeed: Double,
-  override val maxRotSpeed: Double,
+  override var maxLinearSpeed: Double,
+  override var maxRotSpeed: Double,
   private val cameras: List<PhotonPoseEstimator> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
 

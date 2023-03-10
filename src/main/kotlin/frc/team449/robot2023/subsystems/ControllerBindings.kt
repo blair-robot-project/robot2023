@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.commands.AutoBalance
+import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import kotlin.math.abs
@@ -36,10 +37,17 @@ class ControllerBindings(
     ).onFalse(
       InstantCommand(robot.groundIntake::stop).andThen(
         InstantCommand(robot.groundIntake::retract)
-      ).andThen(WaitCommand(.5)).andThen(
+      ).andThen(WaitCommand(.7)).andThen(
         InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }
         )
       )
+    )
+
+    // drive speed overdrive trigger
+    Trigger { driveController.rightTriggerAxis >= .1 }.onTrue(
+      InstantCommand({ robot.drive.maxLinearSpeed = 1.0 })
+    ).onFalse(
+      InstantCommand({ robot.drive.maxLinearSpeed = RobotConstants.MAX_LINEAR_SPEED })
     )
 
     JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
@@ -68,7 +76,11 @@ class ControllerBindings(
 
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
       SequentialCommandGroup(
-        InstantCommand(robot.groundIntake::runIntakeReverse),
+        InstantCommand({
+          if (robot.arm.desiredState == ArmConstants.STOW) {
+            robot.groundIntake.runIntakeReverse()
+          }
+        }),
         ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming),
         InstantCommand(robot.groundIntake::stop)
       )
@@ -76,7 +88,11 @@ class ControllerBindings(
 
     JoystickButton(mechanismController, XboxController.Button.kY.value).onTrue(
       SequentialCommandGroup(
-        InstantCommand(robot.groundIntake::runIntakeReverse),
+        InstantCommand({
+          if (robot.arm.desiredState == ArmConstants.STOW) {
+            robot.groundIntake.runIntakeReverse()
+          }
+        }),
         ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming),
         InstantCommand(robot.groundIntake::stop)
       )

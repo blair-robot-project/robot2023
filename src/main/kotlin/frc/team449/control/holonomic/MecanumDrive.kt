@@ -48,8 +48,8 @@ open class MecanumDrive(
   backLeftLocation: Translation2d,
   backRightLocation: Translation2d,
   private val ahrs: AHRS,
-  override val maxLinearSpeed: Double,
-  override val maxRotSpeed: Double,
+  override var maxLinearSpeed: Double,
+  override var maxRotSpeed: Double,
   private val feedForward: SimpleMotorFeedforward,
   private val controller: () -> PIDController,
   private val cameras: List<PhotonPoseEstimator> = mutableListOf()
