@@ -1,6 +1,5 @@
 package frc.team449.robot2023.auto.routines
 
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
@@ -21,9 +20,7 @@ class EdgeConeCubeStation(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCone" to AutoUtil.dropPiece(robot),
-        "deployIntake" to AutoUtil.deployGroundIntake(robot),
-        "runIntake" to InstantCommand(robot.groundIntake::runIntake),
-        "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
+        "stowArm" to AutoUtil.stowAndDeploy(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "handoff" to robot.groundIntake.handoff(),
         "highArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) },

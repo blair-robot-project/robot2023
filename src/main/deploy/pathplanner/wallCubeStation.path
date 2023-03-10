@@ -18,10 +18,9 @@
       "stopEvent": {
         "names": [
           "dropCone",
-          "deployIntake",
-          "runIntake"
+          "stowArm"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -82,12 +81,5 @@
   "maxVelocity": 4.0,
   "maxAcceleration": 5.0,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 0.174545454545457,
-      "names": [
-        "stowArm"
-      ]
-    }
-  ]
+  "markers": []
 }

@@ -18,25 +18,24 @@
       "stopEvent": {
         "names": [
           "dropCone",
-          "deployIntake",
-          "runIntake"
+          "stowArm"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 6.648734664990697,
+        "x": 6.534542983615882,
         "y": 0.9135334509985259
       },
       "prevControl": {
-        "x": 2.9942243735139735,
+        "x": 2.8800326921391584,
         "y": 0.30595977971083177
       },
       "nextControl": {
-        "x": 2.9942243735139735,
+        "x": 2.8800326921391584,
         "y": 0.30595977971083177
       },
       "holonomicAngle": 0,
@@ -74,7 +73,8 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "dropCube"
+          "dropCube",
+          "stowArm"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -114,18 +114,6 @@
       "position": 1.0909090909090353,
       "names": [
         "highArm"
-      ]
-    },
-    {
-      "position": 0.21818181818183052,
-      "names": [
-        "stowArm"
-      ]
-    },
-    {
-      "position": 2.2472727272726147,
-      "names": [
-        "stowArm"
       ]
     }
   ]

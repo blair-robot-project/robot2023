@@ -18,10 +18,9 @@
       "stopEvent": {
         "names": [
           "dropCube",
-          "deployIntake",
-          "runIntake"
+          "stowArm"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -46,7 +45,7 @@
           "stopIntake",
           "handoff"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "before",
         "waitTime": 1.5
       }
@@ -55,13 +54,5 @@
   "maxVelocity": 4.0,
   "maxAcceleration": 5.0,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 0.07272727272726642,
-      "names": [
-        "event",
-        "stowArm"
-      ]
-    }
-  ]
+  "markers": []
 }

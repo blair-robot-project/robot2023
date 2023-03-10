@@ -4,10 +4,7 @@ import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
-import edu.wpi.first.wpilibj2.command.WaitCommand
+import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -72,13 +69,13 @@ object AutoUtil {
     )
   }
 
-  fun deployGroundIntake(robot: Robot): Command {
-    return InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }).andThen(
-      InstantCommand(robot.groundIntake::deploy).andThen(
-        InstantCommand(robot.groundIntake::runIntake)
-      ).andThen(
-        robot.endEffector::pistonRev
-      )
+  fun stowAndDeploy(robot: Robot): Command {
+    return SequentialCommandGroup(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
+      InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }),
+      InstantCommand(robot.groundIntake::deploy),
+      InstantCommand(robot.groundIntake::runIntake),
+      InstantCommand(robot.endEffector::pistonRev),
     )
   }
 
