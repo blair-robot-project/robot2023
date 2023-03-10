@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "dropCone",
+          "dropCube",
           "stowArm"
         ],
         "executionBehavior": "sequential",

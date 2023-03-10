@@ -16,7 +16,7 @@ class CenterCubeStation(robot: Robot) : RoutineStructure {
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCube" to AutoUtil.dropPiece(robot),
+        "dropCube" to AutoUtil.dropCone(robot),
         "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
         "balanceStation" to AutoBalance.create(robot.drive)
       )
