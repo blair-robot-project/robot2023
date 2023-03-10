@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.robot2023.subsystems.arm.Arm
 import frc.team449.robot2023.subsystems.arm.control.ArmState
+import kotlin.math.abs
 
 class ArmSweep(
   private val arm: Arm,
@@ -19,8 +20,8 @@ class ArmSweep(
 
   override fun initialize() {
     startState = arm.desiredState.copy()
-    if (startState.beta.degrees <= 0.0) sweepBeta = Rotation2d.fromDegrees(-sweepBeta.degrees)
-    else sweepBeta = Rotation2d.fromDegrees(sweepBeta.degrees)
+    sweepBeta = if (startState.beta.degrees <= 0.0) Rotation2d.fromDegrees(-abs(sweepBeta.degrees))
+    else Rotation2d.fromDegrees(abs(sweepBeta.degrees))
   }
   override fun execute() {
     arm.desiredState.beta = startState.beta + sweepBeta * input()
