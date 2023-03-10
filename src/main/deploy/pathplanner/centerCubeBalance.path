@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7999927428426288,
-        "y": 0.5296454878624047
+        "x": 1.7841690384235467,
+        "y": 2.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0433433724010306,
-        "y": 0.5582749736928053
+        "x": 1.944037392348289,
+        "y": 2.738580831862519
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -17,47 +17,44 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "dropCone",
-          "deployIntake",
-          "runIntake"
+          "dropCube"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 6.648734664990697,
-        "y": 0.9249526191360088
+        "x": 3.25,
+        "y": 2.75
       },
       "prevControl": {
-        "x": 6.2216439511601465,
-        "y": 0.887548338813664
+        "x": 2.9183256327531564,
+        "y": 2.75
       },
       "nextControl": null,
       "holonomicAngle": 0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 1.0,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "stopIntake",
-          "handoff"
+          "balanceTesting"
         ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "before",
-        "waitTime": 1.5
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
       }
     }
   ],
   "maxVelocity": 4.0,
-  "maxAcceleration": 5.0,
+  "maxAcceleration": 2.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 0.17454545454544457,
+      "position": 0.05818181818181281,
       "names": [
         "stowArm"
       ]

@@ -17,7 +17,9 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "dropCone"
+          "dropCone",
+          "deployIntake",
+          "runIntake"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -26,16 +28,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.409339961537065,
-        "y": 0.9304582894880083
+        "x": 6.648734664990697,
+        "y": 0.9135334509985259
       },
       "prevControl": {
-        "x": 2.7548296700603414,
-        "y": 0.3228846182003142
+        "x": 2.9942243735139735,
+        "y": 0.30595977971083177
       },
       "nextControl": {
-        "x": 2.7548296700603414,
-        "y": 0.3228846182003142
+        "x": 2.9942243735139735,
+        "y": 0.30595977971083177
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -43,10 +45,13 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "stopIntake",
+          "handoff"
+        ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "before",
+        "waitTime": 1.5
       }
     },
     {
@@ -55,12 +60,12 @@
         "y": 1.0700105610737545
       },
       "prevControl": {
-        "x": 2.1219737176316458,
-        "y": 1.0972153523254424
+        "x": 1.841264879110955,
+        "y": 1.187593486298084
       },
       "nextControl": {
-        "x": 2.1219737176316458,
-        "y": 1.0972153523254424
+        "x": 1.841264879110955,
+        "y": 1.187593486298084
       },
       "holonomicAngle": 0.0,
       "isReversal": true,
@@ -79,11 +84,11 @@
     {
       "anchorPoint": {
         "x": 3.2600965201930405,
-        "y": 2.1328966943648173
+        "y": 2.2
       },
       "prevControl": {
-        "x": 2.2437497732138323,
-        "y": 2.1472114372800175
+        "x": 2.1495824188229578,
+        "y": 2.1696419461214993
       },
       "nextControl": null,
       "holonomicAngle": 0.0,
@@ -101,20 +106,20 @@
       }
     }
   ],
-  "maxVelocity": null,
+  "maxVelocity": 4.0,
   "maxAcceleration": 5.0,
   "isReversed": null,
   "markers": [
     {
       "position": 1.0909090909090353,
       "names": [
-        "stowAndHigh"
+        "highArm"
       ]
     },
     {
       "position": 0.21818181818183052,
       "names": [
-        "stowAndGround"
+        "stowArm"
       ]
     },
     {

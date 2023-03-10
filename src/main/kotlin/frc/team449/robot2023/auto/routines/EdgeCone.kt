@@ -2,7 +2,6 @@ package frc.team449.robot2023.auto.routines
 
 import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
@@ -21,20 +20,19 @@ class EdgeCone(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to AutoUtil.dropCone(robot),
-        "stowAndGround" to SequentialCommandGroup(
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) },
-          InstantCommand(robot.groundIntake::deploy),
-          InstantCommand(robot.groundIntake::runIntake)
-        )
+        "dropCone" to AutoUtil.dropPiece(robot),
+        "deployIntake" to AutoUtil.deployGroundIntake(robot),
+        "runIntake" to InstantCommand(robot.groundIntake::runIntake),
+        "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
+        "stopIntake" to AutoUtil.retractGroundIntake(robot),
+        "handoff" to robot.groundIntake.handoff()
       )
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
-    if (position == PositionChooser.POSITIONS.FAR) {
-      Paths.FARCONE
+    if (position == PositionChooser.POSITIONS.FARCONE) {
+      Paths.FAR.CONE
     } else {
-      Paths.WALLCONE
+      Paths.WALL.CONE
     }
 }

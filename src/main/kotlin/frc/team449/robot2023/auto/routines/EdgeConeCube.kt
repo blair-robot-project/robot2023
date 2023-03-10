@@ -2,7 +2,6 @@ package frc.team449.robot2023.auto.routines
 
 import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
@@ -21,24 +20,21 @@ class EdgeConeCube(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to AutoUtil.dropCone(robot),
-        "stowAndGround" to SequentialCommandGroup(
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
-        ),
-        "stowAndHigh" to SequentialCommandGroup(
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
-        ),
-        "dropCube" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.andThen(InstantCommand({ robot.endEffector.pistonRev() })),
-        "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
+        "dropCone" to AutoUtil.dropPiece(robot),
+        "deployIntake" to AutoUtil.deployGroundIntake(robot),
+        "runIntake" to InstantCommand(robot.groundIntake::runIntake),
+        "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
+        "stopIntake" to AutoUtil.retractGroundIntake(robot),
+        "handoff" to robot.groundIntake.handoff(),
+        "highArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) },
+        "dropCube" to AutoUtil.dropPiece(robot)
       )
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
-    if (position == PositionChooser.POSITIONS.FAR) {
-      Paths.FARCONECUBE
+    if (position == PositionChooser.POSITIONS.FARCONE) {
+      Paths.FAR.CONECUBE
     } else {
-      Paths.WALLCONECUBE
+      Paths.WALL.CONECUBE
     }
 }

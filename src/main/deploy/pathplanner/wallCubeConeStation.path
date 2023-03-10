@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7713632570122286,
-        "y": 0.501016002032004
+        "x": 1.7841690384235467,
+        "y": 1.0391443005108238
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0147138865706307,
-        "y": 0.5296454878624034
+        "x": 1.966875728623252,
+        "y": 1.027725132373342
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -32,14 +32,14 @@
         "y": 0.9135334509985259
       },
       "prevControl": {
-        "x": 6.466027974790992,
-        "y": 0.8678567784486001
+        "x": 4.456254382594235,
+        "y": 0.7079884245238581
       },
       "nextControl": {
-        "x": 6.466027974790992,
-        "y": 0.8678567784486001
+        "x": 4.456254382594235,
+        "y": 0.7079884245238581
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -56,12 +56,39 @@
     },
     {
       "anchorPoint": {
-        "x": 4.534108639645851,
-        "y": 2.1185819514496176
+        "x": 1.7841690384235467,
+        "y": 0.4910242299117076
       },
       "prevControl": {
-        "x": 6.785764682640477,
-        "y": 2.2838336274963154
+        "x": 1.8983607197983627,
+        "y": 0.46818589363674523
+      },
+      "nextControl": {
+        "x": 1.8983607197983627,
+        "y": 0.46818589363674523
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "dropCube"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.3,
+        "y": 2.4665403176960194
+      },
+      "prevControl": {
+        "x": 1.601462348223842,
+        "y": 2.4665403176960194
       },
       "nextControl": null,
       "holonomicAngle": 0.0,
@@ -84,7 +111,19 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.30545454545452394,
+      "position": 1.0909090909090353,
+      "names": [
+        "highArm"
+      ]
+    },
+    {
+      "position": 0.21818181818183052,
+      "names": [
+        "stowArm"
+      ]
+    },
+    {
+      "position": 2.2472727272726147,
       "names": [
         "stowArm"
       ]

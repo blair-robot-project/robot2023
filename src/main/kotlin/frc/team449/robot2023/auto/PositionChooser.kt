@@ -4,12 +4,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 
 class PositionChooser : SendableChooser<PositionChooser.POSITIONS>() {
   enum class POSITIONS {
-    FAR,
-    WALL
+    FARCONE,
+    WALLCONE,
+    FARCUBE,
+    WALLCUBE,
+    CENTER
   }
 
   init {
-    this.setDefaultOption("Wall side", POSITIONS.WALL)
-    this.addOption("Far side", POSITIONS.FAR)
+    this.setDefaultOption("Cone Wall side", POSITIONS.WALLCONE)
+    this.addOption("Cone Far side", POSITIONS.FARCONE)
+    this.addOption("Cube Wall side", POSITIONS.WALLCUBE)
+    this.addOption("Cube Far side", POSITIONS.FARCUBE)
+    this.addOption("Center (Only drop piece and 1 Piece Balance)", POSITIONS.CENTER)
   }
 }

@@ -64,9 +64,9 @@ class RobotLoop : TimedRobot() {
     /** At the start of auto we poll the alliance color given by the FMS */
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
 
-    /** Every time auto starts, we update the chosen auto command */
     routineChooser.updateOptions(positionChooser.selected)
 
+    /** Every time auto starts, we update the chosen auto command */
     val cmd = routineChooser.selected.createCommand()
     this.autoCommand = cmd
     CommandScheduler.getInstance().schedule(this.autoCommand)

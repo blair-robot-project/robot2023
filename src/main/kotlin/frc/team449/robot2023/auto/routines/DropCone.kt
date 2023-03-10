@@ -6,6 +6,8 @@ import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoUtil
+import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class DropCone(
   private val robot: Robot
@@ -19,6 +21,8 @@ class DropCone(
   override val trajectory = mutableListOf(PathPlannerTrajectory())
 
   override fun createCommand(): Command {
-    return AutoUtil.dropCone(robot)
+    return AutoUtil.dropPiece(robot).andThen(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
+    )
   }
 }

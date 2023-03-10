@@ -7,10 +7,10 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncomi
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
-import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.subsystem.ArmConstants
@@ -26,20 +26,9 @@ class ControllerBindings(
   fun bindButtons() {
 
     JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
-      InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }).andThen(
-        InstantCommand(robot.groundIntake::deploy).andThen(
-          InstantCommand(robot.groundIntake::runIntake)
-        ).andThen(
-          robot.endEffector::pistonRev
-        )
-      )
+      AutoUtil.deployGroundIntake(robot)
     ).onFalse(
-      InstantCommand(robot.groundIntake::stop).andThen(
-        InstantCommand(robot.groundIntake::retract)
-      ).andThen(WaitCommand(.5)).andThen(
-        InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }
-        )
-      )
+      AutoUtil.retractGroundIntake(robot)
     )
 
     JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(

@@ -1,5 +1,6 @@
 package frc.team449.robot2023.auto.routines
 
+import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
@@ -7,11 +8,10 @@ import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
-import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
-class EdgeConeCubeStation(
+class EdgeCube(
   robot: Robot,
   position: PositionChooser.POSITIONS
 ) : RoutineStructure {
@@ -25,17 +25,14 @@ class EdgeConeCubeStation(
         "runIntake" to InstantCommand(robot.groundIntake::runIntake),
         "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
-        "handoff" to robot.groundIntake.handoff(),
-        "highArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) },
-        "dropCube" to AutoUtil.dropPiece(robot),
-        "balanceStation" to AutoBalance.create(robot.drive)
+        "handoff" to robot.groundIntake.handoff()
       )
     )
 
-  override val trajectory =
-    if (position == PositionChooser.POSITIONS.FARCONE) {
-      Paths.FAR.CONECUBESTATION
+  override val trajectory: MutableList<PathPlannerTrajectory> =
+    if (position == PositionChooser.POSITIONS.FARCUBE) {
+      Paths.FAR.CUBE
     } else {
-      Paths.WALL.CONECUBESTATION
+      Paths.WALL.CUBE
     }
 }
