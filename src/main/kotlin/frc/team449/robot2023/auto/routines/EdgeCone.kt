@@ -17,7 +17,7 @@ class EdgeCone(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to AutoUtil.dropPiece(robot),
+        "dropCone" to AutoUtil.dropCone(robot),
         "stowArm" to AutoUtil.stowAndDeploy(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "handoff" to robot.groundIntake.handoff()

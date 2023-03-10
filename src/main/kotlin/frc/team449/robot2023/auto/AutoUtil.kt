@@ -54,18 +54,24 @@ object AutoUtil {
     return correctedPathGroup
   }
 
-  fun dropPiece(robot: Robot): Command {
+  fun dropCone(robot: Robot): Command {
+    return ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
+      .andThen(
+        InstantCommand(
+          {
+            val startState = robot.arm.desiredState.copy()
+            robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.125)
+          }
+        ).repeatedly().withTimeout(2.5)
+      )
+      .andThen(InstantCommand(robot.endEffector::pistonRev))
+  }
+
+  fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
-        .andThen(
-          InstantCommand(
-            {
-              val startState = robot.arm.desiredState.copy()
-              robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.125)
-            }
-          ).repeatedly().withTimeout(2.5)
-        )
-        .andThen(InstantCommand({ robot.endEffector.pistonRev() }))
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) },
+      WaitCommand(0.5),
+      InstantCommand(robot.endEffector::pistonRev)
     )
   }
 
