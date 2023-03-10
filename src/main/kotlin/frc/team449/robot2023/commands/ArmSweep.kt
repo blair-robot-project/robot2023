@@ -19,7 +19,7 @@ class ArmSweep(
 
   override fun initialize() {
     startState = arm.desiredState.copy()
-    if (startState.beta.degrees < 0) sweepBeta = -sweepBeta // go opposite direction
+    if (startState.beta.degrees <= 0.0) sweepBeta = -sweepBeta // go opposite direction
   }
   override fun execute() {
     arm.desiredState.beta = startState.beta + sweepBeta * input()

@@ -138,7 +138,7 @@ class Robot : RobotBase() {
       2 * PI,
       1.0 / 3.0
     ),
-    inverted = false,
+    inverted = true,
     currentLimit = 20,
     slaveSparks = mapOf(
       GroundIntakeConstants.INTAKE_LEFT to true

@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.RepeatCommand
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
@@ -27,12 +29,15 @@ class ControllerBindings(
       InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }).andThen(
         InstantCommand(robot.groundIntake::deploy).andThen(
           InstantCommand(robot.groundIntake::runIntake)
+        ).andThen(
+          robot.endEffector::pistonRev
         )
       )
     ).onFalse(
-      InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }).andThen(
-        InstantCommand(robot.groundIntake::stop).andThen(
-          InstantCommand(robot.groundIntake::retract)
+      InstantCommand(robot.groundIntake::stop).andThen(
+        InstantCommand(robot.groundIntake::retract)
+      ).andThen(WaitCommand(.5)).andThen(
+        InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }
         )
       )
     )
@@ -43,6 +48,10 @@ class ControllerBindings(
 
     JoystickButton(mechanismController, XboxController.Button.kB.value).onTrue(
       robot.groundIntake.scoreLow()
+    ).onFalse(
+      InstantCommand(robot.groundIntake::stop).andThen(
+        InstantCommand(robot.groundIntake::retract)
+      )
     )
 
     JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
@@ -58,11 +67,19 @@ class ControllerBindings(
     )
 
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming)
+      SequentialCommandGroup(
+        InstantCommand(robot.groundIntake::runIntakeReverse),
+        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming),
+        InstantCommand(robot.groundIntake::stop)
+      )
     )
 
     JoystickButton(mechanismController, XboxController.Button.kY.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming)
+      SequentialCommandGroup(
+        InstantCommand(robot.groundIntake::runIntakeReverse),
+        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming),
+        InstantCommand(robot.groundIntake::stop)
+      )
     )
 
 //    POVButton(mechanismController, 0).onTrue(
@@ -73,8 +90,8 @@ class ControllerBindings(
       ArmSweep(
         robot.arm,
         { mechanismController.rightTriggerAxis },
-        Rotation2d.fromDegrees(5.0)
-      )
+        Rotation2d.fromDegrees(10.0)
+      ).until { abs(mechanismController.rightTriggerAxis) < 0.1 }
     )
 
     Trigger { abs(mechanismController.leftY) > 0.3 || abs(mechanismController.rightY) > 0.3 }.onTrue(

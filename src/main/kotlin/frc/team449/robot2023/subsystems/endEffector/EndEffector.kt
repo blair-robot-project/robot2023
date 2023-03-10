@@ -13,6 +13,10 @@ class EndEffector(
   private var sensorVal = false
   private var previousVal = false
 
+  init {
+    this.pistonRev()
+  }
+
   fun pistonOn() {
     intakePiston.set(DoubleSolenoid.Value.kForward)
   }

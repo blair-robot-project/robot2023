@@ -1,10 +1,7 @@
 package frc.team449.robot2023.subsystems.groundIntake
 
 import edu.wpi.first.wpilibj.DoubleSolenoid
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.SubsystemBase
-import edu.wpi.first.wpilibj2.command.WaitCommand
+import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.arm.Arm
@@ -17,6 +14,11 @@ class GroundIntake(
   private val arm: Arm,
   private val endEffector: EndEffector
 ) : SubsystemBase() {
+
+  init {
+    this.retract()
+    this.stop()
+  }
 
   private var retracted = true
 
@@ -47,19 +49,19 @@ class GroundIntake(
   }
 
   fun handoff(): Command {
-    return if (arm.state == ArmConstants.STOW && this.retracted) {
-      InstantCommand(::runIntakeReverse).andThen(
+    return if (arm.desiredState == ArmConstants.STOW && this.retracted) {
+      InstantCommand({ intakeMotor.setVoltage(-1.0) }).andThen(
         WaitCommand(0.1)
       ).andThen(
         endEffector::pistonOn
       )
 //      InstantCommand({ intakeMotor.encoder.resetPosition(0.0) }).andThen(
 //        PIDCommand(
-//          PIDController(2.0, 0.0, 0.0),
+//          PIDController(4.0, 0.0, 0.0),
 //          { intakeMotor.encoder.position },
 //          1.34, // this is a measured pos
-//          { x: Double -> intakeMotor.set(x) }
-//        ).andThen(
+//          { x: Double -> intakeMotor.set(-x) }
+//        ).withTimeout(1.0).andThen(
 //          endEffector::pistonOn
 //        )
 //      )
@@ -70,6 +72,7 @@ class GroundIntake(
 
   fun scoreLow(): Command {
     return InstantCommand(::deploy)
+      .andThen(WaitCommand(1.2))
       .andThen(::runIntakeReverse)
   }
   fun stop() {
