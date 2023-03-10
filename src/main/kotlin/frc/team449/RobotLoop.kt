@@ -12,7 +12,7 @@ import frc.team449.control.DriveCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
-import frc.team449.robot2023.auto.RoutineChooser
+import frc.team449.robot2023.auto.routines.RoutineChooser
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
 import frc.team449.robot2023.subsystems.arm.ArmPaths

@@ -1,8 +1,9 @@
-package frc.team449.robot2023.auto
+package frc.team449.robot2023.auto.routines
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.auto.PositionChooser
 
 class RoutineChooser(private val robot: Robot, position: PositionChooser) : SendableChooser<RoutineStructure>() {
 
