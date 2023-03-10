@@ -8,8 +8,6 @@ import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
 import frc.team449.robot2023.commands.AutoBalance
-import frc.team449.robot2023.constants.subsystem.ArmConstants
-import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class EdgeConeStation(
   robot: Robot,
@@ -20,16 +18,18 @@ class EdgeConeStation(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to AutoUtil.dropCone(robot),
-        "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
+        "dropCone" to AutoUtil.dropPiece(robot),
+        "stowArm" to AutoUtil.stowAndDeploy(robot),
+        "stopIntake" to AutoUtil.retractGroundIntake(robot),
+        "handoff" to robot.groundIntake.handoff(),
         "balanceStation" to AutoBalance.create(robot.drive)
       )
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
-    if (position == PositionChooser.POSITIONS.FAR) {
-      Paths.FARCONESTATION
+    if (position == PositionChooser.POSITIONS.FARCONE) {
+      Paths.FAR.CONESTATION
     } else {
-      Paths.WALLCONESTATION
+      Paths.WALL.CONESTATION
     }
 }

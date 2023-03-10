@@ -14,7 +14,7 @@ class EndEffector(
   private var previousVal = false
 
   init {
-    this.pistonRev()
+    this.pistonOn()
   }
 
   fun pistonOn() {

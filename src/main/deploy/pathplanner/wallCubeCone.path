@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7592431676091425,
-        "y": 0.4987099447883107
+        "x": 1.7841690384235467,
+        "y": 1.027725132373342
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.4187354339620963,
-        "y": 1.133488407327693
+        "x": 3.0516967016840018,
+        "y": 0.39967088481185487
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "dropCone",
+          "dropPiece",
           "stowArm"
         ],
         "executionBehavior": "sequential",
@@ -27,16 +27,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.534542983615882,
-        "y": 0.9135334509985259
+        "x": 6.660153833128179,
+        "y": 0.9249526191360088
       },
       "prevControl": {
-        "x": 2.8800326921391584,
-        "y": 0.30595977971083177
+        "x": 5.6552670370298,
+        "y": 0.7993417696237097
       },
       "nextControl": {
-        "x": 2.8800326921391584,
-        "y": 0.30595977971083177
+        "x": 5.6552670370298,
+        "y": 0.7993417696237097
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -55,52 +55,25 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7592431676091425,
-        "y": 1.0700105610737545
+        "x": 1.7955882065610285,
+        "y": 0.4910242299117076
       },
       "prevControl": {
-        "x": 1.841264879110955,
-        "y": 1.187593486298084
-      },
-      "nextControl": {
-        "x": 1.841264879110955,
-        "y": 1.187593486298084
-      },
-      "holonomicAngle": 0.0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "dropCube",
-          "stowArm"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 3.2600965201930405,
-        "y": 2.2
-      },
-      "prevControl": {
-        "x": 2.1495824188229578,
-        "y": 2.1696419461214993
+        "x": 2.7433791619719994,
+        "y": 0.5252817343241527
       },
       "nextControl": null,
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": false,
-      "velOverride": 1.0,
+      "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "balanceStation"
+          "dropPiece",
+          "stowArm"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -111,7 +84,7 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 1.0909090909090353,
+      "position": 1.1781818181817483,
       "names": [
         "highArm"
       ]

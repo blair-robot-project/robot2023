@@ -10,7 +10,7 @@ import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
-class EdgeConeCubeStation(
+class EdgeCubeConeStation(
   robot: Robot,
   position: PositionChooser.POSITIONS
 ) : RoutineStructure {
@@ -30,9 +30,9 @@ class EdgeConeCubeStation(
     )
 
   override val trajectory =
-    if (position == PositionChooser.POSITIONS.FARCONE) {
-      Paths.FAR.CONECUBESTATION
+    if (position == PositionChooser.POSITIONS.FARCUBE) {
+      Paths.FAR.CUBECONESTATION
     } else {
-      Paths.WALL.CONECUBESTATION
+      Paths.WALL.CUBECONESTATION
     }
 }
