@@ -74,6 +74,7 @@ class OrthogonalHolonomicOI(
 
   private var rotScaled = 0.0
   private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
+  private val directionCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) -1.0 else 1.0
 
   private var atGoal = true
 
@@ -125,7 +126,7 @@ class OrthogonalHolonomicOI(
     /** If the PID controller is at its setpoint, then allow the driver to control rotation,
      * otherwise let the PID do its thing. */
     if (atGoal) {
-      rotScaled = rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed)
+      rotScaled = rotRamp.calculate(rotThrottle.asDouble * drive.maxRotSpeed) * directionCompensation
     } else {
       rotScaled = controller.calculate(drive.heading.radians) * drive.maxRotSpeed
       atGoal = controller.atGoal()
@@ -140,8 +141,8 @@ class OrthogonalHolonomicOI(
        **/
       vel.rotateBy(Rotation2d(-rotScaled * dt / 2))
       ChassisSpeeds.fromFieldRelativeSpeeds(
-        vel.x,
-        vel.y,
+        vel.x * directionCompensation,
+        vel.y * directionCompensation,
         rotScaled,
         drive.heading
       )
