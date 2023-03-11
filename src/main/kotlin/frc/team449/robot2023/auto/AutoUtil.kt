@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import java.util.*
 import java.util.function.BooleanSupplier
@@ -55,7 +56,7 @@ object AutoUtil {
   }
 
   fun dropCone(robot: Robot): Command {
-    return ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
+    return ArmFollower(robot.arm) { ArmPaths.STOW_HIGH }
       .andThen(
         InstantCommand(
           {
@@ -69,7 +70,7 @@ object AutoUtil {
 
   fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) },
+      ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
       WaitCommand(0.5),
       InstantCommand(robot.endEffector::pistonRev)
     )
@@ -77,7 +78,7 @@ object AutoUtil {
 
   fun stowAndDeploy(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
+      ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
       InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }),
       InstantCommand(robot.groundIntake::deploy),
       InstantCommand(robot.groundIntake::runIntake),
