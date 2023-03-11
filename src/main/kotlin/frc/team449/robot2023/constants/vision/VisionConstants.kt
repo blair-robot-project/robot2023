@@ -5,7 +5,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout
 import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Transform3d
-import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 
 /** Constants that have anything to do with vision */
@@ -28,12 +27,12 @@ object VisionConstants {
   private val robotToCamera = Transform3d()
 
   /** List of cameras that we want to use */
-  val ESTIMATORS = listOf<PhotonPoseEstimator>(
-    PhotonPoseEstimator(
-      TAG_LAYOUT,
-      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
-      PhotonCamera("Spinel"),
-      robotToCamera
-    )
+  val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
+//    PhotonPoseEstimator(
+//      TAG_LAYOUT,
+//      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
+//      PhotonCamera("Spinel"),
+//      robotToCamera
+//    )
   )
 }

@@ -88,9 +88,11 @@ object AutoUtil {
   fun retractGroundIntake(robot: Robot): Command {
     return InstantCommand(robot.groundIntake::stop).andThen(
       InstantCommand(robot.groundIntake::retract)
-    ).andThen(WaitCommand(.5)).andThen(
+    ).andThen(WaitCommand(1.75)).andThen(
       InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }
       )
+    ).andThen(
+      robot.groundIntake.handoff()
     )
   }
 }

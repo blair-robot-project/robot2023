@@ -74,7 +74,7 @@ class OrthogonalHolonomicOI(
 
   private var rotScaled = 0.0
   private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
-  private val directionCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) -1.0 else 1.0
+  private val directionCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 1.0 else -1.0
 
   private var atGoal = true
 

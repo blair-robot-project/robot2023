@@ -22,7 +22,6 @@ class EdgeConeCube(
         "dropCone" to AutoUtil.dropCone(robot),
         "stowArm" to AutoUtil.stowAndDeploy(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
-        "handoff" to robot.groundIntake.handoff(),
         "dropCube" to AutoUtil.dropCube(robot),
         "retractArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
       )
