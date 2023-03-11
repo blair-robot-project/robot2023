@@ -45,7 +45,7 @@ class ControllerBindings(
 
     // drive speed overdrive trigger
     Trigger { driveController.rightTriggerAxis >= .1 }.onTrue(
-      InstantCommand({ robot.drive.maxLinearSpeed = 1.0 })
+      InstantCommand({ robot.drive.maxLinearSpeed = 2.0 })
     ).onFalse(
       InstantCommand({ robot.drive.maxLinearSpeed = RobotConstants.MAX_LINEAR_SPEED })
     )
@@ -74,6 +74,10 @@ class ControllerBindings(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }.withInterruptBehavior(kCancelIncoming)
     )
 
+    JoystickButton(mechanismController, XboxController.Button.kBack.value).onTrue(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.PICKUP) }.withInterruptBehavior(kCancelIncoming)
+    )
+
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
       SequentialCommandGroup(
         InstantCommand({
@@ -98,15 +102,11 @@ class ControllerBindings(
       )
     )
 
-//    POVButton(mechanismController, 0).onTrue(
-//      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }.withInterruptBehavior(kCancelIncoming)
-//    )
-
     Trigger { abs(mechanismController.rightTriggerAxis) > 0.1 }.onTrue(
       ArmSweep(
         robot.arm,
         { mechanismController.rightTriggerAxis },
-        Rotation2d.fromDegrees(10.0)
+        Rotation2d.fromDegrees(15.0)
       ).until { abs(mechanismController.rightTriggerAxis) < 0.1 }
     )
 

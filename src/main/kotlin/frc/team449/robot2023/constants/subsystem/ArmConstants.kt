@@ -75,18 +75,18 @@ object ArmConstants {
     0.0,
     0.0
   )
-  val LOW = ArmState(
-    Rotation2d.fromDegrees(79.56),
-    Rotation2d.fromDegrees(-115.38),
-    0.0,
-    0.0
-  )
-  val CUBE = ArmState(
-    Rotation2d.fromDegrees(60.32),
-    Rotation2d.fromDegrees(-122.55),
-    0.0,
-    0.0
-  )
+//  val LOW = ArmState(
+//    Rotation2d.fromDegrees(79.56),
+//    Rotation2d.fromDegrees(-115.38),
+//    0.0,
+//    0.0
+//  )
+//  val CUBE = ArmState(
+//    Rotation2d.fromDegrees(60.32),
+//    Rotation2d.fromDegrees(-122.55),
+//    0.0,
+//    0.0
+//  )
   val STOW = ArmState(
     Rotation2d.fromDegrees(106.94),
     Rotation2d.fromDegrees(-141.78),
@@ -100,18 +100,18 @@ object ArmConstants {
     0.0,
     0.0
   )
-  //  val PICKUP = ArmState(
-//    Rotation2d.fromDegrees(85.64),
-//    Rotation2d.fromDegrees(-87.31),
-//    0.0,
-//    0.0
-//  )
-  val CONE = ArmState(
-    Rotation2d.fromDegrees(61.48),
-    Rotation2d.fromDegrees(-124.85),
+  val PICKUP = ArmState(
+    Rotation2d.fromDegrees(85.64),
+    Rotation2d.fromDegrees(-87.31),
     0.0,
     0.0
   )
+//  val CONE = ArmState(
+//    Rotation2d.fromDegrees(61.48),
+//    Rotation2d.fromDegrees(-124.85),
+//    0.0,
+//    0.0
+//  )
 
-  val STATES = listOf(HIGH, MID, STOW)
+  val STATES = listOf(HIGH, MID, PICKUP, STOW)
 }

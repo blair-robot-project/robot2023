@@ -17,7 +17,7 @@ object RobotConstants {
   const val ROTATION_DEADBAND = .125
 
   /** Drive configuration */
-  const val MAX_LINEAR_SPEED = 3.0 // m/s
+  const val MAX_LINEAR_SPEED = 4.0 // m/s
   const val MAX_ROT_SPEED = Math.PI // rad/s
   const val MAX_ACCEL = 5.0 // m/s/s
   val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
