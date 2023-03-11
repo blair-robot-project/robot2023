@@ -62,7 +62,7 @@ object AutoUtil {
             val startState = robot.arm.desiredState.copy()
             robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.125)
           }
-        ).repeatedly().withTimeout(2.5)
+        ).repeatedly().withTimeout(2.0)
       )
       .andThen(InstantCommand(robot.endEffector::pistonRev))
   }

@@ -113,5 +113,5 @@ object ArmConstants {
     0.0
   )
 
-  val STATES = listOf(HIGH, MID, LOW, CUBE, STOW)
+  val STATES = listOf(HIGH, MID, STOW)
 }

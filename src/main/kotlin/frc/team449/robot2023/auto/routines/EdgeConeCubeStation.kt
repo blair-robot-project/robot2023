@@ -7,8 +7,6 @@ import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
 import frc.team449.robot2023.commands.AutoBalance
-import frc.team449.robot2023.constants.subsystem.ArmConstants
-import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class EdgeConeCubeStation(
   robot: Robot,
@@ -23,7 +21,6 @@ class EdgeConeCubeStation(
         "stowArm" to AutoUtil.stowAndDeploy(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "handoff" to robot.groundIntake.handoff(),
-        "highArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) },
         "dropCube" to AutoUtil.dropCube(robot),
         "balanceStation" to AutoBalance.create(robot.drive)
       )

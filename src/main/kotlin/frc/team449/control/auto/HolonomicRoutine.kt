@@ -36,7 +36,7 @@ class HolonomicRoutine(
   private val translationTol: Double = 0.05,
   private val thetaTol: Double = 0.05,
   private val resetPosition: Boolean = false,
-  private val timeout: Double = 1.0
+  private val timeout: Double = 0.35
 ) : BaseAutoBuilder(drive::pose, eventMap, DrivetrainType.HOLONOMIC) {
 
   /** What command you want to use to follow a given trajectory */
