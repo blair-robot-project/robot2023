@@ -17,7 +17,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "dropCube"
+          "dropCube",
+          "stowArm"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -52,12 +53,5 @@
   "maxVelocity": 4.0,
   "maxAcceleration": 2.0,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 0.05818181818181281,
-      "names": [
-        "stowArm"
-      ]
-    }
-  ]
+  "markers": []
 }
