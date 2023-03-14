@@ -72,7 +72,7 @@ class GroundIntake(
 
   fun scoreLow(): Command {
     return InstantCommand(::deploy)
-      .andThen(WaitCommand(.7))
+      .andThen(WaitCommand(.45))
       .andThen(::runIntakeReverse)
   }
   fun stop() {

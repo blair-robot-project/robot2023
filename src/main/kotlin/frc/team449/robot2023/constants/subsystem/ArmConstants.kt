@@ -100,9 +100,12 @@ object ArmConstants {
     0.0,
     0.0
   )
+//  {
+//    "q1": 1.66,
+//    "q2": -1.66,
   val PICKUP = ArmState(
-    Rotation2d.fromDegrees(85.64),
-    Rotation2d.fromDegrees(-87.31),
+    Rotation2d(1.66),
+    Rotation2d(-1.66),
     0.0,
     0.0
   )

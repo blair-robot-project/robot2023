@@ -78,7 +78,7 @@ object AutoUtil {
 
   fun stowAndDeploy(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
+      ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
       InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }),
       InstantCommand(robot.groundIntake::deploy),
       InstantCommand(robot.groundIntake::runIntake),

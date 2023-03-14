@@ -27,15 +27,15 @@
     },
     {
       "anchorPoint": {
-        "x": 6.05,
+        "x": 6.22,
         "y": 0.93
       },
       "prevControl": {
-        "x": 5.956654786880745,
+        "x": 6.126654786880745,
         "y": 0.93
       },
       "nextControl": {
-        "x": 6.158270354949818,
+        "x": 6.328270354949818,
         "y": 0.93
       },
       "holonomicAngle": 0,
@@ -52,15 +52,15 @@
     },
     {
       "anchorPoint": {
-        "x": 6.660153833128179,
+        "x": 6.83,
         "y": 0.9249526191360088
       },
       "prevControl": {
-        "x": 6.595431619434668,
+        "x": 6.765277786306489,
         "y": 0.9161435465728075
       },
       "nextControl": {
-        "x": 6.595431619434668,
+        "x": 6.765277786306489,
         "y": 0.9161435465728075
       },
       "holonomicAngle": 0,
@@ -96,7 +96,7 @@
       "stopEvent": {
         "names": [
           "dropCone",
-          "stowArm"
+          "retractArm"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
