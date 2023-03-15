@@ -1,7 +1,12 @@
 package frc.team449.robot2023
 
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.DoubleSolenoid
+import edu.wpi.first.wpilibj.PneumaticsModuleType
+import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj.RobotBase.isReal
+import edu.wpi.first.wpilibj.SerialPort
+import edu.wpi.first.wpilibj.XboxController
 import frc.team449.RobotBase
 import frc.team449.control.holonomic.OrthogonalHolonomicOI.Companion.createOrthogonalHolonomicOI
 import frc.team449.control.holonomic.SwerveDrive
