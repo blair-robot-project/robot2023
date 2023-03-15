@@ -13,10 +13,15 @@ class AutoBalance(
   private val speedMetersPerSecond: Double
 ) : CommandBase() {
 
+  init {
+    addRequirements(drive)
+  }
+
   override fun initialize() {
     addRequirements(drive)
     controller.enableContinuousInput(-PI, PI)
-    controller.setTolerance(0.05) // .05 rad tolerance ~3 degrees
+    controller.setTolerance(0.05) /* .05 rad tolerance ~3 degrees */
+    controller.setpoint = 0.0
   }
   override fun execute() {
     drive.set(
@@ -29,7 +34,7 @@ class AutoBalance(
   }
 
   override fun isFinished(): Boolean {
-    return controller.atSetpoint()
+    return false
   }
 
   companion object {

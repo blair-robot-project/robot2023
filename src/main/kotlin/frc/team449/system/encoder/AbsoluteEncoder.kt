@@ -1,5 +1,6 @@
 package frc.team449.system.encoder
 
+import edu.wpi.first.math.filter.MedianFilter
 import edu.wpi.first.wpilibj.DutyCycleEncoder
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
@@ -15,20 +16,28 @@ open class AbsoluteEncoder(
   private val enc: DutyCycleEncoder,
   unitPerRotation: Double,
   private val inverted: Boolean,
-  private val offset: Double,
-  pollTime: Double = .02
+  private var offset: Double,
+  pollTime: Double = .02,
+  samplesPerAverage: Int = 1
 ) : Encoder(name, 1, unitPerRotation, 1.0, pollTime) {
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
+  private val filter = MedianFilter(samplesPerAverage)
+  @Log
+  private val frequency = enc.frequency
 
   /** This returns the absolute position of the module */
   @Log
   override fun getPositionNative(): Double {
     return if (inverted) {
-      1 - (enc.absolutePosition - offset) % 1
+      filter.calculate(1 - (enc.absolutePosition - offset) % 1)
     } else {
-      (enc.absolutePosition - offset) % 1
+      filter.calculate((enc.absolutePosition - offset) % 1)
     }
+  }
+
+  override fun resetPosition(pos: Double) {
+    offset += getPositionNative() - pos
   }
 
   /** This returns the rotational velocity (on vertical axis) of the module */

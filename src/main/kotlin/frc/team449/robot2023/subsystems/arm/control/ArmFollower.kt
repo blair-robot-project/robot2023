@@ -9,10 +9,12 @@ open class ArmFollower(
   private val trajectoryFun: () -> ArmTrajectory?
 ) : CommandBase() {
 
+  init {
+    addRequirements(arm)
+  }
   val timer = Timer()
   private var trajectory: ArmTrajectory? = null
   override fun initialize() {
-    addRequirements(arm)
     trajectory = trajectoryFun()
     timer.reset()
     timer.start()

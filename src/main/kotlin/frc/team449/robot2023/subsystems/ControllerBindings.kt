@@ -3,92 +3,133 @@ package frc.team449.robot2023.subsystems
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.RepeatCommand
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import edu.wpi.first.wpilibj2.command.button.POVButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.commands.AutoBalance
-import frc.team449.robot2023.constants.arm.ArmConstants
+import frc.team449.robot2023.constants.RobotConstants
+import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import kotlin.math.abs
 
 class ControllerBindings(
-  private val drivecontroller: XboxController,
-  private val mechanismcontroller: XboxController,
+  private val driveController: XboxController,
+  private val mechanismController: XboxController,
   private val robot: Robot
 ) {
 
   fun bindButtons() {
-    /**  test trajectories */
-//    JoystickButton(drivecontroller, XboxController.Button.kA.value).onTrue(
-//      ArmFollower(robot.arm, ArmPaths.ZERO_STOW)
-//    )
-//
-//    JoystickButton(drivecontroller, XboxController.Button.kB.value).onTrue(
-//      ArmFollower(robot.arm, ArmPaths.STOW_ZERO)
-//    )
 
-    JoystickButton(mechanismcontroller, XboxController.Button.kB.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.LOW) }
-    )
-
-    JoystickButton(mechanismcontroller, XboxController.Button.kLeftBumper.value).onTrue(
-      InstantCommand(robot.intake::pistonOn)
-    )
-
-    JoystickButton(mechanismcontroller, XboxController.Button.kRightBumper.value).onTrue(
-      InstantCommand(robot.intake::pistonRev)
-    )
-
-    JoystickButton(mechanismcontroller, XboxController.Button.kStart.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
-    )
-
-    JoystickButton(mechanismcontroller, XboxController.Button.kX.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }
-    )
-
-    JoystickButton(mechanismcontroller, XboxController.Button.kY.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }
-    )
-
-    JoystickButton(drivecontroller, XboxController.Button.kBack.value).onTrue(
-      AutoBalance.create(robot.drive)
-    )
-
-    JoystickButton(mechanismcontroller, XboxController.Button.kA.value).onTrue(
-      InstantCommand(robot.intake::pistonRev)
-        .andThen(
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }
+    JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
+      InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }).andThen(
+        InstantCommand(robot.groundIntake::deploy).andThen(
+          InstantCommand(robot.groundIntake::runIntake)
+        ).andThen(
+          robot.endEffector::pistonRev
         )
+      )
+    ).onFalse(
+      InstantCommand(robot.groundIntake::stop).andThen(
+        InstantCommand(robot.groundIntake::retract)
+      ).andThen(WaitCommand(.7)).andThen(
+        InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }
+        )
+      )
     )
 
-    Trigger { abs(mechanismcontroller.leftY) > 0.3 || abs(mechanismcontroller.rightY) > 0.3 }.whileTrue(
+    // drive speed overdrive trigger
+    Trigger { driveController.rightTriggerAxis >= .1 }.onTrue(
+      InstantCommand({ robot.drive.maxLinearSpeed = 2.0 })
+    ).onFalse(
+      InstantCommand({ robot.drive.maxLinearSpeed = RobotConstants.MAX_LINEAR_SPEED })
+    )
+
+    JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
+      robot.groundIntake.handoff()
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kB.value).onTrue(
+      robot.groundIntake.scoreLow()
+    ).onFalse(
+      InstantCommand(robot.groundIntake::stop).andThen(
+        InstantCommand(robot.groundIntake::retract)
+      )
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
+      InstantCommand(robot.endEffector::pistonOn)
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
+      InstantCommand(robot.endEffector::pistonRev)
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kStart.value).onTrue(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }.withInterruptBehavior(kCancelIncoming)
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kBack.value).onTrue(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.PICKUP) }.withInterruptBehavior(kCancelIncoming)
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
+      SequentialCommandGroup(
+        InstantCommand({
+          if (robot.arm.desiredState == ArmConstants.STOW) {
+            robot.groundIntake.runIntakeReverse()
+          }
+        }),
+        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming),
+        InstantCommand(robot.groundIntake::stop)
+      )
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kY.value).onTrue(
+      SequentialCommandGroup(
+        InstantCommand({
+          if (robot.arm.desiredState == ArmConstants.STOW) {
+            robot.groundIntake.runIntakeReverse()
+          }
+        }),
+        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming),
+        InstantCommand(robot.groundIntake::stop)
+      )
+    )
+
+    Trigger { abs(mechanismController.rightTriggerAxis) > 0.1 }.onTrue(
+      ArmSweep(
+        robot.arm,
+        { mechanismController.rightTriggerAxis },
+        Rotation2d.fromDegrees(15.0)
+      ).until { abs(mechanismController.rightTriggerAxis) < 0.1 }
+    )
+
+    Trigger { abs(mechanismController.leftY) > 0.3 || abs(mechanismController.rightY) > 0.3 }.onTrue(
       RepeatCommand(
         InstantCommand(
           {
-            val s = robot.arm.state
-            s.beta =
-              Rotation2d(s.beta.radians - MathUtil.applyDeadband(mechanismcontroller.leftY, .3) * .005)
-            s.theta =
-              Rotation2d(s.theta.radians - MathUtil.applyDeadband(mechanismcontroller.rightY, .3) * .005)
-            robot.arm.state = s
+            val newState = robot.arm.desiredState.copy()
+            newState.beta =
+              Rotation2d(newState.beta.radians - MathUtil.applyDeadband(mechanismController.leftY, .3) * .005)
+            newState.theta =
+              Rotation2d(newState.theta.radians - MathUtil.applyDeadband(mechanismController.rightY, .3) * .005)
+            robot.arm.state = newState
           }
         )
-      ).until { abs(mechanismcontroller.leftY) <= 0.3 && abs(mechanismcontroller.rightY) <= 0.3 }
+      ).until { abs(mechanismController.leftY) <= 0.3 && abs(mechanismController.rightY) <= 0.3 }
     )
 
-    POVButton(mechanismcontroller, 0).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
+    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
+      AutoBalance.create(robot.drive)
     )
 
-    JoystickButton(mechanismcontroller, XboxController.Button.kBack.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.PICKUP) }
-    )
-
-    JoystickButton(drivecontroller, XboxController.Button.kStart.value).onTrue(
+    JoystickButton(driveController, XboxController.Button.kStart.value).onTrue(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })
     )
   }

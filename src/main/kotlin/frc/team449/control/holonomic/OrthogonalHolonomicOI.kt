@@ -74,6 +74,7 @@ class OrthogonalHolonomicOI(
 
   private var rotScaled = 0.0
   private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
+  private val directionCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) -1.0 else 1.0
 
   private var atGoal = true
 
@@ -140,8 +141,8 @@ class OrthogonalHolonomicOI(
        **/
       vel.rotateBy(Rotation2d(-rotScaled * dt / 2))
       ChassisSpeeds.fromFieldRelativeSpeeds(
-        vel.x,
-        vel.y,
+        vel.x * directionCompensation,
+        vel.y * directionCompensation,
         rotScaled,
         drive.heading
       )
@@ -176,7 +177,7 @@ class OrthogonalHolonomicOI(
         { if (abs(driveController.getRawAxis(4)) < RobotConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
         SlewRateLimiter(RobotConstants.RATE_LIMIT),
         RobotConstants.MAX_ACCEL,
-        { !driveController.leftBumper },
+        { driveController.leftTriggerAxis < 0.8 },
         RobotConstants.ORTHOGONAL_CONTROLLER,
         { driveController.yButtonPressed },
         { driveController.xButtonPressed },

@@ -4,7 +4,10 @@ import edu.wpi.first.apriltag.AprilTag
 import edu.wpi.first.apriltag.AprilTagFieldLayout
 import edu.wpi.first.apriltag.AprilTagFields
 import edu.wpi.first.math.geometry.Pose3d
+import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
+import edu.wpi.first.math.geometry.Translation3d
+import edu.wpi.first.math.util.Units
 import org.photonvision.PhotonPoseEstimator
 
 /** Constants that have anything to do with vision */
@@ -24,14 +27,17 @@ object VisionConstants {
   )
 
   /** Robot to Camera distance */
-  private val robotToCamera = Transform3d()
+  private val robotToCamera = Transform3d(
+    Translation3d(Units.inchesToMeters(-11.0), 0.0, Units.inchesToMeters(7.5)),
+    Rotation3d(0.0, Units.degreesToRadians(33.0), Units.inchesToMeters(-180.0))
+  )
 
   /** List of cameras that we want to use */
-  val ESTIMATORS = listOf<PhotonPoseEstimator>(
+  val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
 //    PhotonPoseEstimator(
 //      TAG_LAYOUT,
 //      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
-//      PhotonCamera("limelight"),
+//      PhotonCamera("Spinel"),
 //      robotToCamera
 //    )
   )

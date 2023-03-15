@@ -1,4 +1,4 @@
-package frc.team449.robot2023.subsystems.intake
+package frc.team449.robot2023.subsystems.endEffector
 
 import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 
-class Intake(
+class EndEffector(
   private val intakePiston: DoubleSolenoid,
   private val sensor: DigitalInput
 ) : SubsystemBase(), Sendable {
@@ -26,7 +26,7 @@ class Intake(
 //    if (sensorVal != previousVal && sensorVal) {
 //      pistonOn()
 //    }
-//    previousVal = sensorVal
+    previousVal = sensorVal
   }
 
   override fun initSendable(builder: SendableBuilder) {

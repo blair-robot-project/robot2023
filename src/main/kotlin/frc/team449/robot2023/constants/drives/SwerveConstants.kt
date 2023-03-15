@@ -14,16 +14,20 @@ object SwerveConstants {
   const val TURN_MOTOR_BR = 14
 
   /** Turning encoder channels */
-  const val TURN_ENC_CHAN_FL = 12
-  const val TURN_ENC_CHAN_FR = 9
-  const val TURN_ENC_CHAN_BL = 5
-  const val TURN_ENC_CHAN_BR = 0
+  const val TURN_ENC_CHAN_FL = 8
+  const val TURN_ENC_CHAN_FR = 7
+  const val TURN_ENC_CHAN_BL = 9
+  const val TURN_ENC_CHAN_BR = 6
 
+  // BL 0.205474
+  // BR 0.620525
+  // FL 0.365650
+  // FR 0.790104
   /** Offsets for the absolute encoders in rotations */
-  const val TURN_ENC_OFFSET_FL = 0.369667 + .5
-  const val TURN_ENC_OFFSET_FR = 0.790026 - .5
-  const val TURN_ENC_OFFSET_BL = 0.212865 + .5
-  const val TURN_ENC_OFFSET_BR = 0.620506 - .5
+  const val TURN_ENC_OFFSET_FL = 0.365650 + .5
+  const val TURN_ENC_OFFSET_FR = 0.790104 - .5
+  const val TURN_ENC_OFFSET_BL = 0.205474 + .5
+  const val TURN_ENC_OFFSET_BR = 0.620525 - .5
 
   /** PID gains for turning each module */
   const val TURN_KP = 0.75
@@ -45,8 +49,8 @@ object SwerveConstants {
   const val DRIVE_UPR = 0.31818905832
   const val TURN_UPR = 2 * Math.PI
   const val MAX_ATTAINABLE_MK4I_SPEED = 4.267
-  const val DRIVE_CURRENT_LIM = 40
-  const val STEERING_CURRENT_LIM = 40
+  const val DRIVE_CURRENT_LIM = 55
+  const val STEERING_CURRENT_LIM = 47
 
   /** Wheelbase = wheel-to-wheel distance from the side of the robot */
   /** Trackwidth = wheel-to-wheel distance from the front/back of the robot */

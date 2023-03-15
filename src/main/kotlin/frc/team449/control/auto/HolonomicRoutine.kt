@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
+import frc.team449.robot2023.auto.AutoUtil
 import io.github.oblarg.oblog.annotations.Config
-import java.util.function.BooleanSupplier
-import kotlin.math.PI
+import kotlin.collections.HashMap
 
 /**
  * @param xController The PID controller used to correct X translation error when following a trajectory
@@ -36,7 +36,7 @@ class HolonomicRoutine(
   private val translationTol: Double = 0.05,
   private val thetaTol: Double = 0.05,
   private val resetPosition: Boolean = false,
-  private val timeout: Double = 1.0
+  private val timeout: Double = 0.35
 ) : BaseAutoBuilder(drive::pose, eventMap, DrivetrainType.HOLONOMIC) {
 
   /** What command you want to use to follow a given trajectory */
@@ -65,37 +65,21 @@ class HolonomicRoutine(
   override fun fullAuto(pathGroup: MutableList<PathPlannerTrajectory>): CommandBase {
     val commands = SequentialCommandGroup()
 
-    commands.addCommands(resetPose(transformForAlliance(pathGroup, 0) { DriverStation.getAlliance() == DriverStation.Alliance.Red }))
+    val correctedTrajGroup = AutoUtil.transformForAlliance(pathGroup) { DriverStation.getAlliance() == DriverStation.Alliance.Red }
 
-    for ((index, traj) in pathGroup.withIndex()) {
-      commands.addCommands(stopEventGroup(pathGroup[index].startStopEvent))
-      val wantedTrajectory = if (index == 0) traj else transformForAlliance(pathGroup, index) { DriverStation.getAlliance() == DriverStation.Alliance.Red }
+    commands.addCommands(resetPose(correctedTrajGroup[0]))
+
+    for ((index, _) in pathGroup.withIndex()) {
+      commands.addCommands(stopEventGroup(correctedTrajGroup[index].startStopEvent))
       commands.addCommands(
         followPathWithEvents(
-          wantedTrajectory
+          correctedTrajGroup[index]
         )
       )
     }
 
-    commands.addCommands(stopEventGroup(pathGroup[pathGroup.size - 1].endStopEvent))
+    commands.addCommands(stopEventGroup(correctedTrajGroup[correctedTrajGroup.size - 1].endStopEvent))
 
     return commands
-  }
-
-  private fun transformForAlliance(pathGroup: MutableList<PathPlannerTrajectory>, index: Int, isRed: BooleanSupplier): PathPlannerTrajectory {
-    println("HEY THIS IS THE THING" + isRed.asBoolean)
-    if (isRed.asBoolean) {
-      pathGroup[index] = PathPlannerTrajectory.transformTrajectoryForAlliance(
-        pathGroup[index],
-        DriverStation.getAlliance()
-      )
-
-      for (s in pathGroup[index].states) {
-        s as PathPlannerTrajectory.PathPlannerState
-        s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
-        s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
-      }
-    }
-    return pathGroup[index]
   }
 }
