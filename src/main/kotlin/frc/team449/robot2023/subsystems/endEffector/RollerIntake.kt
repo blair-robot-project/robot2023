@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
 import frc.team449.system.motor.WrappedMotor
 
-class RollerArm(
+class RollerIntake(
   private val intakeMotor: WrappedMotor,
   private val chooserPiston: DoubleSolenoid,
   private val sensor: DigitalInput
@@ -24,6 +24,10 @@ class RollerArm(
 
   fun intake() {
     intakeMotor.setVoltage(EndEffectorConstants.INTAKE_VOLTAGE)
+  }
+
+  fun intakeSlow() {
+    intakeMotor.setVoltage(EndEffectorConstants.INTAKE_VOLTAGE * EndEffectorConstants.SLOW_MULTIPLIER)
   }
 
   fun intakeReverse() {

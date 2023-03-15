@@ -8,4 +8,5 @@ object EndEffectorConstants {
   const val CUBE_CHANNEL = 0
   const val CONE_CHANNEL = 0
   const val INTAKE_VOLTAGE = 3.5
+  const val SLOW_MULTIPLIER = 0.2
 }
