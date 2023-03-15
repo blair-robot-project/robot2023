@@ -10,6 +10,6 @@ interface RoutineStructure {
   val trajectory: MutableList<PathPlannerTrajectory>
 
   fun createCommand(): Command {
-    return routine.fullAuto(trajectory)
+    return routine.createRoutine(trajectory)
   }
 }

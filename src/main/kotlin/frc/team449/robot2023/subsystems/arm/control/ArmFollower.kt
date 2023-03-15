@@ -12,6 +12,7 @@ open class ArmFollower(
   init {
     addRequirements(arm)
   }
+
   val timer = Timer()
   private var trajectory: ArmTrajectory? = null
   override fun initialize() {
