@@ -59,6 +59,22 @@ class HolonomicRoutine(
     return InstantCommand({ drive.pose = trajectory.initialHolonomicPose })
   }
 
+  private fun followTrajEvents(traj: PathPlannerTrajectory): Command {
+    val followingEventCommands = SequentialCommandGroup()
+    val prevTime = 0.0
+
+    for (marker in traj.markers) {
+      followingEventCommands.addCommands(WaitCommand(marker.timeSeconds - prevTime))
+      for (name in marker.names) {
+        if (eventMap.containsKey(name)) {
+          followingEventCommands.addCommands(eventMap[name])
+        }
+      }
+    }
+
+    return followingEventCommands
+  }
+
   fun createRoutine(pathGroup: MutableList<PathPlannerTrajectory>): Command {
     val commands = SequentialCommandGroup()
 
@@ -67,22 +83,11 @@ class HolonomicRoutine(
     commands.addCommands(resetPose(correctedTrajGroup[0]))
 
     for (traj in correctedTrajGroup) {
-      val followingEventCommands = SequentialCommandGroup()
-      val prevTime = 0.0
-
-      for (marker in traj.markers) {
-        followingEventCommands.addCommands(WaitCommand(marker.timeSeconds - prevTime))
-        for (name in marker.names) {
-          if (eventMap.containsKey(name)) {
-            followingEventCommands.addCommands(eventMap[name])
-          }
-        }
-      }
       commands.addCommands(
         SequentialCommandGroup(
           stopEventGroup(traj.startStopEvent),
           ParallelCommandGroup(
-            followingEventCommands,
+            followTrajEvents(traj),
             followPath(traj)
           )
         )
