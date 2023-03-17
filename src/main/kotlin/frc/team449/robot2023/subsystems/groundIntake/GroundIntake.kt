@@ -1,7 +1,10 @@
 package frc.team449.robot2023.subsystems.groundIntake
 
 import edu.wpi.first.wpilibj.DoubleSolenoid
-import edu.wpi.first.wpilibj2.command.*
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.WaitCommand
+import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.arm.Arm
