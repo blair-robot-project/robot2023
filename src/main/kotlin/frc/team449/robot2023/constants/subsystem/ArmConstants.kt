@@ -62,6 +62,10 @@ object ArmConstants {
   const val KA2 = 3.2914
   const val KG2 = 0.145
 
+  // Current limits of the motors
+  const val FIRST_JOINT_CURR_LIM = 40
+  const val SECOND_JOINT_CURR_LIM = 40
+
   // Arm States corresponding to points.
   val HIGH = ArmState(
     Rotation2d.fromDegrees(128.12),
@@ -94,7 +98,7 @@ object ArmConstants {
     0.0
   )
 
-  val FORWARD = ArmState(
+  val INTAKE = ArmState(
     Rotation2d.fromDegrees(90.22),
     Rotation2d.fromDegrees(-124.9),
     0.0,

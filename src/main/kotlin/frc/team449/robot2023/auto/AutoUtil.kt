@@ -56,44 +56,48 @@ object AutoUtil {
   }
 
   fun dropCone(robot: Robot): Command {
-    return ArmFollower(robot.arm) { ArmPaths.STOW_HIGH }
-      .andThen(
-        InstantCommand(
-          {
-            val startState = robot.arm.desiredState.copy()
-            robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.135)
-          }
-        ).repeatedly().withTimeout(2.25)
-      )
-      .andThen(InstantCommand(robot.endEffector::pistonRev))
+    return SequentialCommandGroup(
+      ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
+      WaitCommand(1.75),
+//      RepeatCommand(InstantCommand(
+//        {
+//          val startState = robot.arm.desiredState.copy()
+//          robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.135)
+//        }
+//      )).withTimeout(2.25),
+      InstantCommand(robot.endEffector::intakeReverse)
+    )
   }
 
   fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
       ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
       WaitCommand(0.5),
-      InstantCommand(robot.endEffector::pistonRev)
+      InstantCommand(robot.endEffector::intakeReverse)
     )
   }
 
-  fun stowAndDeploy(robot: Robot): Command {
+  fun stowAndDeployCube(robot: Robot): Command {
     return SequentialCommandGroup(
       ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
-      InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }),
-      InstantCommand(robot.groundIntake::deploy),
-      InstantCommand(robot.groundIntake::runIntake),
+      InstantCommand({ robot.arm.desiredState = ArmConstants.INTAKE }),
+      InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonRev),
     )
   }
 
+  fun stowAndDeployCone(robot: Robot): Command {
+    return SequentialCommandGroup(
+      ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
+      InstantCommand({ robot.arm.desiredState = ArmConstants.INTAKE }),
+      InstantCommand(robot.endEffector::intake),
+      InstantCommand(robot.endEffector::pistonOn),
+    )
+  }
+
   fun retractGroundIntake(robot: Robot): Command {
-    return InstantCommand(robot.groundIntake::stop).andThen(
-      InstantCommand(robot.groundIntake::retract)
-    ).andThen(WaitCommand(1.75)).andThen(
-      InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }
-      )
-    ).andThen(
-      robot.groundIntake.handoff()
+    return InstantCommand(robot.endEffector::stop).andThen(
+      InstantCommand({ robot.arm.desiredState = ArmConstants.STOW })
     )
   }
 }

@@ -1,12 +1,21 @@
 package frc.team449.robot2023.constants.subsystem
 
+import kotlin.math.PI
+
 object EndEffectorConstants {
+  /** Piston and IR constants */
   const val FORWARD_CHANNEL = 5
   const val REVERSE_CHANNEL = 4
   const val SENSOR_CHANNEL = 10
-  // roller intake vals
-  const val CUBE_CHANNEL = 0
-  const val CONE_CHANNEL = 0
-  const val INTAKE_VOLTAGE = 3.5
-  const val SLOW_MULTIPLIER = 0.2
+
+  /** Motor constants */
+  const val MOTOR_ID = 25
+  const val MOTOR_UPR = 2 * PI
+  const val MOTOR_GEARING = 1 / 5.0
+  const val MOTOR_CURR_LIM = 20
+
+  /** Voltage constants */
+  const val INTAKE_VOLTAGE = 4.25
+  const val HOLD_VOLTAGE = 1.0
+
 }

@@ -19,9 +19,8 @@ class EdgeConeStation(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCone" to AutoUtil.dropCone(robot),
-        "stowArm" to AutoUtil.stowAndDeploy(robot),
+        "stowArm" to AutoUtil.stowAndDeployCone(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
-        "handoff" to robot.groundIntake.handoff(),
         "balanceStation" to AutoBalance.create(robot.drive)
       )
     )

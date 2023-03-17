@@ -7,20 +7,17 @@ import frc.team449.system.motor.WrappedMotor
 
 class GroundIntake(
   private val piston: DoubleSolenoid,
-  private val leftMotor: WrappedMotor,
-  private val rightMotor: WrappedMotor
+  private val motor: WrappedMotor
 ) : SubsystemBase() {
 
   private var retracted = true
 
   fun runIntake() {
-    leftMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
-    rightMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+    motor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
   }
 
   fun runIntakeReverse() {
-    leftMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
-    rightMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+    motor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
   }
 
   fun deploy() {
@@ -34,7 +31,6 @@ class GroundIntake(
   }
 
   fun stop() {
-    leftMotor.setVoltage(0.0)
-    rightMotor.setVoltage(0.0)
+    motor.setVoltage(0.0)
   }
 }

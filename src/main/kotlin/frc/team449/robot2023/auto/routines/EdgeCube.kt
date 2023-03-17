@@ -18,9 +18,8 @@ class EdgeCube(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCube" to AutoUtil.dropCube(robot),
-        "stowArm" to AutoUtil.stowAndDeploy(robot),
+        "stowArm" to AutoUtil.stowAndDeployCone(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
-//        "handoff" to robot.groundIntake.handoff()
       )
     )
 

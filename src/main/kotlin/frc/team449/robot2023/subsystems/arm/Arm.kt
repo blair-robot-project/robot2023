@@ -5,14 +5,10 @@ import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
-import frc.team449.robot2023.subsystems.arm.control.ArmKinematics
-import frc.team449.robot2023.subsystems.arm.control.ArmPDController
-import frc.team449.robot2023.subsystems.arm.control.ArmState
-import frc.team449.robot2023.subsystems.arm.control.ArmTrajectory
-import frc.team449.robot2023.subsystems.arm.control.CartesianArmState
-import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
+import frc.team449.robot2023.subsystems.arm.control.*
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
+import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
@@ -177,6 +173,73 @@ open class Arm(
         else ->
           ArmPaths.MID_STOW
       }
+    }
+  }
+
+  companion object {
+    fun createArm(): Arm {
+      val firstJointMotor = createSparkMax(
+        "First Joint Motor",
+        ArmConstants.FIRST_MOTOR_ID1,
+        ArmEncoder.creator(
+          ArmConstants.FIRST_ENCODER_CHAN,
+          ArmConstants.FIRST_ENCODER_OFFSET,
+          true
+        ),
+        slaveSparks = mapOf(
+          ArmConstants.FIRST_MOTOR_ID2 to true
+        ),
+        currentLimit = ArmConstants.FIRST_JOINT_CURR_LIM,
+        inverted = true,
+        enableBrakeMode = true
+      )
+
+      val secondJointMotor = createSparkMax(
+        "Second Joint Motor",
+        ArmConstants.SECOND_MOTOR_ID,
+        ArmEncoder.creator(
+          ArmConstants.SECOND_ENCODER_CHAN,
+          ArmConstants.SECOND_ENCODER_OFFSET,
+          inverted = true
+        ),
+        currentLimit = ArmConstants.SECOND_JOINT_CURR_LIM,
+        enableBrakeMode = true
+      )
+
+      val firstJointEncoder = QuadEncoder(
+        "First joint quad",
+        ArmConstants.FIRSTJ_QUAD_ENCODER,
+        1024,
+        2 * PI,
+        1.0
+      )
+
+      val secondJointEncoder = QuadEncoder(
+        "Second joint quad",
+        ArmConstants.SECONDJ_QUAD_ENCODER,
+        1024,
+        2 * PI,
+        1.0
+      )
+
+      return Arm(
+        firstJointMotor,
+        secondJointMotor,
+        firstJointEncoder,
+        secondJointEncoder,
+        TwoJointArmFeedForward.createFromConstants(),
+        ArmPDController(
+          ArmConstants.kP1,
+          ArmConstants.kP2,
+          ArmConstants.kD1,
+          ArmConstants.kD2,
+          ArmConstants.kI1,
+          ArmConstants.kI2,
+          ArmConstants.kErrDeadband
+        ),
+        ArmConstants.LENGTH_1,
+        ArmConstants.LENGTH_2
+      )
     }
   }
 }
