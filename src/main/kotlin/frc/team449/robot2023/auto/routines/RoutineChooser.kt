@@ -11,6 +11,7 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
     updateOptions(position.selected)
   }
 
+  // TODO: Update all routines to make use of on the move event following :D
   fun updateOptions(position: PositionChooser.POSITIONS) {
     /** Add auto options here */
     this.setDefaultOption("Drop Piece", DropCone(robot))
