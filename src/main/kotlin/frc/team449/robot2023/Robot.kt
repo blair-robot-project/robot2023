@@ -30,7 +30,8 @@ class Robot : RobotBase() {
 
   // Instantiate/declare PDP and other stuff here
 
-  override val powerDistribution: PowerDistribution = PowerDistribution(RobotConstants.PDP_CAN, PowerDistribution.ModuleType.kCTRE)
+  @Log(name = "PDH Logs")
+  override val powerDistribution: PowerDistribution = PowerDistribution(RobotConstants.PDH_CAN, PowerDistribution.ModuleType.kRev)
 
   override val drive = SwerveDrive.createSwerve(ahrs)
 

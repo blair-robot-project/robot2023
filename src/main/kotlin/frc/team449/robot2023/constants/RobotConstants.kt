@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation
 object RobotConstants {
 
   /** Other CAN ID */
-  const val PDP_CAN = 1
+  const val PDH_CAN = 1
 
   /** Controller Configurations */
   const val RATE_LIMIT = 4.75

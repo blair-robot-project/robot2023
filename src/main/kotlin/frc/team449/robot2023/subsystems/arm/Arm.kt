@@ -165,8 +165,8 @@ open class Arm(
       when (endpoint) {
         ArmConstants.HIGH ->
           ArmPaths.STOW_HIGH
-        ArmConstants.PICKUP ->
-          ArmPaths.STOW_PICKUP
+        ArmConstants.GROUND ->
+          ArmPaths.STOW_GROUND
         else ->
           ArmPaths.STOW_MID
       }
@@ -174,8 +174,8 @@ open class Arm(
       when (startPoint) {
         ArmConstants.HIGH ->
           ArmPaths.HIGH_STOW
-        ArmConstants.PICKUP ->
-          ArmPaths.PICKUP_STOW
+        ArmConstants.GROUND ->
+          ArmPaths.GROUND_STOW
         else ->
           ArmPaths.MID_STOW
       }

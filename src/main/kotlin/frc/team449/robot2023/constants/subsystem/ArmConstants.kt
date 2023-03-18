@@ -68,14 +68,14 @@ object ArmConstants {
 
   // Arm States corresponding to points.
   val HIGH = ArmState(
-    Rotation2d.fromDegrees(128.12),
-    Rotation2d(0.205619455575943),
+    Rotation2d.fromDegrees(127.98),
+    Rotation2d.fromDegrees(17.87),
     0.0,
     0.0
   )
   val MID = ArmState(
-    Rotation2d.fromDegrees(65.09),
-    Rotation2d.fromDegrees(-49.11),
+    Rotation2d.fromDegrees(88.25),
+    Rotation2d.fromDegrees(94.25),
     0.0,
     0.0
   )
@@ -92,15 +92,15 @@ object ArmConstants {
 //    0.0
 //  )
   val STOW = ArmState(
-    Rotation2d.fromDegrees(106.94),
-    Rotation2d.fromDegrees(-141.78),
+    Rotation2d.fromDegrees(90.0),
+    Rotation2d.fromDegrees(-146.14),
     0.0,
     0.0
   )
 
-  val INTAKE = ArmState(
-    Rotation2d.fromDegrees(90.22),
-    Rotation2d.fromDegrees(-124.9),
+  val GROUND = ArmState(
+    Rotation2d.fromDegrees(50.67),
+    Rotation2d.fromDegrees(-118.55),
     0.0,
     0.0
   )
@@ -120,5 +120,5 @@ object ArmConstants {
 //    0.0
 //  )
 
-  val STATES = listOf(HIGH, MID, PICKUP, STOW)
+  val STATES = listOf(HIGH, MID, GROUND, STOW)
 }

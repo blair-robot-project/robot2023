@@ -54,6 +54,10 @@ class ControllerBindings(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.PICKUP) }.withInterruptBehavior(kCancelIncoming)
     )
 
+    JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.GROUND) }.withInterruptBehavior(kCancelIncoming)
+    )
+
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
       SequentialCommandGroup(
         ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming),
