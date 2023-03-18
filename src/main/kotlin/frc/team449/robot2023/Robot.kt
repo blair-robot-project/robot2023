@@ -15,6 +15,7 @@ import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.arm.Arm.Companion.createArm
 import frc.team449.robot2023.subsystems.arm.ArmSim.Companion.createArmSim
 import frc.team449.robot2023.subsystems.endEffector.EndEffector.Companion.createEndEffector
+import frc.team449.robot2023.subsystems.light.Light.Companion.createLight
 import frc.team449.system.AHRS
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
@@ -69,4 +70,7 @@ class Robot : RobotBase() {
 //    groundIntakePiston,
 //    groundIntakeMotor
 //  )
+
+  val light = createLight()
+
 }

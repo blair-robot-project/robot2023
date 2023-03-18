@@ -2,6 +2,7 @@ package frc.team449.robot2023.subsystems
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
 import edu.wpi.first.wpilibj2.command.InstantCommand
@@ -44,6 +45,12 @@ class ControllerBindings(
 
     JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
       InstantCommand(robot.endEffector::pistonRev)
+    )
+
+    Trigger {robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward}.onTrue(
+      InstantCommand(robot.light::setCubeColor)
+    ).onFalse(
+      InstantCommand(robot.light::setConeColor)
     )
 
     JoystickButton(mechanismController, XboxController.Button.kStart.value).onTrue(
