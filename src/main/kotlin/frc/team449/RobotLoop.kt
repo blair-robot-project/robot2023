@@ -61,6 +61,8 @@ class RobotLoop : TimedRobot() {
   }
 
   override fun autonomousInit() {
+    robot.arm.controller.reset()
+
     /** At the start of auto we poll the alliance color given by the FMS */
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
 
@@ -92,6 +94,8 @@ class RobotLoop : TimedRobot() {
   override fun disabledPeriodic() {}
 
   override fun testInit() {
+    robot.arm.controller.reset()
+
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand)
     }

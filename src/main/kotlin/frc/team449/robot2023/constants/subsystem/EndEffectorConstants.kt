@@ -15,7 +15,7 @@ object EndEffectorConstants {
   const val MOTOR_CURR_LIM = 20
 
   /** Voltage constants */
-  const val INTAKE_VOLTAGE = 4.25
+  const val INTAKE_VOLTAGE = 8.0
+  const val REVERSE_INTAKE_VOLTAGE = -2.0
   const val HOLD_VOLTAGE = 1.0
-
 }

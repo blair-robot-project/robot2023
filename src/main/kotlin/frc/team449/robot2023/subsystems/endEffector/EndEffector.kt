@@ -36,7 +36,7 @@ class EndEffector(
   }
 
   fun intakeReverse() {
-    intakeMotor.setVoltage(EndEffectorConstants.INTAKE_VOLTAGE)
+    intakeMotor.setVoltage(EndEffectorConstants.REVERSE_INTAKE_VOLTAGE)
   }
 
   fun stop() {

@@ -1,6 +1,5 @@
 package frc.team449.robot2023
 
-import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.PneumaticsModuleType
 import edu.wpi.first.wpilibj.PowerDistribution
