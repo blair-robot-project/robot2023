@@ -12,7 +12,7 @@ import frc.team449.system.motor.createSparkMax
 
 class EndEffector(
   private val intakeMotor: WrappedMotor,
-  private val chooserPiston: DoubleSolenoid,
+  val chooserPiston: DoubleSolenoid,
   private val sensor: DigitalInput
 ) : SubsystemBase() {
   private var sensorVal = false

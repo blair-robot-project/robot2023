@@ -6,12 +6,10 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.RepeatCommand
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.ArmSweep
-import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -27,6 +25,14 @@ class ControllerBindings(
 
     JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
       InstantCommand(robot.endEffector::intake)
+    ).onFalse(
+      InstantCommand(robot.endEffector::stop).andThen(
+        InstantCommand(robot.endEffector::holdIntake)
+      )
+    )
+
+    JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
+      InstantCommand(robot.endEffector::intakeReverse)
     ).onFalse(
       InstantCommand(robot.endEffector::stop)
     )
@@ -46,6 +52,24 @@ class ControllerBindings(
       InstantCommand(robot.endEffector::pistonRev)
     )
 
+//    Trigger {robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward}.onTrue(
+//      InstantCommand(robot.ledStrip::setCubeColor).andThen(
+//        InstantCommand(
+//          {
+//            robot.arm.state = ArmConstants.CUBE
+//          }
+//        )
+//      )
+//    ).onFalse(
+//      InstantCommand(robot.ledStrip::setConeColor).andThen(
+//        InstantCommand(
+//          {
+//            robot.arm.state = ArmConstants.GROUND
+//          }
+//        )
+//      )
+//    )
+
     JoystickButton(mechanismController, XboxController.Button.kStart.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }.withInterruptBehavior(kCancelIncoming)
     )
@@ -57,19 +81,13 @@ class ControllerBindings(
     JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.GROUND) }.withInterruptBehavior(kCancelIncoming)
     )
-
+// teddy is a foo
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
-      SequentialCommandGroup(
-        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming),
-        InstantCommand(robot.endEffector::holdIntake)
-      )
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming)
     )
 
     JoystickButton(mechanismController, XboxController.Button.kY.value).onTrue(
-      SequentialCommandGroup(
-        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming),
-        InstantCommand(robot.endEffector::holdIntake)
-      )
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming)
     )
 
     Trigger { abs(mechanismController.rightTriggerAxis) > 0.1 }.onTrue(
@@ -96,7 +114,7 @@ class ControllerBindings(
     )
 
     JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
-      AutoBalance.create(robot.drive)
+      InstantCommand(robot.drive::stop)
     )
 
     JoystickButton(driveController, XboxController.Button.kStart.value).onTrue(

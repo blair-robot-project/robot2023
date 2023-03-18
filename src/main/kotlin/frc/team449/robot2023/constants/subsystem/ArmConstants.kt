@@ -104,6 +104,13 @@ object ArmConstants {
     0.0,
     0.0
   )
+
+  val CUBE = ArmState(
+    Rotation2d(0.93),
+    Rotation2d(-2.07),
+    0.0,
+    0.0
+  )
 //  {
 //    "q1": 1.66,
 //    "q2": -1.66,

@@ -69,4 +69,6 @@ class Robot : RobotBase() {
 //    groundIntakePiston,
 //    groundIntakeMotor
 //  )
+
+//  val ledStrip = createLight()
 }

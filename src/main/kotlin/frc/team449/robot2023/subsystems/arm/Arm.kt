@@ -160,7 +160,10 @@ open class Arm(
   }
   fun chooseTraj(endpoint: ArmState): ArmTrajectory? {
     val startPoint = getClosestState(this.desiredState)
-    if (endpoint == startPoint) return null
+    if (endpoint == startPoint) {
+      this.desiredState = endpoint
+      return null
+    }
     return if (startPoint == ArmConstants.STOW) {
       when (endpoint) {
         ArmConstants.HIGH ->
