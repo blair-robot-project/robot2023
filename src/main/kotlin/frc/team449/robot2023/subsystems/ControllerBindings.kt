@@ -5,12 +5,14 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
+import edu.wpi.first.wpilibj2.command.ConditionalCommand
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.ArmSweep
+import frc.team449.robot2023.commands.AutoBalance
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -81,8 +83,14 @@ class ControllerBindings(
 
     JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.GROUND) }.withInterruptBehavior(kCancelIncoming)
+        .andThen(
+          ConditionalCommand(
+            InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
+            InstantCommand({ robot.arm.state = ArmConstants.GROUND })
+          ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
+        )
     )
-// teddy is a foo
+
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming)
     )
@@ -115,7 +123,7 @@ class ControllerBindings(
     )
 
     JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
-      InstantCommand(robot.drive::stop)
+      AutoBalance.create(robot.drive)
     )
 
     JoystickButton(driveController, XboxController.Button.kStart.value).onTrue(

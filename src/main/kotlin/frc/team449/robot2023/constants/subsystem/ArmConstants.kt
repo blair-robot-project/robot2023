@@ -30,7 +30,7 @@ object ArmConstants {
   const val kErrDeadband = .0 // rad
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(32.0)
-  val LENGTH_2 = Units.inchesToMeters(36.5)
+  val LENGTH_2 = Units.inchesToMeters(34.0)
 
   // Mass of segments
   const val MASS_1 = 6.944561
@@ -42,7 +42,7 @@ object ArmConstants {
 
   // Distance from pivot to the Center of Grav for each segment
   val R1 = Units.inchesToMeters(9.97)
-  val R2 = Units.inchesToMeters(26.0)
+  val R2 = Units.inchesToMeters(24.0)
 
   // Feedforward constants of first joint in arm
   const val KS1 = .0789162

@@ -96,6 +96,7 @@ open class Arm(
    * Mitigate any speed on the joints
    */
   fun stop() {
+
     desiredState.thetaVel = 0.0
     desiredState.betaVel = 0.0
   }
@@ -130,8 +131,8 @@ open class Arm(
     val ff = feedForward.calculate(desiredState.matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
-    firstJoint.setVoltage(u[0, 0])
-    secondJoint.setVoltage(u[1, 0])
+//    firstJoint.setVoltage(u[0, 0])
+//    secondJoint.setVoltage(u[1, 0])
     visual.setState(state, desiredState)
   }
 
