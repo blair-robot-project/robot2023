@@ -2,6 +2,7 @@ package frc.team449.robot2023.subsystems
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
 import edu.wpi.first.wpilibj2.command.InstantCommand
@@ -52,23 +53,23 @@ class ControllerBindings(
       InstantCommand(robot.endEffector::pistonRev)
     )
 
-//    Trigger {robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward}.onTrue(
-//      InstantCommand(robot.ledStrip::setCubeColor).andThen(
-//        InstantCommand(
-//          {
-//            robot.arm.state = ArmConstants.CUBE
-//          }
-//        )
-//      )
-//    ).onFalse(
-//      InstantCommand(robot.ledStrip::setConeColor).andThen(
-//        InstantCommand(
-//          {
-//            robot.arm.state = ArmConstants.GROUND
-//          }
-//        )
-//      )
-//    )
+    Trigger {robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward}.onTrue(
+      // InstantCommand(robot.ledStrip::setCubeColor).andThen(
+        InstantCommand(
+          {
+            robot.arm.state = ArmConstants.CUBE
+          }
+        )
+      // )
+    ).onFalse(
+      // InstantCommand(robot.ledStrip::setConeColor).andThen(
+        InstantCommand(
+          {
+            robot.arm.state = ArmConstants.GROUND
+          }
+        )
+      // )
+    )
 
     JoystickButton(mechanismController, XboxController.Button.kStart.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }.withInterruptBehavior(kCancelIncoming)
