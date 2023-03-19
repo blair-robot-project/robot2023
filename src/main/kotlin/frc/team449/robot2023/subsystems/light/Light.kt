@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.LightConstants
 
 class Light(
-  private val port: Int,
-  private val length: Int
+  port: Int,
+  length: Int
 ) : SubsystemBase() {
 
   private var lightStrip = AddressableLED(port)

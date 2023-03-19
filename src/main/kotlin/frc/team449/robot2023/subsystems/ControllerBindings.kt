@@ -53,21 +53,21 @@ class ControllerBindings(
       InstantCommand(robot.endEffector::pistonRev)
     )
 
-    Trigger {robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward}.onTrue(
+    Trigger { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }.onTrue(
       // InstantCommand(robot.ledStrip::setCubeColor).andThen(
-        InstantCommand(
-          {
-            robot.arm.state = ArmConstants.CUBE
-          }
-        )
+      InstantCommand(
+        {
+          robot.arm.state = ArmConstants.CUBE
+        }
+      )
       // )
     ).onFalse(
       // InstantCommand(robot.ledStrip::setConeColor).andThen(
-        InstantCommand(
-          {
-            robot.arm.state = ArmConstants.GROUND
-          }
-        )
+      InstantCommand(
+        {
+          robot.arm.state = ArmConstants.GROUND
+        }
+      )
       // )
     )
 

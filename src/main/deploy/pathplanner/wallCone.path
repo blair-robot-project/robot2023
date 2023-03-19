@@ -70,7 +70,7 @@
           "handoff"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "after",
+        "waitBehavior": "none",
         "waitTime": 1.5
       }
     }

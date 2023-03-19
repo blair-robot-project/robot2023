@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.Robot
-import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import java.util.Collections
@@ -65,7 +64,7 @@ object AutoUtil {
             robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.135)
           }
         )
-      ).withTimeout(2.0),
+      ).withTimeout(0.5),
       InstantCommand(robot.endEffector::pistonRev)
     )
   }
@@ -81,7 +80,7 @@ object AutoUtil {
   fun stowAndDeployCube(robot: Robot): Command {
     return SequentialCommandGroup(
       ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
-      InstantCommand({ robot.arm.desiredState = ArmConstants.GROUND }),
+      ArmFollower(robot.arm) { ArmPaths.STOW_GROUND },
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonRev),
     )
@@ -90,15 +89,19 @@ object AutoUtil {
   fun stowAndDeployCone(robot: Robot): Command {
     return SequentialCommandGroup(
       ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
-      InstantCommand({ robot.arm.desiredState = ArmConstants.GROUND }),
+      ArmFollower(robot.arm) { ArmPaths.STOW_GROUND },
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonOn),
     )
   }
 
+  fun stowArm(robot: Robot): Command {
+    return ArmFollower(robot.arm) { ArmPaths.HIGH_STOW }
+  }
+
   fun retractGroundIntake(robot: Robot): Command {
     return InstantCommand(robot.endEffector::stop).andThen(
-      InstantCommand({ robot.arm.desiredState = ArmConstants.STOW })
+      ArmFollower(robot.arm) { ArmPaths.GROUND_STOW }
     )
   }
 }
