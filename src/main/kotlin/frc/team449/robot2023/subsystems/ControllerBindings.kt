@@ -72,7 +72,7 @@ class ControllerBindings(
         .andThen(
           ConditionalCommand(
             InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
-            InstantCommand({ robot.arm.state = ArmConstants.CONE})
+            InstantCommand({ robot.arm.state = ArmConstants.CONE })
           ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
         )
     )
