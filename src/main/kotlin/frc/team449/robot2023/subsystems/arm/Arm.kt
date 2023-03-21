@@ -131,8 +131,8 @@ open class Arm(
     val ff = feedForward.calculate(desiredState.matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
-//    firstJoint.setVoltage(u[0, 0])
-//    secondJoint.setVoltage(u[1, 0])
+    firstJoint.setVoltage(u[0, 0])
+    secondJoint.setVoltage(u[1, 0])
     visual.setState(state, desiredState)
   }
 
@@ -167,21 +167,31 @@ open class Arm(
     }
     return if (startPoint == ArmConstants.STOW) {
       when (endpoint) {
-        ArmConstants.HIGH ->
-          ArmPaths.STOW_HIGH
-        ArmConstants.GROUND ->
-          ArmPaths.STOW_GROUND
+        ArmConstants.SINGLE ->
+          ArmPaths.stowSingle
+        ArmConstants.DOUBLE ->
+          ArmPaths.stowDouble
+        ArmConstants.CONE ->
+          ArmPaths.stowCone
+        ArmConstants.MID ->
+          ArmPaths.stowMid
         else ->
-          ArmPaths.STOW_MID
+          ArmPaths.stowHigh
       }
     } else {
       when (startPoint) {
-        ArmConstants.HIGH ->
-          ArmPaths.HIGH_STOW
-        ArmConstants.GROUND ->
-          ArmPaths.GROUND_STOW
+        ArmConstants.SINGLE ->
+          ArmPaths.singleStow
+        ArmConstants.DOUBLE ->
+          ArmPaths.doubleStow
+        ArmConstants.CONE ->
+          ArmPaths.coneStow
+        ArmConstants.CUBE ->
+          ArmPaths.cubeStow
+        ArmConstants.MID ->
+          ArmPaths.midStow
         else ->
-          ArmPaths.MID_STOW
+          ArmPaths.highStow
       }
     }
   }

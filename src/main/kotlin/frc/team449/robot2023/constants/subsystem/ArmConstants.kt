@@ -67,65 +67,54 @@ object ArmConstants {
   const val SECOND_JOINT_CURR_LIM = 40
 
   // Arm States corresponding to points.
-  val HIGH = ArmState(
-    Rotation2d.fromDegrees(127.98),
-    Rotation2d.fromDegrees(17.87),
-    0.0,
-    0.0
-  )
-  val MID = ArmState(
-    Rotation2d.fromDegrees(88.25),
-    Rotation2d.fromDegrees(94.25),
-    0.0,
-    0.0
-  )
-//  val LOW = ArmState(
-//    Rotation2d.fromDegrees(79.56),
-//    Rotation2d.fromDegrees(-115.38),
-//    0.0,
-//    0.0
-//  )
-//  val CUBE = ArmState(
-//    Rotation2d.fromDegrees(60.32),
-//    Rotation2d.fromDegrees(-122.55),
-//    0.0,
-//    0.0
-//  )
-  val STOW = ArmState(
-    Rotation2d.fromDegrees(90.0),
-    Rotation2d.fromDegrees(-146.14),
+  val SINGLE = ArmState(
+    Rotation2d.fromDegrees(93.07),
+    Rotation2d.fromDegrees(-114.74),
     0.0,
     0.0
   )
 
-  val GROUND = ArmState(
-    Rotation2d.fromDegrees(50.67),
-    Rotation2d.fromDegrees(-118.55),
+  val DOUBLE = ArmState(
+    Rotation2d.fromDegrees(95.11),
+    Rotation2d.fromDegrees(-95.11),
+    0.0,
+    0.0
+  )
+
+  val STOW = ArmState(
+    Rotation2d.fromDegrees(90.00),
+    Rotation2d.fromDegrees(-152.00),
+    0.0,
+    0.0
+  )
+
+  val CONE = ArmState(
+    Rotation2d.fromDegrees(49.39),
+    Rotation2d.fromDegrees(-116.58),
     0.0,
     0.0
   )
 
   val CUBE = ArmState(
-    Rotation2d(0.93),
-    Rotation2d(-2.07),
+    Rotation2d.fromDegrees(47.81),
+    Rotation2d.fromDegrees(-111.31),
     0.0,
     0.0
   )
-//  {
-//    "q1": 1.66,
-//    "q2": -1.66,
-  val PICKUP = ArmState(
-    Rotation2d(1.66),
-    Rotation2d(-1.66),
+  val MID = ArmState(
+    Rotation2d.fromDegrees(91.40),
+    Rotation2d.fromDegrees(90.22),
     0.0,
     0.0
   )
-//  val CONE = ArmState(
-//    Rotation2d.fromDegrees(61.48),
-//    Rotation2d.fromDegrees(-124.85),
-//    0.0,
-//    0.0
-//  )
 
-  val STATES = listOf(HIGH, MID, GROUND, STOW)
+  val HIGH = ArmState(
+    Rotation2d.fromDegrees(132.01),
+    Rotation2d.fromDegrees(14.46),
+    0.0,
+    0.0
+  )
+
+
+  val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH)
 }
