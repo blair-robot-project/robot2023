@@ -23,7 +23,7 @@ class EdgeConeCube(
         "stowArm" to AutoUtil.stowAndDeployCube(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "dropCube" to AutoUtil.dropCube(robot),
-        "retractArm" to ArmFollower(robot.arm) { ArmPaths.HIGH_STOW }
+        "retractArm" to ArmFollower(robot.arm) { ArmPaths.highStow }
       )
     )
 

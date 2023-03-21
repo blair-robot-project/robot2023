@@ -23,7 +23,7 @@ class EdgeConeCubeStation(
         "dropCone" to AutoUtil.dropCone(robot),
         "stowArm" to AutoUtil.stowAndDeployCube(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
-        "highArm" to ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
+        "highArm" to ArmFollower(robot.arm) { ArmPaths.stowHigh },
         "dropCube" to InstantCommand(robot.endEffector::intakeReverse),
         "balanceStation" to AutoBalance.create(robot.drive),
         "endArm" to AutoUtil.stowArm(robot)

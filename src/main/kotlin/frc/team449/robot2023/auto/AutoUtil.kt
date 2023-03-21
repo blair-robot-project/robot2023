@@ -56,7 +56,7 @@ object AutoUtil {
 
   fun dropCone(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
+      ArmFollower(robot.arm) { ArmPaths.stowHigh },
       RepeatCommand(
         InstantCommand(
           {
@@ -71,7 +71,7 @@ object AutoUtil {
 
   fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
+      ArmFollower(robot.arm) { ArmPaths.stowHigh },
       WaitCommand(0.35),
       InstantCommand(robot.endEffector::intakeReverse)
     )
@@ -79,8 +79,8 @@ object AutoUtil {
 
   fun stowAndDeployCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
-      ArmFollower(robot.arm) { ArmPaths.STOW_GROUND },
+      ArmFollower(robot.arm) { ArmPaths.highStow },
+      ArmFollower(robot.arm) { ArmPaths.stowCone },
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonRev),
     )
@@ -88,20 +88,20 @@ object AutoUtil {
 
   fun stowAndDeployCone(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
-      ArmFollower(robot.arm) { ArmPaths.STOW_GROUND },
+      ArmFollower(robot.arm) { ArmPaths.highStow },
+      ArmFollower(robot.arm) { ArmPaths.stowCone },
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonOn),
     )
   }
 
   fun stowArm(robot: Robot): Command {
-    return ArmFollower(robot.arm) { ArmPaths.HIGH_STOW }
+    return ArmFollower(robot.arm) { ArmPaths.highStow }
   }
 
   fun retractGroundIntake(robot: Robot): Command {
     return InstantCommand(robot.endEffector::stop).andThen(
-      ArmFollower(robot.arm) { ArmPaths.GROUND_STOW }
+      ArmFollower(robot.arm) { ArmPaths.coneStow }
     )
   }
 }

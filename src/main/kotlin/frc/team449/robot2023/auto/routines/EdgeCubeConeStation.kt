@@ -24,7 +24,7 @@ class EdgeCubeConeStation(
         "stowArm" to AutoUtil.stowAndDeployCone(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "dropCube" to AutoUtil.dropCube(robot),
-        "highArm" to ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
+        "highArm" to ArmFollower(robot.arm) { ArmPaths.stowHigh },
         "balanceStation" to AutoBalance.create(robot.drive),
         "endArm" to AutoUtil.stowArm(robot),
         // TODO: Cone or cube?

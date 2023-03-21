@@ -28,6 +28,12 @@ class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx, Loggab
       return -Rotation2d.fromDegrees(navx.roll.toDouble())
     }
 
+  @get:Log.ToString
+  val angularVel: Float
+    get() {
+      return navx.rawGyroY
+    }
+
   constructor(
     port: SerialPort.Port = SerialPort.Port.kMXP
   ) : this(
