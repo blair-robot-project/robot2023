@@ -25,7 +25,11 @@ class Robot : RobotBase() {
   // Instantiate/declare PDP and other stuff here
 
   @Log(name = "PDH Logs")
-  override val powerDistribution: PowerDistribution = PowerDistribution(RobotConstants.PDH_CAN, PowerDistribution.ModuleType.kRev)
+  override val powerDistribution: PowerDistribution = PowerDistribution(
+    RobotConstants
+      .PDH_CAN,
+    PowerDistribution.ModuleType.kRev
+  )
 
   override val drive = SwerveDrive.createSwerve(ahrs)
 
@@ -36,33 +40,4 @@ class Robot : RobotBase() {
 
   @Log(name = "End Effector")
   val endEffector = createEndEffector()
-
-//  // create ground end effector motors
-//  private val groundIntakeMotor = createSparkMax(
-//    "GroundIntake",
-//    GroundIntakeConstants.INTAKE_RIGHT,
-//    NEOEncoder.creator(
-//      2 * PI,
-//      1.0 / 3.0
-//    ),
-//    inverted = true,
-//    currentLimit = 20,
-//    slaveSparks = mapOf(
-//      GroundIntakeConstants.INTAKE_LEFT to true
-//    )
-//  )
-
-//  // create ground intake pistons
-//  private val groundIntakePiston = DoubleSolenoid(
-//    PneumaticsModuleType.CTREPCM,
-//    7,
-//    0
-//  )
-
-//  val groundIntake = GroundIntake(
-//    groundIntakePiston,
-//    groundIntakeMotor
-//  )
-
-//  val ledStrip = createLight()
 }

@@ -16,6 +16,6 @@ object EndEffectorConstants {
 
   /** Voltage constants */
   const val INTAKE_VOLTAGE = 8.0
-  const val REVERSE_INTAKE_VOLTAGE = -3.0
-  const val HOLD_VOLTAGE = 1.0
+  const val REVERSE_INTAKE_VOLTAGE = -1.75
+  const val HOLD_VOLTAGE = 1.25
 }

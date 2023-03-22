@@ -61,7 +61,7 @@ object AutoUtil {
         InstantCommand(
           {
             val startState = robot.arm.desiredState.copy()
-            robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.135)
+            robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.175)
           }
         )
       ).withTimeout(0.5),

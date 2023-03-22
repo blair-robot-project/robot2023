@@ -48,11 +48,21 @@ class ControllerBindings(
     )
 
     JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
-      InstantCommand(robot.endEffector::pistonOn)
+      InstantCommand(robot.endEffector::pistonOn).andThen(
+        ConditionalCommand(
+          InstantCommand({ robot.arm.desiredState = ArmConstants.CUBE }),
+          InstantCommand()
+        ) { robot.arm.desiredState == ArmConstants.CONE }
+      )
     )
 
     JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
-      InstantCommand(robot.endEffector::pistonRev)
+      InstantCommand(robot.endEffector::pistonRev).andThen(
+        ConditionalCommand(
+          InstantCommand({ robot.arm.desiredState = ArmConstants.CONE }),
+          InstantCommand()
+        ) { robot.arm.desiredState == ArmConstants.CUBE }
+      )
     )
 
     JoystickButton(mechanismController, XboxController.Button.kB.value).onTrue(
@@ -77,23 +87,23 @@ class ControllerBindings(
         )
     )
 
-    Trigger { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }.onTrue(
-      // InstantCommand(robot.ledStrip::setCubeColor).andThen(
-      InstantCommand(
-        {
-          robot.arm.state = ArmConstants.CUBE
-        }
-      )
-      // )
-    ).onFalse(
-      // InstantCommand(robot.ledStrip::setConeColor).andThen(
-      InstantCommand(
-        {
-          robot.arm.state = ArmConstants.CONE
-        }
-      )
-      // )
-    )
+//    Trigger { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }.onTrue(
+//      // InstantCommand(robot.ledStrip::setCubeColor).andThen(
+//      InstantCommand(
+//        {
+//          robot.arm.state = ArmConstants.CUBE
+//        }
+//      )
+//      // )
+//    ).onFalse(
+//      // InstantCommand(robot.ledStrip::setConeColor).andThen(
+//      InstantCommand(
+//        {
+//          robot.arm.state = ArmConstants.CONE
+//        }
+//      )
+//      // )
+//    )
 
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming)

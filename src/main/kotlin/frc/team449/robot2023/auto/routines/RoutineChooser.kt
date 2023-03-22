@@ -75,5 +75,20 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
         }
       }
     )
+
+    this.addOption(
+      "3 Piece (Edges only)",
+      when (position) {
+        PositionChooser.POSITIONS.FARCONE, PositionChooser.POSITIONS.WALLCONE -> {
+          EdgeCubeConeCone(robot, position)
+        }
+        PositionChooser.POSITIONS.FARCUBE, PositionChooser.POSITIONS.WALLCUBE -> {
+          EdgeCubeConeCone(robot, position)
+        }
+        else -> {
+          DropCone(robot)
+        }
+      }
+    )
   }
 }
