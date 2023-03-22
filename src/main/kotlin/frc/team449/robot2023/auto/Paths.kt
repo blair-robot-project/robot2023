@@ -70,6 +70,12 @@ object Paths {
         "wallCubeConeCone",
         PathPlanner.getConstraintsFromPath("wallCubeConeCone")
       )
+
+    val CONECUBECONE: MutableList<PathPlannerTrajectory> =
+      PathPlanner.loadPathGroup(
+        "wallConeCubeCone",
+        PathPlanner.getConstraintsFromPath("wallConeCubeCone")
+      )
   }
 
   object FAR {
@@ -146,6 +152,14 @@ object Paths {
         PathPlanner.loadPathGroup(
           "wallCubeConeCone",
           PathPlanner.getConstraintsFromPath("wallCubeConeCone")
+        )
+      )
+
+    val CONECUBECONE: MutableList<PathPlannerTrajectory> =
+      AutoUtil.transformForFarSide(
+        PathPlanner.loadPathGroup(
+          "wallConeCubeCone",
+          PathPlanner.getConstraintsFromPath("wallConeCubeCone")
         )
       )
   }

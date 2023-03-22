@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "dropCube"
+          "dropCone"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -26,41 +26,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.25,
-        "y": 0.92
-      },
-      "prevControl": {
-        "x": 6.164111542508799,
-        "y": 0.92
-      },
-      "nextControl": {
-        "x": 6.314017476477642,
-        "y": 0.92
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.82,
+        "x": 6.5,
         "y": 0.9135334509985259
       },
       "prevControl": {
-        "x": 6.6316702544499035,
-        "y": 0.9135334509985259
+        "x": 5.646917547870184,
+        "y": 0.9611913960670033
       },
       "nextControl": {
-        "x": 6.6316702544499035,
-        "y": 0.9135334509985259
+        "x": 5.646917547870184,
+        "y": 0.9611913960670033
       },
       "holonomicAngle": 0.0,
       "isReversal": true,

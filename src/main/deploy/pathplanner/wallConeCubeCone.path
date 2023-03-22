@@ -7,10 +7,10 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9078395124208798,
-        "y": 0.5100842657825675
+        "x": 4.515995347780169,
+        "y": 0.580324318543375
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -19,31 +19,6 @@
         "names": [
           "dropCone"
         ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.15,
-        "y": 0.92
-      },
-      "prevControl": {
-        "x": 5.754667489990351,
-        "y": 0.92
-      },
-      "nextControl": {
-        "x": 6.545332510009649,
-        "y": 0.92
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": 1.0,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -51,46 +26,45 @@
     },
     {
       "anchorPoint": {
-        "x": 6.6,
-        "y": 0.9135334509985259
+        "x": 6.642252049349706,
+        "y": 1.7327299262674536
       },
       "prevControl": {
-        "x": 6.5403920198922005,
-        "y": 0.9135334509985259
+        "x": 6.4900911037246605,
+        "y": 1.5805689806424084
       },
       "nextControl": {
-        "x": 6.5403920198922005,
-        "y": 0.9135334509985259
+        "x": 6.4900911037246605,
+        "y": 1.5805689806424084
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 45.0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "stopIntake",
-          "handoff"
+          "stopIntake"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
-        "waitTime": 1.5
+        "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 1.7955162226113928,
-        "y": 1.033737506071504
+        "x": 1.7864479588608302,
+        "y": 1.0428057698220663
       },
       "prevControl": {
-        "x": 1.9331667601059757,
-        "y": 0.8873700265166743
+        "x": 4.624814512786921,
+        "y": 0.4352320985343734
       },
       "nextControl": {
-        "x": 1.9331667601059757,
-        "y": 0.8873700265166743
+        "x": 4.624814512786921,
+        "y": 0.4352320985343734
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -99,19 +73,46 @@
         "names": [
           "dropCube"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 3.9,
-        "y": 2.375840541154767
+        "x": 6.45,
+        "y": 0.9158500773141907
       },
       "prevControl": {
-        "x": 1.6685605301035165,
-        "y": 2.611615398669395
+        "x": 6.379398999148876,
+        "y": 0.9158500773141907
+      },
+      "nextControl": {
+        "x": 6.379398999148876,
+        "y": 0.9158500773141907
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "stopCubeIntake"
+        ],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.7864479588608302,
+        "y": 1.6322429136086347
+      },
+      "prevControl": {
+        "x": 2.5119090589058373,
+        "y": 0.15411592226693271
       },
       "nextControl": null,
       "holonomicAngle": 0.0,
@@ -121,7 +122,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "balanceStation"
+          "dropCube2"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -129,26 +130,32 @@
       }
     }
   ],
-  "maxVelocity": 4.35,
-  "maxAcceleration": 6.0,
+  "maxVelocity": 4.45,
+  "maxAcceleration": 6.75,
   "isReversed": null,
   "markers": [
     {
-      "position": 3.1709090909089386,
-      "names": [
-        "endArm"
-      ]
-    },
-    {
-      "position": 0.03,
+      "position": 0.01,
       "names": [
         "stowArm"
       ]
     },
     {
-      "position": 2.0654545454544295,
+      "position": 1.0763636363636413,
       "names": [
         "highArm"
+      ]
+    },
+    {
+      "position": 2.01,
+      "names": [
+        "stowCube"
+      ]
+    },
+    {
+      "position": 3.09,
+      "names": [
+        "midCube"
       ]
     }
   ]

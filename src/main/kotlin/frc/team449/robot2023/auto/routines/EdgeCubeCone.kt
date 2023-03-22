@@ -7,7 +7,7 @@ import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
-import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class EdgeCubeCone(
@@ -19,11 +19,13 @@ class EdgeCubeCone(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to AutoUtil.dropCone(robot),
+        "dropCube" to AutoUtil.stowDropCube(robot),
         "stowArm" to AutoUtil.stowAndDeployCone(robot),
-        "stopIntake" to AutoUtil.retractGroundIntake(robot),
-        "dropCube" to AutoUtil.dropCube(robot),
-        "retractArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
+        "stopIntake" to AutoUtil.holdIntake(robot),
+        "dropCone" to ArmFollower(robot.arm) { ArmPaths.coneHigh }.andThen(AutoUtil.dropCube(robot)),
+        "retractArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
+        "stopIntake2" to AutoUtil.retractGroundIntake(robot),
+        "stowCone" to AutoUtil.stowAndDeployCone(robot)
       )
     )
 

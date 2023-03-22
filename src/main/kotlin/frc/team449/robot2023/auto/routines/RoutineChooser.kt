@@ -17,7 +17,7 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
     this.setDefaultOption("Drop Piece", DropCone(robot))
 
     this.addOption(
-      "1 Piece (Edges only)",
+      "1.5 Piece (Edges only)",
       when (position) {
         PositionChooser.POSITIONS.FARCONE, PositionChooser.POSITIONS.WALLCONE -> {
           EdgeCone(robot, position)
@@ -32,7 +32,7 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
     )
 
     this.addOption(
-      "2 Piece (Edges only)",
+      "2.5 Piece (Edges only)",
       when (position) {
         PositionChooser.POSITIONS.FARCONE, PositionChooser.POSITIONS.WALLCONE -> {
           EdgeConeCube(robot, position)
@@ -47,7 +47,7 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
     )
 
     this.addOption(
-      "1 Piece and Balance",
+      "1.5 Piece and Balance",
       when (position) {
         PositionChooser.POSITIONS.FARCONE, PositionChooser.POSITIONS.WALLCONE -> {
           EdgeConeStation(robot, position)
@@ -62,7 +62,7 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
     )
 
     this.addOption(
-      "2 Piece and Balance (Edges only)",
+      "2.5 Piece and Balance (Edges only)",
       when (position) {
         PositionChooser.POSITIONS.FARCONE, PositionChooser.POSITIONS.WALLCONE -> {
           EdgeConeCubeStation(robot, position)
@@ -80,7 +80,7 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
       "3 Piece (Edges only)",
       when (position) {
         PositionChooser.POSITIONS.FARCONE, PositionChooser.POSITIONS.WALLCONE -> {
-          EdgeCubeConeCone(robot, position)
+          EdgeConeCubeCone(robot, position)
         }
         PositionChooser.POSITIONS.FARCUBE, PositionChooser.POSITIONS.WALLCUBE -> {
           EdgeCubeConeCone(robot, position)

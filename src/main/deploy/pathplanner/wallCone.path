@@ -66,8 +66,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "stopIntake",
-          "handoff"
+          "stopIntake"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",

@@ -3,7 +3,6 @@ package frc.team449.robot2023.auto.routines
 import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.PrintCommand
 import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.team449.control.auto.HolonomicRoutine
@@ -24,11 +23,11 @@ class EdgeCubeConeCone(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCube" to AutoUtil.dropCube(robot).andThen(PrintCommand("FSIOFSFHODUIOASHFBIDSOAUFHI")),
+        "dropCube" to AutoUtil.dropCube(robot),
         "stowArm" to AutoUtil.stowAndDeployCone(robot),
-        "highArm" to ArmFollower(robot.arm) { ArmPaths.stowHigh },
-        "stowCone" to AutoUtil.stowAndDeployCube(robot),
-        "midCone" to ArmFollower(robot.arm) { ArmPaths.stowMid },
+        "highArm" to ArmFollower(robot.arm) { ArmPaths.coneHigh },
+        "stowCone" to AutoUtil.stowAndDeployCone(robot),
+        "highCone" to ArmFollower(robot.arm) { ArmPaths.coneHigh },
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "dropCone" to SequentialCommandGroup(
           RepeatCommand(
@@ -38,7 +37,7 @@ class EdgeCubeConeCone(
                 robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.175)
               }
             )
-          ).withTimeout(0.5),
+          ).withTimeout(0.75),
           InstantCommand(robot.endEffector::pistonRev)
         ),
         "stopConeIntake" to AutoUtil.retractGroundIntake(robot),
@@ -50,7 +49,7 @@ class EdgeCubeConeCone(
                 robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.175)
               }
             )
-          ).withTimeout(0.5),
+          ).withTimeout(0.75),
           InstantCommand(robot.endEffector::pistonRev)
         )
       )

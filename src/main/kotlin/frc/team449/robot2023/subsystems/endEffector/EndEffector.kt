@@ -43,6 +43,10 @@ class EndEffector(
     intakeMotor.set(0.0)
   }
 
+  fun autoReverse() {
+    intakeMotor.setVoltage(-3.0)
+  }
+
   override fun periodic() {
 //    sensorVal = !sensor.get()
 //    if (sensorVal != previousVal && sensorVal) {
