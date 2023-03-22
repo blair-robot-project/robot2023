@@ -37,8 +37,8 @@ class AngularAutoBalance(
     fun create(
       drive: SwerveDrive,
       ahrs: AHRS
-    ) {
-      AngularAutoBalance(
+    ): AngularAutoBalance {
+      return AngularAutoBalance(
         drive,
         AutoConstants.ADJUST_SPEED,
         AutoConstants.MAX_ROT_VEL,
