@@ -109,8 +109,8 @@ object ArmConstants {
   )
 
   val HIGH = ArmState(
-    Rotation2d.fromDegrees(132.01),
-    Rotation2d.fromDegrees(14.46),
+    Rotation2d.fromDegrees(133.00),
+    Rotation2d.fromDegrees(11.00),
     0.0,
     0.0
   )
