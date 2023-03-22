@@ -47,7 +47,7 @@ class ControllerBindings(
       InstantCommand({ robot.drive.maxLinearSpeed = RobotConstants.MAX_LINEAR_SPEED })
     )
 
-    JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
+    JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
       InstantCommand(robot.endEffector::pistonOn).andThen(
         ConditionalCommand(
           InstantCommand({ robot.arm.desiredState = ArmConstants.CUBE }),
@@ -56,7 +56,7 @@ class ControllerBindings(
       )
     )
 
-    JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
+    JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
       InstantCommand(robot.endEffector::pistonRev).andThen(
         ConditionalCommand(
           InstantCommand({ robot.arm.desiredState = ArmConstants.CONE }),
@@ -86,24 +86,6 @@ class ControllerBindings(
           ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
         )
     )
-
-//    Trigger { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }.onTrue(
-//      // InstantCommand(robot.ledStrip::setCubeColor).andThen(
-//      InstantCommand(
-//        {
-//          robot.arm.state = ArmConstants.CUBE
-//        }
-//      )
-//      // )
-//    ).onFalse(
-//      // InstantCommand(robot.ledStrip::setConeColor).andThen(
-//      InstantCommand(
-//        {
-//          robot.arm.state = ArmConstants.CONE
-//        }
-//      )
-//      // )
-//    )
 
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming)

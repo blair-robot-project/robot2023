@@ -31,10 +31,32 @@ object ArmPaths {
   var stowHigh = ArmTrajectory("stowHigh.json")
   var highStow = ArmTrajectory("highStow.json")
 
-  private val armTrajectories = listOf(stowSingle, singleStow, stowDouble, doubleStow, stowCone, coneStow, stowCube, cubeStow, stowMid, midStow, stowHigh, highStow)
+  /** Auto Specific trajectories */
 
+  var coneHigh = ArmTrajectory("coneHigh.json")
+  var highCone = ArmTrajectory("highCone.json")
+
+  var cubeHigh = ArmTrajectory("cubeHigh.json")
+  var highCube = ArmTrajectory("highCube.json")
   fun parseTrajectories() {
-    armTrajectories.forEach {
+    listOf(
+      stowSingle,
+      singleStow,
+      stowDouble,
+      doubleStow,
+      stowCone,
+      coneStow,
+      stowCube,
+      cubeStow,
+      stowMid,
+      midStow,
+      stowHigh,
+      highStow,
+      coneHigh,
+      highCone,
+      cubeHigh,
+      highCube
+    ).forEach {
       it.parse()
     }
   }
