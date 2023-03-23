@@ -2,6 +2,7 @@ package frc.team449.system
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.SerialPort
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.interfaces.Gyro
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim
 import frc.team449.util.simBooleanProp
@@ -9,7 +10,12 @@ import frc.team449.util.simDoubleProp
 import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 
-class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx, Loggable {
+class AHRS(
+  private val navx: com.kauailabs.navx.frc.AHRS
+  ) : Gyro by navx, Loggable {
+
+  var prevPos = Double.NaN
+  var prevTime = Double.NaN
 
   /** The current reading of the gyro with the offset included */
   @get:Log.ToString
@@ -28,11 +34,24 @@ class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx, Loggab
       return -Rotation2d.fromDegrees(navx.roll.toDouble())
     }
 
-  @get:Log.Graph
-  val angularVel: Double
-    get() {
-      return navx.rawGyroY.toDouble()
+  fun angularXVel(): Double {
+    val currPos = navx.roll.toDouble()
+    val currTime = Timer.getFPGATimestamp()
+
+    val vel = if (prevPos.isNaN()) {
+      0.0
+    } else {
+      val dt = currTime - prevTime
+      val dx = currPos - prevPos
+
+      dx / dt
     }
+    this.prevTime = currTime
+    this.prevPos = currPos
+
+    return vel
+  }
+
 
   constructor(
     port: SerialPort.Port = SerialPort.Port.kMXP

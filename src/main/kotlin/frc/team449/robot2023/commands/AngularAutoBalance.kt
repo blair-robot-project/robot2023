@@ -18,15 +18,15 @@ class AngularAutoBalance(
   }
 
   override fun initialize() {
-    addRequirements(drive)
   }
 
   override fun execute() {
     drive.desiredSpeeds = ChassisSpeeds(speedMetersPerSecond, 0.0, 0.0)
+    ahrs.angularXVel()
   }
 
   override fun isFinished(): Boolean {
-    return ahrs.angularVel >= maxAngularVelocity
+    return ahrs.angularXVel() >= maxAngularVelocity
   }
 
   override fun end(interrupted: Boolean) {
