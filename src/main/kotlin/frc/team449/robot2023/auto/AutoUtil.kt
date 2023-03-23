@@ -88,19 +88,17 @@ object AutoUtil {
 
   fun stowAndDeployCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      InstantCommand(robot.endEffector::stop),
+      InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonRev),
-      ArmFollower(robot.arm) { ArmPaths.highCube },
-      InstantCommand(robot.endEffector::intake)
+      ArmFollower(robot.arm) { ArmPaths.highCube }
     )
   }
 
   fun stowAndDeployCone(robot: Robot): Command {
     return SequentialCommandGroup(
-      InstantCommand(robot.endEffector::stop),
+      InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonOn),
-      ArmFollower(robot.arm) { ArmPaths.highCone },
-      InstantCommand(robot.endEffector::intake)
+      ArmFollower(robot.arm) { ArmPaths.highCone }
     )
   }
 

@@ -20,11 +20,11 @@ class EndEffector(
 
   // forward is cone, reverse is cube
   fun pistonOn() {
-    chooserPiston.set(DoubleSolenoid.Value.kReverse)
+    chooserPiston.set(DoubleSolenoid.Value.kForward)
   }
 
   fun pistonRev() {
-    chooserPiston.set(DoubleSolenoid.Value.kForward)
+    chooserPiston.set(DoubleSolenoid.Value.kReverse)
   }
 
   fun intake() {
@@ -44,7 +44,7 @@ class EndEffector(
   }
 
   fun autoReverse() {
-    intakeMotor.setVoltage(-2.0)
+    intakeMotor.setVoltage(-0.75)
   }
 
   override fun periodic() {

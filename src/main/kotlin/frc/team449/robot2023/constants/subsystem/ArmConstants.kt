@@ -83,7 +83,7 @@ object ArmConstants {
   )
 
   val CONE = ArmState(
-    Rotation2d.fromDegrees(50.0),
+    Rotation2d.fromDegrees(48.0),
     Rotation2d.fromDegrees(-116.58)
   )
 
