@@ -52,7 +52,7 @@ open class SwerveDrive(
     ahrs.heading,
     getPositions(),
     RobotConstants.INITIAL_POSE,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.0075, .0075, .0025), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.0075, .0075, .00025), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
     MatBuilder(Nat.N3(), Nat.N1()).fill(.01, .01, .025) // [x, y, theta]
   )
 

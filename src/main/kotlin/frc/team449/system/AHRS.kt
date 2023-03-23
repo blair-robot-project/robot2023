@@ -28,10 +28,10 @@ class AHRS(private val navx: com.kauailabs.navx.frc.AHRS) : Gyro by navx, Loggab
       return -Rotation2d.fromDegrees(navx.roll.toDouble())
     }
 
-  @get:Log
-  val angularVel: Float
+  @get:Log.Graph
+  val angularVel: Double
     get() {
-      return navx.rawGyroY
+      return navx.rawGyroY.toDouble()
     }
 
   constructor(

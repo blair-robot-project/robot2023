@@ -91,7 +91,9 @@ class RobotLoop : TimedRobot() {
     robot.drive.stop()
   }
 
-  override fun disabledPeriodic() {}
+  override fun disabledPeriodic() {
+    robot.arm.controller.reset()
+  }
 
   override fun testInit() {
     robot.arm.controller.reset()

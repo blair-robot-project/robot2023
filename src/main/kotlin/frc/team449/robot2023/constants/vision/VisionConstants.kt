@@ -30,7 +30,7 @@ object VisionConstants {
   /** Robot to Camera distance */
   private val robotToCamera = Transform3d(
     Translation3d(Units.inchesToMeters(-11.0), 0.0, Units.inchesToMeters(7.5)),
-    Rotation3d(0.0, Units.degreesToRadians(33.0), Units.inchesToMeters(-180.0))
+    Rotation3d(0.0, Units.degreesToRadians(33.0), Units.degreesToRadians(-180.0))
   )
 
   /** List of cameras that we want to use */

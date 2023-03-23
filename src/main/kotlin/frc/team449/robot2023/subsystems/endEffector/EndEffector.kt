@@ -44,7 +44,7 @@ class EndEffector(
   }
 
   fun autoReverse() {
-    intakeMotor.setVoltage(-3.0)
+    intakeMotor.setVoltage(-2.0)
   }
 
   override fun periodic() {
