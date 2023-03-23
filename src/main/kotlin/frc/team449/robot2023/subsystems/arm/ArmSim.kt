@@ -41,6 +41,7 @@ class ArmSim(
     }
 
   override fun periodic() {
+//    super.periodic()
     firstJointEnc.velocity = desiredState.thetaVel
     secondJointEnc.velocity = desiredState.betaVel
     firstJointEnc.position = desiredState.theta.radians

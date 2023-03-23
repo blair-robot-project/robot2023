@@ -12,32 +12,32 @@ object ArmPaths {
 //  var GROUND_STOW = ArmTrajectory("Ground_Stow.json")
 //  var STOW_GROUND = ArmTrajectory("Stow_Ground.json")
 
-  var stowSingle = ArmTrajectory("stowSingle.json")
-  var singleStow = ArmTrajectory("singleStow.json")
+  val stowSingle = ArmTrajectory("stowSingle.json")
+  val singleStow = ArmTrajectory("singleStow.json")
 
   // todo: get position for double substation and create trajectory. put trajectory into stowDouble and doubleStow
 
-  var stowDouble = ArmTrajectory("stowDouble.json")
-  var doubleStow = ArmTrajectory("doubleStow.json")
+  val stowDouble = ArmTrajectory("stowDouble.json")
+  val doubleStow = ArmTrajectory("doubleStow.json")
 
-  var stowCone = ArmTrajectory("stowCone.json")
-  var coneStow = ArmTrajectory("coneStow.json")
-  var stowCube = ArmTrajectory("stowCube.json")
-  var cubeStow = ArmTrajectory("cubeStow.json")
+  val stowCone = ArmTrajectory("stowCone.json")
+  val coneStow = ArmTrajectory("coneStow.json")
+  val stowCube = ArmTrajectory("stowCube.json")
+  val cubeStow = ArmTrajectory("cubeStow.json")
 
-  var stowMid = ArmTrajectory("stowMid.json")
-  var midStow = ArmTrajectory("midStow.json")
+  val stowMid = ArmTrajectory("stowMid.json")
+  val midStow = ArmTrajectory("midStow.json")
 
-  var stowHigh = ArmTrajectory("stowHigh.json")
-  var highStow = ArmTrajectory("highStow.json")
+  val stowHigh = ArmTrajectory("stowHigh.json")
+  val highStow = ArmTrajectory("highStow.json")
 
   /** Auto Specific trajectories */
 
-  var coneHigh = ArmTrajectory("coneHigh.json")
-  var highCone = ArmTrajectory("highCone.json")
+  val coneHigh = ArmTrajectory("coneHigh.json")
+  val highCone = ArmTrajectory("highCone.json")
 
-  var cubeHigh = ArmTrajectory("cubeHigh.json")
-  var highCube = ArmTrajectory("highCube.json")
+  val cubeHigh = ArmTrajectory("cubeHigh.json")
+  val highCube = ArmTrajectory("highCube.json")
   fun parseTrajectories() {
     listOf(
       stowSingle,
