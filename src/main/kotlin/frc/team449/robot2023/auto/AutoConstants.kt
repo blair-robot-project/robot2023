@@ -7,8 +7,8 @@ object AutoConstants {
   const val DEFAULT_ROTATION_KP = 0.75
 
   /** Auto Balance PD Gains */
-  const val AUTO_BAL_KP = 0.52
+  const val AUTO_BAL_KP = 0.55
   const val AUTO_BAL_KD = .0325
-  const val ADJUST_SPEED = 1.0 // m/s
+  const val ADJUST_SPEED = 1.5 // m/s
   const val MAX_ROT_VEL = 100.0 // rad/s
 }

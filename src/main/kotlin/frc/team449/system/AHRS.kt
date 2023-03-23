@@ -12,7 +12,7 @@ import io.github.oblarg.oblog.annotations.Log
 
 class AHRS(
   private val navx: com.kauailabs.navx.frc.AHRS
-  ) : Gyro by navx, Loggable {
+) : Gyro by navx, Loggable {
 
   var prevPos = Double.NaN
   var prevTime = Double.NaN
@@ -51,7 +51,6 @@ class AHRS(
 
     return vel
   }
-
 
   constructor(
     port: SerialPort.Port = SerialPort.Port.kMXP

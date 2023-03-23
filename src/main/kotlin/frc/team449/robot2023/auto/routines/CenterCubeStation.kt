@@ -7,7 +7,7 @@ import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.commands.AutoBalance
-import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class CenterCubeStation(robot: Robot) : RoutineStructure {
@@ -16,8 +16,8 @@ class CenterCubeStation(robot: Robot) : RoutineStructure {
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCube" to AutoUtil.dropCone(robot),
-        "stowArm" to ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) },
+        "dropCube" to AutoUtil.stowDropCube(robot),
+        "stowArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
         "balanceStation" to AutoBalance.create(robot.drive)
       )
     )
