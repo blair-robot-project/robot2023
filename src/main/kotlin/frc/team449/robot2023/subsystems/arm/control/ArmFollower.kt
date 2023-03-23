@@ -37,6 +37,7 @@ open class ArmFollower(
   override fun end(interrupted: Boolean) {
     timer.stop()
     timer.reset()
+    arm.state = arm.getClosestState(arm.desiredState)!!
     arm.stop()
   }
 }

@@ -96,7 +96,6 @@ open class Arm(
    * Mitigate any speed on the joints
    */
   fun stop() {
-
     desiredState.thetaVel = 0.0
     desiredState.betaVel = 0.0
   }
@@ -104,7 +103,7 @@ open class Arm(
   /**
    * **!!! THE ARM BETTER BE STATIONARY WHEN DOING THIS !!!**
    * Quadrature is better at measuring position but cannot measure absolute
-   * Read 500 PWM signals and take the high pulse readings to apply initial measurement for quad
+   * Read some PWM signals and take the high pulse readings to apply initial measurement for quadrature
    */
   fun resetQuadrature() {
     firstJointSamples.removeAll { true }
@@ -136,7 +135,7 @@ open class Arm(
     visual.setState(state, desiredState)
   }
 
-  private fun getClosestState(point: ArmState): ArmState? {
+  fun getClosestState(point: ArmState): ArmState? {
     var closestState: ArmState? = null
     var closestDistance = Double.MAX_VALUE
 
@@ -173,6 +172,8 @@ open class Arm(
           ArmPaths.stowDouble
         ArmConstants.CONE ->
           ArmPaths.stowCone
+        ArmConstants.CUBE ->
+          ArmPaths.stowCube
         ArmConstants.MID ->
           ArmPaths.stowMid
         else ->

@@ -69,50 +69,36 @@ object ArmConstants {
   // Arm States corresponding to points.
   val SINGLE = ArmState(
     Rotation2d.fromDegrees(93.07),
-    Rotation2d.fromDegrees(-114.74),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(-114.74)
   )
 
   val DOUBLE = ArmState(
     Rotation2d.fromDegrees(95.11),
-    Rotation2d.fromDegrees(-95.11),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(-95.11)
   )
 
   val STOW = ArmState(
     Rotation2d.fromDegrees(90.00),
-    Rotation2d.fromDegrees(-152.00),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(-151.833816)
   )
 
   val CONE = ArmState(
     Rotation2d.fromDegrees(48.5),
-    Rotation2d.fromDegrees(-116.58),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(-116.58)
   )
 
   val CUBE = ArmState(
     Rotation2d.fromDegrees(54.58),
-    Rotation2d.fromDegrees(-120.25),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(-120.25)
   )
   val MID = ArmState(
     Rotation2d.fromDegrees(91.40),
-    Rotation2d.fromDegrees(90.22),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(90.22)
   )
 
   val HIGH = ArmState(
     Rotation2d.fromDegrees(133.00),
-    Rotation2d.fromDegrees(11.00),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(11.00)
   )
 
   val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH)
