@@ -12,6 +12,7 @@ import frc.team449.robot2023.auto.AutoConstants
 import frc.team449.robot2023.auto.AutoUtil
 import io.github.oblarg.oblog.annotations.Config
 import java.util.*
+import kotlin.math.abs
 
 /**
  * @param xController The PID controller used to correct X translation error when following a trajectory
@@ -33,6 +34,7 @@ class HolonomicRoutine(
   private val translationTol: Double = 0.05,
   private val thetaTol: Double = 0.05,
   private val resetPosition: Boolean = false,
+  private val resetPositionTolerance: Pose2d = Pose2d(0.35, 0.35, Rotation2d.fromDegrees(10.0)),
   private val timeout: Double = 1.0
 ) : BaseAutoBuilder(drive::pose, eventMap, DrivetrainType.HOLONOMIC) {
 
@@ -54,8 +56,14 @@ class HolonomicRoutine(
     )
   }
 
-  // TODO: If AprilTag is in sight at starting pos: either delete resetPose from fullAuto, or make this method do nothing
   override fun resetPose(trajectory: PathPlannerTrajectory): CommandBase {
+    val poseError = drive.pose.relativeTo(trajectory.initialHolonomicPose)
+    if (abs(poseError.x) < resetPositionTolerance.x &&
+      abs(poseError.y) < resetPositionTolerance.y &&
+      abs(poseError.rotation.radians) < resetPositionTolerance.rotation.radians
+    ) {
+      return InstantCommand()
+    }
     return InstantCommand({ drive.pose = trajectory.initialHolonomicPose })
   }
 
