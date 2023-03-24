@@ -23,10 +23,10 @@ class EdgeConeCubeStation(
         "dropCone" to ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(AutoUtil.dropCone(robot)),
         "stowArm" to AutoUtil.stowAndDeployCube(robot),
         "stopIntake" to AutoUtil.holdIntake(robot),
-        "highArm" to ArmFollower(robot.arm) { ArmPaths.cubeHigh }.andThen(
-          AutoUtil.stowArm(robot)
+        "highArm" to ArmFollower(robot.arm) { ArmPaths.cubeHigh },
+        "dropCube" to InstantCommand(robot.endEffector::intakeReverse).andThen(
+          ArmFollower(robot.arm) { ArmPaths.highStow }
         ),
-        "dropCube" to InstantCommand(robot.endEffector::intakeReverse),
         "balanceStation" to AutoBalance.create(robot.drive),
       )
     )

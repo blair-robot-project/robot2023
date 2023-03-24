@@ -47,8 +47,8 @@
           "stopIntake"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "before",
+        "waitTime": 0.5
       }
     },
     {
@@ -101,8 +101,8 @@
           "stopCubeIntake"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "before",
+        "waitTime": 0.5
       }
     },
     {
@@ -131,7 +131,7 @@
     }
   ],
   "maxVelocity": 4.45,
-  "maxAcceleration": 6.75,
+  "maxAcceleration": 6.25,
   "isReversed": null,
   "markers": [
     {

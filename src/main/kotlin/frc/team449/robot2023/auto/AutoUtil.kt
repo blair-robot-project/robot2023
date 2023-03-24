@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
+import frc.team449.robot2023.subsystems.arm.control.ArmState
 import java.util.Collections
 import java.util.function.BooleanSupplier
 import kotlin.math.PI
@@ -62,11 +63,16 @@ object AutoUtil {
       RepeatCommand(
         InstantCommand(
           {
-            val startState = robot.arm.desiredState.copy()
-            robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.175)
+            val currState = robot.arm.desiredState.copy()
+            robot.arm.state = ArmState(
+              currState.theta,
+              currState.beta + Rotation2d.fromDegrees(0.23),
+              currState.thetaVel,
+              currState.betaVel
+            )
           }
         )
-      ).withTimeout(0.5),
+      ).withTimeout(0.75),
       InstantCommand(robot.endEffector::pistonRev)
     )
   }

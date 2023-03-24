@@ -47,8 +47,8 @@
           "stopIntake"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "before",
+        "waitTime": 0.5
       }
     },
     {
@@ -101,8 +101,8 @@
           "stopConeIntake"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "before",
+        "waitTime": 0.5
       }
     },
     {
@@ -111,8 +111,8 @@
         "y": 1.641311177359197
       },
       "prevControl": {
-        "x": 3.445940225213783,
-        "y": -0.2086146277555709
+        "x": 3.3746144635146416,
+        "y": -0.4723865162016035
       },
       "nextControl": null,
       "holonomicAngle": 0.0,
@@ -131,7 +131,7 @@
     }
   ],
   "maxVelocity": 4.4,
-  "maxAcceleration": 5.0,
+  "maxAcceleration": 6.3,
   "isReversed": null,
   "markers": [
     {

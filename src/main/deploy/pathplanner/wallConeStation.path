@@ -47,17 +47,17 @@
           "stopIntake"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 1.5
+        "waitBehavior": "before",
+        "waitTime": 0.5
       }
     },
     {
       "anchorPoint": {
-        "x": 3.825,
+        "x": 3.75,
         "y": 2.5
       },
       "prevControl": {
-        "x": 6.076656042994626,
+        "x": 6.001656042994626,
         "y": 2.6652516760466978
       },
       "nextControl": null,
@@ -76,8 +76,8 @@
       }
     }
   ],
-  "maxVelocity": 4.25,
-  "maxAcceleration": 5.0,
+  "maxVelocity": 4.0,
+  "maxAcceleration": 3.0,
   "isReversed": null,
   "markers": [
     {

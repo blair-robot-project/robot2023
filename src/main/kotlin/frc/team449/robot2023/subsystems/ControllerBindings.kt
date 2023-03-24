@@ -61,7 +61,7 @@ class ControllerBindings(
     JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
       InstantCommand(robot.endEffector::pistonRev).andThen(
         ConditionalCommand(
-          InstantCommand({ robot.arm.desiredState = ArmConstants.CUBE }),
+          InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CONE }
       )
@@ -70,7 +70,7 @@ class ControllerBindings(
     JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
       InstantCommand(robot.endEffector::pistonOn).andThen(
         ConditionalCommand(
-          InstantCommand({ robot.arm.desiredState = ArmConstants.CONE }),
+          InstantCommand({ robot.arm.state = ArmConstants.CONE }),
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CUBE }
       )

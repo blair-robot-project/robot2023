@@ -8,7 +8,7 @@ class PositionChooser : SendableChooser<PositionChooser.POSITIONS>() {
     WALLCONE,
     FARCUBE,
     WALLCUBE,
-    CENTER
+    CENTER,
   }
 
   init {
@@ -16,6 +16,6 @@ class PositionChooser : SendableChooser<PositionChooser.POSITIONS>() {
     this.addOption("Cone Far side", POSITIONS.FARCONE)
     this.addOption("Cube Wall side", POSITIONS.WALLCUBE)
     this.addOption("Cube Far side", POSITIONS.FARCUBE)
-    this.addOption("Center (Only drop piece and 1 Piece Balance)", POSITIONS.CENTER)
+    this.addOption("Center Cube (Only drop piece and 1 Piece Balance)", POSITIONS.CENTER)
   }
 }

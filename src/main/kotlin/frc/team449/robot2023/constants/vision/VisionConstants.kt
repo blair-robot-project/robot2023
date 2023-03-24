@@ -38,7 +38,7 @@ object VisionConstants {
     PhotonPoseEstimator(
       TAG_LAYOUT,
       PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
-      PhotonCamera("thing"),
+      PhotonCamera("Spinel"),
       robotToCamera
     )
   )
