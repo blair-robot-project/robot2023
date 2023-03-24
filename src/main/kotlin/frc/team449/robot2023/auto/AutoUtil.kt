@@ -73,7 +73,7 @@ object AutoUtil {
 
   fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      WaitCommand(0.4),
+      WaitCommand(0.25),
       InstantCommand(robot.endEffector::autoReverse)
     )
   }
