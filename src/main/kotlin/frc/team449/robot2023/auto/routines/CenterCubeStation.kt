@@ -19,7 +19,8 @@ class CenterCubeStation(robot: Robot) : RoutineStructure {
         "dropCube" to AutoUtil.stowDropCube(robot),
         "stowArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
         "balanceStation" to AutoBalance.create(robot.drive)
-      )
+      ),
+      timeout = 0.0
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> = Paths.CENTER.CUBEBALANCE

@@ -2,9 +2,9 @@ package frc.team449.robot2023.auto
 
 object AutoConstants {
   /** PID gains */
-  const val DEFAULT_X_KP = 1.25
-  const val DEFAULT_Y_KP = 1.25
-  const val DEFAULT_ROTATION_KP = 0.75
+  const val DEFAULT_X_KP = 1.35
+  const val DEFAULT_Y_KP = 1.35
+  const val DEFAULT_ROTATION_KP = 0.95
 
   /** Auto Balance PD Gains */
   const val AUTO_BAL_KP = 0.55
