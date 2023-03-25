@@ -24,7 +24,7 @@ object AutoUtil {
     for ((index, _) in correctedTrajList.withIndex()) {
       for (s in correctedTrajList[index].states) {
         s as PathPlannerTrajectory.PathPlannerState
-        s.poseMeters = Pose2d(s.poseMeters.x, 5.50 - s.poseMeters.y, -s.poseMeters.rotation)
+        s.poseMeters = Pose2d(s.poseMeters.x, 5.47878 - s.poseMeters.y, -s.poseMeters.rotation)
         s.holonomicAngularVelocityRadPerSec *= -1.0
         s.holonomicRotation *= -1.0
       }
