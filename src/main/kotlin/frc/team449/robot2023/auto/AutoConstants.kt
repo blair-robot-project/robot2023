@@ -9,6 +9,6 @@ object AutoConstants {
   /** Auto Balance PD Gains */
   const val AUTO_BAL_KP = 0.55
   const val AUTO_BAL_KD = .0325
-  const val ADJUST_SPEED = 1.5 // m/s
-  const val MAX_ROT_VEL = 60.0 // deg/s
+  const val ADJUST_SPEED = 1.7 // m/s
+  const val MAX_ROT_VEL = 20.0 // deg/s
 }

@@ -110,19 +110,19 @@ class OrthogonalHolonomicOI(
     this.prevY = yClamped
 
     /** Based on which button was pressed, give in the setpoint to the PID controller. */
-    if (yButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation.invoke()), 0.0)
-    } else if (xButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation.invoke()), 0.0)
-    } else if (aButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation.invoke()), 0.0)
-    } else if (bButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation.invoke()), 0.0)
-    }
+//    if (yButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation.invoke()), 0.0)
+//    } else if (xButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation.invoke()), 0.0)
+//    } else if (aButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation.invoke()), 0.0)
+//    } else if (bButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation.invoke()), 0.0)
+//    }
 
     /** If the PID controller is at its setpoint, then allow the driver to control rotation,
      * otherwise let the PID do its thing. */

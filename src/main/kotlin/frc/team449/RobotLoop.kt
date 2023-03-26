@@ -51,6 +51,8 @@ class RobotLoop : TimedRobot() {
     SmartDashboard.putData("Routine Chooser", routineChooser)
 
     ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
+
+//    robot.light.defaultCommand = Rainbow(robot.light)
   }
 
   override fun robotPeriodic() {

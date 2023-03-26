@@ -16,7 +16,8 @@ class AHRS(
 
   var prevPos = Double.NaN
   var prevTime = Double.NaN
-
+  @Log
+  var lastAngular = Double.NaN
   /** The current reading of the gyro with the offset included */
   @get:Log.ToString
   val heading: Rotation2d
@@ -48,7 +49,7 @@ class AHRS(
     }
     this.prevTime = currTime
     this.prevPos = currPos
-
+    lastAngular = vel
     return vel
   }
 

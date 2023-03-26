@@ -62,7 +62,7 @@ class EndEffector(
   override fun initSendable(builder: SendableBuilder) {
     builder.addBooleanProperty("sensor", { sensor.get() }, null)
     builder.addStringProperty("piston", { chooserPiston.get().toString() }, null)
-    builder.addStringProperty("motor", { intakeMotor.get().toString() }, null)
+    builder.addStringProperty("motor", { intakeMotor.lastVoltage.toString() }, null)
   }
 
   companion object {

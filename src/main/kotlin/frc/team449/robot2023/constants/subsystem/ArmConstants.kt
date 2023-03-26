@@ -16,8 +16,8 @@ object ArmConstants {
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.5 - 0.150604
-  const val SECOND_ENCODER_OFFSET = -0.185619 // 0.855081
+  const val FIRST_ENCODER_OFFSET = 0.75 - 0.398869
+  const val SECOND_ENCODER_OFFSET = -0.185619 - 0.004858 // 0.855081
   val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
   val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
   // PD Controller Constants
@@ -69,7 +69,7 @@ object ArmConstants {
   // Arm States corresponding to points.
   // (Joint 1: Rotation2d(Rads: 1.59, Deg: 91.32), Joint 2 : Rotation2d(Rads: -1.94, Deg: -111.19), theta speed : -0.01828647817075757, beta speed 0.0)
   val SINGLE = ArmState(
-    Rotation2d.fromDegrees(93.07),
+    Rotation2d.fromDegrees(91.77),
     Rotation2d.fromDegrees(-114.74)
   )
 

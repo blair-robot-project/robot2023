@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.auto.AutoConstants
 import frc.team449.system.AHRS
-import kotlin.math.abs
 
 class AngularAutoBalance(
   private val drive: SwerveDrive,
@@ -32,7 +31,7 @@ class AngularAutoBalance(
   }
 
   override fun isFinished(): Boolean {
-    return abs(ahrs.angularXVel()) >= maxAngularVelocity
+    return ahrs.angularXVel() >= maxAngularVelocity
   }
 
   override fun end(interrupted: Boolean) {

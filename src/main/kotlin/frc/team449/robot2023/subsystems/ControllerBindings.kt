@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
-import frc.team449.robot2023.commands.AngularAutoBalance
 import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
@@ -139,9 +138,47 @@ class ControllerBindings(
       ).until { abs(mechanismController.leftY) <= 0.3 && abs(mechanismController.rightY) <= 0.3 }
     )
 
-    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
-      AngularAutoBalance.create(robot.drive, robot.ahrs)
+//    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
+//      AngularAutoBalance.create(robot.drive, robot.ahrs)
+//    )
+
+    JoystickButton(driveController, XboxController.Button.kA.value).onTrue(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.SINGLE) }.withInterruptBehavior(kCancelIncoming)
     )
+
+    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
+      InstantCommand(robot.endEffector::pistonRev).andThen(
+        ConditionalCommand(
+          InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
+          InstantCommand()
+        ) { robot.arm.desiredState == ArmConstants.CONE }
+      ).andThen(
+        InstantCommand({
+          EndEffectorConstants.INTAKE_VOLTAGE = 8.0
+        })
+      )
+    )
+
+    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
+      InstantCommand(robot.endEffector::pistonOn).andThen(
+        ConditionalCommand(
+          InstantCommand({ robot.arm.state = ArmConstants.CONE }),
+          InstantCommand()
+        ) { robot.arm.desiredState == ArmConstants.CUBE }
+      ).andThen(
+        InstantCommand({
+          EndEffectorConstants.INTAKE_VOLTAGE = 12.0
+        })
+      )
+    )
+
+    JoystickButton(driveController, XboxController.Button.kY.value).onTrue(
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming)
+    )
+
+//    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
+//      AutoBalance.create(robot.drive)
+//    )
 
     JoystickButton(driveController, XboxController.Button.kStart.value).onTrue(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })
