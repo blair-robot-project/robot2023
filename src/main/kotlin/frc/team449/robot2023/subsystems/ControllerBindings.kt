@@ -101,12 +101,12 @@ class ControllerBindings(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }.withInterruptBehavior(kCancelIncoming)
     )
 
-    JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
-      ConditionalCommand(
-        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }.withInterruptBehavior(kCancelIncoming),
-        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }.withInterruptBehavior(kCancelIncoming)
-      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
-    )
+//    JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
+//      ConditionalCommand(
+//        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }.withInterruptBehavior(kCancelIncoming),
+//        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }.withInterruptBehavior(kCancelIncoming)
+//      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
+//    )
 
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.MID) }.withInterruptBehavior(kCancelIncoming)
