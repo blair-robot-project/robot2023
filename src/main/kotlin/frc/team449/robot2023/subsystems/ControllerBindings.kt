@@ -15,6 +15,7 @@ import frc.team449.robot2023.commands.AngularAutoBalance
 import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import kotlin.math.abs
 
@@ -35,13 +36,10 @@ class ControllerBindings(
     )
 
     Trigger { driveController.rightTriggerAxis > 0.8 }.onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }.withInterruptBehavior(kCancelIncoming)
-        .andThen(
-          ConditionalCommand(
-            InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
-            InstantCommand({ robot.arm.state = ArmConstants.CONE })
-          ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
-        )
+      ConditionalCommand(
+        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
+        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
+      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
     ).onFalse(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
     )
@@ -65,6 +63,10 @@ class ControllerBindings(
           InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CONE }
+      ).andThen(
+        InstantCommand({
+          EndEffectorConstants.INTAKE_VOLTAGE = 8.0
+        })
       )
     )
 
@@ -74,6 +76,10 @@ class ControllerBindings(
           InstantCommand({ robot.arm.state = ArmConstants.CONE }),
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CUBE }
+      ).andThen(
+        InstantCommand({
+          EndEffectorConstants.INTAKE_VOLTAGE = 12.0
+        })
       )
     )
 
