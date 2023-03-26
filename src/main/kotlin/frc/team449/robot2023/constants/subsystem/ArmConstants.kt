@@ -67,6 +67,7 @@ object ArmConstants {
   const val SECOND_JOINT_CURR_LIM = 40
 
   // Arm States corresponding to points.
+  // (Joint 1: Rotation2d(Rads: 1.59, Deg: 91.32), Joint 2 : Rotation2d(Rads: -1.94, Deg: -111.19), theta speed : -0.01828647817075757, beta speed 0.0)
   val SINGLE = ArmState(
     Rotation2d.fromDegrees(93.07),
     Rotation2d.fromDegrees(-114.74)
@@ -83,7 +84,7 @@ object ArmConstants {
   )
 
   val CONE = ArmState(
-    Rotation2d.fromDegrees(48.0),
+    Rotation2d.fromDegrees(47.55),
     Rotation2d.fromDegrees(-116.58)
   )
 

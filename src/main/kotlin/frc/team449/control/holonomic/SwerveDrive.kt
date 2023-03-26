@@ -144,9 +144,10 @@ open class SwerveDrive(
     for (camera in cameras) {
       val result = camera.update()
       if (result.isPresent) {
+        val realResult = result.get()
         poseEstimator.addVisionMeasurement(
-          result.get().estimatedPose.toPose2d(),
-          result.get().timestampSeconds
+          realResult.estimatedPose.toPose2d(),
+          realResult.timestampSeconds
         )
       }
     }

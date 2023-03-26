@@ -79,17 +79,22 @@ object AutoUtil {
 
   fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      WaitCommand(0.25),
-      InstantCommand(robot.endEffector::autoReverse)
+      WaitCommand(0.075),
+      InstantCommand(robot.endEffector::autoReverse),
+      WaitCommand(0.35)
     )
   }
 
   fun stowDropCube(robot: Robot): Command {
-    return ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(dropCube(robot))
+    return InstantCommand(robot.endEffector::holdIntake).andThen(
+      ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(dropCube(robot))
+    )
   }
 
   fun stowDropCone(robot: Robot): Command {
-    return ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(dropCone(robot))
+    return InstantCommand(robot.endEffector::holdIntake).andThen(
+      ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(dropCone(robot))
+    )
   }
 
   fun stowAndDeployCube(robot: Robot): Command {

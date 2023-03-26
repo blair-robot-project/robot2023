@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.commands.AngularAutoBalance
 import frc.team449.robot2023.commands.ArmSweep
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
@@ -76,6 +77,12 @@ class ControllerBindings(
       )
     )
 
+    Trigger { robot.arm.desiredState == ArmConstants.STOW }.onTrue(
+      InstantCommand(robot.endEffector::strongHoldIntake)
+    ).onFalse(
+      InstantCommand(robot.endEffector::holdIntake)
+    )
+
     JoystickButton(mechanismController, XboxController.Button.kB.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.SINGLE) }.withInterruptBehavior(kCancelIncoming)
     )
@@ -126,9 +133,9 @@ class ControllerBindings(
       ).until { abs(mechanismController.leftY) <= 0.3 && abs(mechanismController.rightY) <= 0.3 }
     )
 
-//    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
-//      AngularAutoBalance.create(robot.drive, robot.ahrs)
-//    )
+    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
+      AngularAutoBalance.create(robot.drive, robot.ahrs)
+    )
 
     JoystickButton(driveController, XboxController.Button.kStart.value).onTrue(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })

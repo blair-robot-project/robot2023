@@ -27,7 +27,8 @@ class EdgeCubeConeCone(
         "stopIntake" to AutoUtil.holdIntake(robot),
         "dropCone" to AutoUtil.dropCone(robot),
         "stopConeIntake" to AutoUtil.holdIntake(robot),
-        "dropCone2" to AutoUtil.dropCone(robot))
+        "dropCone2" to AutoUtil.dropCone(robot)
+      )
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =

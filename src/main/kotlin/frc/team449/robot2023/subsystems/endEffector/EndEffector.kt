@@ -35,6 +35,10 @@ class EndEffector(
     intakeMotor.setVoltage(EndEffectorConstants.HOLD_VOLTAGE)
   }
 
+  fun strongHoldIntake() {
+    intakeMotor.setVoltage(5.0)
+  }
+
   fun intakeReverse() {
     intakeMotor.setVoltage(EndEffectorConstants.REVERSE_INTAKE_VOLTAGE)
   }
@@ -44,7 +48,7 @@ class EndEffector(
   }
 
   fun autoReverse() {
-    intakeMotor.setVoltage(-0.75)
+    intakeMotor.setVoltage(-1.25)
   }
 
   override fun periodic() {

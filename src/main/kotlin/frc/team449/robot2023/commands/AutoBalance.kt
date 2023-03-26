@@ -2,6 +2,7 @@ package frc.team449.robot2023.commands
 
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.auto.AutoConstants
@@ -13,6 +14,8 @@ class AutoBalance(
   private val speedMetersPerSecond: Double
 ) : CommandBase() {
 
+  private var timeOfBalance = Double.MAX_VALUE
+
   init {
     addRequirements(drive)
   }
@@ -20,7 +23,7 @@ class AutoBalance(
   override fun initialize() {
     addRequirements(drive)
     controller.enableContinuousInput(-PI, PI)
-    controller.setTolerance(0.05) /* .05 rad tolerance ~3 degrees */
+    controller.setTolerance(0.01) /* .05 rad tolerance ~3 degrees */
     controller.setpoint = 0.0
   }
   override fun execute() {
@@ -31,10 +34,14 @@ class AutoBalance(
         0.0
       )
     )
+
+    if (controller.atSetpoint()) {
+      timeOfBalance = Timer.getFPGATimestamp()
+    }
   }
 
   override fun isFinished(): Boolean {
-    return false
+    return Timer.getFPGATimestamp() >= timeOfBalance + 2.0
   }
 
   companion object {

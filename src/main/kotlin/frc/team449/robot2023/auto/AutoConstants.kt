@@ -10,5 +10,5 @@ object AutoConstants {
   const val AUTO_BAL_KP = 0.55
   const val AUTO_BAL_KD = .0325
   const val ADJUST_SPEED = 1.5 // m/s
-  const val MAX_ROT_VEL = 100.0 // rad/s
+  const val MAX_ROT_VEL = 60.0 // deg/s
 }
