@@ -16,8 +16,10 @@ import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
 
 class GroundIntake(
-  private val intakeMotor: WrappedMotor,
-  private val intakePiston: DoubleSolenoid,
+  private val topMotor: WrappedMotor,
+  private val bottomMotor: WrappedMotor,
+  private val intakePiston1: DoubleSolenoid,
+  private val intakePiston2: DoubleSolenoid,
   private val arm: Arm,
   private val endEffector: EndEffector
 ) : SubsystemBase() {
@@ -29,39 +31,40 @@ class GroundIntake(
 
   private var retracted = true
 
-  fun runIntake() {
-    intakeMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun intakeCone() {
+    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+    bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE * -1)
   }
 
-  fun runIntakeReverse() {
-    intakeMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun intakeCube() {
+    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+    bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+  }
+
+  fun outtake() {
+    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE * -1)
+    bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE * -1)
   }
 
   fun deploy() {
-    intakePiston.set(DoubleSolenoid.Value.kForward)
+    intakePiston1.set(DoubleSolenoid.Value.kForward)
+    intakePiston2.set(DoubleSolenoid.Value.kForward)
     retracted = false
   }
 
   fun retract() {
-    intakePiston.set(DoubleSolenoid.Value.kReverse)
+    intakePiston1.set(DoubleSolenoid.Value.kForward)
+    intakePiston2.set(DoubleSolenoid.Value.kForward)
     retracted = true
-  }
-
-  fun toggleRollerState() {
-    if (retracted) {
-      deploy()
-    } else {
-      retract()
-    }
   }
 
   fun handoff(): Command {
     return if (arm.desiredState == ArmConstants.STOW && this.retracted) {
-      InstantCommand({ intakeMotor.setVoltage(-1.0) }).andThen(
-        WaitCommand(0.1)
-      ).andThen(
-        endEffector::pistonOn
-      )
+//      InstantCommand({ intakeMotor.setVoltage(-1.0) }).andThen(
+//        WaitCommand(0.1)
+//      ).andThen(
+//        endEffector::pistonOn
+//      )
 //      InstantCommand({ intakeMotor.encoder.resetPosition(0.0) }).andThen(
 //        PIDCommand(
 //          PIDController(4.0, 0.0, 0.0),
@@ -72,6 +75,7 @@ class GroundIntake(
 //          endEffector::pistonOn
 //        )
 //      )
+      InstantCommand()
     } else {
       InstantCommand()
     }
@@ -80,38 +84,55 @@ class GroundIntake(
   fun scoreLow(): Command {
     return InstantCommand(::deploy)
       .andThen(WaitCommand(.45))
-      .andThen(::runIntakeReverse)
+      .andThen(::outtake)
   }
   fun stop() {
-    intakeMotor.stopMotor()
+    topMotor.stopMotor()
+    bottomMotor.stopMotor()
   }
 
   companion object {
     fun createGroundIntake(robot: Robot): GroundIntake {
-      val groundIntakeMotor = createSparkMax(
-        "GroundIntake",
-        GroundIntakeConstants.INTAKE_RIGHT,
+      val topMotor = createSparkMax(
+        "Intake Top",
+        GroundIntakeConstants.INTAKE_TOP,
         NEOEncoder.creator(
           GroundIntakeConstants.UPR,
           GroundIntakeConstants.GEARING
         ),
-        inverted = GroundIntakeConstants.INVERTED,
+        inverted = GroundIntakeConstants.TOP_INVERTED,
         currentLimit = GroundIntakeConstants.CURRENT_LIM,
-        slaveSparks = mapOf(
-          GroundIntakeConstants.INTAKE_LEFT to true
-        )
+      )
+
+      val bottomMotor = createSparkMax(
+        "Intake Bottom",
+        GroundIntakeConstants.INTAKE_BOTTOM,
+        NEOEncoder.creator(
+          GroundIntakeConstants.UPR,
+          GroundIntakeConstants.GEARING
+        ),
+        inverted = GroundIntakeConstants.BOTTOM_INVERTED,
+        currentLimit = GroundIntakeConstants.CURRENT_LIM,
       )
 
       // create ground intake pistons
-      val groundIntakePiston = DoubleSolenoid(
+      val piston1 = DoubleSolenoid(
+        PneumaticsModuleType.CTREPCM,
+        GroundIntakeConstants.PISTON_FWD,
+        GroundIntakeConstants.PISTON_REV
+      )
+
+      val piston2 = DoubleSolenoid(
         PneumaticsModuleType.CTREPCM,
         GroundIntakeConstants.PISTON_FWD,
         GroundIntakeConstants.PISTON_REV
       )
 
       return GroundIntake(
-        groundIntakeMotor,
-        groundIntakePiston,
+        topMotor,
+        bottomMotor,
+        piston1,
+        piston2,
         robot.arm,
         robot.endEffector
       )
