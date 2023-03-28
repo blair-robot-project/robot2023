@@ -45,6 +45,10 @@ open class SwerveDrive(
       .map { it.location }.toTypedArray()
   )
 
+  fun getModules(): List<SwerveModule> {
+    return modules
+  }
+
   private var currentSpeeds = ChassisSpeeds()
 
   private val poseEstimator = SwerveDrivePoseEstimator(

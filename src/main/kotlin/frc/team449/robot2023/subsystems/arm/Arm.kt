@@ -2,6 +2,7 @@ package frc.team449.robot2023.subsystems.arm
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.clamp
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
@@ -52,6 +53,22 @@ open class Arm(
     secondJointToEndEffector,
     "Arm Visual :)"
   )
+
+  fun getFirstJointEncoder(): QuadEncoder {
+    return firstJointEncoder
+  }
+
+  fun getSecondJointEncoder(): QuadEncoder {
+    return secondJointEncoder
+  }
+
+  fun getArmFeedForward(): TwoJointArmFeedForward {
+    return feedForward
+  }
+
+  fun getArmPDController(): ArmPDController {
+    return controller
+  }
 
   /** kinematics that converts between (x, y) <-> (theta, beta) coordinates */
   val kinematics = ArmKinematics(
@@ -111,28 +128,6 @@ open class Arm(
     calibrated = false
   }
   override fun periodic() {
-    if (firstJointSamples.size < numSamples) {
-      firstJointSamples.add(firstJoint.position)
-      secondJointSamples.add(secondJoint.position)
-      return
-    }
-    if (firstJointSamples.size == numSamples && !calibrated) {
-      // update encoder reading of quad
-      firstJointSamples.sort()
-      secondJointSamples.sort()
-      val firstJointPos = firstJointSamples[(firstJointSamples.size * .9).toInt()]
-      val secondJointPos = secondJointSamples[(secondJointSamples.size * .9).toInt()]
-      firstJointEncoder.resetPosition(firstJointPos)
-      secondJointEncoder.resetPosition(secondJointPos)
-      calibrated = true
-      println("***** Finished Calibrating Quadrature reading *****")
-    }
-    val ff = feedForward.calculate(desiredState.matrix, false)
-    val pid = controller.calculate(state.matrix, desiredState.matrix)
-    val u = ff + pid
-    firstJoint.setVoltage(u[0, 0])
-    secondJoint.setVoltage(u[1, 0])
-    visual.setState(state, desiredState)
   }
 
   fun getClosestState(point: ArmState): ArmState? {
