@@ -4,14 +4,11 @@ import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
-import edu.wpi.first.wpilibj2.command.WaitCommand
-import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.Robot
-import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
+import frc.team449.robot2023.subsystems.arm.control.ArmState
 import java.util.Collections
 import java.util.function.BooleanSupplier
 import kotlin.math.PI
@@ -26,7 +23,10 @@ object AutoUtil {
 
     for ((index, _) in correctedTrajList.withIndex()) {
       for (s in correctedTrajList[index].states) {
-        s.poseMeters = Pose2d(s.poseMeters.x, 5.50 - s.poseMeters.y, -s.poseMeters.rotation)
+        s as PathPlannerTrajectory.PathPlannerState
+        s.poseMeters = Pose2d(s.poseMeters.x, 5.47878 - s.poseMeters.y, -s.poseMeters.rotation)
+        s.holonomicAngularVelocityRadPerSec *= -1.0
+        s.holonomicRotation *= -1.0
       }
     }
 
@@ -59,44 +59,71 @@ object AutoUtil {
   }
 
   fun dropCone(robot: Robot): Command {
-    return ArmFollower(robot.arm) { ArmPaths.STOW_HIGH }
-      .andThen(
+    return SequentialCommandGroup(
+      RepeatCommand(
         InstantCommand(
           {
-            val startState = robot.arm.desiredState.copy()
-            robot.arm.desiredState.beta = startState.beta + Rotation2d.fromDegrees(0.135)
+            val currState = robot.arm.desiredState.copy()
+            robot.arm.state = ArmState(
+              currState.theta,
+              currState.beta + Rotation2d.fromDegrees(0.23),
+              currState.thetaVel,
+              currState.betaVel
+            )
           }
-        ).repeatedly().withTimeout(2.25)
-      )
-      .andThen(InstantCommand(robot.endEffector::pistonRev))
-  }
-
-  fun dropCube(robot: Robot): Command {
-    return SequentialCommandGroup(
-      ArmFollower(robot.arm) { ArmPaths.STOW_HIGH },
-      WaitCommand(0.5),
+        )
+      ).withTimeout(0.75),
       InstantCommand(robot.endEffector::pistonRev)
     )
   }
 
-  fun stowAndDeploy(robot: Robot): Command {
+  fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      ArmFollower(robot.arm) { ArmPaths.HIGH_STOW },
-      InstantCommand({ robot.arm.desiredState = ArmConstants.FORWARD }),
-      InstantCommand(robot.groundIntake::deploy),
-      InstantCommand(robot.groundIntake::runIntake),
-      InstantCommand(robot.endEffector::pistonRev),
+      WaitCommand(0.075),
+      InstantCommand(robot.endEffector::autoReverse),
+      WaitCommand(0.35)
     )
   }
 
-  fun retractGroundIntake(robot: Robot): Command {
-    return InstantCommand(robot.groundIntake::stop).andThen(
-      InstantCommand(robot.groundIntake::retract)
-    ).andThen(WaitCommand(1.75)).andThen(
-      InstantCommand({ robot.arm.desiredState = ArmConstants.STOW }
-      )
-    ).andThen(
-      robot.groundIntake.handoff()
+  fun stowDropCube(robot: Robot): Command {
+    return InstantCommand(robot.endEffector::holdIntake).andThen(
+      ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(dropCube(robot))
     )
+  }
+
+  fun stowDropCone(robot: Robot): Command {
+    return InstantCommand(robot.endEffector::holdIntake).andThen(
+      ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(dropCone(robot))
+    )
+  }
+
+  fun stowAndDeployCube(robot: Robot): Command {
+    return SequentialCommandGroup(
+      InstantCommand(robot.endEffector::intake),
+      InstantCommand(robot.endEffector::pistonRev),
+      ArmFollower(robot.arm) { ArmPaths.highCube }
+    )
+  }
+
+  fun stowAndDeployCone(robot: Robot): Command {
+    return SequentialCommandGroup(
+      InstantCommand(robot.endEffector::intake),
+      InstantCommand(robot.endEffector::pistonOn),
+      ArmFollower(robot.arm) { ArmPaths.highCone }
+    )
+  }
+
+  fun stowArm(robot: Robot): Command {
+    return ArmFollower(robot.arm) { ArmPaths.highStow }
+  }
+
+  fun retractGroundIntake(robot: Robot): Command {
+    return InstantCommand(robot.endEffector::holdIntake).andThen(
+      ArmFollower(robot.arm) { ArmPaths.coneStow }
+    )
+  }
+
+  fun holdIntake(robot: Robot): Command {
+    return InstantCommand(robot.endEffector::holdIntake)
   }
 }

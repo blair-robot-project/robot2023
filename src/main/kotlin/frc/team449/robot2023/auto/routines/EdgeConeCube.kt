@@ -19,11 +19,13 @@ class EdgeConeCube(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to AutoUtil.dropCone(robot),
-        "stowArm" to AutoUtil.stowAndDeploy(robot),
-        "stopIntake" to AutoUtil.retractGroundIntake(robot),
-        "dropCube" to AutoUtil.dropCube(robot),
-        "retractArm" to ArmFollower(robot.arm) { ArmPaths.HIGH_STOW }
+        "dropCone" to AutoUtil.stowDropCone(robot),
+        "stowArm" to AutoUtil.stowAndDeployCube(robot),
+        "stopIntake" to AutoUtil.holdIntake(robot),
+        "dropCube" to ArmFollower(robot.arm) { ArmPaths.cubeHigh }.andThen(AutoUtil.dropCube(robot)),
+        "retractArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
+        "stopIntake2" to AutoUtil.retractGroundIntake(robot),
+        "stowCone" to AutoUtil.stowAndDeployCone(robot)
       )
     )
 

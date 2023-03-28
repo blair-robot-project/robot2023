@@ -1,7 +1,6 @@
 package frc.team449.robot2023.auto.routines
 
 import com.pathplanner.lib.PathPlannerTrajectory
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
@@ -19,9 +18,9 @@ class EdgeCubeStation(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCube" to AutoUtil.dropCube(robot),
-        "stowArm" to AutoUtil.stowAndDeploy(robot),
-        "stopIntake" to InstantCommand(robot.groundIntake::stop),
+        "dropCube" to AutoUtil.stowDropCube(robot),
+        "stowArm" to AutoUtil.stowAndDeployCone(robot),
+        "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "balanceStation" to AutoBalance.create(robot.drive)
       )
     )

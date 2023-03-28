@@ -14,6 +14,7 @@ import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
 import frc.team449.robot2023.auto.routines.RoutineChooser
 import frc.team449.robot2023.constants.RobotConstants
+import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import io.github.oblarg.oblog.Logger
@@ -50,6 +51,8 @@ class RobotLoop : TimedRobot() {
     SmartDashboard.putData("Routine Chooser", routineChooser)
 
     ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
+
+//    robot.light.defaultCommand = Rainbow(robot.light)
   }
 
   override fun robotPeriodic() {
@@ -61,6 +64,10 @@ class RobotLoop : TimedRobot() {
   }
 
   override fun autonomousInit() {
+    robot.arm.controller.reset()
+
+    robot.arm.state = ArmConstants.STOW
+
     /** At the start of auto we poll the alliance color given by the FMS */
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
 
@@ -89,9 +96,13 @@ class RobotLoop : TimedRobot() {
     robot.drive.stop()
   }
 
-  override fun disabledPeriodic() {}
+  override fun disabledPeriodic() {
+    robot.arm.controller.reset()
+  }
 
   override fun testInit() {
+    robot.arm.controller.reset()
+
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand)
     }

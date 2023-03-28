@@ -23,6 +23,7 @@ class TrajCharacterizer(
   override fun initialize() {
     holdTimer.start()
   }
+
   override fun execute() {
     val currState = arm.state
     val desiredState = arm.desiredState

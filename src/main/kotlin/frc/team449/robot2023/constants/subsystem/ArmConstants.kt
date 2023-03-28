@@ -16,8 +16,8 @@ object ArmConstants {
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.25 - (-0.102613)
-  const val SECOND_ENCODER_OFFSET = -0.180810 // 0.855081
+  const val FIRST_ENCODER_OFFSET = 0.75 - 0.398869
+  const val SECOND_ENCODER_OFFSET = -0.185619 - 0.004858 // 0.855081
   val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
   val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
   // PD Controller Constants
@@ -30,7 +30,7 @@ object ArmConstants {
   const val kErrDeadband = .0 // rad
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(32.0)
-  val LENGTH_2 = Units.inchesToMeters(36.5)
+  val LENGTH_2 = Units.inchesToMeters(34.0)
 
   // Mass of segments
   const val MASS_1 = 6.944561
@@ -42,7 +42,7 @@ object ArmConstants {
 
   // Distance from pivot to the Center of Grav for each segment
   val R1 = Units.inchesToMeters(9.97)
-  val R2 = Units.inchesToMeters(26.0)
+  val R2 = Units.inchesToMeters(24.0)
 
   // Feedforward constants of first joint in arm
   const val KS1 = .0789162
@@ -62,59 +62,45 @@ object ArmConstants {
   const val KA2 = 3.2914
   const val KG2 = 0.145
 
+  // Current limits of the motors
+  const val FIRST_JOINT_CURR_LIM = 40
+  const val SECOND_JOINT_CURR_LIM = 40
+
   // Arm States corresponding to points.
-  val HIGH = ArmState(
-    Rotation2d.fromDegrees(128.12),
-    Rotation2d(0.205619455575943),
-    0.0,
-    0.0
+  // (Joint 1: Rotation2d(Rads: 1.59, Deg: 91.32), Joint 2 : Rotation2d(Rads: -1.94, Deg: -111.19), theta speed : -0.01828647817075757, beta speed 0.0)
+  val SINGLE = ArmState(
+    Rotation2d.fromDegrees(91.77),
+    Rotation2d.fromDegrees(-114.74)
+  )
+
+  val DOUBLE = ArmState(
+    Rotation2d.fromDegrees(95.11),
+    Rotation2d.fromDegrees(-95.11)
+  )
+
+  val STOW = ArmState(
+    Rotation2d.fromDegrees(90.00),
+    Rotation2d.fromDegrees(-151.833816)
+  )
+
+  val CONE = ArmState(
+    Rotation2d.fromDegrees(47.55),
+    Rotation2d.fromDegrees(-116.58)
+  )
+
+  val CUBE = ArmState(
+    Rotation2d.fromDegrees(54.58),
+    Rotation2d.fromDegrees(-120.25)
   )
   val MID = ArmState(
-    Rotation2d.fromDegrees(65.09),
-    Rotation2d.fromDegrees(-49.11),
-    0.0,
-    0.0
-  )
-//  val LOW = ArmState(
-//    Rotation2d.fromDegrees(79.56),
-//    Rotation2d.fromDegrees(-115.38),
-//    0.0,
-//    0.0
-//  )
-//  val CUBE = ArmState(
-//    Rotation2d.fromDegrees(60.32),
-//    Rotation2d.fromDegrees(-122.55),
-//    0.0,
-//    0.0
-//  )
-  val STOW = ArmState(
-    Rotation2d.fromDegrees(106.94),
-    Rotation2d.fromDegrees(-141.78),
-    0.0,
-    0.0
+    Rotation2d.fromDegrees(91.40),
+    Rotation2d.fromDegrees(90.22)
   )
 
-  val FORWARD = ArmState(
-    Rotation2d.fromDegrees(90.22),
-    Rotation2d.fromDegrees(-124.9),
-    0.0,
-    0.0
+  val HIGH = ArmState(
+    Rotation2d.fromDegrees(133.00),
+    Rotation2d.fromDegrees(0.00)
   )
-//  {
-//    "q1": 1.66,
-//    "q2": -1.66,
-  val PICKUP = ArmState(
-    Rotation2d(1.66),
-    Rotation2d(-1.66),
-    0.0,
-    0.0
-  )
-//  val CONE = ArmState(
-//    Rotation2d.fromDegrees(61.48),
-//    Rotation2d.fromDegrees(-124.85),
-//    0.0,
-//    0.0
-//  )
 
-  val STATES = listOf(HIGH, MID, PICKUP, STOW)
+  val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH)
 }

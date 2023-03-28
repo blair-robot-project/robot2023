@@ -6,15 +6,13 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.CommandBase
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.*
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import frc.team449.robot2023.auto.AutoUtil
 import io.github.oblarg.oblog.annotations.Config
-import kotlin.collections.HashMap
+import java.util.*
+import kotlin.math.abs
 
 /**
  * @param xController The PID controller used to correct X translation error when following a trajectory
@@ -32,18 +30,19 @@ class HolonomicRoutine(
   @field:Config.PIDController(name = "Y PID") var yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
   @field:Config.PIDController(name = "Rotation PID") var thetaController: PIDController = PIDController(AutoConstants.DEFAULT_ROTATION_KP, 0.0, 0.0),
   private val drive: HolonomicDrive,
-  eventMap: HashMap<String, Command>,
+  private val eventMap: HashMap<String, Command>,
   private val translationTol: Double = 0.05,
   private val thetaTol: Double = 0.05,
   private val resetPosition: Boolean = false,
-  private val timeout: Double = 0.35
+  private val resetPositionTolerance: Pose2d = Pose2d(0.35, 0.35, Rotation2d.fromDegrees(10.0)),
+  private val timeout: Double = 0.65
 ) : BaseAutoBuilder(drive::pose, eventMap, DrivetrainType.HOLONOMIC) {
 
   /** What command you want to use to follow a given trajectory */
-  override fun followPath(trajectory: PathPlannerTrajectory): CommandBase {
+  override fun followPath(traj: PathPlannerTrajectory): CommandBase {
     return HolonomicFollower(
       drive,
-      trajectory,
+      traj,
       xController,
       yController,
       thetaController,
@@ -57,23 +56,48 @@ class HolonomicRoutine(
     )
   }
 
-  // TODO: If AprilTag is in sight at starting pos: either delete resetPose from fullAuto, or make this method do nothing
   override fun resetPose(trajectory: PathPlannerTrajectory): CommandBase {
+    val poseError = drive.pose.relativeTo(trajectory.initialHolonomicPose)
+    if (abs(poseError.x) < resetPositionTolerance.x &&
+      abs(poseError.y) < resetPositionTolerance.y &&
+      abs(poseError.rotation.radians) < resetPositionTolerance.rotation.radians
+    ) {
+      return InstantCommand()
+    }
     return InstantCommand({ drive.pose = trajectory.initialHolonomicPose })
   }
 
-  override fun fullAuto(pathGroup: MutableList<PathPlannerTrajectory>): CommandBase {
+  private fun followTrajEvents(traj: PathPlannerTrajectory): Command {
+    val followingEventCommands = SequentialCommandGroup()
+    val prevTime = 0.0
+
+    for (marker in traj.markers) {
+      followingEventCommands.addCommands(WaitCommand(marker.timeSeconds - prevTime))
+      for (name in marker.names) {
+        if (eventMap.containsKey(name)) {
+          followingEventCommands.addCommands(eventMap[name])
+        }
+      }
+    }
+
+    return followingEventCommands
+  }
+
+  fun createRoutine(pathGroup: MutableList<PathPlannerTrajectory>): Command {
     val commands = SequentialCommandGroup()
 
     val correctedTrajGroup = AutoUtil.transformForAlliance(pathGroup) { DriverStation.getAlliance() == DriverStation.Alliance.Red }
 
     commands.addCommands(resetPose(correctedTrajGroup[0]))
 
-    for ((index, _) in pathGroup.withIndex()) {
-      commands.addCommands(stopEventGroup(correctedTrajGroup[index].startStopEvent))
+    for (traj in correctedTrajGroup) {
       commands.addCommands(
-        followPathWithEvents(
-          correctedTrajGroup[index]
+        SequentialCommandGroup(
+          stopEventGroup(traj.startStopEvent),
+          ParallelCommandGroup(
+            followTrajEvents(traj),
+            followPath(traj)
+          )
         )
       )
     }

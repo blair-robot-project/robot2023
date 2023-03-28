@@ -52,8 +52,8 @@ open class SwerveDrive(
     ahrs.heading,
     getPositions(),
     RobotConstants.INITIAL_POSE,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.005, .005, .005), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .075, .025) // [x, y, theta]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.0075, .0075, .025), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.01, .01, .15) // [x, y, theta]
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -144,9 +144,10 @@ open class SwerveDrive(
     for (camera in cameras) {
       val result = camera.update()
       if (result.isPresent) {
+        val realResult = result.get()
         poseEstimator.addVisionMeasurement(
-          result.get().estimatedPose.toPose2d(),
-          result.get().timestampSeconds
+          realResult.estimatedPose.toPose2d(),
+          realResult.timestampSeconds
         )
       }
     }

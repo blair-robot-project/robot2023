@@ -12,6 +12,7 @@ open class ArmFollower(
   init {
     addRequirements(arm)
   }
+
   val timer = Timer()
   private var trajectory: ArmTrajectory? = null
   override fun initialize() {
@@ -36,6 +37,7 @@ open class ArmFollower(
   override fun end(interrupted: Boolean) {
     timer.stop()
     timer.reset()
+    arm.state = arm.getClosestState(arm.desiredState)!!
     arm.stop()
   }
 }

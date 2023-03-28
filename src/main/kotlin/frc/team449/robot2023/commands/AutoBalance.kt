@@ -13,6 +13,8 @@ class AutoBalance(
   private val speedMetersPerSecond: Double
 ) : CommandBase() {
 
+  private var timeOfBalance = Double.MAX_VALUE - 2.0
+
   init {
     addRequirements(drive)
   }
@@ -20,7 +22,7 @@ class AutoBalance(
   override fun initialize() {
     addRequirements(drive)
     controller.enableContinuousInput(-PI, PI)
-    controller.setTolerance(0.05) /* .05 rad tolerance ~3 degrees */
+    controller.setTolerance(0.125) /* .05 rad tolerance ~3 degrees */
     controller.setpoint = 0.0
   }
   override fun execute() {
@@ -31,10 +33,24 @@ class AutoBalance(
         0.0
       )
     )
+
+//    if (controller.atSetpoint()) {
+//      timeOfBalance = Timer.getFPGATimestamp()
+//    }
   }
 
   override fun isFinished(): Boolean {
-    return false
+    return controller.atSetpoint()
+  }
+
+  override fun end(interrupted: Boolean) {
+    drive.set(
+      ChassisSpeeds(
+        0.0,
+        0.0,
+        0.01
+      )
+    )
   }
 
   companion object {

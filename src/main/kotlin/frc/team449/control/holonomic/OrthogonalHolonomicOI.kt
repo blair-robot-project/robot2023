@@ -55,7 +55,8 @@ class OrthogonalHolonomicOI(
 
   init {
     controller.enableContinuousInput(-PI, PI)
-    controller.setTolerance(0.05) // ~3 degrees of tolerance
+    controller.setTolerance(0.035) // ~2 degrees of tolerance
+    controller.goal = TrapezoidProfile.State(drive.heading.radians, 0.0)
   }
 
   /** Previous x velocity (scaled and clamped) */
@@ -73,8 +74,8 @@ class OrthogonalHolonomicOI(
   private var magAccClamped = 0.0
 
   private var rotScaled = 0.0
-  private val allianceCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI
-  private val directionCompensation = if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) -1.0 else 1.0
+  private val allianceCompensation = { if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) 0.0 else PI }
+  private val directionCompensation = { if (RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red) -1.0 else 1.0 }
 
   private var atGoal = true
 
@@ -109,19 +110,19 @@ class OrthogonalHolonomicOI(
     this.prevY = yClamped
 
     /** Based on which button was pressed, give in the setpoint to the PID controller. */
-    if (yButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation), 0.0)
-    } else if (xButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation), 0.0)
-    } else if (aButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation), 0.0)
-    } else if (bButton.asBoolean) {
-      atGoal = false
-      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation), 0.0)
-    }
+//    if (yButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation.invoke()), 0.0)
+//    } else if (xButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation.invoke()), 0.0)
+//    } else if (aButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation.invoke()), 0.0)
+//    } else if (bButton.asBoolean) {
+//      atGoal = false
+//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation.invoke()), 0.0)
+//    }
 
     /** If the PID controller is at its setpoint, then allow the driver to control rotation,
      * otherwise let the PID do its thing. */
@@ -141,8 +142,8 @@ class OrthogonalHolonomicOI(
        **/
       vel.rotateBy(Rotation2d(-rotScaled * dt / 2))
       ChassisSpeeds.fromFieldRelativeSpeeds(
-        vel.x * directionCompensation,
-        vel.y * directionCompensation,
+        vel.x * directionCompensation.invoke(),
+        vel.y * directionCompensation.invoke(),
         rotScaled,
         drive.heading
       )

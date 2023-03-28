@@ -28,15 +28,15 @@ object VisionConstants {
 
   /** Robot to Camera distance */
   private val robotToCamera = Transform3d(
-    Translation3d(Units.inchesToMeters(-11.0), 0.0, Units.inchesToMeters(7.5)),
-    Rotation3d(0.0, Units.degreesToRadians(33.0), Units.inchesToMeters(-180.0))
+    Translation3d(Units.inchesToMeters(-10.25), Units.inchesToMeters(6.0), Units.inchesToMeters(13.35)),
+    Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(-180.0))
   )
 
   /** List of cameras that we want to use */
   val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
 //    PhotonPoseEstimator(
 //      TAG_LAYOUT,
-//      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
+//      PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
 //      PhotonCamera("Spinel"),
 //      robotToCamera
 //    )

@@ -1,15 +1,19 @@
 package frc.team449.robot2023.subsystems.groundIntake
 
 import edu.wpi.first.wpilibj.DoubleSolenoid
+import edu.wpi.first.wpilibj.PneumaticsModuleType
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.WaitCommand
+import frc.team449.robot2023.Robot
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
 import frc.team449.robot2023.subsystems.arm.Arm
 import frc.team449.robot2023.subsystems.endEffector.EndEffector
+import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.WrappedMotor
+import frc.team449.system.motor.createSparkMax
 
 class GroundIntake(
   private val intakeMotor: WrappedMotor,
@@ -80,5 +84,37 @@ class GroundIntake(
   }
   fun stop() {
     intakeMotor.stopMotor()
+  }
+
+  companion object {
+    fun createGroundIntake(robot: Robot): GroundIntake {
+      val groundIntakeMotor = createSparkMax(
+        "GroundIntake",
+        GroundIntakeConstants.INTAKE_RIGHT,
+        NEOEncoder.creator(
+          GroundIntakeConstants.UPR,
+          GroundIntakeConstants.GEARING
+        ),
+        inverted = GroundIntakeConstants.INVERTED,
+        currentLimit = GroundIntakeConstants.CURRENT_LIM,
+        slaveSparks = mapOf(
+          GroundIntakeConstants.INTAKE_LEFT to true
+        )
+      )
+
+      // create ground intake pistons
+      val groundIntakePiston = DoubleSolenoid(
+        PneumaticsModuleType.CTREPCM,
+        GroundIntakeConstants.PISTON_FWD,
+        GroundIntakeConstants.PISTON_REV
+      )
+
+      return GroundIntake(
+        groundIntakeMotor,
+        groundIntakePiston,
+        robot.arm,
+        robot.endEffector
+      )
+    }
   }
 }
