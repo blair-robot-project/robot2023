@@ -46,8 +46,8 @@ object ArmConstants {
 
   // Feedforward constants of first joint in arm
   const val KS1 = .0789162
-  const val KV1 = 0.54671
-  const val KA1 = 1.8353
+  const val KV1 = 0.0
+  const val KA1 = 0.0
   const val KG1 = 0.25519
 
   // Characterized values
@@ -58,8 +58,8 @@ object ArmConstants {
 
   // Feedforward constants of second joint in arm
   const val KS2 = .218338
-  const val KV2 = 0.59783
-  const val KA2 = 3.2914
+  const val KV2 = 0.0
+  const val KA2 = 0.0
   const val KG2 = 0.145
 
   // Current limits of the motors

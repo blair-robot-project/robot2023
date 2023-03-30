@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.commands.ArmCharacterizer
 import frc.team449.robot2023.commands.arm.ArmSweep
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
@@ -141,6 +142,10 @@ class ControllerBindings(
 //    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
 //      AngularAutoBalance.create(robot.drive, robot.ahrs)
 //    )
+
+    JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
+      ArmCharacterizer(robot.arm, 100.0, 2.0, 3)
+    )
 
     JoystickButton(driveController, XboxController.Button.kA.value).onTrue(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.SINGLE) }.withInterruptBehavior(kCancelIncoming)

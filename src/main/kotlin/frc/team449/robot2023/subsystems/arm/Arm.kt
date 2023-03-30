@@ -2,7 +2,6 @@ package frc.team449.robot2023.subsystems.arm
 
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.clamp
-import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
@@ -33,42 +32,20 @@ import kotlin.math.sqrt
 open class Arm(
   val firstJoint: WrappedMotor,
   val secondJoint: WrappedMotor,
-  private val firstJointEncoder: QuadEncoder,
-  private val secondJointEncoder: QuadEncoder,
+  val firstJointEncoder: QuadEncoder,
+  val secondJointEncoder: QuadEncoder,
   private val feedForward: TwoJointArmFeedForward,
   @field:Log val controller: ArmPDController,
   firstToSecondJoint: Double,
-  secondJointToEndEffector: Double,
-  private val numSamples: Int = 150
+  secondJointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
 
-  /** PWM signal measurement samples */
-  private var firstJointSamples = mutableListOf<Double>()
-  private var secondJointSamples = mutableListOf<Double>()
-  @Log
-  private var calibrated = false
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
     firstToSecondJoint,
     secondJointToEndEffector,
     "Arm Visual :)"
   )
-
-  fun getFirstJointEncoder(): QuadEncoder {
-    return firstJointEncoder
-  }
-
-  fun getSecondJointEncoder(): QuadEncoder {
-    return secondJointEncoder
-  }
-
-  fun getArmFeedForward(): TwoJointArmFeedForward {
-    return feedForward
-  }
-
-  fun getArmPDController(): ArmPDController {
-    return controller
-  }
 
   /** kinematics that converts between (x, y) <-> (theta, beta) coordinates */
   val kinematics = ArmKinematics(
@@ -117,17 +94,13 @@ open class Arm(
     desiredState.betaVel = 0.0
   }
 
-  /**
-   * **!!! THE ARM BETTER BE STATIONARY WHEN DOING THIS !!!**
-   * Quadrature is better at measuring position but cannot measure absolute
-   * Read some PWM signals and take the high pulse readings to apply initial measurement for quadrature
-   */
-  fun resetQuadrature() {
-    firstJointSamples.removeAll { true }
-    secondJointSamples.removeAll { true }
-    calibrated = false
-  }
   override fun periodic() {
+    val ff = feedForward.calculate(state.static().matrix, false)
+    val pid = controller.calculate(state.matrix, desiredState.matrix)
+    val u = ff + pid
+    firstJoint.setVoltage(u[0, 0])
+    secondJoint.setVoltage(u[1, 0])
+    visual.setState(state, desiredState)
   }
 
   fun getClosestState(point: ArmState): ArmState? {

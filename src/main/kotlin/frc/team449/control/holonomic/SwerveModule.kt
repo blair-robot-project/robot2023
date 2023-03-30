@@ -58,6 +58,7 @@ open class SwerveModule(
         desiredState,
         Rotation2d(turningMotor.position)
       )
+
       turnController.setpoint = state.angle.radians
       desiredSpeed = state.speedMetersPerSecond
       driveController.setpoint = state.speedMetersPerSecond

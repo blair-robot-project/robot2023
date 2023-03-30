@@ -13,7 +13,7 @@ import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
 import frc.team449.robot2023.auto.routines.RoutineChooser
-import frc.team449.robot2023.commands.ArmMove
+import frc.team449.robot2023.commands.ArmCalibration
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
@@ -44,6 +44,12 @@ class RobotLoop : TimedRobot() {
     ArmPaths.parseTrajectories()
     println("DONE Parsing Trajectories : ${Timer.getFPGATimestamp()}")
     PathPlannerServer.startServer(5811)
+
+    CommandScheduler.getInstance().schedule(
+      ArmCalibration(
+        robot.arm
+      ).ignoringDisable(true)
+    )
 
     Logger.configureLoggingAndConfig(robot, false)
     Logger.configureLoggingAndConfig(Paths, false)
@@ -88,8 +94,6 @@ class RobotLoop : TimedRobot() {
       CommandScheduler.getInstance().cancel(autoCommand)
     }
     robot.drive.defaultCommand = DriveCommand(robot.drive, robot.oi)
-
-    robot.arm.defaultCommand = ArmMove(robot.arm)
   }
 
   override fun teleopPeriodic() {
