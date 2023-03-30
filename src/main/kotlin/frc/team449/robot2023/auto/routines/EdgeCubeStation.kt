@@ -7,7 +7,7 @@ import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
-import frc.team449.robot2023.commands.AutoBalance
+import frc.team449.robot2023.commands.autoBalance.AutoBalance
 
 class EdgeCubeStation(
   robot: Robot,

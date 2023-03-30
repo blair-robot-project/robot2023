@@ -1,4 +1,4 @@
-package frc.team449.robot2023.commands
+package frc.team449.robot2023.commands.arm
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.CommandBase

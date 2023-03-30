@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
-import frc.team449.robot2023.commands.ArmSweep
+import frc.team449.robot2023.commands.arm.ArmSweep
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
@@ -27,10 +27,10 @@ class ControllerBindings(
   fun bindButtons() {
 
     JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
-      InstantCommand(robot.endEffector::intake)
+      robot.endEffector.runOnce(robot.endEffector::intake)
     ).onFalse(
-      InstantCommand(robot.endEffector::stop).andThen(
-        InstantCommand(robot.endEffector::holdIntake)
+      robot.endEffector.runOnce(robot.endEffector::stop).andThen(
+        robot.endEffector.runOnce(robot.endEffector::holdIntake)
       )
     )
 
@@ -44,9 +44,9 @@ class ControllerBindings(
     )
 
     JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
-      InstantCommand(robot.endEffector::intakeReverse)
+      robot.endEffector.runOnce(robot.endEffector::intakeReverse)
     ).onFalse(
-      InstantCommand(robot.endEffector::stop)
+      robot.endEffector.runOnce(robot.endEffector::stop)
     )
 
     // drive speed overdrive trigger
@@ -57,9 +57,9 @@ class ControllerBindings(
     )
 
     JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
-      InstantCommand(robot.endEffector::pistonRev).andThen(
+      robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
         ConditionalCommand(
-          InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
+          robot.arm.runOnce { robot.arm.state = ArmConstants.CUBE },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CONE }
       ).andThen(
@@ -70,9 +70,9 @@ class ControllerBindings(
     )
 
     JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
-      InstantCommand(robot.endEffector::pistonOn).andThen(
+      robot.endEffector.runOnce(robot.endEffector::pistonOn).andThen(
         ConditionalCommand(
-          InstantCommand({ robot.arm.state = ArmConstants.CONE }),
+          robot.arm.runOnce { robot.arm.state = ArmConstants.CONE },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CUBE }
       ).andThen(
@@ -83,9 +83,9 @@ class ControllerBindings(
     )
 
     Trigger { robot.arm.desiredState == ArmConstants.STOW }.onTrue(
-      InstantCommand(robot.endEffector::strongHoldIntake)
+      robot.endEffector.runOnce(robot.endEffector::strongHoldIntake)
     ).onFalse(
-      InstantCommand(robot.endEffector::holdIntake)
+      robot.endEffector.runOnce(robot.endEffector::holdIntake)
     )
 
     JoystickButton(mechanismController, XboxController.Button.kB.value).onTrue(
@@ -147,9 +147,9 @@ class ControllerBindings(
     )
 
     JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
-      InstantCommand(robot.endEffector::pistonRev).andThen(
+      robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
         ConditionalCommand(
-          InstantCommand({ robot.arm.state = ArmConstants.CUBE }),
+          robot.arm.runOnce { robot.arm.state = ArmConstants.CUBE },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CONE }
       ).andThen(
@@ -160,9 +160,9 @@ class ControllerBindings(
     )
 
     JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
-      InstantCommand(robot.endEffector::pistonOn).andThen(
+      robot.endEffector.runOnce(robot.endEffector::pistonOn).andThen(
         ConditionalCommand(
-          InstantCommand({ robot.arm.state = ArmConstants.CONE }),
+          robot.arm.runOnce { robot.arm.state = ArmConstants.CONE },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CUBE }
       ).andThen(
