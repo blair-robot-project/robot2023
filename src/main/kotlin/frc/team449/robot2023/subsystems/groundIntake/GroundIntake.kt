@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.PneumaticsModuleType
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import frc.team449.robot2023.Robot
@@ -14,12 +15,12 @@ import frc.team449.robot2023.subsystems.endEffector.EndEffector
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
+import java.time.Instant
 
 class GroundIntake(
   private val topMotor: WrappedMotor,
   private val bottomMotor: WrappedMotor,
-  private val intakePiston1: DoubleSolenoid,
-  private val intakePiston2: DoubleSolenoid,
+  private val intakePiston: DoubleSolenoid
 ) : SubsystemBase() {
 
   init {
@@ -29,41 +30,58 @@ class GroundIntake(
 
   private var retracted = true
 
-  fun intakeCone() {
-    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
-    bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun intakeCone(): Command {
+    return InstantCommand(
+      {
+        topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+        bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+      }
+    )
   }
 
-  fun intakeCube() {
-    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
-    bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun intakeCube(): Command {
+    return InstantCommand(
+      {
+        topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+        bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+      }
+    )
   }
 
-  fun outtake() {
-    topMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
-    bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun outtake(): Command {
+    return InstantCommand(
+      {
+        topMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+        bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+      }
+    )
   }
 
-  fun deploy() {
-    intakePiston1.set(DoubleSolenoid.Value.kForward)
-    intakePiston2.set(DoubleSolenoid.Value.kForward)
+  fun deploy(): Command {
     retracted = false
+    return InstantCommand(
+      {
+        intakePiston.set(DoubleSolenoid.Value.kForward)
+      }
+    )
   }
 
-  fun retract() {
-    intakePiston1.set(DoubleSolenoid.Value.kForward)
-    intakePiston2.set(DoubleSolenoid.Value.kForward)
+  fun retract(): Command {
     retracted = true
+    return InstantCommand(
+      {
+        intakePiston.set(DoubleSolenoid.Value.kReverse)
+      }
+    )
   }
 
-  fun scoreLow(): Command {
-    return InstantCommand(::deploy)
-      .andThen(WaitCommand(.45))
-      .andThen(::outtake)
-  }
-  fun stop() {
-    topMotor.stopMotor()
-    bottomMotor.stopMotor()
+  fun stop(): Command {
+    return InstantCommand(
+      {
+        topMotor.stopMotor()
+        bottomMotor.stopMotor()
+      }
+    )
   }
 
   companion object {
@@ -91,23 +109,16 @@ class GroundIntake(
       )
 
       // create ground intake pistons
-      val piston1 = DoubleSolenoid(
+      val piston = DoubleSolenoid(
         PneumaticsModuleType.CTREPCM,
-        GroundIntakeConstants.PISTON_FWD_1,
-        GroundIntakeConstants.PISTON_REV_1
-      )
-
-      val piston2 = DoubleSolenoid(
-        PneumaticsModuleType.CTREPCM,
-        GroundIntakeConstants.PISTON_FWD_2,
-        GroundIntakeConstants.PISTON_REV_2
+        GroundIntakeConstants.FWD_CHANNEL,
+        GroundIntakeConstants.REV_CHANNEL
       )
 
       return GroundIntake(
         topMotor,
         bottomMotor,
-        piston1,
-        piston2,
+        piston
       )
     }
   }
