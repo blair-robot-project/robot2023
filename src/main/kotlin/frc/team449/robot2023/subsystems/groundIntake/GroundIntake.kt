@@ -20,8 +20,6 @@ class GroundIntake(
   private val bottomMotor: WrappedMotor,
   private val intakePiston1: DoubleSolenoid,
   private val intakePiston2: DoubleSolenoid,
-  private val arm: Arm,
-  private val endEffector: EndEffector
 ) : SubsystemBase() {
 
   init {
@@ -33,7 +31,7 @@ class GroundIntake(
 
   fun intakeCone() {
     topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
-    bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE * -1)
+    bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
   }
 
   fun intakeCube() {
@@ -42,8 +40,8 @@ class GroundIntake(
   }
 
   fun outtake() {
-    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE * -1)
-    bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE * -1)
+    topMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+    bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
   }
 
   fun deploy() {
@@ -58,29 +56,6 @@ class GroundIntake(
     retracted = true
   }
 
-  fun handoff(): Command {
-    return if (arm.desiredState == ArmConstants.STOW && this.retracted) {
-//      InstantCommand({ intakeMotor.setVoltage(-1.0) }).andThen(
-//        WaitCommand(0.1)
-//      ).andThen(
-//        endEffector::pistonOn
-//      )
-//      InstantCommand({ intakeMotor.encoder.resetPosition(0.0) }).andThen(
-//        PIDCommand(
-//          PIDController(4.0, 0.0, 0.0),
-//          { intakeMotor.encoder.position },
-//          1.34, // this is a measured pos
-//          { x: Double -> intakeMotor.set(-x) }
-//        ).withTimeout(1.0).andThen(
-//          endEffector::pistonOn
-//        )
-//      )
-      InstantCommand()
-    } else {
-      InstantCommand()
-    }
-  }
-
   fun scoreLow(): Command {
     return InstantCommand(::deploy)
       .andThen(WaitCommand(.45))
@@ -92,7 +67,7 @@ class GroundIntake(
   }
 
   companion object {
-    fun createGroundIntake(robot: Robot): GroundIntake {
+    fun createGroundIntake(): GroundIntake {
       val topMotor = createSparkMax(
         "Intake Top",
         GroundIntakeConstants.INTAKE_TOP,
@@ -118,14 +93,14 @@ class GroundIntake(
       // create ground intake pistons
       val piston1 = DoubleSolenoid(
         PneumaticsModuleType.CTREPCM,
-        GroundIntakeConstants.PISTON_FWD,
-        GroundIntakeConstants.PISTON_REV
+        GroundIntakeConstants.PISTON_FWD_1,
+        GroundIntakeConstants.PISTON_REV_1
       )
 
       val piston2 = DoubleSolenoid(
         PneumaticsModuleType.CTREPCM,
-        GroundIntakeConstants.PISTON_FWD,
-        GroundIntakeConstants.PISTON_REV
+        GroundIntakeConstants.PISTON_FWD_2,
+        GroundIntakeConstants.PISTON_REV_2
       )
 
       return GroundIntake(
@@ -133,8 +108,6 @@ class GroundIntake(
         bottomMotor,
         piston1,
         piston2,
-        robot.arm,
-        robot.endEffector
       )
     }
   }
