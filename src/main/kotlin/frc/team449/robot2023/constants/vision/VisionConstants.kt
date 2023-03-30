@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.util.Units
+import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 
 /** Constants that have anything to do with vision */
@@ -34,11 +35,11 @@ object VisionConstants {
 
   /** List of cameras that we want to use */
   val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
-//    PhotonPoseEstimator(
-//      TAG_LAYOUT,
-//      PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
-//      PhotonCamera("Spinel"),
-//      robotToCamera
-//    )
+    PhotonPoseEstimator(
+      TAG_LAYOUT,
+      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
+      PhotonCamera("Spinel"),
+      robotToCamera
+    )
   )
 }
