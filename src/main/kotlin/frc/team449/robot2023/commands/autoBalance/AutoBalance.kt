@@ -15,7 +15,6 @@ class AutoBalance(
   private val speedMetersPerSecond: Double
 ) : CommandBase() {
 
-  private var timeOfBalance = Double.MAX_VALUE - 2.0
   private var driveModules = drive.getModules()
 
   init {
@@ -36,10 +35,6 @@ class AutoBalance(
         0.0
       )
     )
-
-//    if (controller.atSetpoint()) {
-//      timeOfBalance = Timer.getFPGATimestamp()
-//    }
   }
 
   override fun isFinished(): Boolean {
@@ -47,20 +42,21 @@ class AutoBalance(
   }
 
   override fun end(interrupted: Boolean) {
+    drive.desiredSpeeds = null
     driveModules[0].state = SwerveModuleState(
-      0.0,
+      0.001,
       Rotation2d.fromDegrees(-45.0)
     )
     driveModules[1].state = SwerveModuleState(
-      0.0,
+      0.001,
       Rotation2d.fromDegrees(45.0)
     )
     driveModules[2].state = SwerveModuleState(
-      0.0,
+      0.001,
       Rotation2d.fromDegrees(45.0)
     )
     driveModules[3].state = SwerveModuleState(
-      0.0,
+      0.001,
       Rotation2d.fromDegrees(-45.0)
     )
   }

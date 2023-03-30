@@ -25,6 +25,7 @@ import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import org.photonvision.PhotonPoseEstimator
+import java.lang.Exception
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -56,14 +57,14 @@ open class SwerveDrive(
     ahrs.heading,
     getPositions(),
     RobotConstants.INITIAL_POSE,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .035), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .05, .075) // [x, y, theta]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .035), // dead reckoning
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .05, .075) // vision
   )
 
   private var lastTime = Timer.getFPGATimestamp()
 
   @Log.ToString(name = "Desired Speeds")
-  var desiredSpeeds = ChassisSpeeds()
+  var desiredSpeeds: ChassisSpeeds? = ChassisSpeeds()
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
@@ -102,19 +103,21 @@ open class SwerveDrive(
       modules[3].state
     )
 
-    val desiredModuleStates =
-      this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
+    if (desiredSpeeds != null) {
+      val desiredModuleStates =
+        this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
 
-    /** If any module is going faster than the max speed,
-     *  apply scaling down and make sure there isn't
-     *  any early desaturation */
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-      desiredModuleStates,
-      SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED
-    )
+      /** If any module is going faster than the max speed,
+       *  apply scaling down and make sure there isn't
+       *  any early desaturation */
+      SwerveDriveKinematics.desaturateWheelSpeeds(
+        desiredModuleStates,
+        SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED
+      )
 
-    for (i in this.modules.indices) {
-      this.modules[i].state = desiredModuleStates[i]
+      for (i in this.modules.indices) {
+        this.modules[i].state = desiredModuleStates[i]
+      }
     }
 
     for (module in modules)
@@ -145,15 +148,19 @@ open class SwerveDrive(
   }
 
   private fun localize() {
-    for (camera in cameras) {
-      val result = camera.update()
-      if (result.isPresent) {
-        val realResult = result.get()
-        poseEstimator.addVisionMeasurement(
-          realResult.estimatedPose.toPose2d(),
-          Timer.getFPGATimestamp()
-        )
+    try {
+      for (camera in cameras) {
+        val result = camera.update()
+        if (result.isPresent) {
+          val realResult = result.get()
+          poseEstimator.addVisionMeasurement(
+            realResult.estimatedPose.toPose2d(),
+            Timer.getFPGATimestamp()
+          )
+        }
       }
+    } catch (e: Exception) {
+      print("!!!!!!!!! VISION ERROR !!!!!!! \n $e")
     }
   }
 
