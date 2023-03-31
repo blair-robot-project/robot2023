@@ -26,7 +26,7 @@ open class ArmFollower(
 
     if (trajectory != null) {
       val reference: ArmState = trajectory!!.sample(currTime)
-      arm.state = reference
+      arm.moveToState(reference)
     }
   }
 
@@ -37,7 +37,7 @@ open class ArmFollower(
   override fun end(interrupted: Boolean) {
     timer.stop()
     timer.reset()
-    arm.state = arm.getClosestState(arm.desiredState)!!
+    arm.setArmDesiredState(arm.getClosestState(arm.desiredState)!!)
     arm.stop()
   }
 }

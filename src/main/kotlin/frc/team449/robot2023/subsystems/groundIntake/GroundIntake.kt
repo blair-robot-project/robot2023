@@ -14,8 +14,7 @@ import frc.team449.system.motor.createSparkMax
 class GroundIntake(
   private val topMotor: WrappedMotor,
   private val bottomMotor: WrappedMotor,
-  private val intakePiston1: DoubleSolenoid,
-  private val intakePiston2: DoubleSolenoid,
+  private val piston: DoubleSolenoid
 ) : SubsystemBase() {
 
   init {
@@ -41,14 +40,12 @@ class GroundIntake(
   }
 
   fun deploy() {
-    intakePiston1.set(DoubleSolenoid.Value.kForward)
-    intakePiston2.set(DoubleSolenoid.Value.kForward)
+    piston.set(DoubleSolenoid.Value.kForward)
     retracted = false
   }
 
   fun retract() {
-    intakePiston1.set(DoubleSolenoid.Value.kForward)
-    intakePiston2.set(DoubleSolenoid.Value.kForward)
+    piston.set(DoubleSolenoid.Value.kForward)
     retracted = true
   }
 
@@ -87,23 +84,16 @@ class GroundIntake(
       )
 
       // create ground intake pistons
-      val piston1 = DoubleSolenoid(
+      val piston = DoubleSolenoid(
         PneumaticsModuleType.CTREPCM,
-        GroundIntakeConstants.PISTON_FWD_1,
-        GroundIntakeConstants.PISTON_REV_1
-      )
-
-      val piston2 = DoubleSolenoid(
-        PneumaticsModuleType.CTREPCM,
-        GroundIntakeConstants.PISTON_FWD_2,
-        GroundIntakeConstants.PISTON_REV_2
+        GroundIntakeConstants.PISTON_FWD,
+        GroundIntakeConstants.PISTON_REV
       )
 
       return GroundIntake(
         topMotor,
         bottomMotor,
-        piston1,
-        piston2,
+        piston
       )
     }
   }

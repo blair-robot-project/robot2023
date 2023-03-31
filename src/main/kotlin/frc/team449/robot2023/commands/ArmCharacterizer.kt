@@ -62,7 +62,7 @@ class ArmCharacterizer(
       currData["u2"] = arm.secondJoint.lastVoltage
 
       log.add(currData)
-      arm.state = stateMap.get(timer.get()).state()
+      arm.moveToState(stateMap.get(timer.get()).state())
       holdTimer.reset()
       holdTimer.start()
     }

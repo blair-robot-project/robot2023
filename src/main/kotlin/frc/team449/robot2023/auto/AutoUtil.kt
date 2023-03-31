@@ -64,12 +64,12 @@ object AutoUtil {
         InstantCommand(
           {
             val currState = robot.arm.desiredState.copy()
-            robot.arm.state = ArmState(
+            robot.arm.moveToState(ArmState(
               currState.theta,
               currState.beta + Rotation2d.fromDegrees(0.23),
               currState.thetaVel,
               currState.betaVel
-            )
+            ))
           }
         )
       ).withTimeout(0.75),

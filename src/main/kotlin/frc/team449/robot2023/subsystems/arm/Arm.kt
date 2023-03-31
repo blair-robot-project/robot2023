@@ -61,23 +61,13 @@ open class Arm(
    * the current state of the arm in [ArmState]
    */
   @get:Log.ToString
-  open var state: ArmState
+  open val state: ArmState
     get() = ArmState(
       Rotation2d(MathUtil.inputModulus(firstJointEncoder.position, -PI, PI)),
       Rotation2d(MathUtil.inputModulus(secondJointEncoder.position, -PI, PI)),
       firstJointEncoder.velocity,
       secondJointEncoder.velocity
     )
-    set(state) {
-//    cap q2 between its hard limits
-      state.beta = Rotation2d.fromDegrees(
-        clamp(state.beta.degrees, -156.8, 151.15)
-      )
-      // continue if state is same as last desired state
-      if (state == desiredState) return
-      controller.reset()
-      desiredState = state
-    }
 
   /**
    * The current state of the arm in [CartesianArmState]
@@ -85,6 +75,36 @@ open class Arm(
   @get:Log.ToString
   val coordinate: CartesianArmState
     get() = kinematics.toCartesian(state)
+
+  fun setArmDesiredState(desiredState: ArmState) {
+    val desState = ArmState(
+      desiredState.theta,
+      Rotation2d.fromDegrees(
+        clamp(desiredState.beta.degrees, -156.8, 151.15)
+      ),
+      desiredState.thetaVel,
+      desiredState.betaVel
+    )
+//     continue if state is same as last desired state
+      if (desState == desiredState) {
+        return
+      }
+    controller.reset()
+    this.desiredState = desState
+  }
+
+  fun moveToState(desiredState: ArmState) {
+    setArmDesiredState(desiredState)
+    holdArm()
+  }
+
+  fun holdArm() {
+    val ff = feedForward.calculate(state.static().matrix, true)
+    val pid = controller.calculate(state.matrix, desiredState.matrix)
+    val u = ff + pid
+    firstJoint.setVoltage(u[0, 0])
+    secondJoint.setVoltage(u[1, 0])
+  }
 
   /**
    * Mitigate any speed on the joints
@@ -95,11 +115,6 @@ open class Arm(
   }
 
   override fun periodic() {
-    val ff = feedForward.calculate(state.static().matrix, true)
-    val pid = controller.calculate(state.matrix, desiredState.matrix)
-    val u = ff + pid
-    firstJoint.setVoltage(u[0, 0])
-    secondJoint.setVoltage(u[1, 0])
     visual.setState(state, desiredState)
   }
 
@@ -136,14 +151,19 @@ open class Arm(
       when (endpoint) {
         ArmConstants.SINGLE ->
           ArmPaths.stowSingle
+
         ArmConstants.DOUBLE ->
           ArmPaths.stowDouble
+
         ArmConstants.CONE ->
           ArmPaths.stowCone
+
         ArmConstants.CUBE ->
           ArmPaths.stowCube
+
         ArmConstants.MID ->
           ArmPaths.stowMid
+
         else ->
           ArmPaths.stowHigh
       }
@@ -151,14 +171,19 @@ open class Arm(
       when (startPoint) {
         ArmConstants.SINGLE ->
           ArmPaths.singleStow
+
         ArmConstants.DOUBLE ->
           ArmPaths.doubleStow
+
         ArmConstants.CONE ->
           ArmPaths.coneStow
+
         ArmConstants.CUBE ->
           ArmPaths.cubeStow
+
         ArmConstants.MID ->
           ArmPaths.midStow
+
         else ->
           ArmPaths.highStow
       }

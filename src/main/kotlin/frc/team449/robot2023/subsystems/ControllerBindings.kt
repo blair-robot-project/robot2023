@@ -39,7 +39,7 @@ class ControllerBindings(
       ConditionalCommand(
         ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
         ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
-      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
+      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }
     ).onFalse(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
     )
@@ -60,7 +60,7 @@ class ControllerBindings(
     JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
       robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
         ConditionalCommand(
-          robot.arm.runOnce { robot.arm.state = ArmConstants.CUBE },
+          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CUBE) },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CONE }
       ).andThen(
@@ -73,7 +73,7 @@ class ControllerBindings(
     JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
       robot.endEffector.runOnce(robot.endEffector::pistonOn).andThen(
         ConditionalCommand(
-          robot.arm.runOnce { robot.arm.state = ArmConstants.CONE },
+          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CONE) },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CUBE }
       ).andThen(
@@ -105,7 +105,7 @@ class ControllerBindings(
 //      ConditionalCommand(
 //        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }.withInterruptBehavior(kCancelIncoming),
 //        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }.withInterruptBehavior(kCancelIncoming)
-//      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
+//      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }
 //    )
 
     JoystickButton(mechanismController, XboxController.Button.kX.value).onTrue(
@@ -133,7 +133,7 @@ class ControllerBindings(
               Rotation2d(newState.beta.radians - MathUtil.applyDeadband(mechanismController.leftY, .3) * .005)
             newState.theta =
               Rotation2d(newState.theta.radians - MathUtil.applyDeadband(mechanismController.rightY, .3) * .005)
-            robot.arm.state = newState
+            robot.arm.moveToState(newState)
           }
         )
       ).until { abs(mechanismController.leftY) <= 0.3 && abs(mechanismController.rightY) <= 0.3 }
@@ -154,7 +154,7 @@ class ControllerBindings(
     JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
       robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
         ConditionalCommand(
-          robot.arm.runOnce { robot.arm.state = ArmConstants.CUBE },
+          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CUBE) },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CONE }
       ).andThen(
@@ -167,7 +167,7 @@ class ControllerBindings(
     JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
       robot.endEffector.runOnce(robot.endEffector::pistonOn).andThen(
         ConditionalCommand(
-          robot.arm.runOnce { robot.arm.state = ArmConstants.CONE },
+          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CONE) },
           InstantCommand()
         ) { robot.arm.desiredState == ArmConstants.CUBE }
       ).andThen(

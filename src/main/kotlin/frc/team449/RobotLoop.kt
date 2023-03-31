@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.DriveCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.Paths
@@ -59,6 +60,11 @@ class RobotLoop : TimedRobot() {
 
     ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
 
+    robot.arm.defaultCommand = InstantCommand(
+      robot.arm::holdArm,
+      robot.arm
+    )
+
 //    robot.light.defaultCommand = Rainbow(robot.light)
   }
 
@@ -73,7 +79,7 @@ class RobotLoop : TimedRobot() {
   override fun autonomousInit() {
     robot.arm.controller.reset()
 
-    robot.arm.state = ArmConstants.STOW
+    robot.arm.setArmDesiredState(ArmConstants.STOW)
 
     /** At the start of auto we poll the alliance color given by the FMS */
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
