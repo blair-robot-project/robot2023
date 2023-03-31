@@ -86,15 +86,15 @@ open class Arm(
       desiredState.betaVel
     )
 //     continue if state is same as last desired state
-      if (desState == desiredState) {
+      if (desState == this.desiredState) {
         return
       }
     controller.reset()
     this.desiredState = desState
   }
 
-  fun moveToState(desiredState: ArmState) {
-    setArmDesiredState(desiredState)
+  fun moveToState(newState: ArmState) {
+    setArmDesiredState(newState)
     holdArm()
   }
 
