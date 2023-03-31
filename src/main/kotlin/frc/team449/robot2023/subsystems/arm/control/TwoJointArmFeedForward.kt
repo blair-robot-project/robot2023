@@ -7,6 +7,7 @@ import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import kotlin.math.cos
+import kotlin.math.sign
 import kotlin.math.sin
 
 class TwoJointArmFeedForward(
@@ -90,8 +91,8 @@ class TwoJointArmFeedForward(
 
     /** Ks matrix in equation: Overcome static friction */
     val Ks = builder2x1.fill(
-      ks.first,
-      ks.second
+      ks.first * sign(thetaDot),
+      ks.second * sign(betaDot)
     )
 
     /** cos matrix to multiply B^-1(Tg) term */

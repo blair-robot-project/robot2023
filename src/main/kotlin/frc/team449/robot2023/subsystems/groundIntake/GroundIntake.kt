@@ -24,29 +24,39 @@ class GroundIntake(
 
   private var retracted = true
 
-  fun intakeCone() {
-    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
-    bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun intakeCone(): Command {
+    return this.runOnce {
+      topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+      bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+    }
   }
 
-  fun intakeCube() {
-    topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
-    bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun intakeCube(): Command {
+    return this.runOnce {
+      topMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+      bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+    }
   }
 
-  fun outtake() {
-    topMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
-    bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+  fun outtake(): Command {
+    return this.runOnce {
+      topMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
+      bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+    }
   }
 
-  fun deploy() {
-    piston.set(DoubleSolenoid.Value.kForward)
-    retracted = false
+  fun deploy(): Command {
+    return this.runOnce {
+      piston.set(DoubleSolenoid.Value.kForward)
+      retracted = false
+    }
   }
 
-  fun retract() {
-    piston.set(DoubleSolenoid.Value.kForward)
-    retracted = true
+  fun retract(): Command {
+    return this.runOnce {
+      piston.set(DoubleSolenoid.Value.kForward)
+      retracted = true
+    }
   }
 
   fun scoreLow(): Command {
@@ -54,6 +64,7 @@ class GroundIntake(
       .andThen(WaitCommand(.45))
       .andThen(::outtake)
   }
+
   fun stop() {
     topMotor.stopMotor()
     bottomMotor.stopMotor()

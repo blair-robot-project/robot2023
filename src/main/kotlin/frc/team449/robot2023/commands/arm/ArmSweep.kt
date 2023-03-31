@@ -24,12 +24,14 @@ class ArmSweep(
     else Rotation2d.fromDegrees(abs(sweepBeta.degrees))
   }
   override fun execute() {
-    arm.moveToState(ArmState(
-      startState.theta,
-      startState.beta + sweepBeta * input(),
-      startState.thetaVel,
-      startState.betaVel
-    ))
+    arm.moveToState(
+      ArmState(
+        startState.theta,
+        startState.beta + sweepBeta * input(),
+        startState.thetaVel,
+        startState.betaVel
+      )
+    )
   }
 
   override fun isFinished(): Boolean {

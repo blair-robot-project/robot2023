@@ -81,6 +81,7 @@ class ArmCharacterizer(
       holdTimer.stop()
       holdTimer.reset()
     }
+    arm.stop()
   }
 
   fun Matrix<N4, N1>.state(): ArmState {

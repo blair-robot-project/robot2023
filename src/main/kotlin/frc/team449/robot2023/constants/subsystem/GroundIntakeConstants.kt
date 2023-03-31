@@ -16,5 +16,5 @@ object GroundIntakeConstants {
   const val CURRENT_LIM = 20
 
   const val PISTON_FWD = 7
-  const val PISTON_REV = 0
+  const val PISTON_REV = 6
 }

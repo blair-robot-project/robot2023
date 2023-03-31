@@ -4,10 +4,8 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.*
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
-import edu.wpi.first.wpilibj2.command.ConditionalCommand
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.RepeatCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
@@ -15,7 +13,6 @@ import frc.team449.robot2023.commands.ArmCharacterizer
 import frc.team449.robot2023.commands.arm.ArmSweep
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
-import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import kotlin.math.abs
 
@@ -25,23 +22,63 @@ class ControllerBindings(
   private val robot: Robot
 ) {
 
-  fun bindButtons() {
+  private fun changeCone(): Command {
+    return robot.endEffector.runOnce(robot.endEffector::pistonOn).andThen(
+      ConditionalCommand(
+        SequentialCommandGroup(
+          robot.groundIntake.retract(),
+//          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CONE) }
+        ),
+        InstantCommand()
+      ) { robot.arm.desiredState == ArmConstants.CUBE }
+    )
+  }
 
+  private fun changeCube(): Command {
+    return robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
+      ConditionalCommand(
+        SequentialCommandGroup(
+          robot.groundIntake.deploy(),
+//          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CUBE) }
+        ),
+        InstantCommand()
+      ) { robot.arm.desiredState == ArmConstants.CONE }
+    )
+  }
+
+  fun bindButtons() {
     JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
-      robot.endEffector.runOnce(robot.endEffector::intake)
+      ConditionalCommand(
+        robot.endEffector.runOnce(robot.endEffector::intake),
+        SequentialCommandGroup(
+          robot.groundIntake.intakeCube(),
+          robot.endEffector.runOnce(robot.endEffector::intake)
+        )
+      ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
     ).onFalse(
-      robot.endEffector.runOnce(robot.endEffector::stop).andThen(
+      SequentialCommandGroup(
+        robot.groundIntake.runOnce(robot.groundIntake::stop),
         robot.endEffector.runOnce(robot.endEffector::holdIntake)
       )
     )
 
     Trigger { driveController.rightTriggerAxis > 0.8 }.onTrue(
       ConditionalCommand(
-        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
-        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
+        SequentialCommandGroup(
+          robot.groundIntake.deploy(),
+//          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }
+        ),
+        SequentialCommandGroup(
+          robot.groundIntake.retract(),
+//          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
+        ),
       ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }
     ).onFalse(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
+      SequentialCommandGroup(
+        robot.groundIntake.retract(),
+        robot.groundIntake.runOnce(robot.groundIntake::stop),
+        ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
+      )
     )
 
     JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
@@ -58,29 +95,11 @@ class ControllerBindings(
     )
 
     JoystickButton(mechanismController, XboxController.Button.kRightBumper.value).onTrue(
-      robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
-        ConditionalCommand(
-          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CUBE) },
-          InstantCommand()
-        ) { robot.arm.desiredState == ArmConstants.CONE }
-      ).andThen(
-        InstantCommand({
-          EndEffectorConstants.INTAKE_VOLTAGE = 8.0
-        })
-      )
+      changeCube()
     )
 
     JoystickButton(mechanismController, XboxController.Button.kLeftBumper.value).onTrue(
-      robot.endEffector.runOnce(robot.endEffector::pistonOn).andThen(
-        ConditionalCommand(
-          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CONE) },
-          InstantCommand()
-        ) { robot.arm.desiredState == ArmConstants.CUBE }
-      ).andThen(
-        InstantCommand({
-          EndEffectorConstants.INTAKE_VOLTAGE = 12.0
-        })
-      )
+      changeCone()
     )
 
     Trigger { robot.arm.desiredState == ArmConstants.STOW }.onTrue(
@@ -139,10 +158,6 @@ class ControllerBindings(
       ).until { abs(mechanismController.leftY) <= 0.3 && abs(mechanismController.rightY) <= 0.3 }
     )
 
-//    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
-//      AngularAutoBalance.create(robot.drive, robot.ahrs)
-//    )
-
     JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
       ArmCharacterizer(robot.arm, 100.0, 2.0, 3)
     )
@@ -152,29 +167,11 @@ class ControllerBindings(
     )
 
     JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
-      robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
-        ConditionalCommand(
-          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CUBE) },
-          InstantCommand()
-        ) { robot.arm.desiredState == ArmConstants.CONE }
-      ).andThen(
-        InstantCommand({
-          EndEffectorConstants.INTAKE_VOLTAGE = 8.0
-        })
-      )
+      changeCube()
     )
 
     JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
-      robot.endEffector.runOnce(robot.endEffector::pistonOn).andThen(
-        ConditionalCommand(
-          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CONE) },
-          InstantCommand()
-        ) { robot.arm.desiredState == ArmConstants.CUBE }
-      ).andThen(
-        InstantCommand({
-          EndEffectorConstants.INTAKE_VOLTAGE = 12.0
-        })
-      )
+      changeCone()
     )
 
     JoystickButton(driveController, XboxController.Button.kY.value).onTrue(
