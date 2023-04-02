@@ -3,6 +3,8 @@ package frc.team449.robot2023.subsystems.arm
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.util.sendable.Sendable
+import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
@@ -15,7 +17,6 @@ import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
-import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
 import kotlin.math.pow
@@ -38,7 +39,7 @@ open class Arm(
   @field:Log val controller: ArmPDController,
   firstToSecondJoint: Double,
   secondJointToEndEffector: Double
-) : Loggable, SubsystemBase() {
+) : SubsystemBase(), Sendable {
 
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
@@ -61,7 +62,12 @@ open class Arm(
    * the current state of the arm in [ArmState]
    */
   @get:Log.ToString
-  open val state: ArmState
+  open var state: ArmState = ArmState(
+    Rotation2d(MathUtil.inputModulus(firstJointEncoder.position, -PI, PI)),
+    Rotation2d(MathUtil.inputModulus(secondJointEncoder.position, -PI, PI)),
+    firstJointEncoder.velocity,
+    secondJointEncoder.velocity
+  )
     get() = ArmState(
       Rotation2d(MathUtil.inputModulus(firstJointEncoder.position, -PI, PI)),
       Rotation2d(MathUtil.inputModulus(secondJointEncoder.position, -PI, PI)),
@@ -141,12 +147,18 @@ open class Arm(
       (coordinate1.x - coordinate2.x).pow(2.0) + (coordinate1.z - coordinate2.z).pow(2.0)
     )
   }
+
   fun chooseTraj(endpoint: ArmState): ArmTrajectory? {
     val startPoint = getClosestState(this.desiredState)
     if (endpoint == startPoint) {
-      this.desiredState = endpoint
+      this.desiredState = endpoint.copy()
       return null
     }
+    if (startPoint == ArmConstants.CONE && endpoint == ArmConstants.CUBE) return ArmPaths.coneCube
+    if (startPoint == ArmConstants.CUBE && endpoint == ArmConstants.CONE) return ArmPaths.cubeCone
+    if (startPoint == ArmConstants.HIGH && endpoint == ArmConstants.MID) return ArmPaths.highMid
+    if (startPoint == ArmConstants.MID && endpoint == ArmConstants.HIGH) return ArmPaths.midHigh
+
     return if (startPoint == ArmConstants.STOW) {
       when (endpoint) {
         ArmConstants.SINGLE ->
@@ -255,5 +267,10 @@ open class Arm(
         ArmConstants.LENGTH_2
       )
     }
+  }
+
+  override fun initSendable(builder: SendableBuilder?) {
+    builder!!.addDoubleProperty("First Joint Degrees", { Rotation2d.fromRadians(firstJointEncoder.position).degrees }, null)
+    builder.addDoubleProperty("Second Joint Degrees", { Rotation2d.fromRadians(secondJointEncoder.position).degrees }, null)
   }
 }

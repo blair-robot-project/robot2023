@@ -16,8 +16,8 @@ object ArmConstants {
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.75 - 0.398869
-  const val SECOND_ENCODER_OFFSET = -0.185619 - 0.004858 // 0.855081
+  const val FIRST_ENCODER_OFFSET = 0.25 + (.25 - 0.150425)
+  const val SECOND_ENCODER_OFFSET = 0.081042 // 0.855081
   val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
   val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
   // PD Controller Constants
@@ -74,8 +74,8 @@ object ArmConstants {
   )
 
   val DOUBLE = ArmState(
-    Rotation2d.fromDegrees(95.11),
-    Rotation2d.fromDegrees(-95.11)
+    Rotation2d.fromDegrees(61.92),
+    Rotation2d.fromDegrees(106.05)
   )
 
   val STOW = ArmState(
@@ -89,16 +89,16 @@ object ArmConstants {
   )
 
   val CUBE = ArmState(
-    Rotation2d.fromDegrees(54.58),
-    Rotation2d.fromDegrees(-120.25)
+    Rotation2d.fromDegrees(72.4),
+    Rotation2d.fromDegrees(-139.2)
   )
   val MID = ArmState(
-    Rotation2d.fromDegrees(91.40),
-    Rotation2d.fromDegrees(90.22)
+    Rotation2d.fromDegrees(92.36),
+    Rotation2d.fromDegrees(82.97)
   )
 
   val HIGH = ArmState(
-    Rotation2d.fromDegrees(133.00),
+    Rotation2d.fromDegrees(135.00),
     Rotation2d.fromDegrees(0.00)
   )
 

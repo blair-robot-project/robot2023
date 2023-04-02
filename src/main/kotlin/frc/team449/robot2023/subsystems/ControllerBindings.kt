@@ -27,7 +27,8 @@ class ControllerBindings(
       ConditionalCommand(
         SequentialCommandGroup(
           robot.groundIntake.retract(),
-//          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CONE) }
+          WaitCommand(0.5), // wait for the intake to fully retract (this might take more time)
+          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
         ),
         InstantCommand()
       ) { robot.arm.desiredState == ArmConstants.CUBE }
@@ -38,8 +39,9 @@ class ControllerBindings(
     return robot.endEffector.runOnce(robot.endEffector::pistonRev).andThen(
       ConditionalCommand(
         SequentialCommandGroup(
+          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
+          WaitCommand(0.2), // wait for the arm to go to the cube position before deploying the intake
           robot.groundIntake.deploy(),
-//          robot.arm.runOnce { robot.arm.moveToState(ArmConstants.CUBE) }
         ),
         InstantCommand()
       ) { robot.arm.desiredState == ArmConstants.CONE }
@@ -66,11 +68,13 @@ class ControllerBindings(
       ConditionalCommand(
         SequentialCommandGroup(
           robot.groundIntake.deploy(),
-//          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }
+          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }
         ),
         SequentialCommandGroup(
           robot.groundIntake.retract(),
-//          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) }
+          WaitCommand(.5), // wait for intake to retract
+          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) },
+          InstantCommand(robot.endEffector::intake)
         ),
       ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }
     ).onFalse(
