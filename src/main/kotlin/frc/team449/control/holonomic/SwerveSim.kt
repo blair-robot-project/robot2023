@@ -17,7 +17,7 @@ class SwerveSim(
 
   override fun periodic() {
     val currTime = getFPGATimestamp()
-    heading = heading.plus(Rotation2d((super.desiredSpeeds.omegaRadiansPerSecond) * (currTime - lastTime)))
+    heading = heading.plus(Rotation2d(super.desiredSpeeds.omegaRadiansPerSecond * (currTime - lastTime)))
     this.lastTime = currTime
 
     super.periodic()

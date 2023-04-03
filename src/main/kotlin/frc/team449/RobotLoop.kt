@@ -59,7 +59,6 @@ class RobotLoop : TimedRobot() {
     SmartDashboard.putData("Routine Chooser", routineChooser)
 
     ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
-
     robot.arm.defaultCommand = InstantCommand(
       robot.arm::holdArm,
       robot.arm

@@ -3,7 +3,6 @@ package frc.team449.robot2023.subsystems.groundIntake
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.PneumaticsModuleType
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import frc.team449.robot2023.constants.subsystem.GroundIntakeConstants
@@ -54,15 +53,15 @@ class GroundIntake(
 
   fun retract(): Command {
     return this.runOnce {
-      piston.set(DoubleSolenoid.Value.kForward)
+      piston.set(DoubleSolenoid.Value.kReverse)
       retracted = true
     }
   }
 
   fun scoreLow(): Command {
-    return InstantCommand(::deploy)
+    return deploy()
       .andThen(WaitCommand(.45))
-      .andThen(::outtake)
+      .andThen(outtake())
   }
 
   fun stop() {

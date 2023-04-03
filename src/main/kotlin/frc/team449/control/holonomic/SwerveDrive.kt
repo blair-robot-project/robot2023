@@ -26,7 +26,6 @@ import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import org.photonvision.PhotonPoseEstimator
 import java.lang.Exception
-import kotlin.math.pow
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -152,14 +151,6 @@ open class SwerveDrive(
       if (result.isPresent) {
         val presentResult = result.get()
         if (presentResult.timestampSeconds > 0) {
-          val tagDistanceSq = (presentResult.estimatedPose.x.pow(2) + presentResult.estimatedPose.y.pow(2)).pow(17.5 * 0.5)
-          poseEstimator.setVisionMeasurementStdDevs(
-            MatBuilder(Nat.N3(), Nat.N1()).fill(
-              tagDistanceSq * 0.025,
-              tagDistanceSq * 0.025,
-              tagDistanceSq * 0.15
-            )
-          )
           poseEstimator.addVisionMeasurement(
             presentResult.estimatedPose.toPose2d(),
             presentResult.timestampSeconds

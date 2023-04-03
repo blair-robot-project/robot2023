@@ -26,7 +26,7 @@ class ArmCharacterizer(
   private var stateMap: InterpolatingMatrixTreeMap<Double, N4, N1> = InterpolatingMatrixTreeMap()
   private var t = 0.0
   private var q1 = 45.0
-  private var q2 = -90.0
+  private var q2 = 90.0
   private var log = JSONArray()
   init {
     addRequirements(arm)
@@ -66,6 +66,7 @@ class ArmCharacterizer(
       holdTimer.reset()
       holdTimer.start()
     }
+    arm.holdArm()
   }
 
   override fun isFinished(): Boolean {
@@ -73,14 +74,16 @@ class ArmCharacterizer(
   }
 
   override fun end(interrupted: Boolean) {
-    if (!interrupted) {
-      val writer = FileWriter("${Filesystem.getDeployDirectory()}/characterization_data.json")
-      writer.write(log.toJSONString())
-      writer.flush()
-      writer.close()
-      holdTimer.stop()
-      holdTimer.reset()
-    }
+    println("Starting to Save Characterization File :)")
+
+    val writer = FileWriter("${Filesystem.getDeployDirectory()}/characterization_data.json")
+    writer.write(log.toJSONString())
+    writer.flush()
+    writer.close()
+    holdTimer.stop()
+    holdTimer.reset()
+
+    println("Saved Characterization File :)")
     arm.stop()
   }
 

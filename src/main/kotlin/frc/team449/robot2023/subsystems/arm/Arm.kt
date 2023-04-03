@@ -3,7 +3,6 @@ package frc.team449.robot2023.subsystems.arm
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
@@ -17,6 +16,7 @@ import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
+import io.github.oblarg.oblog.Loggable
 import io.github.oblarg.oblog.annotations.Log
 import kotlin.math.PI
 import kotlin.math.pow
@@ -39,7 +39,7 @@ open class Arm(
   @field:Log val controller: ArmPDController,
   firstToSecondJoint: Double,
   secondJointToEndEffector: Double
-) : SubsystemBase(), Sendable {
+) : Loggable, SubsystemBase() {
 
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
@@ -62,12 +62,7 @@ open class Arm(
    * the current state of the arm in [ArmState]
    */
   @get:Log.ToString
-  open var state: ArmState = ArmState(
-    Rotation2d(MathUtil.inputModulus(firstJointEncoder.position, -PI, PI)),
-    Rotation2d(MathUtil.inputModulus(secondJointEncoder.position, -PI, PI)),
-    firstJointEncoder.velocity,
-    secondJointEncoder.velocity
-  )
+  open val state: ArmState
     get() = ArmState(
       Rotation2d(MathUtil.inputModulus(firstJointEncoder.position, -PI, PI)),
       Rotation2d(MathUtil.inputModulus(secondJointEncoder.position, -PI, PI)),
@@ -108,8 +103,8 @@ open class Arm(
     val ff = feedForward.calculate(state.static().matrix, true)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
-//    firstJoint.setVoltage(u[0, 0])
-//    secondJoint.setVoltage(u[1, 0])
+    firstJoint.setVoltage(u[0, 0])
+    secondJoint.setVoltage(u[1, 0])
   }
 
   /**
@@ -269,8 +264,8 @@ open class Arm(
     }
   }
 
-  override fun initSendable(builder: SendableBuilder?) {
-    builder!!.addDoubleProperty("First Joint Degrees", { Rotation2d.fromRadians(firstJointEncoder.position).degrees }, null)
+  override fun initSendable(builder: SendableBuilder) {
+    builder.addDoubleProperty("First Joint Degrees", { Rotation2d.fromRadians(firstJointEncoder.position).degrees }, null)
     builder.addDoubleProperty("Second Joint Degrees", { Rotation2d.fromRadians(secondJointEncoder.position).degrees }, null)
   }
 }

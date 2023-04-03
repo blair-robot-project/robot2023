@@ -89,8 +89,8 @@ object ArmConstants {
   )
 
   val CUBE = ArmState(
-    Rotation2d.fromDegrees(72.4),
-    Rotation2d.fromDegrees(-139.2)
+    Rotation2d.fromDegrees(74.15),
+    Rotation2d.fromDegrees(-132.17)
   )
   val MID = ArmState(
     Rotation2d.fromDegrees(92.36),

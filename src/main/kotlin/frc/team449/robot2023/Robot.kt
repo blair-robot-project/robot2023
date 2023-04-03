@@ -37,6 +37,7 @@ class Robot : RobotBase() {
   @Log(name = "Joystick Input")
   override val oi = createOrthogonalHolonomicOI(drive, driveController)
 
+  @Log(name = "Double Joint Arm")
   val arm = if (isReal()) createArm() else createArmSim()
 
   @Log(name = "End Effector")

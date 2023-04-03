@@ -1,12 +1,14 @@
 package frc.team449.robot2023.commands.driveAlign
 
-import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.HolonomicDrive
+import frc.team449.robot2023.auto.AutoConstants
+import frc.team449.robot2023.constants.RobotConstants
 
 /**
  * @param drive The holonomic drive you want to align with
@@ -19,9 +21,24 @@ import frc.team449.control.holonomic.HolonomicDrive
 class ProfiledPoseAlign(
   private val drive: HolonomicDrive,
   private val targetPose: Pose2d,
-  private val xPID: ProfiledPIDController,
-  private val yPID: ProfiledPIDController,
-  private val headingPID: PIDController,
+  private val xPID: ProfiledPIDController = ProfiledPIDController(
+    AutoConstants.DEFAULT_X_KP,
+    0.0,
+    0.0,
+    TrapezoidProfile.Constraints(4.0, 3.0)
+  ),
+  private val yPID: ProfiledPIDController = ProfiledPIDController(
+    AutoConstants.DEFAULT_Y_KP,
+    0.0,
+    0.0,
+    TrapezoidProfile.Constraints(4.0, 3.0)
+  ),
+  private val headingPID: ProfiledPIDController = ProfiledPIDController(
+    AutoConstants.DEFAULT_ROTATION_KP,
+    0.0,
+    0.0,
+    TrapezoidProfile.Constraints(RobotConstants.MAX_ROT_SPEED, RobotConstants.RATE_LIMIT)
+  ),
   tolerance: Pose2d = Pose2d(0.05, 0.05, Rotation2d(0.05))
 ) : CommandBase() {
   init {
@@ -36,7 +53,7 @@ class ProfiledPoseAlign(
     // Set the goals for all the PID controller to the target pose
     xPID.setGoal(targetPose.x)
     yPID.setGoal(targetPose.y)
-    headingPID.setpoint = targetPose.rotation.radians
+    headingPID.setGoal(targetPose.rotation.radians)
   }
 
   override fun execute() {
@@ -45,11 +62,18 @@ class ProfiledPoseAlign(
     val yFeedback = yPID.calculate(drive.pose.y)
     val headingFeedback = headingPID.calculate(drive.heading.radians)
 
-    drive.set(ChassisSpeeds.fromFieldRelativeSpeeds(xFeedback, yFeedback, headingFeedback, drive.heading))
+    drive.set(
+      ChassisSpeeds.fromFieldRelativeSpeeds(
+        xFeedback,
+        yFeedback,
+        headingFeedback,
+        drive.heading
+      )
+    )
   }
 
   override fun isFinished(): Boolean {
-    return xPID.atGoal() && yPID.atGoal() && headingPID.atSetpoint()
+    return xPID.atGoal() && yPID.atGoal() && headingPID.atGoal()
   }
 
   override fun end(interrupted: Boolean) {

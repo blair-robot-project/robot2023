@@ -1,8 +1,10 @@
 package frc.team449.robot2023.subsystems
 
 import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DoubleSolenoid
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.*
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
@@ -11,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.ArmCharacterizer
 import frc.team449.robot2023.commands.arm.ArmSweep
+import frc.team449.robot2023.commands.driveAlign.ProfiledPoseAlign
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
+import kotlin.math.PI
 import kotlin.math.abs
 
 class ControllerBindings(
@@ -64,17 +68,16 @@ class ControllerBindings(
       )
     )
 
-    // TODO: Should intaking and ground position be separated?
     Trigger { driveController.rightTriggerAxis > 0.8 }.onTrue(
       ConditionalCommand(
         SequentialCommandGroup(
           robot.groundIntake.deploy(),
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) }
+          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
+          robot.groundIntake.intakeCube()
         ),
         SequentialCommandGroup(
-          robot.groundIntake.retract(),
-          WaitCommand(.5), // wait for intake to retract
-          ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) },
+          robot.groundIntake.deploy(),
+          robot.groundIntake.intakeCone()
         ),
       ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }
     ).onFalse(
@@ -166,21 +169,21 @@ class ControllerBindings(
       ArmCharacterizer(robot.arm, 100.0, 2.0, 3)
     )
 
-    JoystickButton(driveController, XboxController.Button.kA.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.SINGLE) }.withInterruptBehavior(kCancelIncoming)
-    )
+//    JoystickButton(driveController, XboxController.Button.kA.value).onTrue(
+//      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.SINGLE) }.withInterruptBehavior(kCancelIncoming)
+//    )
 
-    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
-      changeCube()
-    )
+//    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
+//      changeCube()
+//    )
+//
+//    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
+//      changeCone()
+//    )
 
-    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
-      changeCone()
-    )
-
-    JoystickButton(driveController, XboxController.Button.kY.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming)
-    )
+//    JoystickButton(driveController, XboxController.Button.kY.value).onTrue(
+//      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming)
+//    )
 
 //    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
 //      AutoBalance.create(robot.drive)
@@ -188,6 +191,32 @@ class ControllerBindings(
 
     JoystickButton(driveController, XboxController.Button.kStart.value).onTrue(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })
+    )
+
+    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
+      ConditionalCommand(
+        ProfiledPoseAlign(
+          robot.drive,
+          Pose2d(0.7, 6.15, Rotation2d(0.0)),
+        ),
+        ProfiledPoseAlign(
+          robot.drive,
+          Pose2d(16.54 - 0.7, 6.13, Rotation2d(0.0))
+        )
+      ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }
+    )
+
+    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
+      ConditionalCommand(
+        ProfiledPoseAlign(
+          robot.drive,
+          Pose2d(0.7, 7.465, Rotation2d(0.0)),
+        ),
+        ProfiledPoseAlign(
+          robot.drive,
+          Pose2d(16.54 - 0.7, 7.465, Rotation2d(PI))
+        )
+      ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }
     )
   }
 }
