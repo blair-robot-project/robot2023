@@ -20,7 +20,7 @@ class EdgeCubeConeStation(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCone" to AutoUtil.dropCone(robot),
-        "stowArm" to AutoUtil.stowAndDeployCone(robot),
+        "stowArm" to AutoUtil.deployCone(robot),
         "stopIntake" to AutoUtil.holdIntake(robot),
         "stopIntake2" to AutoUtil.retractGroundIntake(robot),
         "dropCube" to AutoUtil.stowDropCube(robot),
@@ -28,7 +28,7 @@ class EdgeCubeConeStation(
         "balanceStation" to AutoBalance.create(robot.drive),
         "endArm" to AutoUtil.stowArm(robot),
         // TODO: Cone or cube?
-        "deployArm" to AutoUtil.stowAndDeployCone(robot)
+        "deployArm" to AutoUtil.deployCone(robot)
       )
     )
 

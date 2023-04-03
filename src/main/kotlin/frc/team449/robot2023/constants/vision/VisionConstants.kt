@@ -37,7 +37,7 @@ object VisionConstants {
   val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
     PhotonPoseEstimator(
       TAG_LAYOUT,
-      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
+      PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS,
       PhotonCamera("Spinel"),
       robotToCamera
     )

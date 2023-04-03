@@ -21,12 +21,12 @@ class EdgeConeCubeStation(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCone" to ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(AutoUtil.dropCone(robot)),
-        "stowArm" to AutoUtil.stowAndDeployCube(robot),
+        "stowArm" to AutoUtil.deployCube(robot),
         "stopIntake" to AutoUtil.holdIntake(robot),
+        "stopIntake2" to AutoUtil.holdIntake(robot),
+        "stowArm2" to AutoUtil.deployCube(robot),
         "highArm" to ArmFollower(robot.arm) { ArmPaths.cubeHigh },
-        "dropCube" to InstantCommand(robot.endEffector::intakeReverse).andThen(
-          ArmFollower(robot.arm) { ArmPaths.highStow }
-        ),
+        "dropCube" to InstantCommand(robot.endEffector::intakeReverse),
         "balanceStation" to AutoBalance.create(robot.drive),
       )
     )

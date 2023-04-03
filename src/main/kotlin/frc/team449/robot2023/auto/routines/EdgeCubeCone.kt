@@ -20,12 +20,12 @@ class EdgeCubeCone(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCube" to AutoUtil.stowDropCube(robot),
-        "stowArm" to AutoUtil.stowAndDeployCone(robot),
+        "stowArm" to AutoUtil.deployCone(robot),
         "stopIntake" to AutoUtil.holdIntake(robot),
         "dropCone" to ArmFollower(robot.arm) { ArmPaths.coneHigh }.andThen(AutoUtil.dropCone(robot)),
         "retractArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
         "stopIntake2" to AutoUtil.retractGroundIntake(robot),
-        "stowCone" to AutoUtil.stowAndDeployCone(robot)
+        "stowCone" to AutoUtil.deployCone(robot)
       )
     )
 

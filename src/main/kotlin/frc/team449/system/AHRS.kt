@@ -44,7 +44,6 @@ class AHRS(
     } else {
       val dt = currTime - prevTime
       val dx = currPos - prevPos
-
       dx / dt
     }
     this.prevTime = currTime

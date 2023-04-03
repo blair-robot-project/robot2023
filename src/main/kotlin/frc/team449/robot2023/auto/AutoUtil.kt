@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import frc.team449.robot2023.subsystems.arm.control.ArmState
@@ -83,7 +84,7 @@ object AutoUtil {
     return SequentialCommandGroup(
       WaitCommand(0.075),
       InstantCommand(robot.endEffector::autoReverse),
-      WaitCommand(0.35)
+      WaitCommand(0.275)
     )
   }
 
@@ -99,15 +100,17 @@ object AutoUtil {
     )
   }
 
-  fun stowAndDeployCube(robot: Robot): Command {
+  fun deployCube(robot: Robot): Command {
     return SequentialCommandGroup(
+      robot.groundIntake.deploy(),
+      robot.groundIntake.intakeCube(),
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonRev),
       ArmFollower(robot.arm) { ArmPaths.highCube }
     )
   }
 
-  fun stowAndDeployCone(robot: Robot): Command {
+  fun deployCone(robot: Robot): Command {
     return SequentialCommandGroup(
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonOn),
@@ -120,8 +123,11 @@ object AutoUtil {
   }
 
   fun retractGroundIntake(robot: Robot): Command {
-    return InstantCommand(robot.endEffector::holdIntake).andThen(
-      ArmFollower(robot.arm) { ArmPaths.coneStow }
+    return SequentialCommandGroup(
+      robot.groundIntake.retract(),
+      robot.groundIntake.runOnce(robot.groundIntake::stop),
+      holdIntake(robot),
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
     )
   }
 

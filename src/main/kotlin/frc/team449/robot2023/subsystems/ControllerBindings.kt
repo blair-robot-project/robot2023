@@ -64,6 +64,7 @@ class ControllerBindings(
       )
     )
 
+    // TODO: Should intaking and ground position be separated?
     Trigger { driveController.rightTriggerAxis > 0.8 }.onTrue(
       ConditionalCommand(
         SequentialCommandGroup(
@@ -74,7 +75,6 @@ class ControllerBindings(
           robot.groundIntake.retract(),
           WaitCommand(.5), // wait for intake to retract
           ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CONE) },
-          InstantCommand(robot.endEffector::intake)
         ),
       ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }
     ).onFalse(

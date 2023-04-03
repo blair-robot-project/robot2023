@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.DriverStation
+import kotlin.math.PI
 
 object RobotConstants {
 
@@ -12,13 +13,13 @@ object RobotConstants {
   const val PDH_CAN = 49
 
   /** Controller Configurations */
-  const val RATE_LIMIT = 5.0
+  const val RATE_LIMIT = 2 * PI
   const val TRANSLATION_DEADBAND = .125
   const val ROTATION_DEADBAND = .125
 
   /** Drive configuration */
   const val MAX_LINEAR_SPEED = 4.4 // m/s
-  const val MAX_ROT_SPEED = Math.PI // rad/s
+  const val MAX_ROT_SPEED = PI // rad/s
   const val MAX_ACCEL = 7.25 // m/s/s
   val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
 

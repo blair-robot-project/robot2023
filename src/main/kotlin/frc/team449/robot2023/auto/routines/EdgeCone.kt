@@ -18,7 +18,7 @@ class EdgeCone(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCone" to AutoUtil.stowDropCone(robot),
-        "stowArm" to AutoUtil.stowAndDeployCone(robot),
+        "stowArm" to AutoUtil.deployCone(robot),
         "stopIntake" to AutoUtil.retractGroundIntake(robot),
       )
     )

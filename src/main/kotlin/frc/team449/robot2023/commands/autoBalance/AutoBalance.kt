@@ -1,9 +1,7 @@
 package frc.team449.robot2023.commands.autoBalance
 
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.holonomic.SwerveDrive
 import frc.team449.robot2023.auto.AutoConstants
@@ -14,8 +12,6 @@ class AutoBalance(
   private val drive: SwerveDrive,
   private val speedMetersPerSecond: Double
 ) : CommandBase() {
-
-  private var driveModules = drive.getModules()
 
   init {
     addRequirements(drive)
@@ -42,23 +38,7 @@ class AutoBalance(
   }
 
   override fun end(interrupted: Boolean) {
-    drive.desiredSpeeds = null
-    driveModules[0].state = SwerveModuleState(
-      0.001,
-      Rotation2d.fromDegrees(-45.0)
-    )
-    driveModules[1].state = SwerveModuleState(
-      0.001,
-      Rotation2d.fromDegrees(45.0)
-    )
-    driveModules[2].state = SwerveModuleState(
-      0.001,
-      Rotation2d.fromDegrees(45.0)
-    )
-    driveModules[3].state = SwerveModuleState(
-      0.001,
-      Rotation2d.fromDegrees(-45.0)
-    )
+    drive.stop()
   }
 
   companion object {

@@ -26,6 +26,7 @@ import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import org.photonvision.PhotonPoseEstimator
 import java.lang.Exception
+import kotlin.math.pow
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -64,7 +65,7 @@ open class SwerveDrive(
   private var lastTime = Timer.getFPGATimestamp()
 
   @Log.ToString(name = "Desired Speeds")
-  var desiredSpeeds: ChassisSpeeds? = ChassisSpeeds()
+  var desiredSpeeds: ChassisSpeeds = ChassisSpeeds()
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
@@ -103,21 +104,19 @@ open class SwerveDrive(
       modules[3].state
     )
 
-    if (desiredSpeeds != null) {
-      val desiredModuleStates =
-        this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
+    val desiredModuleStates =
+      this.kinematics.toSwerveModuleStates(this.desiredSpeeds)
 
-      /** If any module is going faster than the max speed,
-       *  apply scaling down and make sure there isn't
-       *  any early desaturation */
-      SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredModuleStates,
-        SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED
-      )
+    /** If any module is going faster than the max speed,
+     *  apply scaling down and make sure there isn't
+     *  any early desaturation */
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+      desiredModuleStates,
+      SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED
+    )
 
-      for (i in this.modules.indices) {
-        this.modules[i].state = desiredModuleStates[i]
-      }
+    for (i in this.modules.indices) {
+      this.modules[i].state = desiredModuleStates[i]
     }
 
     for (module in modules)
@@ -147,21 +146,29 @@ open class SwerveDrive(
     return Array(modules.size) { i -> modules[i].state }
   }
 
-  private fun localize() {
-    try {
-      for (camera in cameras) {
-        val result = camera.update()
-        if (result.isPresent) {
-          val realResult = result.get()
+  private fun localize() = try {
+    for (camera in cameras) {
+      val result = camera.update()
+      if (result.isPresent) {
+        val presentResult = result.get()
+        if (presentResult.timestampSeconds > 0) {
+          val tagDistanceSq = (presentResult.estimatedPose.x.pow(2) + presentResult.estimatedPose.y.pow(2)).pow(17.5 * 0.5)
+          poseEstimator.setVisionMeasurementStdDevs(
+            MatBuilder(Nat.N3(), Nat.N1()).fill(
+              tagDistanceSq * 0.025,
+              tagDistanceSq * 0.025,
+              tagDistanceSq * 0.15
+            )
+          )
           poseEstimator.addVisionMeasurement(
-            realResult.estimatedPose.toPose2d(),
-            Timer.getFPGATimestamp()
+            presentResult.estimatedPose.toPose2d(),
+            presentResult.timestampSeconds
           )
         }
       }
-    } catch (e: Exception) {
-      print("!!!!!!!!! VISION ERROR !!!!!!! \n $e")
     }
+  } catch (e: Exception) {
+    print("!!!!!!!!! VISION ERROR !!!!!!! \n $e")
   }
 
   companion object {

@@ -21,15 +21,16 @@ class EdgeConeCubeCone(
       drive = robot.drive,
       eventMap = hashMapOf(
         "dropCube" to InstantCommand(robot.endEffector::autoReverse),
-        "stowArm" to AutoUtil.stowAndDeployCube(robot),
+        "stowArm" to AutoUtil.deployCube(robot),
         "highArm" to ArmFollower(robot.arm) { ArmPaths.cubeHigh },
-        "stowCube" to AutoUtil.stowAndDeployCube(robot),
+        "stowCube" to AutoUtil.deployCube(robot),
         "midCube" to ArmFollower(robot.arm) { ArmPaths.coneHigh },
         "stopIntake" to AutoUtil.holdIntake(robot),
         "dropCone" to AutoUtil.stowDropCone(robot),
         "stopCubeIntake" to AutoUtil.holdIntake(robot),
         "dropCube2" to InstantCommand(robot.endEffector::autoReverse)
-      )
+      ),
+      timeout = 0.5
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
