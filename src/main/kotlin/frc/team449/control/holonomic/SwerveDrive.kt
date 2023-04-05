@@ -1,6 +1,8 @@
 package frc.team449.control.holonomic
 
+import edu.wpi.first.math.MatBuilder
 import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
@@ -23,6 +25,8 @@ import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import org.photonvision.PhotonPoseEstimator
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -54,8 +58,8 @@ open class SwerveDrive(
     ahrs.heading,
     getPositions(),
     RobotConstants.INITIAL_POSE,
-    VisionConstants.ENCODER_TRUST, // dead reckoning
-    VisionConstants.VISION_TRUST // vision
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .025), // dead reckoning
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .5, .75) // vision
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -147,7 +151,18 @@ open class SwerveDrive(
       val result = camera.update()
       if (result.isPresent) {
         val presentResult = result.get()
-        if (presentResult.timestampSeconds > 0 && presentResult.targetsUsed.size >= VisionConstants.MIN_TARGETS) {
+        val numTargets = presentResult.targetsUsed.size
+        var tagDistance = 0.0
+
+        for (tag in presentResult.targetsUsed) {
+          val estimatedToTag = presentResult.estimatedPose.minus(camera.fieldTags.getTagPose(tag.fiducialId).get())
+          tagDistance = sqrt(estimatedToTag.x.pow(2) + estimatedToTag.y.pow(2)) / numTargets
+        }
+
+        if (presentResult.timestampSeconds > 0 &&
+          numTargets < 2 && tagDistance <= VisionConstants.MAX_DISTANCE_SINGLE_TAG ||
+          numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_DOUBLE_TAG
+        ) {
           poseEstimator.addVisionMeasurement(
             presentResult.estimatedPose.toPose2d(),
             presentResult.timestampSeconds

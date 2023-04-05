@@ -36,9 +36,10 @@ VisionConstants {
     Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(180.0))
   )
 
-  var MIN_TARGETS = 2
-  var VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.125, .125, .025)
-  var ENCODER_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.025, .025, .75)
+  val MAX_DISTANCE_SINGLE_TAG = 2.0
+  val MAX_DISTANCE_DOUBLE_TAG = 3.5
+
+  val VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.035, .035, .75)
 
   /** List of cameras that we want to use */
   val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
