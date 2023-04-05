@@ -16,19 +16,23 @@ class AHRS(
 
   var prevPos = Double.NaN
   var prevTime = Double.NaN
+
   @Log
   var lastAngular = Double.NaN
+
   /** The current reading of the gyro with the offset included */
   @get:Log.ToString
   val heading: Rotation2d
     get() {
       return -Rotation2d.fromDegrees(navx.fusedHeading.toDouble())
     }
+
   @get:Log.ToString
   val pitch: Rotation2d
     get() {
       return -Rotation2d.fromDegrees(navx.pitch.toDouble())
     }
+
   @get:Log.ToString
   val roll: Rotation2d
     get() {

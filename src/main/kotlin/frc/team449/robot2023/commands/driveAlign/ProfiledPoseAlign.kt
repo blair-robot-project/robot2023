@@ -39,10 +39,13 @@ class ProfiledPoseAlign(
     0.0,
     TrapezoidProfile.Constraints(RobotConstants.MAX_ROT_SPEED, RobotConstants.RATE_LIMIT)
   ),
-  tolerance: Pose2d = Pose2d(0.05, 0.05, Rotation2d(0.05))
+  private val tolerance: Pose2d = Pose2d(0.05, 0.05, Rotation2d(0.05))
 ) : CommandBase() {
   init {
     addRequirements(drive)
+  }
+
+  override fun initialize() {
     headingPID.enableContinuousInput(-Math.PI, Math.PI)
 
     // Set tolerances from the given pose tolerance
@@ -70,6 +73,10 @@ class ProfiledPoseAlign(
         drive.heading
       )
     )
+    println(xFeedback)
+    println(yFeedback)
+    println(headingFeedback)
+    println(xPID.goal)
   }
 
   override fun isFinished(): Boolean {

@@ -4,7 +4,7 @@ object AutoConstants {
   /** PID gains */
   const val DEFAULT_X_KP = 1.35
   const val DEFAULT_Y_KP = 1.35
-  const val DEFAULT_ROTATION_KP = 1.0
+  const val DEFAULT_ROTATION_KP = 1.15
 
   /** Auto Balance PD Gains */
   const val AUTO_BAL_KP = 0.55

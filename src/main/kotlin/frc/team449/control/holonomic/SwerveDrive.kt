@@ -25,7 +25,6 @@ import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import org.photonvision.PhotonPoseEstimator
-import java.lang.Exception
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -250,7 +249,7 @@ open class SwerveDrive(
           Translation2d(-SwerveConstants.WHEELBASE / 2, -SwerveConstants.TRACKWIDTH / 2)
         )
       )
-      return if (isReal())
+      return if (isReal()) {
         SwerveDrive(
           modules,
           ahrs,
@@ -258,7 +257,7 @@ open class SwerveDrive(
           RobotConstants.MAX_ROT_SPEED,
           VisionConstants.ESTIMATORS
         )
-      else
+      } else {
         SwerveSim(
           modules,
           ahrs,
@@ -266,6 +265,7 @@ open class SwerveDrive(
           RobotConstants.MAX_ROT_SPEED,
           VisionConstants.ESTIMATORS
         )
+      }
     }
 
     /** Helper to make turning motors for swerve */

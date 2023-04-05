@@ -50,7 +50,7 @@ class OrthogonalHolonomicOI(
   private val yButton: BooleanSupplier,
   private val xButton: BooleanSupplier,
   private val aButton: BooleanSupplier,
-  private val bButton: BooleanSupplier,
+  private val bButton: BooleanSupplier
 ) : OI, Sendable {
 
   init {
@@ -110,19 +110,19 @@ class OrthogonalHolonomicOI(
     this.prevY = yClamped
 
     /** Based on which button was pressed, give in the setpoint to the PID controller. */
-    if (yButton.asBoolean) {
+    if (aButton.asBoolean) {
       atGoal = false
       controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation.invoke()), 0.0)
     }
-//    else if (xButton.asBoolean) {
+//    else if (bButton.asBoolean) {
 //      atGoal = false
 //      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation.invoke()), 0.0)
 //    }
-    else if (aButton.asBoolean) {
+    else if (yButton.asBoolean) {
       atGoal = false
       controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation.invoke()), 0.0)
     }
-//    else if (bButton.asBoolean) {
+//    else if (xButton.asBoolean) {
 //      atGoal = false
 //      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation.invoke()), 0.0)
 //    }

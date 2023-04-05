@@ -1,7 +1,6 @@
 package frc.team449.robot2023.auto.routines
 
 import com.pathplanner.lib.PathPlannerTrajectory
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
@@ -13,28 +12,28 @@ import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class EdgeConeCubeCone(
   robot: Robot,
-  position: PositionChooser.POSITIONS
+  position: PositionChooser.Positions
 ) : RoutineStructure {
 
   override val routine =
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCube" to InstantCommand(robot.endEffector::autoReverse),
+        "dropCube" to AutoUtil.dropCube(robot),
         "stowArm" to AutoUtil.deployCube(robot),
         "highArm" to ArmFollower(robot.arm) { ArmPaths.cubeHigh },
         "stowCube" to AutoUtil.deployCube(robot),
         "midCube" to ArmFollower(robot.arm) { ArmPaths.coneHigh },
-        "stopIntake" to AutoUtil.holdIntake(robot),
+        "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "dropCone" to AutoUtil.stowDropCone(robot),
-        "stopCubeIntake" to AutoUtil.holdIntake(robot),
-        "dropCube2" to InstantCommand(robot.endEffector::autoReverse)
+        "stopCubeIntake" to AutoUtil.retractGroundIntake(robot),
+        "dropCone2" to AutoUtil.dropCone(robot)
       ),
       timeout = 0.5
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
-    if (position == PositionChooser.POSITIONS.FARCONE) {
+    if (position == PositionChooser.Positions.FARCONE) {
       Paths.FAR.CONECUBECONE
     } else {
       Paths.WALL.CONECUBECONE

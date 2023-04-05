@@ -88,6 +88,7 @@ abstract class Encoder(
     }
     return cachedVel
   }
+
   override fun configureLogName() = this.name
 
   /**

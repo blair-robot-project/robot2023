@@ -10,7 +10,7 @@ import frc.team449.robot2023.auto.PositionChooser
 
 class EdgeCube(
   robot: Robot,
-  position: PositionChooser.POSITIONS
+  position: PositionChooser.Positions
 ) : RoutineStructure {
 
   override val routine =
@@ -19,12 +19,12 @@ class EdgeCube(
       eventMap = hashMapOf(
         "dropCube" to AutoUtil.stowDropCube(robot),
         "stowArm" to AutoUtil.deployCone(robot),
-        "stopIntake" to AutoUtil.retractGroundIntake(robot),
+        "stopIntake" to AutoUtil.retractAndStow(robot)
       )
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
-    if (position == PositionChooser.POSITIONS.FARCUBE) {
+    if (position == PositionChooser.Positions.FARCUBE) {
       Paths.FAR.CUBE
     } else {
       Paths.WALL.CUBE

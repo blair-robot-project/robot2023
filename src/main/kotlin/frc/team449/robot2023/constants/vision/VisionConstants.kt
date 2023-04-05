@@ -12,7 +12,8 @@ import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 
 /** Constants that have anything to do with vision */
-object VisionConstants {
+object
+VisionConstants {
   /** How the tags are laid out on the field (their locations and ids) */
   private val TEST_TAG_LAYOUT = AprilTagFieldLayout(
     listOf(
@@ -29,8 +30,8 @@ object VisionConstants {
 
   /** Robot to Camera distance */
   private val robotToCamera = Transform3d(
-    Translation3d(Units.inchesToMeters(-10.25), Units.inchesToMeters(6.0), Units.inchesToMeters(13.35)),
-    Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(-180.0))
+    Translation3d(Units.inchesToMeters(-10.25), Units.inchesToMeters(-6.0), Units.inchesToMeters(13.35)),
+    Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(180.0))
   )
 
   /** List of cameras that we want to use */

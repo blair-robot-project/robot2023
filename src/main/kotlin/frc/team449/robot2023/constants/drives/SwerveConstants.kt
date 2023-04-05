@@ -30,7 +30,7 @@ object SwerveConstants {
   const val TURN_ENC_OFFSET_BR = 0.620525 - .5
 
   /** PID gains for turning each module */
-  const val TURN_KP = 0.75
+  const val TURN_KP = 0.8
   const val TURN_KI = 0.0
   const val TURN_KD = 0.0
 
@@ -49,8 +49,8 @@ object SwerveConstants {
   const val DRIVE_UPR = 0.31818905832
   const val TURN_UPR = 2 * Math.PI
   const val MAX_ATTAINABLE_MK4I_SPEED = (12 - DRIVE_KS) / DRIVE_KV
-  const val DRIVE_CURRENT_LIM = 60
-  const val STEERING_CURRENT_LIM = 60
+  const val DRIVE_CURRENT_LIM = 50
+  const val STEERING_CURRENT_LIM = 50
 
   /** Wheelbase = wheel-to-wheel distance from the side of the robot */
   /** Trackwidth = wheel-to-wheel distance from the front/back of the robot */

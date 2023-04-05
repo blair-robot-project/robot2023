@@ -79,7 +79,7 @@ class GroundIntake(
           GroundIntakeConstants.GEARING
         ),
         inverted = GroundIntakeConstants.TOP_INVERTED,
-        currentLimit = GroundIntakeConstants.CURRENT_LIM,
+        currentLimit = GroundIntakeConstants.CURRENT_LIM
       )
 
       val bottomMotor = createSparkMax(
@@ -90,7 +90,7 @@ class GroundIntake(
           GroundIntakeConstants.GEARING
         ),
         inverted = GroundIntakeConstants.BOTTOM_INVERTED,
-        currentLimit = GroundIntakeConstants.CURRENT_LIM,
+        currentLimit = GroundIntakeConstants.CURRENT_LIM
       )
 
       // create ground intake pistons

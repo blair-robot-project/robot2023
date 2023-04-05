@@ -19,7 +19,9 @@ data class ArmState(
       return builder.fill(theta.radians, beta.radians, thetaVel, betaVel)
     }
 
-  companion object fun static(): ArmState {
+  companion object
+
+  fun static(): ArmState {
     return ArmState(this.theta, this.beta)
   }
 

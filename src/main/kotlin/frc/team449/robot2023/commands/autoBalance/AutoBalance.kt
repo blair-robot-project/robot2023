@@ -23,6 +23,7 @@ class AutoBalance(
     controller.setTolerance(0.125) /* .05 rad tolerance ~3 degrees */
     controller.setpoint = 0.0
   }
+
   override fun execute() {
     drive.set(
       ChassisSpeeds(

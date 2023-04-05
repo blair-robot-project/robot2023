@@ -25,6 +25,7 @@ class ArmPDController(
   private var setpoint: Matrix<N4, N1>? = null
 
   private var errorSum = mat(N4.instance, N1.instance).fill(0.0, 0.0, 0.0, 0.0)
+
   /**
    * @param state the current state observed of the system from sensors
    * @param reference the desired state where the system should be
@@ -49,18 +50,30 @@ class ArmPDController(
     )
 
     val I = mat(N2.instance, N4.instance).fill(
-      kI1, 0.0, 0.0, 0.0,
-      0.0, kI2, 0.0, 0.0
+      kI1,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      kI2,
+      0.0,
+      0.0
     )
 
     val K = mat(N2.instance, N4.instance).fill(
-      kP1, 0.0, kD1, 0.0,
-      0.0, kP2, 0.0, kD2
+      kP1,
+      0.0,
+      kD1,
+      0.0,
+      0.0,
+      kP2,
+      0.0,
+      kD2
     )
     val output = K * wrappedErr + I * errorSum
 
-    output[0, 0] = clamp(output[0, 0], -7.0, 7.0) // first joint PID is bounded 6V min -6V
-    output[1, 0] = clamp(output[1, 0], -7.0, 7.0) // second joint PID is bounded 6V min -6V
+    output[0, 0] = clamp(output[0, 0], -10.0, 10.0) // first joint PID is bounded 9.5V min -9.5V
+    output[1, 0] = clamp(output[1, 0], -10.0, 10.0) // second joint PID is bounded 9.5V min -9.5V
 
     return output
   }

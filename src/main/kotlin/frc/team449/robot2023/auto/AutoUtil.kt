@@ -122,16 +122,18 @@ object AutoUtil {
     return ArmFollower(robot.arm) { ArmPaths.highStow }
   }
 
-  fun retractGroundIntake(robot: Robot): Command {
+  fun retractAndStow(robot: Robot): Command {
     return SequentialCommandGroup(
-      robot.groundIntake.retract(),
-      robot.groundIntake.runOnce(robot.groundIntake::stop),
-      holdIntake(robot),
+      retractGroundIntake(robot),
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
     )
   }
 
-  fun holdIntake(robot: Robot): Command {
-    return InstantCommand(robot.endEffector::holdIntake)
+  fun retractGroundIntake(robot: Robot): Command {
+    return SequentialCommandGroup(
+      InstantCommand(robot.endEffector::holdIntake),
+      robot.groundIntake.retract(),
+      robot.groundIntake.runOnce(robot.groundIntake::stop)
+    )
   }
 }

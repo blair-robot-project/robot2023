@@ -63,7 +63,10 @@ open class MecanumDrive(
   private var lastTime = Timer.getFPGATimestamp()
 
   val kinematics = MecanumDriveKinematics(
-    frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation
+    frontLeftLocation,
+    frontRightLocation,
+    backLeftLocation,
+    backRightLocation
   )
 
   private val poseEstimator = MecanumDrivePoseEstimator(

@@ -5,7 +5,6 @@ import edu.wpi.first.math.Matrix
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N4
-import edu.wpi.first.wpilibj.Filesystem
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.robot2023.subsystems.arm.Arm
@@ -28,6 +27,7 @@ class ArmCharacterizer(
   private var q1 = 45.0
   private var q2 = 90.0
   private var log = JSONArray()
+
   init {
     addRequirements(arm)
 
@@ -44,6 +44,7 @@ class ArmCharacterizer(
       t += dt
     }
   }
+
   override fun initialize() {
     holdTimer.reset()
     holdTimer.start()
@@ -60,6 +61,8 @@ class ArmCharacterizer(
       currData["q2"] = arm.state.beta.radians
       currData["u1"] = arm.firstJoint.lastVoltage
       currData["u2"] = arm.secondJoint.lastVoltage
+      currData["q1-setpoint"] = arm.desiredState.theta.radians
+      currData["q2-setpoint"] = arm.desiredState.beta.radians
 
       log.add(currData)
       arm.moveToState(stateMap.get(timer.get()).state())
@@ -76,7 +79,7 @@ class ArmCharacterizer(
   override fun end(interrupted: Boolean) {
     println("Starting to Save Characterization File :)")
 
-    val writer = FileWriter("${Filesystem.getDeployDirectory()}/characterization_data.json")
+    val writer = FileWriter("/home/lvuser/characterization_data.json")
     writer.write(log.toJSONString())
     writer.flush()
     writer.close()

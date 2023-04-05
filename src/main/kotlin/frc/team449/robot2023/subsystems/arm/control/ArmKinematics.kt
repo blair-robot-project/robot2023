@@ -6,11 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N2
 import org.ejml.data.SingularMatrixException
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 /**
  * Forward and inverse kinematics solver for two-jointed arms
@@ -160,8 +156,10 @@ class ArmKinematics(
       s12: Double
     ): Matrix<N2, N2> {
       return mat(N2.instance, N2.instance).fill(
-        -(l1 * s1 + l2 * s12), -l2 * s12,
-        l1 * c1 + l2 * c12, l2 * c12
+        -(l1 * s1 + l2 * s12),
+        -l2 * s12,
+        l1 * c1 + l2 * c12,
+        l2 * c12
       )
     }
   }

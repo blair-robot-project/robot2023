@@ -20,7 +20,7 @@ class DropCone(
 
   override val trajectory = mutableListOf(PathPlannerTrajectory())
 
-  override fun createCommand(): Command {
+  override fun createCommand(robot: Robot): Command {
     return AutoUtil.stowDropCone(robot).andThen(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
     )

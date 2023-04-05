@@ -1,19 +1,23 @@
 package frc.team449.robot2023.subsystems
 
+import com.pathplanner.lib.PathConstraints
+import com.pathplanner.lib.PathPlanner
+import com.pathplanner.lib.PathPoint
 import edu.wpi.first.math.MathUtil
-import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.*
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelIncoming
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior.kCancelSelf
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import edu.wpi.first.wpilibj2.command.button.Trigger
+import frc.team449.control.auto.HolonomicFollower
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.ArmCharacterizer
 import frc.team449.robot2023.commands.arm.ArmSweep
-import frc.team449.robot2023.commands.driveAlign.ProfiledPoseAlign
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -45,7 +49,7 @@ class ControllerBindings(
         SequentialCommandGroup(
           ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
           WaitCommand(0.2), // wait for the arm to go to the cube position before deploying the intake
-          robot.groundIntake.deploy(),
+          robot.groundIntake.deploy()
         ),
         InstantCommand()
       ) { robot.arm.desiredState == ArmConstants.CONE }
@@ -78,7 +82,7 @@ class ControllerBindings(
         SequentialCommandGroup(
           robot.groundIntake.deploy(),
           robot.groundIntake.intakeCone()
-        ),
+        )
       ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }
     ).onFalse(
       SequentialCommandGroup(
@@ -195,27 +199,74 @@ class ControllerBindings(
 
     JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
       ConditionalCommand(
-        ProfiledPoseAlign(
-          robot.drive,
-          Pose2d(0.7, 6.15, Rotation2d(0.0)),
-        ),
-        ProfiledPoseAlign(
-          robot.drive,
-          Pose2d(16.54 - 0.7, 6.13, Rotation2d(0.0))
-        )
+        InstantCommand({
+          val command = HolonomicFollower(
+            robot.drive,
+            PathPlanner.generatePath(
+              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
+              PathPoint(robot.drive.pose.translation, Translation2d(0.7, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(0.7, 6.13), Rotation2d(PI), Rotation2d(PI))
+            )
+          ).withInterruptBehavior(kCancelSelf).until {
+            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
+          }
+
+          command.schedule()
+        }),
+        InstantCommand({
+          val command = HolonomicFollower(
+            robot.drive,
+            PathPlanner.generatePath(
+              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
+              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.7, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(16.54 - 0.7, 6.13), Rotation2d(), Rotation2d())
+            )
+          ).until {
+            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
+          }
+
+          command.schedule()
+        })
       ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }
     )
 
     JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
       ConditionalCommand(
-        ProfiledPoseAlign(
-          robot.drive,
-          Pose2d(0.7, 7.465, Rotation2d(0.0)),
-        ),
-        ProfiledPoseAlign(
-          robot.drive,
-          Pose2d(16.54 - 0.7, 7.465, Rotation2d(PI))
-        )
+        InstantCommand({
+          val command = HolonomicFollower(
+            robot.drive,
+            PathPlanner.generatePath(
+              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
+              PathPoint(robot.drive.pose.translation, Translation2d(0.7, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(0.7, 7.465), Rotation2d(PI), Rotation2d(PI))
+            )
+          ).withInterruptBehavior(kCancelSelf).until {
+            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
+          }
+
+          command.schedule()
+        }),
+        InstantCommand({
+          val command = HolonomicFollower(
+            robot.drive,
+            PathPlanner.generatePath(
+              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
+              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.7, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(16.54 - 0.7, 7.465), Rotation2d(), Rotation2d())
+            )
+          ).until {
+            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
+              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
+          }
+          command.schedule()
+        })
       ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }
     )
   }

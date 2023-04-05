@@ -1,16 +1,16 @@
 package frc.team449.robot2023.auto.routines
 
+import com.pathplanner.lib.PathPlannerTrajectory
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.AutoUtil
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
-import frc.team449.robot2023.commands.autoBalance.AutoBalance
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
-class EdgeConeCubeStation(
+class EdgeConeCubeCube(
   robot: Robot,
   position: PositionChooser.Positions
 ) : RoutineStructure {
@@ -19,21 +19,23 @@ class EdgeConeCubeStation(
     HolonomicRoutine(
       drive = robot.drive,
       eventMap = hashMapOf(
-        "dropCone" to ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(AutoUtil.dropCone(robot)),
-        "stowArm" to AutoUtil.deployCube(robot),
-        "stopIntake" to AutoUtil.retractGroundIntake(robot),
-        "stopIntake2" to AutoUtil.retractGroundIntake(robot),
-        "stowArm2" to AutoUtil.deployCube(robot),
-        "highArm" to ArmFollower(robot.arm) { ArmPaths.cubeHigh },
         "dropCube" to AutoUtil.dropCube(robot),
-        "balanceStation" to AutoBalance.create(robot.drive)
-      )
+        "stowArm" to AutoUtil.deployCube(robot),
+        "highArm" to ArmFollower(robot.arm) { ArmPaths.cubeHigh },
+        "stowCube" to AutoUtil.deployCube(robot),
+        "midCube" to ArmFollower(robot.arm) { ArmPaths.cubeMid },
+        "stopIntake" to AutoUtil.retractGroundIntake(robot),
+        "dropCone" to AutoUtil.stowDropCone(robot),
+        "stopCubeIntake" to AutoUtil.retractGroundIntake(robot),
+        "dropCube2" to AutoUtil.dropCube(robot)
+      ),
+      timeout = 0.4
     )
 
-  override val trajectory =
+  override val trajectory: MutableList<PathPlannerTrajectory> =
     if (position == PositionChooser.Positions.FARCONE) {
-      Paths.FAR.CONECUBESTATION
+      Paths.FAR.CONECUBECUBE
     } else {
-      Paths.WALL.CONECUBESTATION
+      Paths.WALL.CONECUBECUBE
     }
 }

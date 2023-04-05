@@ -79,7 +79,7 @@ class EndEffector(
           EndEffectorConstants.MOTOR_GEARING
         ),
         inverted = false,
-        currentLimit = EndEffectorConstants.MOTOR_CURR_LIM,
+        currentLimit = EndEffectorConstants.MOTOR_CURR_LIM
       )
 
       val sensor = DigitalInput(

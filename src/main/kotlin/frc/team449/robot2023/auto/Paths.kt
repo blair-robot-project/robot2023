@@ -4,14 +4,6 @@ import com.pathplanner.lib.PathPlanner
 import com.pathplanner.lib.PathPlannerTrajectory
 
 object Paths {
-  /** Description of path: Just testing */
-  val TEST: MutableList<PathPlannerTrajectory> =
-    PathPlanner.loadPathGroup(
-      "testing",
-      PathPlanner.getConstraintsFromPath("testing")
-
-    )
-
   object WALL {
     val CUBE: MutableList<PathPlannerTrajectory> =
       PathPlanner.loadPathGroup(
@@ -75,6 +67,12 @@ object Paths {
       PathPlanner.loadPathGroup(
         "wallConeCubeCone",
         PathPlanner.getConstraintsFromPath("wallConeCubeCone")
+      )
+
+    val CONECUBECUBE: MutableList<PathPlannerTrajectory> =
+      PathPlanner.loadPathGroup(
+        "wallConeCubeCube",
+        PathPlanner.getConstraintsFromPath("wallConeCubeCube")
       )
   }
 
@@ -160,6 +158,14 @@ object Paths {
         PathPlanner.loadPathGroup(
           "wallConeCubeCone",
           PathPlanner.getConstraintsFromPath("wallConeCubeCone")
+        )
+      )
+
+    val CONECUBECUBE: MutableList<PathPlannerTrajectory> =
+      AutoUtil.transformForFarSide(
+        PathPlanner.loadPathGroup(
+          "wallConeCubeCube",
+          PathPlanner.getConstraintsFromPath("wallConeCubeCube")
         )
       )
   }

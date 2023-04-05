@@ -195,12 +195,17 @@ open class DifferentialDrive(
       wheelRadius: Double
     ): DifferentialSim {
       val drivePlant = LinearSystemId.identifyDrivetrainSystem(
-        kV, kA, angleKV, angleKA
+        kV,
+        kA,
+        angleKV,
+        angleKA
       )
       val driveSim = DifferentialDrivetrainSim(
         drivePlant,
-        DCMotor.getNEO(3), DifferentialConstants.DRIVE_GEARING,
-        drive.trackwidth, wheelRadius,
+        DCMotor.getNEO(3),
+        DifferentialConstants.DRIVE_GEARING,
+        drive.trackwidth,
+        wheelRadius,
         VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
       )
       return DifferentialSim(driveSim, drive.leftLeader, drive.rightLeader, drive.ahrs, drive.feedforward, drive.makeVelPID, drive.trackwidth)

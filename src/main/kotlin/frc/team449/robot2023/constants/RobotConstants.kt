@@ -18,10 +18,12 @@ object RobotConstants {
   const val ROTATION_DEADBAND = .125
 
   /** Drive configuration */
-  const val MAX_LINEAR_SPEED = 4.4 // m/s
+  const val MAX_LINEAR_SPEED = 4.25 // m/s
   const val MAX_ROT_SPEED = PI // rad/s
-  const val MAX_ACCEL = 7.25 // m/s/s
+  const val MAX_ACCEL = 12.0 // m/s/s
   val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
+
+  const val DOUBLE_ALIGN_ACCEL = 3.5
 
   /** PID controller for Orthogonal turning */
   val ORTHOGONAL_CONTROLLER = ProfiledPIDController(

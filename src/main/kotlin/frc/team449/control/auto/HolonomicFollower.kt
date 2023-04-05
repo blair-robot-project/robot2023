@@ -36,7 +36,9 @@ class HolonomicFollower(
   private var prevTime = 0.0
 
   private val controller = PPHolonomicDriveController(
-    xController, yController, thetaController
+    xController,
+    yController,
+    thetaController
   )
 
   init {

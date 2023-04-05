@@ -86,7 +86,7 @@ class RobotLoop : TimedRobot() {
     routineChooser.updateOptions(positionChooser.selected)
 
     /** Every time auto starts, we update the chosen auto command */
-    val cmd = routineChooser.selected.createCommand()
+    val cmd = routineChooser.selected.createCommand(robot)
     this.autoCommand = cmd
     CommandScheduler.getInstance().schedule(this.autoCommand)
   }

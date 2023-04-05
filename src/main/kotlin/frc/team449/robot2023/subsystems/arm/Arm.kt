@@ -6,13 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
-import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
-import frc.team449.robot2023.subsystems.arm.control.ArmKinematics
-import frc.team449.robot2023.subsystems.arm.control.ArmPDController
-import frc.team449.robot2023.subsystems.arm.control.ArmState
-import frc.team449.robot2023.subsystems.arm.control.ArmTrajectory
-import frc.team449.robot2023.subsystems.arm.control.CartesianArmState
-import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
+import frc.team449.robot2023.subsystems.arm.control.*
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
@@ -100,11 +94,11 @@ open class Arm(
   }
 
   fun holdArm() {
-    val ff = feedForward.calculate(state.static().matrix, true)
+    val ff = feedForward.calculate(state.static().matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
-    firstJoint.setVoltage(u[0, 0])
-    secondJoint.setVoltage(u[1, 0])
+//    firstJoint.setVoltage(u[0, 0])
+//    secondJoint.setVoltage(u[1, 0])
   }
 
   /**

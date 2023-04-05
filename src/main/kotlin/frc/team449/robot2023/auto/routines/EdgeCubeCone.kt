@@ -12,7 +12,7 @@ import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
 class EdgeCubeCone(
   robot: Robot,
-  position: PositionChooser.POSITIONS
+  position: PositionChooser.Positions
 ) : RoutineStructure {
 
   override val routine =
@@ -21,7 +21,7 @@ class EdgeCubeCone(
       eventMap = hashMapOf(
         "dropCube" to AutoUtil.stowDropCube(robot),
         "stowArm" to AutoUtil.deployCone(robot),
-        "stopIntake" to AutoUtil.holdIntake(robot),
+        "stopIntake" to AutoUtil.retractGroundIntake(robot),
         "dropCone" to ArmFollower(robot.arm) { ArmPaths.coneHigh }.andThen(AutoUtil.dropCone(robot)),
         "retractArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
         "stopIntake2" to AutoUtil.retractGroundIntake(robot),
@@ -30,7 +30,7 @@ class EdgeCubeCone(
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
-    if (position == PositionChooser.POSITIONS.FARCUBE) {
+    if (position == PositionChooser.Positions.FARCUBE) {
       Paths.FAR.CUBECONE
     } else {
       Paths.WALL.CUBECONE

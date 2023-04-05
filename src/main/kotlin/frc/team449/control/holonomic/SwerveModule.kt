@@ -71,15 +71,16 @@ open class SwerveModule(
         Rotation2d(turningMotor.position)
       )
     }
+
   /** Keep same direction of module but keep speed at zero */
   fun stop() {
     turnController.setpoint = turningMotor.position
     desiredSpeed = 0.0
   }
+
   override fun configureLogName() = this.name
 
   open fun update() {
-
     /** CONTROL speed of module */
     val drivePid = driveController.calculate(
       drivingMotor.velocity
