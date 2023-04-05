@@ -46,11 +46,7 @@ class RobotLoop : TimedRobot() {
     println("DONE Parsing Trajectories : ${Timer.getFPGATimestamp()}")
     PathPlannerServer.startServer(5811)
 
-    CommandScheduler.getInstance().schedule(
-      ArmCalibration(
-        robot.arm
-      ).ignoringDisable(true)
-    )
+    ArmCalibration(robot.arm).ignoringDisable(true).schedule()
 
     Logger.configureLoggingAndConfig(robot, false)
     Logger.configureLoggingAndConfig(Paths, false)
