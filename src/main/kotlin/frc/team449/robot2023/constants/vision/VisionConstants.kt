@@ -3,6 +3,8 @@ package frc.team449.robot2023.constants.vision
 import edu.wpi.first.apriltag.AprilTag
 import edu.wpi.first.apriltag.AprilTagFieldLayout
 import edu.wpi.first.apriltag.AprilTagFields
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Nat
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
@@ -34,11 +36,15 @@ VisionConstants {
     Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(180.0))
   )
 
+  var MIN_TARGETS = 2
+  var VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.125, .125, .025)
+  var ENCODER_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.025, .025, .75)
+
   /** List of cameras that we want to use */
   val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
     PhotonPoseEstimator(
       TAG_LAYOUT,
-      PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS,
+      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
       PhotonCamera("Spinel"),
       robotToCamera
     )

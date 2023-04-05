@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.control.auto.HolonomicFollower
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.arm.ArmSweep
+import frc.team449.robot2023.commands.autoBalance.AutoBalance
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -188,9 +189,9 @@ class ControllerBindings(
 //      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.HIGH) }.withInterruptBehavior(kCancelIncoming)
 //    )
 
-//    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
-//      AutoBalance.create(robot.drive)
-//    )
+    JoystickButton(driveController, XboxController.Button.kBack.value).onTrue(
+      AutoBalance.create(robot.drive)
+    )
 
     JoystickButton(driveController, XboxController.Button.kStart.value).onTrue(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })
@@ -203,8 +204,8 @@ class ControllerBindings(
             robot.drive,
             PathPlanner.generatePath(
               PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-              PathPoint(robot.drive.pose.translation, Translation2d(0.7, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-              PathPoint(Translation2d(0.7, 6.13), Rotation2d(PI), Rotation2d(PI))
+              PathPoint(robot.drive.pose.translation, Translation2d(0.75, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(0.75, 6.13), Rotation2d(PI), Rotation2d())
             )
           ).withInterruptBehavior(kCancelSelf).until {
             abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
@@ -219,15 +220,14 @@ class ControllerBindings(
             robot.drive,
             PathPlanner.generatePath(
               PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.7, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-              PathPoint(Translation2d(16.54 - 0.7, 6.13), Rotation2d(), Rotation2d())
+              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.75, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(16.54 - 0.75, 7.465), Rotation2d(), Rotation2d(PI))
             )
           ).until {
             abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
               abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
               abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
           }
-
           command.schedule()
         })
       ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }
@@ -240,9 +240,10 @@ class ControllerBindings(
             robot.drive,
             PathPlanner.generatePath(
               PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-              PathPoint(robot.drive.pose.translation, Translation2d(0.7, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-              PathPoint(Translation2d(0.7, 7.465), Rotation2d(PI), Rotation2d(PI))
+              PathPoint(robot.drive.pose.translation, Translation2d(0.75, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(0.75, 7.465), Rotation2d(PI), Rotation2d())
             )
+
           ).withInterruptBehavior(kCancelSelf).until {
             abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
               abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
@@ -256,14 +257,15 @@ class ControllerBindings(
             robot.drive,
             PathPlanner.generatePath(
               PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.7, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-              PathPoint(Translation2d(16.54 - 0.7, 7.465), Rotation2d(), Rotation2d())
+              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.75, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
+              PathPoint(Translation2d(16.54 - 0.75, 6.13), Rotation2d(0.0), Rotation2d(PI))
             )
           ).until {
             abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
               abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
               abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
           }
+
           command.schedule()
         })
       ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }

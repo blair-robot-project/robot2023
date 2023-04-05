@@ -1,8 +1,6 @@
 package frc.team449.control.holonomic
 
-import edu.wpi.first.math.MatBuilder
 import edu.wpi.first.math.MathUtil
-import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
@@ -56,8 +54,8 @@ open class SwerveDrive(
     ahrs.heading,
     getPositions(),
     RobotConstants.INITIAL_POSE,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .035), // dead reckoning
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .05, .075) // vision
+    VisionConstants.ENCODER_TRUST, // dead reckoning
+    VisionConstants.VISION_TRUST // vision
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -149,7 +147,7 @@ open class SwerveDrive(
       val result = camera.update()
       if (result.isPresent) {
         val presentResult = result.get()
-        if (presentResult.timestampSeconds > 0) {
+        if (presentResult.timestampSeconds > 0 && presentResult.targetsUsed.size >= VisionConstants.MIN_TARGETS) {
           poseEstimator.addVisionMeasurement(
             presentResult.estimatedPose.toPose2d(),
             presentResult.timestampSeconds

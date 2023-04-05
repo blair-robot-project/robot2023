@@ -97,8 +97,8 @@ open class Arm(
     val ff = feedForward.calculate(state.static().matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
-//    firstJoint.setVoltage(u[0, 0])
-//    secondJoint.setVoltage(u[1, 0])
+    firstJoint.setVoltage(u[0, 0])
+    secondJoint.setVoltage(u[1, 0])
   }
 
   /**

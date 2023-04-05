@@ -72,8 +72,8 @@ class ArmPDController(
     )
     val output = K * wrappedErr + I * errorSum
 
-    output[0, 0] = clamp(output[0, 0], -10.0, 10.0) // first joint PID is bounded 9.5V min -9.5V
-    output[1, 0] = clamp(output[1, 0], -10.0, 10.0) // second joint PID is bounded 9.5V min -9.5V
+    output[0, 0] = clamp(output[0, 0], -11.5, 11.5) // first joint PID is bounded 11V min -11V
+    output[1, 0] = clamp(output[1, 0], -11.5, 11.5) // second joint PID is bounded 11V min -11V
 
     return output
   }

@@ -23,12 +23,12 @@ object ArmConstants {
   val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
 
   // PD Controller Constants
-  const val kP1 = 12.5
-  const val kP2 = 15.0
+  const val kP1 = 15.75
+  const val kP2 = 18.25
   const val kD1 = .0
   const val kD2 = .0
-  const val kI1 = .1
-  const val kI2 = .125
+  const val kI1 = .125
+  const val kI2 = .15
   const val kErrDeadband = .0 // rad
 
   // Length of segments
@@ -77,7 +77,7 @@ object ArmConstants {
   )
 
   val DOUBLE = ArmState(
-    Rotation2d.fromDegrees(61.33),
+    Rotation2d.fromDegrees(59.75),
     Rotation2d.fromDegrees(112.51)
   )
 

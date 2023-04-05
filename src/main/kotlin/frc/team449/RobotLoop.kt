@@ -1,6 +1,8 @@
 package frc.team449
 
 import com.pathplanner.lib.server.PathPlannerServer
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Nat
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
@@ -17,6 +19,7 @@ import frc.team449.robot2023.auto.routines.RoutineChooser
 import frc.team449.robot2023.commands.ArmCalibration
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.constants.vision.VisionConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import io.github.oblarg.oblog.Logger
@@ -72,6 +75,11 @@ class RobotLoop : TimedRobot() {
   }
 
   override fun autonomousInit() {
+    VisionConstants.MIN_TARGETS = 2
+
+    VisionConstants.VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.125, .125, .025)
+    VisionConstants.ENCODER_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.025, .025, .75)
+
     robot.arm.controller.reset()
 
     robot.arm.setArmDesiredState(ArmConstants.STOW)
@@ -90,6 +98,10 @@ class RobotLoop : TimedRobot() {
   override fun autonomousPeriodic() {}
 
   override fun teleopInit() {
+    VisionConstants.VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.035, .035, .025)
+    VisionConstants.ENCODER_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.125, .125, .75)
+    VisionConstants.MIN_TARGETS = 1
+
     robot.arm.controller.reset()
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand)
