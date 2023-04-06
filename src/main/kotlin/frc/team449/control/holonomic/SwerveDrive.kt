@@ -161,7 +161,7 @@ open class SwerveDrive(
 
         if (presentResult.timestampSeconds > 0 &&
           numTargets < 2 && tagDistance <= VisionConstants.MAX_DISTANCE_SINGLE_TAG ||
-          numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_DOUBLE_TAG
+          numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_MULTI_TAG
         ) {
           poseEstimator.addVisionMeasurement(
             presentResult.estimatedPose.toPose2d(),

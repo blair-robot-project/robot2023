@@ -94,7 +94,7 @@ open class Arm(
   }
 
   fun holdArm() {
-    val ff = feedForward.calculate(state.static().matrix, false)
+    val ff = feedForward.calculate(state.matrix, false)
     val pid = controller.calculate(state.matrix, desiredState.matrix)
     val u = ff + pid
     firstJoint.setVoltage(u[0, 0])
