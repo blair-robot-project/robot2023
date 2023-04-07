@@ -34,8 +34,8 @@ VisionConstants {
     Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(180.0))
   )
 
-  const val MAX_DISTANCE_SINGLE_TAG = 2.15
-  const val MAX_DISTANCE_MULTI_TAG = 3.65
+  var MAX_DISTANCE_SINGLE_TAG = 2.15
+  var MAX_DISTANCE_MULTI_TAG = 3.65
 
   /** List of cameras that we want to use */
   val ESTIMATORS: List<PhotonPoseEstimator> = listOf(

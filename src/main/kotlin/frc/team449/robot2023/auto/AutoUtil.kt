@@ -131,7 +131,7 @@ object AutoUtil {
 
   fun retractGroundIntake(robot: Robot): Command {
     return SequentialCommandGroup(
-      InstantCommand(robot.endEffector::holdIntake),
+      InstantCommand(robot.endEffector::strongHoldIntake),
       robot.groundIntake.retract(),
       robot.groundIntake.runOnce(robot.groundIntake::stop)
     )

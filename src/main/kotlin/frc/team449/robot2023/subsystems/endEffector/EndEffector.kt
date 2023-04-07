@@ -38,7 +38,7 @@ class EndEffector(
   }
 
   fun strongHoldIntake() {
-    intakeMotor.setVoltage(5.0)
+    intakeMotor.setVoltage(9.0)
   }
 
   fun intakeReverse() {

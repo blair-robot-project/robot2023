@@ -17,18 +17,18 @@ object ArmConstants {
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.25 + (.25 - 0.150425)
-  const val SECOND_ENCODER_OFFSET = 0.081042 // 0.855081
+  const val FIRST_ENCODER_OFFSET = 0.25 + (.25 - 0.150425) + (0.25 - 0.243137) + (0.25 - 0.248505) + (0.25 - 0.254607)
+  const val SECOND_ENCODER_OFFSET = 0.081042 - 0.003050 - 0.004135 + 0.003173 // 0.855081
   val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
   val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
 
   // PD Controller Constants
-  const val kP1 = 15.75
-  const val kP2 = 18.25
+  const val kP1 = 8.95
+  const val kP2 = 9.75
   const val kD1 = .0
   const val kD2 = .0
-  const val kI1 = .125
-  const val kI2 = .15
+  const val kI1 = .1
+  const val kI2 = .07
   const val kErrDeadband = .0 // rad
 
   // Length of segments
@@ -60,9 +60,9 @@ object ArmConstants {
   const val KG22 = .73816688
 
   // Feedforward constants of second joint in arm
-  const val KS2 = .27145615
-  const val KV2 = 0.59783
-  const val KA2 = 3.2914
+  const val KS2 = .35
+  const val KV2 = 0.35
+  const val KA2 = 1.15
   const val KG2 = 0.145
 
   // Current limits of the motors
@@ -78,7 +78,7 @@ object ArmConstants {
 
   val DOUBLE = ArmState(
     Rotation2d.fromDegrees(59.75),
-    Rotation2d.fromDegrees(112.51)
+    Rotation2d.fromDegrees(116.25)
   )
 
   val STOW = ArmState(
@@ -93,7 +93,7 @@ object ArmConstants {
 
   val CUBE = ArmState(
     Rotation2d.fromDegrees(74.15),
-    Rotation2d.fromDegrees(-132.17)
+    Rotation2d.fromDegrees(-136.17)
   )
 
   val MID = ArmState(

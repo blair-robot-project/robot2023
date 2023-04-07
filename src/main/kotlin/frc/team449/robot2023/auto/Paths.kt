@@ -28,8 +28,8 @@ object Paths {
     /** Description of path: Wall side path that scores a cone, then a cube */
     val CONECUBE: MutableList<PathPlannerTrajectory> =
       PathPlanner.loadPathGroup(
-        "wallConeCube",
-        PathPlanner.getConstraintsFromPath("wallConeCube")
+        "bumpConeCube",
+        PathPlanner.getConstraintsFromPath("bumpConeCube")
       )
 
     /** Description of path: Wall side path that scores a cone and aligns up to a game piece for teleop */

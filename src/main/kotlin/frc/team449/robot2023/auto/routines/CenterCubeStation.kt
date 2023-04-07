@@ -20,7 +20,7 @@ class CenterCubeStation(robot: Robot) : RoutineStructure {
         "stowArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
         "balanceStation" to AutoBalance.create(robot.drive)
       ),
-      timeout = 0.0
+      timeout = 1.5
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> = Paths.CENTER.CUBEBALANCE

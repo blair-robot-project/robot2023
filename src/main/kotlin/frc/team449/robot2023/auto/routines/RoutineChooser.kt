@@ -51,7 +51,7 @@ class RoutineChooser(private val robot: Robot, position: PositionChooser) : Send
     )
 
     this.addOption(
-      "1.5 Piece and Balance",
+      "1 Piece and Balance",
       when (position) {
         PositionChooser.Positions.FARCONE, PositionChooser.Positions.WALLCONE -> {
           EdgeConeStation(robot, position)

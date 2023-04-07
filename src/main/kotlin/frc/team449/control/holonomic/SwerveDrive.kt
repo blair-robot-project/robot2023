@@ -59,7 +59,7 @@ open class SwerveDrive(
     getPositions(),
     RobotConstants.INITIAL_POSE,
     MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .025), // dead reckoning
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .5, .75) // vision
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .05, .75) // vision
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -155,8 +155,14 @@ open class SwerveDrive(
         var tagDistance = 0.0
 
         for (tag in presentResult.targetsUsed) {
-          val estimatedToTag = presentResult.estimatedPose.minus(camera.fieldTags.getTagPose(tag.fiducialId).get())
-          tagDistance = sqrt(estimatedToTag.x.pow(2) + estimatedToTag.y.pow(2)) / numTargets
+          val tagPose = camera.fieldTags.getTagPose(tag.fiducialId)
+          if (tagPose.isPresent) {
+            val estimatedToTag = presentResult.estimatedPose.minus(tagPose.get())
+            tagDistance += sqrt(estimatedToTag.x.pow(2) + estimatedToTag.y.pow(2)) / numTargets
+          } else {
+            tagDistance = Double.MAX_VALUE
+            break
+          }
         }
 
         if (presentResult.timestampSeconds > 0 &&
