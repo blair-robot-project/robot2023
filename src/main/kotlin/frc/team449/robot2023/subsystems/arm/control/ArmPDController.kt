@@ -1,6 +1,5 @@
 package frc.team449.robot2023.subsystems.arm.control
 
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.applyDeadband
 import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.Matrix
@@ -35,13 +34,12 @@ class ArmPDController(
     setpoint = reference
     val err = reference - state
     val wrappedErr = mat(N4.instance, N1.instance).fill(
-      MathUtil.angleModulus(applyDeadband(err[0, 0], errDeadband * PI / 180.0)),
-      MathUtil.angleModulus(applyDeadband(err[1, 0], errDeadband * PI / 180.0)),
+      applyDeadband(err[0, 0], errDeadband * PI / 180.0),
+      applyDeadband(err[1, 0], errDeadband * PI / 180.0),
       err[2, 0],
       err[3, 0]
     )
 
-    // deadband of
     errorSum = mat(N4.instance, N1.instance).fill(
       errorSum[0, 0] + wrappedErr[0, 0],
       errorSum[1, 0] + wrappedErr[1, 0],

@@ -223,7 +223,7 @@ open class Arm(
 
       val firstJointEncoder = QuadEncoder(
         "First joint quad",
-        ArmConstants.FIRSTJ_QUAD_ENCODER,
+        ArmConstants.FIRST_JOINT_QUAD_ENCODER,
         1024,
         2 * PI,
         1.0
@@ -231,7 +231,7 @@ open class Arm(
 
       val secondJointEncoder = QuadEncoder(
         "Second joint quad",
-        ArmConstants.SECONDJ_QUAD_ENCODER,
+        ArmConstants.SECOND_JOINT_QUAD_ENCODER,
         1024,
         2 * PI,
         1.0

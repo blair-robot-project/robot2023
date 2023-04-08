@@ -12,18 +12,13 @@ object ArmConstants {
   const val FIRST_MOTOR_ID2 = 6
   const val SECOND_MOTOR_ID = 7
 
-  // -
-  // 0.430809
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.25 + (.25 - 0.150425) + (0.25 - 0.243137) + (0.25 - 0.248505) + (0.25 - 0.254607) + (0.25 - 0.247172) + (0.107712 - 0.103266) +
-    (0.107712 - 0.106316) + (0.107712 - 0.109182) + (0.107712 - 0.104313) + (0.107712 - 0.109552) + (0.107712 - 0.107955)
-  const val SECOND_ENCODER_OFFSET = 0.081042 - 0.003050 - 0.004135 + 0.003173 - 0.002653 + (0.445331 - 0.450993) +
-    (0.445331 - 0.443156) + (0.445331 - 0.448732) + (0.445331 - 0.440198) - 0.016066 + 0.022137 +
-    (0.445331 - 0.411544) - 0.035009 + 0.006346 + 0.028997 - 0.027515 + (0.445331 - 0.458677) // 0.855081
-  val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
-  val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
+  const val FIRST_ENCODER_OFFSET = 0.25
+  const val SECOND_ENCODER_OFFSET = 0.0
+  val FIRST_JOINT_QUAD_ENCODER = Encoder(4, 5)
+  val SECOND_JOINT_QUAD_ENCODER = Encoder(1, 2)
 
   // PD Controller Constants
   const val kP1 = 8.95
@@ -72,8 +67,8 @@ object ArmConstants {
   const val FIRST_JOINT_CURR_LIM = 40
   const val SECOND_JOINT_CURR_LIM = 40
 
-  // Arm States corresponding to points.
-  // (Joint 1: Rotation2d(Rads: 1.59, Deg: 91.32), Joint 2 : Rotation2d(Rads: -1.94, Deg: -111.19), theta speed : -0.01828647817075757, beta speed 0.0)
+  // Arm States corresponding to set points
+
   val SINGLE = ArmState(
     Rotation2d.fromDegrees(91.77),
     Rotation2d.fromDegrees(-114.74)
