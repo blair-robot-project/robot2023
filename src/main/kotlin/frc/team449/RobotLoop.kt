@@ -54,6 +54,10 @@ class RobotLoop : TimedRobot() {
     SmartDashboard.putData("Field", robot.field)
     SmartDashboard.putData("Position Chooser", positionChooser)
     SmartDashboard.putData("Routine Chooser", routineChooser)
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance())
+    SmartDashboard.putData("Arm Subsystem", robot.arm)
+    SmartDashboard.putData("Ground Intake Subsystem", robot.groundIntake)
+    SmartDashboard.putData("End Effector Subsystem", robot.endEffector)
 
     ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
     robot.arm.defaultCommand = InstantCommand(

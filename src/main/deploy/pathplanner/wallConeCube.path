@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8045844863619473,
-        "y": 0.4896416810377484
+        "x": 2.012552401173178,
+        "y": 0.5024433980491892
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -26,16 +26,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.781523277332269,
-        "y": 0.9304582894880083
+        "x": 6.877118027740329,
+        "y": 0.9249526191360088
       },
       "prevControl": {
-        "x": 6.564901909450949,
-        "y": 0.9304582894880083
+        "x": 2.4122232859850334,
+        "y": 0.7879226014862292
       },
       "nextControl": {
-        "x": 6.564901909450949,
-        "y": 0.9304582894880083
+        "x": 2.4122232859850334,
+        "y": 0.7879226014862292
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -53,52 +53,25 @@
     },
     {
       "anchorPoint": {
-        "x": 1.75,
-        "y": 1.0518740335726287
+        "x": 1.9097798879358443,
+        "y": 1.073401804923269
       },
       "prevControl": {
-        "x": 5.722232301607461,
-        "y": 0.3435538299648037
-      },
-      "nextControl": {
-        "x": 5.722232301607461,
-        "y": 0.3435538299648037
-      },
-      "holonomicAngle": 0,
-      "isReversal": true,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": true,
-      "stopEvent": {
-        "names": [
-          "dropCube"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.85309699190827,
-        "y": 1.9468050364672163
-      },
-      "prevControl": {
-        "x": 6.05134358863979,
-        "y": 1.145051633198737
+        "x": 2.138163250685476,
+        "y": 1.0848209730607496
       },
       "nextControl": null,
-      "holonomicAngle": 45.0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "stopIntake2"
+          "dropCube"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "before",
+        "waitBehavior": "none",
         "waitTime": 0.5
       }
     }
@@ -108,15 +81,9 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.03,
+      "position": 0.10181818181822924,
       "names": [
         "stowArm"
-      ]
-    },
-    {
-      "position": 2.01,
-      "names": [
-        "stowCube"
       ]
     }
   ]

@@ -59,7 +59,7 @@ open class SwerveDrive(
     getPositions(),
     RobotConstants.INITIAL_POSE,
     MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .025), // dead reckoning
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .05, .75) // vision
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.035, .035, .75) // vision
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -169,10 +169,10 @@ open class SwerveDrive(
           numTargets < 2 && tagDistance <= VisionConstants.MAX_DISTANCE_SINGLE_TAG ||
           numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_MULTI_TAG
         ) {
-          poseEstimator.addVisionMeasurement(
-            presentResult.estimatedPose.toPose2d(),
-            presentResult.timestampSeconds
-          )
+//          poseEstimator.addVisionMeasurement(
+//            presentResult.estimatedPose.toPose2d(),
+//            presentResult.timestampSeconds
+//          )
         }
       }
     }

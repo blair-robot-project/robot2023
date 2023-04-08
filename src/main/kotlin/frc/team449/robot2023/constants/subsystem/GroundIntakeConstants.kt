@@ -4,7 +4,7 @@ import kotlin.math.PI
 
 object GroundIntakeConstants {
 
-  const val INTAKE_VOLTAGE = 6.0
+  const val INTAKE_VOLTAGE = 7.0
 
   /** Ground Intake Motor Constants */
   const val INTAKE_TOP = 31

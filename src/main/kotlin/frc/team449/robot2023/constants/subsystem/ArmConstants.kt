@@ -17,8 +17,11 @@ object ArmConstants {
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.25 + (.25 - 0.150425) + (0.25 - 0.243137) + (0.25 - 0.248505) + (0.25 - 0.254607)
-  const val SECOND_ENCODER_OFFSET = 0.081042 - 0.003050 - 0.004135 + 0.003173 // 0.855081
+  const val FIRST_ENCODER_OFFSET = 0.25 + (.25 - 0.150425) + (0.25 - 0.243137) + (0.25 - 0.248505) + (0.25 - 0.254607) + (0.25 - 0.247172) + (0.107712 - 0.103266) +
+    (0.107712 - 0.106316) + (0.107712 - 0.109182) + (0.107712 - 0.104313) + (0.107712 - 0.109552) + (0.107712 - 0.107955)
+  const val SECOND_ENCODER_OFFSET = 0.081042 - 0.003050 - 0.004135 + 0.003173 - 0.002653 + (0.445331 - 0.450993) +
+    (0.445331 - 0.443156) + (0.445331 - 0.448732) + (0.445331 - 0.440198) - 0.016066 + 0.022137 +
+    (0.445331 - 0.411544) - 0.035009 + 0.006346 + 0.028997 - 0.027515 + (0.445331 - 0.458677) // 0.855081
   val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
   val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
 
@@ -78,7 +81,7 @@ object ArmConstants {
 
   val DOUBLE = ArmState(
     Rotation2d.fromDegrees(59.75),
-    Rotation2d.fromDegrees(116.25)
+    Rotation2d.fromDegrees(117.15)
   )
 
   val STOW = ArmState(
