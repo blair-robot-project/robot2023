@@ -68,14 +68,14 @@ object AutoUtil {
             robot.arm.moveToState(
               ArmState(
                 currState.theta,
-                currState.beta + Rotation2d.fromDegrees(0.23),
+                currState.beta + Rotation2d.fromDegrees(0.3),
                 currState.thetaVel,
                 currState.betaVel
               )
             )
           }
         )
-      ).withTimeout(0.75),
+      ).withTimeout(0.825),
       InstantCommand(robot.endEffector::pistonRev)
     )
   }
