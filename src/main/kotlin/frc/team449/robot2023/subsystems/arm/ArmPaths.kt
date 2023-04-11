@@ -31,11 +31,17 @@ object ArmPaths {
   val stowHigh = ArmTrajectory("stowHigh.json")
   val highStow = ArmTrajectory("highStow.json")
 
+  val highMid = ArmTrajectory("highMid.json")
+  val midHigh = ArmTrajectory("midHigh.json")
+
+  val cubeCone = ArmTrajectory("cubeCone.json")
+  val coneCube = ArmTrajectory("coneCube.json")
+
   /** Auto Specific trajectories */
 
   val coneHigh = ArmTrajectory("coneHigh.json")
   val highCone = ArmTrajectory("highCone.json")
-
+  val cubeMid = ArmTrajectory("cubeMid.json")
   val cubeHigh = ArmTrajectory("cubeHigh.json")
   val highCube = ArmTrajectory("highCube.json")
   fun parseTrajectories() {
@@ -55,7 +61,12 @@ object ArmPaths {
       coneHigh,
       highCone,
       cubeHigh,
-      highCube
+      highCube,
+      midHigh,
+      highMid,
+      cubeCone,
+      coneCube,
+      cubeMid
     ).forEach {
       it.parse()
     }

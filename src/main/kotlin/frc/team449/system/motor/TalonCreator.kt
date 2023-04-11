@@ -1,16 +1,6 @@
 package frc.team449.system.motor
 
-import com.ctre.phoenix.motorcontrol.ControlFrame
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.IMotorController
-import com.ctre.phoenix.motorcontrol.InvertType
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.StatusFrame
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.BaseTalon
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod
@@ -69,7 +59,8 @@ fun <T> createTalon(
   // Set the current limit if it was given
   if (currentLimit > 0) {
     motor.configSupplyCurrentLimit(
-      SupplyCurrentLimitConfiguration(true, currentLimit.toDouble(), 0.0, 0.0), 0
+      SupplyCurrentLimitConfiguration(true, currentLimit.toDouble(), 0.0, 0.0),
+      0
     )
   } else {
     // If we don't have a current limit, disable current limiting.
@@ -127,10 +118,14 @@ fun configureSlaveTalon(
   // Turn off features we don't want a slave to have
   slaveTalon.setInverted(invertType)
   slaveTalon.configForwardLimitSwitchSource(
-    LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0
+    LimitSwitchSource.Deactivated,
+    LimitSwitchNormal.Disabled,
+    0
   )
   slaveTalon.configReverseLimitSwitchSource(
-    LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0
+    LimitSwitchSource.Deactivated,
+    LimitSwitchNormal.Disabled,
+    0
   )
   slaveTalon.configForwardSoftLimitEnable(false, 0)
   slaveTalon.configReverseSoftLimitEnable(false, 0)
@@ -207,7 +202,8 @@ private fun setMasterForTalon(
   // safe
   if (currentLimit > 0) {
     slaveTalon.configSupplyCurrentLimit(
-      SupplyCurrentLimitConfiguration(true, currentLimit.toDouble(), 0.0, 0.0), 0
+      SupplyCurrentLimitConfiguration(true, currentLimit.toDouble(), 0.0, 0.0),
+      0
     )
   } else {
     // If we don't have a current limit, disable current limiting.

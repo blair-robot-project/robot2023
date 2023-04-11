@@ -27,7 +27,6 @@ class DifferentialSim(
   private var lastTime = Timer.getFPGATimestamp()
 
   override fun periodic() {
-
     val currTime = Timer.getFPGATimestamp()
 
     val dt = currTime - lastTime

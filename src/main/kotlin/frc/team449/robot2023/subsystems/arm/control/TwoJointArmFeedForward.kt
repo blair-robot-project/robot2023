@@ -7,6 +7,7 @@ import edu.wpi.first.math.numbers.N2
 import edu.wpi.first.math.numbers.N4
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import kotlin.math.cos
+import kotlin.math.sign
 import kotlin.math.sin
 
 class TwoJointArmFeedForward(
@@ -31,6 +32,7 @@ class TwoJointArmFeedForward(
   private val b22 = m2 * r2 * gravity / kg.second
   private val i2 = b22 * ka.second - m2 * r2 * r2
   private val i1 = b11 * ka.first - m1 * r1 * r1 - m2 * (l1 * l1 + r2 * r2) - i2 - 2 * h
+
   /**
    * Computes the voltage for each joint based on a desired state
    * @param reference the matrix of the desired state matrix in form [theta, beta, theta-dot, beta-dot]
@@ -60,14 +62,18 @@ class TwoJointArmFeedForward(
 
     /** M matrix in equation: Inertia */
     val M = builder2x2.fill(
-      (m1 * r1 * r1 + m2 * (l1 * l1 + r2 * r2) + i1 + i2 + 2 * h * c2), (m2 * r2 * r2 + i2 + h * c2),
-      (m2 * r2 * r2 + i2 + h * c2), (m2 * r2 * r2 + i2)
+      (m1 * r1 * r1 + m2 * (l1 * l1 + r2 * r2) + i1 + i2 + 2 * h * c2),
+      (m2 * r2 * r2 + i2 + h * c2),
+      (m2 * r2 * r2 + i2 + h * c2),
+      (m2 * r2 * r2 + i2)
     )
 
     /** C matrix in equation: Centrifugal and Coriolis forces */
     val C = builder2x2.fill(
-      (-h * s2 * betaDot), (-h * s2 * (thetaDot + betaDot)),
-      (h * s2 * thetaDot), (0.0)
+      (-h * s2 * betaDot),
+      (-h * s2 * (thetaDot + betaDot)),
+      (h * s2 * thetaDot),
+      (0.0)
     )
 
     /** Tau g matrix in equation: Torque on each joint */
@@ -78,20 +84,24 @@ class TwoJointArmFeedForward(
 
     /** B matrix in equation: Motor torque */
     val B = builder2x2.fill(
-      b11, 0.0,
-      0.0, b22
+      b11,
+      0.0,
+      0.0,
+      b22
     )
 
     /** Kb matrix in equation: Back-emf */
     val Kb = builder2x2.fill(
-      b11 * kv.first, 0.0,
-      0.0, b22 * kv.second
+      b11 * kv.first,
+      0.0,
+      0.0,
+      b22 * kv.second
     )
 
     /** Ks matrix in equation: Overcome static friction */
     val Ks = builder2x1.fill(
-      ks.first,
-      ks.second
+      ks.first * sign(thetaDot),
+      ks.second * sign(betaDot)
     )
 
     /** cos matrix to multiply B^-1(Tg) term */
@@ -100,8 +110,10 @@ class TwoJointArmFeedForward(
       c12
     )
     val G = builder2x2.fill(
-      kg1.first, kg1.second,
-      kg2.first, kg2.second
+      kg1.first,
+      kg1.second,
+      kg2.first,
+      kg2.second
     )
 
     val tau = G * cos
@@ -114,9 +126,12 @@ class TwoJointArmFeedForward(
     val kbTimesVel = Kb * angularVelocities
 
     /** return u = Km ^ -1 * [D * accel + C * vel + Tg + Kb * vel] */
-    return if (singleJointCharacterized) B.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel) + Ks
-    /** return u = b^-1(tg) + b^-1(M + C + Kb) + kS */
-    else tau + B.solve(dTimesAccel + cTimesVel + kbTimesVel) + Ks
+    return if (singleJointCharacterized) {
+      B.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel) + Ks
+    } /** return u = b^-1(tg) + b^-1(M + C + Kb) + kS */
+    else {
+      tau + B.solve(dTimesAccel + cTimesVel + kbTimesVel) + Ks
+    }
   }
 
   /**

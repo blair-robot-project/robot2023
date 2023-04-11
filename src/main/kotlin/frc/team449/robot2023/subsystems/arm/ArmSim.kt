@@ -41,7 +41,7 @@ class ArmSim(
     }
 
   override fun periodic() {
-//    super.periodic()
+    super.periodic()
     firstJointEnc.velocity = desiredState.thetaVel
     secondJointEnc.velocity = desiredState.betaVel
     firstJointEnc.position = desiredState.theta.radians
@@ -83,7 +83,7 @@ class ArmSim(
 
       val firstJointEncoder = QuadEncoder(
         "First joint quad",
-        ArmConstants.FIRSTJ_QUAD_ENCODER,
+        ArmConstants.FIRST_JOINT_QUAD_ENCODER,
         1024,
         2 * PI,
         1.0
@@ -91,7 +91,7 @@ class ArmSim(
 
       val secondJointEncoder = QuadEncoder(
         "Second joint quad",
-        ArmConstants.SECONDJ_QUAD_ENCODER,
+        ArmConstants.SECOND_JOINT_QUAD_ENCODER,
         1024,
         2 * PI,
         1.0

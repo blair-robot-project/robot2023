@@ -11,6 +11,7 @@ import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.subsystems.arm.Arm.Companion.createArm
 import frc.team449.robot2023.subsystems.arm.ArmSim.Companion.createArmSim
 import frc.team449.robot2023.subsystems.endEffector.EndEffector.Companion.createEndEffector
+import frc.team449.robot2023.subsystems.groundIntake.GroundIntake.Companion.createGroundIntake
 import frc.team449.system.AHRS
 import io.github.oblarg.oblog.annotations.Log
 
@@ -36,8 +37,11 @@ class Robot : RobotBase() {
   @Log(name = "Joystick Input")
   override val oi = createOrthogonalHolonomicOI(drive, driveController)
 
+  @Log(name = "Double Joint Arm")
   val arm = if (isReal()) createArm() else createArmSim()
 
   @Log(name = "End Effector")
   val endEffector = createEndEffector()
+
+  val groundIntake = createGroundIntake()
 }

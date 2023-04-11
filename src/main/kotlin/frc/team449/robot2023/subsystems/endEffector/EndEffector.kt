@@ -9,14 +9,16 @@ import frc.team449.robot2023.constants.subsystem.EndEffectorConstants
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
+import io.github.oblarg.oblog.annotations.Log
 
 class EndEffector(
   private val intakeMotor: WrappedMotor,
   val chooserPiston: DoubleSolenoid,
   private val sensor: DigitalInput
 ) : SubsystemBase() {
+
+  @Log(name = "Cone/Cube in End Effector")
   private var sensorVal = false
-  private var previousVal = false
 
   // forward is cone, reverse is cube
   fun pistonOn() {
@@ -36,7 +38,7 @@ class EndEffector(
   }
 
   fun strongHoldIntake() {
-    intakeMotor.setVoltage(5.0)
+    intakeMotor.setVoltage(9.0)
   }
 
   fun intakeReverse() {
@@ -52,11 +54,7 @@ class EndEffector(
   }
 
   override fun periodic() {
-//    sensorVal = !sensor.get()
-//    if (sensorVal != previousVal && sensorVal) {
-//      pistonOn()
-//    }
-    previousVal = sensorVal
+    sensorVal = sensor.get()
   }
 
   override fun initSendable(builder: SendableBuilder) {
@@ -81,7 +79,7 @@ class EndEffector(
           EndEffectorConstants.MOTOR_GEARING
         ),
         inverted = false,
-        currentLimit = EndEffectorConstants.MOTOR_CURR_LIM,
+        currentLimit = EndEffectorConstants.MOTOR_CURR_LIM
       )
 
       val sensor = DigitalInput(

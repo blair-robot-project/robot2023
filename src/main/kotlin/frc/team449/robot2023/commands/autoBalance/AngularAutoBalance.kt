@@ -1,4 +1,4 @@
-package frc.team449.robot2023.commands
+package frc.team449.robot2023.commands.autoBalance
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.CommandBase

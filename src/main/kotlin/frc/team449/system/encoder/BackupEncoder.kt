@@ -20,7 +20,8 @@ class BackupEncoder(
 ) : Encoder(primary.configureLogName(), 1, 1.0, 1.0, pollTime) {
 
   /** Whether the primary encoder's stopped working */
-  @Log private var useFallback = false
+  @Log
+  private var useFallback = false
 
   protected override fun getPositionNative(): Double {
     return if (useFallback) {
@@ -49,9 +50,8 @@ class BackupEncoder(
     fun <T : MotorController> creator(
       primaryCreator: EncoderCreator<T>,
       fallbackCreator: EncoderCreator<T>,
-      velThreshold: Double,
-    ): EncoderCreator<T> = EncoderCreator {
-      name, motor, inverted ->
+      velThreshold: Double
+    ): EncoderCreator<T> = EncoderCreator { name, motor, inverted ->
       BackupEncoder(
         primaryCreator.create("primary_$name", motor, inverted),
         fallbackCreator.create("fallback_$name", motor, inverted),

@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.515995347780169,
-        "y": 0.580324318543375
+        "x": 5.407307957473058,
+        "y": 0.572589716608005
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -53,16 +53,16 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7864479588608302,
+        "x": 1.75,
         "y": 1.0428057698220663
       },
       "prevControl": {
-        "x": 4.624814512786921,
-        "y": 0.4352320985343734
+        "x": 5.070250397393025,
+        "y": 0.20040640081280187
       },
       "nextControl": {
-        "x": 4.624814512786921,
-        "y": 0.4352320985343734
+        "x": 5.070250397393025,
+        "y": 0.20040640081280187
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -107,11 +107,11 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7864479588608302,
+        "x": 1.75,
         "y": 1.6322429136086347
       },
       "prevControl": {
-        "x": 2.5119090589058373,
+        "x": 2.475461100045007,
         "y": 0.15411592226693271
       },
       "nextControl": null,
@@ -122,7 +122,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "dropCube2"
+          "dropCone2"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

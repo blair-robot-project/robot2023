@@ -25,6 +25,8 @@ import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
 import org.photonvision.PhotonPoseEstimator
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * @param modules the list of swerve modules on this drivetrain
@@ -45,6 +47,10 @@ open class SwerveDrive(
       .map { it.location }.toTypedArray()
   )
 
+  fun getModules(): List<SwerveModule> {
+    return modules
+  }
+
   private var currentSpeeds = ChassisSpeeds()
 
   private val poseEstimator = SwerveDrivePoseEstimator(
@@ -52,14 +58,14 @@ open class SwerveDrive(
     ahrs.heading,
     getPositions(),
     RobotConstants.INITIAL_POSE,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.0075, .0075, .025), // [theta, fl_pos, fr_pos, bl_pos, br_pos]
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.01, .01, .15) // [x, y, theta]
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .025), // dead reckoning
+    MatBuilder(Nat.N3(), Nat.N1()).fill(.035, .035, .75) // vision
   )
 
   private var lastTime = Timer.getFPGATimestamp()
 
   @Log.ToString(name = "Desired Speeds")
-  var desiredSpeeds = ChassisSpeeds()
+  var desiredSpeeds: ChassisSpeeds = ChassisSpeeds()
 
   override fun set(desiredSpeeds: ChassisSpeeds) {
     this.desiredSpeeds = desiredSpeeds
@@ -140,17 +146,38 @@ open class SwerveDrive(
     return Array(modules.size) { i -> modules[i].state }
   }
 
-  private fun localize() {
+  private fun localize() = try {
     for (camera in cameras) {
       val result = camera.update()
       if (result.isPresent) {
-        val realResult = result.get()
-        poseEstimator.addVisionMeasurement(
-          realResult.estimatedPose.toPose2d(),
-          realResult.timestampSeconds
-        )
+        val presentResult = result.get()
+        val numTargets = presentResult.targetsUsed.size
+        var tagDistance = 0.0
+
+        for (tag in presentResult.targetsUsed) {
+          val tagPose = camera.fieldTags.getTagPose(tag.fiducialId)
+          if (tagPose.isPresent) {
+            val estimatedToTag = presentResult.estimatedPose.minus(tagPose.get())
+            tagDistance += sqrt(estimatedToTag.x.pow(2) + estimatedToTag.y.pow(2)) / numTargets
+          } else {
+            tagDistance = Double.MAX_VALUE
+            break
+          }
+        }
+
+        if (presentResult.timestampSeconds > 0 &&
+          numTargets < 2 && tagDistance <= VisionConstants.MAX_DISTANCE_SINGLE_TAG ||
+          numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_MULTI_TAG
+        ) {
+//          poseEstimator.addVisionMeasurement(
+//            presentResult.estimatedPose.toPose2d(),
+//            presentResult.timestampSeconds
+//          )
+        }
       }
     }
+  } catch (e: Exception) {
+    print("!!!!!!!!! VISION ERROR !!!!!!! \n $e")
   }
 
   companion object {
@@ -241,7 +268,7 @@ open class SwerveDrive(
           Translation2d(-SwerveConstants.WHEELBASE / 2, -SwerveConstants.TRACKWIDTH / 2)
         )
       )
-      return if (isReal())
+      return if (isReal()) {
         SwerveDrive(
           modules,
           ahrs,
@@ -249,7 +276,7 @@ open class SwerveDrive(
           RobotConstants.MAX_ROT_SPEED,
           VisionConstants.ESTIMATORS
         )
-      else
+      } else {
         SwerveSim(
           modules,
           ahrs,
@@ -257,6 +284,7 @@ open class SwerveDrive(
           RobotConstants.MAX_ROT_SPEED,
           VisionConstants.ESTIMATORS
         )
+      }
     }
 
     /** Helper to make turning motors for swerve */

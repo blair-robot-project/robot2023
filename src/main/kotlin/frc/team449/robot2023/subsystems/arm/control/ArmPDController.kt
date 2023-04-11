@@ -1,6 +1,5 @@
 package frc.team449.robot2023.subsystems.arm.control
 
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.applyDeadband
 import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.Matrix
@@ -25,6 +24,7 @@ class ArmPDController(
   private var setpoint: Matrix<N4, N1>? = null
 
   private var errorSum = mat(N4.instance, N1.instance).fill(0.0, 0.0, 0.0, 0.0)
+
   /**
    * @param state the current state observed of the system from sensors
    * @param reference the desired state where the system should be
@@ -34,13 +34,12 @@ class ArmPDController(
     setpoint = reference
     val err = reference - state
     val wrappedErr = mat(N4.instance, N1.instance).fill(
-      MathUtil.angleModulus(applyDeadband(err[0, 0], errDeadband * PI / 180.0)),
-      MathUtil.angleModulus(applyDeadband(err[1, 0], errDeadband * PI / 180.0)),
+      applyDeadband(err[0, 0], errDeadband * PI / 180.0),
+      applyDeadband(err[1, 0], errDeadband * PI / 180.0),
       err[2, 0],
       err[3, 0]
     )
 
-    // deadband of
     errorSum = mat(N4.instance, N1.instance).fill(
       errorSum[0, 0] + wrappedErr[0, 0],
       errorSum[1, 0] + wrappedErr[1, 0],
@@ -49,18 +48,30 @@ class ArmPDController(
     )
 
     val I = mat(N2.instance, N4.instance).fill(
-      kI1, 0.0, 0.0, 0.0,
-      0.0, kI2, 0.0, 0.0
+      kI1,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      kI2,
+      0.0,
+      0.0
     )
 
     val K = mat(N2.instance, N4.instance).fill(
-      kP1, 0.0, kD1, 0.0,
-      0.0, kP2, 0.0, kD2
+      kP1,
+      0.0,
+      kD1,
+      0.0,
+      0.0,
+      kP2,
+      0.0,
+      kD2
     )
     val output = K * wrappedErr + I * errorSum
 
-    output[0, 0] = clamp(output[0, 0], -7.0, 7.0) // first joint PID is bounded 6V min -6V
-    output[1, 0] = clamp(output[1, 0], -7.0, 7.0) // second joint PID is bounded 6V min -6V
+    output[0, 0] = clamp(output[0, 0], -11.5, 11.5) // first joint PID is bounded 11V min -11V
+    output[1, 0] = clamp(output[1, 0], -11.5, 11.5) // second joint PID is bounded 11V min -11V
 
     return output
   }

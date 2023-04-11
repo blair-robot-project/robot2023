@@ -8,10 +8,12 @@ import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.util.Units
+import org.photonvision.PhotonCamera
 import org.photonvision.PhotonPoseEstimator
 
 /** Constants that have anything to do with vision */
-object VisionConstants {
+object
+VisionConstants {
   /** How the tags are laid out on the field (their locations and ids) */
   private val TEST_TAG_LAYOUT = AprilTagFieldLayout(
     listOf(
@@ -28,17 +30,20 @@ object VisionConstants {
 
   /** Robot to Camera distance */
   private val robotToCamera = Transform3d(
-    Translation3d(Units.inchesToMeters(-10.25), Units.inchesToMeters(6.0), Units.inchesToMeters(13.35)),
-    Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(-180.0))
+    Translation3d(Units.inchesToMeters(-10.25), Units.inchesToMeters(-6.0), Units.inchesToMeters(13.35)),
+    Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(180.0))
   )
+
+  var MAX_DISTANCE_SINGLE_TAG = 2.15
+  var MAX_DISTANCE_MULTI_TAG = 3.65
 
   /** List of cameras that we want to use */
   val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
-//    PhotonPoseEstimator(
-//      TAG_LAYOUT,
-//      PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY,
-//      PhotonCamera("Spinel"),
-//      robotToCamera
-//    )
+    PhotonPoseEstimator(
+      TAG_LAYOUT,
+      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
+      PhotonCamera("Spinel"),
+      robotToCamera
+    )
   )
 }

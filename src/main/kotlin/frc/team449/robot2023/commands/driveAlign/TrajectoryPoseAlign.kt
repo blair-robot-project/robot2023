@@ -1,4 +1,4 @@
-package frc.team449.robot2023.commands
+package frc.team449.robot2023.commands.driveAlign
 
 import com.pathplanner.lib.PathConstraints
 import com.pathplanner.lib.PathPlanner
@@ -11,6 +11,7 @@ import frc.team449.control.auto.HolonomicFollower
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import io.github.oblarg.oblog.annotations.Config
+import java.util.function.Supplier
 
 /**
  * @param drive The holonomic drive you want to align with
@@ -24,6 +25,7 @@ import io.github.oblarg.oblog.annotations.Config
  */
 class TrajectoryPoseAlign(
   private val drive: HolonomicDrive,
+  private val currPose: Supplier<Pose2d>,
   private val targetPose: Pose2d,
   @field:Config.PIDController(name = "Pose Align X PID") var xController: PIDController = PIDController(AutoConstants.DEFAULT_X_KP, 0.0, 0.0),
   @field:Config.PIDController(name = "Pose Align Y PID") var yController: PIDController = PIDController(AutoConstants.DEFAULT_Y_KP, 0.0, 0.0),
@@ -35,15 +37,17 @@ class TrajectoryPoseAlign(
 
   fun generateCommand(): Command {
     // Make the start and end poses point at each other
-    val startPointRotation = targetPose.translation.minus(drive.pose.translation).angle
-    val endPointRotation = drive.pose.translation.minus(targetPose.translation).angle
+    val startPointRotation = currPose.get().translation.minus(targetPose.translation).angle
+    val endPointRotation = targetPose.translation.minus(currPose.get().translation).angle
 
     // Generate a PathPlanner trajectory on the fly
     val traj = PathPlanner.generatePath(
       maxSpeeds,
-      PathPoint(drive.pose.translation, startPointRotation, drive.heading.radians),
-      PathPoint(targetPose.translation, endPointRotation, targetPose.rotation)
+      PathPoint(currPose.get().translation, Rotation2d(), currPose.get().rotation),
+      PathPoint(targetPose.translation, Rotation2d(), targetPose.rotation)
     )
+
+    println(traj.states)
 
     // Return a command that follows the trajectory
     return HolonomicFollower(

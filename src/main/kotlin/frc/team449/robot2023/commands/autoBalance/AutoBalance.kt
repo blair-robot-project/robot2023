@@ -1,4 +1,4 @@
-package frc.team449.robot2023.commands
+package frc.team449.robot2023.commands.autoBalance
 
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -13,8 +13,6 @@ class AutoBalance(
   private val speedMetersPerSecond: Double
 ) : CommandBase() {
 
-  private var timeOfBalance = Double.MAX_VALUE - 2.0
-
   init {
     addRequirements(drive)
   }
@@ -25,6 +23,7 @@ class AutoBalance(
     controller.setTolerance(0.125) /* .05 rad tolerance ~3 degrees */
     controller.setpoint = 0.0
   }
+
   override fun execute() {
     drive.set(
       ChassisSpeeds(
@@ -33,10 +32,6 @@ class AutoBalance(
         0.0
       )
     )
-
-//    if (controller.atSetpoint()) {
-//      timeOfBalance = Timer.getFPGATimestamp()
-//    }
   }
 
   override fun isFinished(): Boolean {
@@ -44,13 +39,7 @@ class AutoBalance(
   }
 
   override fun end(interrupted: Boolean) {
-    drive.set(
-      ChassisSpeeds(
-        0.0,
-        0.0,
-        0.01
-      )
-    )
+    drive.stop()
   }
 
   companion object {

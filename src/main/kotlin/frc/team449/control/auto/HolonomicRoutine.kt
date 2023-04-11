@@ -11,7 +11,6 @@ import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
 import frc.team449.robot2023.auto.AutoUtil
 import io.github.oblarg.oblog.annotations.Config
-import java.util.*
 import kotlin.math.abs
 
 /**
@@ -34,7 +33,7 @@ class HolonomicRoutine(
   private val translationTol: Double = 0.05,
   private val thetaTol: Double = 0.05,
   private val resetPosition: Boolean = false,
-  private val resetPositionTolerance: Pose2d = Pose2d(0.35, 0.35, Rotation2d.fromDegrees(10.0)),
+  private val resetPositionTolerance: Pose2d = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)),
   private val timeout: Double = 0.65
 ) : BaseAutoBuilder(drive::pose, eventMap, DrivetrainType.HOLONOMIC) {
 

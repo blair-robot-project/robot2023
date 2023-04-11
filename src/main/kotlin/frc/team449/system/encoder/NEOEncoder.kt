@@ -19,15 +19,14 @@ class NEOEncoder(
     enc.velocityConversionFactor = unitPerRotation * gearing / 60
   }
 
-  protected override fun getPositionNative() = enc.position
+  override fun getPositionNative() = enc.position
 
-  protected override fun pollVelocityNative(): Double = enc.velocity
+  override fun pollVelocityNative(): Double = enc.velocity
 
   companion object {
     const val NEO_ENCODER_CPR = 1
 
-    fun creator(unitPerRotation: Double, gearing: Double): EncoderCreator<CANSparkMax> = EncoderCreator {
-      name, motor, _ ->
+    fun creator(unitPerRotation: Double, gearing: Double): EncoderCreator<CANSparkMax> = EncoderCreator { name, motor, _ ->
       NEOEncoder(name, motor.encoder, unitPerRotation, gearing)
     }
   }

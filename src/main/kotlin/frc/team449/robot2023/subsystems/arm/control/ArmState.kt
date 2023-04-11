@@ -19,6 +19,12 @@ data class ArmState(
       return builder.fill(theta.radians, beta.radians, thetaVel, betaVel)
     }
 
+  companion object
+
+  fun static(): ArmState {
+    return ArmState(this.theta, this.beta)
+  }
+
   override fun toString(): String {
     return "(Joint 1: $theta, Joint 2 : $beta, theta speed : $thetaVel, beta speed $betaVel)"
   }

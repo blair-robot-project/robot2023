@@ -50,7 +50,7 @@ class OrthogonalHolonomicOI(
   private val yButton: BooleanSupplier,
   private val xButton: BooleanSupplier,
   private val aButton: BooleanSupplier,
-  private val bButton: BooleanSupplier,
+  private val bButton: BooleanSupplier
 ) : OI, Sendable {
 
   init {
@@ -110,16 +110,19 @@ class OrthogonalHolonomicOI(
     this.prevY = yClamped
 
     /** Based on which button was pressed, give in the setpoint to the PID controller. */
-//    if (yButton.asBoolean) {
-//      atGoal = false
-//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation.invoke()), 0.0)
-//    } else if (xButton.asBoolean) {
+    if (aButton.asBoolean) {
+      atGoal = false
+      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(0.0 + allianceCompensation.invoke()), 0.0)
+    }
+//    else if (bButton.asBoolean) {
 //      atGoal = false
 //      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI / 2 + allianceCompensation.invoke()), 0.0)
-//    } else if (aButton.asBoolean) {
-//      atGoal = false
-//      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation.invoke()), 0.0)
-//    } else if (bButton.asBoolean) {
+//    }
+    else if (yButton.asBoolean) {
+      atGoal = false
+      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(PI + allianceCompensation.invoke()), 0.0)
+    }
+//    else if (xButton.asBoolean) {
 //      atGoal = false
 //      controller.goal = TrapezoidProfile.State(MathUtil.angleModulus(3 * PI / 2 + allianceCompensation.invoke()), 0.0)
 //    }
@@ -175,7 +178,7 @@ class OrthogonalHolonomicOI(
         drive,
         { if (abs(driveController.leftY) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
         { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
-        { if (abs(driveController.getRawAxis(4)) < RobotConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
+        { if (abs(driveController.rightX) < RobotConstants.ROTATION_DEADBAND) .0 else -driveController.rightX },
         SlewRateLimiter(RobotConstants.RATE_LIMIT),
         RobotConstants.MAX_ACCEL,
         { driveController.leftTriggerAxis < 0.8 },

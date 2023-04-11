@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.*
 import frc.team449.robot2023.Robot
+import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 import frc.team449.robot2023.subsystems.arm.control.ArmState
@@ -64,15 +65,17 @@ object AutoUtil {
         InstantCommand(
           {
             val currState = robot.arm.desiredState.copy()
-            robot.arm.state = ArmState(
-              currState.theta,
-              currState.beta + Rotation2d.fromDegrees(0.23),
-              currState.thetaVel,
-              currState.betaVel
+            robot.arm.moveToState(
+              ArmState(
+                currState.theta,
+                currState.beta + Rotation2d.fromDegrees(0.3),
+                currState.thetaVel,
+                currState.betaVel
+              )
             )
           }
         )
-      ).withTimeout(0.75),
+      ).withTimeout(0.825),
       InstantCommand(robot.endEffector::pistonRev)
     )
   }
@@ -81,7 +84,7 @@ object AutoUtil {
     return SequentialCommandGroup(
       WaitCommand(0.075),
       InstantCommand(robot.endEffector::autoReverse),
-      WaitCommand(0.35)
+      WaitCommand(0.275)
     )
   }
 
@@ -97,15 +100,17 @@ object AutoUtil {
     )
   }
 
-  fun stowAndDeployCube(robot: Robot): Command {
+  fun deployCube(robot: Robot): Command {
     return SequentialCommandGroup(
+      robot.groundIntake.deploy(),
+      robot.groundIntake.intakeCube(),
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonRev),
       ArmFollower(robot.arm) { ArmPaths.highCube }
     )
   }
 
-  fun stowAndDeployCone(robot: Robot): Command {
+  fun deployCone(robot: Robot): Command {
     return SequentialCommandGroup(
       InstantCommand(robot.endEffector::intake),
       InstantCommand(robot.endEffector::pistonOn),
@@ -117,13 +122,18 @@ object AutoUtil {
     return ArmFollower(robot.arm) { ArmPaths.highStow }
   }
 
-  fun retractGroundIntake(robot: Robot): Command {
-    return InstantCommand(robot.endEffector::holdIntake).andThen(
-      ArmFollower(robot.arm) { ArmPaths.coneStow }
+  fun retractAndStow(robot: Robot): Command {
+    return SequentialCommandGroup(
+      retractGroundIntake(robot),
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
     )
   }
 
-  fun holdIntake(robot: Robot): Command {
-    return InstantCommand(robot.endEffector::holdIntake)
+  fun retractGroundIntake(robot: Robot): Command {
+    return SequentialCommandGroup(
+      InstantCommand(robot.endEffector::strongHoldIntake),
+      robot.groundIntake.retract(),
+      robot.groundIntake.runOnce(robot.groundIntake::stop)
+    )
   }
 }

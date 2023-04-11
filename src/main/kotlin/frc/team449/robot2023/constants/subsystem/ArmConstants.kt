@@ -11,23 +11,25 @@ object ArmConstants {
   const val FIRST_MOTOR_ID1 = 5
   const val FIRST_MOTOR_ID2 = 6
   const val SECOND_MOTOR_ID = 7
-  // -
-  // 0.430809
+
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.75 - 0.398869
-  const val SECOND_ENCODER_OFFSET = -0.185619 - 0.004858 // 0.855081
-  val FIRSTJ_QUAD_ENCODER = Encoder(4, 5)
-  val SECONDJ_QUAD_ENCODER = Encoder(1, 2)
+  const val FIRST_ENCODER_OFFSET = 0.25 + (0.25 - 0.138433) + (0.25 - 0.255332) + (0.25 - 0.247635) + (0.25 - 0.252205) +
+    (0.25 - 0.251082) + (0.25 - 0.251513)
+  const val SECOND_ENCODER_OFFSET = -0.021277 - 0.243989 - 0.003766 - 0.001928 + 0.002880 - 0.001357
+  val FIRST_JOINT_QUAD_ENCODER = Encoder(4, 5)
+  val SECOND_JOINT_QUAD_ENCODER = Encoder(1, 2)
+
   // PD Controller Constants
-  const val kP1 = 10.0
-  const val kP2 = 10.0
+  const val kP1 = 8.95
+  const val kP2 = 9.75
   const val kD1 = .0
   const val kD2 = .0
   const val kI1 = .1
-  const val kI2 = .1
+  const val kI2 = .07
   const val kErrDeadband = .0 // rad
+
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(32.0)
   val LENGTH_2 = Units.inchesToMeters(34.0)
@@ -45,37 +47,37 @@ object ArmConstants {
   val R2 = Units.inchesToMeters(24.0)
 
   // Feedforward constants of first joint in arm
-  const val KS1 = .0789162
+  const val KS1 = .03914108
   const val KV1 = 0.54671
   const val KA1 = 1.8353
   const val KG1 = 0.25519
 
   // Characterized values
-  const val KG11 = .161436
-  const val KG12 = 0.0
+  const val KG11 = .657621995
+  const val KG12 = .01236377
   const val KG21 = 0.0
-  const val KG22 = .382553
+  const val KG22 = .73816688
 
   // Feedforward constants of second joint in arm
-  const val KS2 = .218338
-  const val KV2 = 0.59783
-  const val KA2 = 3.2914
+  const val KS2 = .35
+  const val KV2 = 0.35
+  const val KA2 = 1.15
   const val KG2 = 0.145
 
   // Current limits of the motors
   const val FIRST_JOINT_CURR_LIM = 40
   const val SECOND_JOINT_CURR_LIM = 40
 
-  // Arm States corresponding to points.
-  // (Joint 1: Rotation2d(Rads: 1.59, Deg: 91.32), Joint 2 : Rotation2d(Rads: -1.94, Deg: -111.19), theta speed : -0.01828647817075757, beta speed 0.0)
+  // Arm States corresponding to set points
+
   val SINGLE = ArmState(
     Rotation2d.fromDegrees(91.77),
     Rotation2d.fromDegrees(-114.74)
   )
 
   val DOUBLE = ArmState(
-    Rotation2d.fromDegrees(95.11),
-    Rotation2d.fromDegrees(-95.11)
+    Rotation2d.fromDegrees(59.75),
+    Rotation2d.fromDegrees(115.75)
   )
 
   val STOW = ArmState(
@@ -89,16 +91,17 @@ object ArmConstants {
   )
 
   val CUBE = ArmState(
-    Rotation2d.fromDegrees(54.58),
-    Rotation2d.fromDegrees(-120.25)
+    Rotation2d.fromDegrees(74.15),
+    Rotation2d.fromDegrees(-136.17)
   )
+
   val MID = ArmState(
-    Rotation2d.fromDegrees(91.40),
-    Rotation2d.fromDegrees(90.22)
+    Rotation2d.fromDegrees(92.36),
+    Rotation2d.fromDegrees(82.97)
   )
 
   val HIGH = ArmState(
-    Rotation2d.fromDegrees(133.00),
+    Rotation2d.fromDegrees(135.00),
     Rotation2d.fromDegrees(0.00)
   )
 

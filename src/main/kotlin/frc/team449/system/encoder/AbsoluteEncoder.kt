@@ -23,6 +23,7 @@ open class AbsoluteEncoder(
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
   private val filter = MedianFilter(samplesPerAverage)
+
   @Log
   private val frequency = enc.frequency
 

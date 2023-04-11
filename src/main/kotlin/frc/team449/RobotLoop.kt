@@ -8,13 +8,16 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import frc.team449.control.DriveCommand
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.Paths
 import frc.team449.robot2023.auto.PositionChooser
 import frc.team449.robot2023.auto.routines.RoutineChooser
+import frc.team449.robot2023.commands.ArmCalibration
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
+import frc.team449.robot2023.constants.vision.VisionConstants
 import frc.team449.robot2023.subsystems.ControllerBindings
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import io.github.oblarg.oblog.Logger
@@ -44,13 +47,23 @@ class RobotLoop : TimedRobot() {
     println("DONE Parsing Trajectories : ${Timer.getFPGATimestamp()}")
     PathPlannerServer.startServer(5811)
 
+    ArmCalibration(robot.arm).ignoringDisable(true).schedule()
+
     Logger.configureLoggingAndConfig(robot, false)
     Logger.configureLoggingAndConfig(Paths, false)
     SmartDashboard.putData("Field", robot.field)
     SmartDashboard.putData("Position Chooser", positionChooser)
     SmartDashboard.putData("Routine Chooser", routineChooser)
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance())
+    SmartDashboard.putData("Arm Subsystem", robot.arm)
+    SmartDashboard.putData("Ground Intake Subsystem", robot.groundIntake)
+    SmartDashboard.putData("End Effector Subsystem", robot.endEffector)
 
     ControllerBindings(robot.driveController, robot.mechanismController, robot).bindButtons()
+    robot.arm.defaultCommand = InstantCommand(
+      robot.arm::holdArm,
+      robot.arm
+    )
 
 //    robot.light.defaultCommand = Rainbow(robot.light)
   }
@@ -64,9 +77,12 @@ class RobotLoop : TimedRobot() {
   }
 
   override fun autonomousInit() {
+    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 2.35
+    VisionConstants.MAX_DISTANCE_MULTI_TAG = 3.65
+
     robot.arm.controller.reset()
 
-    robot.arm.state = ArmConstants.STOW
+    robot.arm.setArmDesiredState(ArmConstants.STOW)
 
     /** At the start of auto we poll the alliance color given by the FMS */
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
@@ -74,7 +90,7 @@ class RobotLoop : TimedRobot() {
     routineChooser.updateOptions(positionChooser.selected)
 
     /** Every time auto starts, we update the chosen auto command */
-    val cmd = routineChooser.selected.createCommand()
+    val cmd = routineChooser.selected.createCommand(robot)
     this.autoCommand = cmd
     CommandScheduler.getInstance().schedule(this.autoCommand)
   }
@@ -82,6 +98,9 @@ class RobotLoop : TimedRobot() {
   override fun autonomousPeriodic() {}
 
   override fun teleopInit() {
+    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 3.65
+    VisionConstants.MAX_DISTANCE_MULTI_TAG = 4.25
+
     robot.arm.controller.reset()
     if (autoCommand != null) {
       CommandScheduler.getInstance().cancel(autoCommand)

@@ -1,4 +1,4 @@
-package frc.team449.robot2023.commands
+package frc.team449.robot2023.commands.arm
 
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.CommandBase
@@ -20,15 +20,21 @@ class ArmSweep(
 
   override fun initialize() {
     startState = arm.desiredState.copy()
-    sweepBeta = if (startState.beta.degrees < 0.0) Rotation2d.fromDegrees(-abs(sweepBeta.degrees))
-    else Rotation2d.fromDegrees(abs(sweepBeta.degrees))
+    sweepBeta = if (startState.beta.degrees < 0.0) {
+      Rotation2d.fromDegrees(-abs(sweepBeta.degrees))
+    } else {
+      Rotation2d.fromDegrees(abs(sweepBeta.degrees))
+    }
   }
+
   override fun execute() {
-    arm.state = ArmState(
-      startState.theta,
-      startState.beta + sweepBeta * input(),
-      startState.thetaVel,
-      startState.betaVel
+    arm.moveToState(
+      ArmState(
+        startState.theta,
+        startState.beta + sweepBeta * input(),
+        startState.thetaVel,
+        startState.betaVel
+      )
     )
   }
 

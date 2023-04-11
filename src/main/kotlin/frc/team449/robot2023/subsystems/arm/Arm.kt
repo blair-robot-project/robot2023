@@ -3,15 +3,10 @@ package frc.team449.robot2023.subsystems.arm
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.robot2023.constants.subsystem.ArmConstants
-import frc.team449.robot2023.subsystems.arm.control.ArmEncoder
-import frc.team449.robot2023.subsystems.arm.control.ArmKinematics
-import frc.team449.robot2023.subsystems.arm.control.ArmPDController
-import frc.team449.robot2023.subsystems.arm.control.ArmState
-import frc.team449.robot2023.subsystems.arm.control.ArmTrajectory
-import frc.team449.robot2023.subsystems.arm.control.CartesianArmState
-import frc.team449.robot2023.subsystems.arm.control.TwoJointArmFeedForward
+import frc.team449.robot2023.subsystems.arm.control.*
 import frc.team449.system.encoder.QuadEncoder
 import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
@@ -32,20 +27,14 @@ import kotlin.math.sqrt
 open class Arm(
   val firstJoint: WrappedMotor,
   val secondJoint: WrappedMotor,
-  private val firstJointEncoder: QuadEncoder,
-  private val secondJointEncoder: QuadEncoder,
+  val firstJointEncoder: QuadEncoder,
+  val secondJointEncoder: QuadEncoder,
   private val feedForward: TwoJointArmFeedForward,
   @field:Log val controller: ArmPDController,
   firstToSecondJoint: Double,
-  secondJointToEndEffector: Double,
-  private val numSamples: Int = 150
+  secondJointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
 
-  /** PWM signal measurement samples */
-  private var firstJointSamples = mutableListOf<Double>()
-  private var secondJointSamples = mutableListOf<Double>()
-  @Log
-  private var calibrated = false
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
     firstToSecondJoint,
@@ -67,23 +56,13 @@ open class Arm(
    * the current state of the arm in [ArmState]
    */
   @get:Log.ToString
-  open var state: ArmState
+  open val state: ArmState
     get() = ArmState(
       Rotation2d(MathUtil.inputModulus(firstJointEncoder.position, -PI, PI)),
       Rotation2d(MathUtil.inputModulus(secondJointEncoder.position, -PI, PI)),
       firstJointEncoder.velocity,
       secondJointEncoder.velocity
     )
-    set(state) {
-//    cap q2 between its hard limits
-      state.beta = Rotation2d.fromDegrees(
-        clamp(state.beta.degrees, -156.8, 151.15)
-      )
-      // continue if state is same as last desired state
-      if (state == desiredState) return
-      controller.reset()
-      desiredState = state
-    }
 
   /**
    * The current state of the arm in [CartesianArmState]
@@ -91,6 +70,36 @@ open class Arm(
   @get:Log.ToString
   val coordinate: CartesianArmState
     get() = kinematics.toCartesian(state)
+
+  fun setArmDesiredState(desiredState: ArmState) {
+    val desState = ArmState(
+      desiredState.theta,
+      Rotation2d.fromDegrees(
+        clamp(desiredState.beta.degrees, -156.8, 151.15)
+      ),
+      desiredState.thetaVel,
+      desiredState.betaVel
+    )
+//     continue if state is same as last desired state
+    if (desState == this.desiredState) {
+      return
+    }
+    controller.reset()
+    this.desiredState = desState
+  }
+
+  fun moveToState(newState: ArmState) {
+    setArmDesiredState(newState)
+    holdArm()
+  }
+
+  fun holdArm() {
+    val ff = feedForward.calculate(state.matrix, false)
+    val pid = controller.calculate(state.matrix, desiredState.matrix)
+    val u = ff + pid
+    firstJoint.setVoltage(u[0, 0])
+    secondJoint.setVoltage(u[1, 0])
+  }
 
   /**
    * Mitigate any speed on the joints
@@ -100,38 +109,7 @@ open class Arm(
     desiredState.betaVel = 0.0
   }
 
-  /**
-   * **!!! THE ARM BETTER BE STATIONARY WHEN DOING THIS !!!**
-   * Quadrature is better at measuring position but cannot measure absolute
-   * Read some PWM signals and take the high pulse readings to apply initial measurement for quadrature
-   */
-  fun resetQuadrature() {
-    firstJointSamples.removeAll { true }
-    secondJointSamples.removeAll { true }
-    calibrated = false
-  }
   override fun periodic() {
-    if (firstJointSamples.size < numSamples) {
-      firstJointSamples.add(firstJoint.position)
-      secondJointSamples.add(secondJoint.position)
-      return
-    }
-    if (firstJointSamples.size == numSamples && !calibrated) {
-      // update encoder reading of quad
-      firstJointSamples.sort()
-      secondJointSamples.sort()
-      val firstJointPos = firstJointSamples[(firstJointSamples.size * .9).toInt()]
-      val secondJointPos = secondJointSamples[(secondJointSamples.size * .9).toInt()]
-      firstJointEncoder.resetPosition(firstJointPos)
-      secondJointEncoder.resetPosition(secondJointPos)
-      calibrated = true
-      println("***** Finished Calibrating Quadrature reading *****")
-    }
-    val ff = feedForward.calculate(desiredState.matrix, false)
-    val pid = controller.calculate(state.matrix, desiredState.matrix)
-    val u = ff + pid
-    firstJoint.setVoltage(u[0, 0])
-    secondJoint.setVoltage(u[1, 0])
     visual.setState(state, desiredState)
   }
 
@@ -158,24 +136,35 @@ open class Arm(
       (coordinate1.x - coordinate2.x).pow(2.0) + (coordinate1.z - coordinate2.z).pow(2.0)
     )
   }
+
   fun chooseTraj(endpoint: ArmState): ArmTrajectory? {
     val startPoint = getClosestState(this.desiredState)
     if (endpoint == startPoint) {
-      this.desiredState = endpoint
+      this.desiredState = endpoint.copy()
       return null
     }
+    if (startPoint == ArmConstants.CONE && endpoint == ArmConstants.CUBE) return ArmPaths.coneCube
+    if (startPoint == ArmConstants.CUBE && endpoint == ArmConstants.CONE) return ArmPaths.cubeCone
+    if (startPoint == ArmConstants.HIGH && endpoint == ArmConstants.MID) return ArmPaths.highMid
+    if (startPoint == ArmConstants.MID && endpoint == ArmConstants.HIGH) return ArmPaths.midHigh
+
     return if (startPoint == ArmConstants.STOW) {
       when (endpoint) {
         ArmConstants.SINGLE ->
           ArmPaths.stowSingle
+
         ArmConstants.DOUBLE ->
           ArmPaths.stowDouble
+
         ArmConstants.CONE ->
           ArmPaths.stowCone
+
         ArmConstants.CUBE ->
           ArmPaths.stowCube
+
         ArmConstants.MID ->
           ArmPaths.stowMid
+
         else ->
           ArmPaths.stowHigh
       }
@@ -183,14 +172,19 @@ open class Arm(
       when (startPoint) {
         ArmConstants.SINGLE ->
           ArmPaths.singleStow
+
         ArmConstants.DOUBLE ->
           ArmPaths.doubleStow
+
         ArmConstants.CONE ->
           ArmPaths.coneStow
+
         ArmConstants.CUBE ->
           ArmPaths.cubeStow
+
         ArmConstants.MID ->
           ArmPaths.midStow
+
         else ->
           ArmPaths.highStow
       }
@@ -229,7 +223,7 @@ open class Arm(
 
       val firstJointEncoder = QuadEncoder(
         "First joint quad",
-        ArmConstants.FIRSTJ_QUAD_ENCODER,
+        ArmConstants.FIRST_JOINT_QUAD_ENCODER,
         1024,
         2 * PI,
         1.0
@@ -237,7 +231,7 @@ open class Arm(
 
       val secondJointEncoder = QuadEncoder(
         "Second joint quad",
-        ArmConstants.SECONDJ_QUAD_ENCODER,
+        ArmConstants.SECOND_JOINT_QUAD_ENCODER,
         1024,
         2 * PI,
         1.0
@@ -262,5 +256,10 @@ open class Arm(
         ArmConstants.LENGTH_2
       )
     }
+  }
+
+  override fun initSendable(builder: SendableBuilder) {
+    builder.addDoubleProperty("First Joint Degrees", { Rotation2d.fromRadians(firstJointEncoder.position).degrees }, null)
+    builder.addDoubleProperty("Second Joint Degrees", { Rotation2d.fromRadians(secondJointEncoder.position).degrees }, null)
   }
 }
