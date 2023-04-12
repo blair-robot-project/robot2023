@@ -32,7 +32,7 @@ object ArmConstants {
 
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(32.0)
-  val LENGTH_2 = Units.inchesToMeters(34.0)
+  val LENGTH_2 = Units.inchesToMeters(36.0)
 
   // Mass of segments
   const val MASS_1 = 6.944561
@@ -105,5 +105,10 @@ object ArmConstants {
     Rotation2d.fromDegrees(0.00)
   )
 
-  val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH)
+  val BACK = ArmState(
+    Rotation2d.fromDegrees(20.00),
+    Rotation2d.fromDegrees(140.00)
+  )
+
+  val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH, BACK)
 }

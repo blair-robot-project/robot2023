@@ -35,6 +35,9 @@ open class Arm(
   secondJointToEndEffector: Double
 ) : Loggable, SubsystemBase() {
 
+  /** which position the stow is in. true means backstow. default false. */
+  var backStow = false
+
   /** visual of the arm as a Mechanism2d object */
   val visual = ArmVisual(
     firstToSecondJoint,
@@ -147,48 +150,67 @@ open class Arm(
     if (startPoint == ArmConstants.CUBE && endpoint == ArmConstants.CONE) return ArmPaths.cubeCone
     if (startPoint == ArmConstants.HIGH && endpoint == ArmConstants.MID) return ArmPaths.highMid
     if (startPoint == ArmConstants.MID && endpoint == ArmConstants.HIGH) return ArmPaths.midHigh
+    if (startPoint == ArmConstants.STOW && endpoint == ArmConstants.BACK) backStow = true
+    if (startPoint == ArmConstants.BACK && endpoint == ArmConstants.STOW) backStow = false
 
-    return if (startPoint == ArmConstants.STOW) {
-      when (endpoint) {
-        ArmConstants.SINGLE ->
-          ArmPaths.stowSingle
-
-        ArmConstants.DOUBLE ->
-          ArmPaths.stowDouble
-
-        ArmConstants.CONE ->
-          ArmPaths.stowCone
-
-        ArmConstants.CUBE ->
-          ArmPaths.stowCube
-
-        ArmConstants.MID ->
-          ArmPaths.stowMid
-
-        else ->
-          ArmPaths.stowHigh
+    return if (backStow) {
+      if (startPoint == ArmConstants.BACK) {
+        when (endpoint) {
+          ArmConstants.SINGLE ->
+            ArmPaths.backSingle
+          ArmConstants.DOUBLE ->
+            ArmPaths.backDouble
+          ArmConstants.STOW ->
+            ArmPaths.backStow
+          ArmConstants.MID ->
+            ArmPaths.backMid
+          else ->
+            ArmPaths.backHigh
+        }
+      } else {
+        when (startPoint) {
+          ArmConstants.SINGLE ->
+            ArmPaths.singleBack
+          ArmConstants.DOUBLE ->
+            ArmPaths.doubleBack
+          ArmConstants.STOW -> // should theoretically never happen, but here just in case
+            ArmPaths.stowBack
+          ArmConstants.MID ->
+            ArmPaths.midBack
+          else ->
+            ArmPaths.highBack
+        }
       }
     } else {
-      when (startPoint) {
-        ArmConstants.SINGLE ->
-          ArmPaths.singleStow
-
-        ArmConstants.DOUBLE ->
-          ArmPaths.doubleStow
-
-        ArmConstants.CONE ->
-          ArmPaths.coneStow
-
-        ArmConstants.CUBE ->
-          ArmPaths.cubeStow
-
-        ArmConstants.MID ->
-          ArmPaths.midStow
-
-        else ->
-          ArmPaths.highStow
+      if (startPoint == ArmConstants.STOW) {
+        when (endpoint) {
+          ArmConstants.SINGLE ->
+            ArmPaths.stowSingle
+          ArmConstants.DOUBLE ->
+            ArmPaths.stowDouble
+          ArmConstants.BACK ->
+            ArmPaths.stowBack
+          ArmConstants.MID ->
+            ArmPaths.stowMid
+          else ->
+            ArmPaths.stowHigh
+        }
+      } else {
+        when (startPoint) {
+          ArmConstants.SINGLE ->
+            ArmPaths.singleStow
+          ArmConstants.DOUBLE ->
+            ArmPaths.doubleStow
+          ArmConstants.BACK -> // again, should theoretically never happen, but here just in case
+            ArmPaths.backStow
+          ArmConstants.MID ->
+            ArmPaths.midStow
+          else ->
+            ArmPaths.highStow
+        }
       }
     }
+
   }
 
   companion object {
