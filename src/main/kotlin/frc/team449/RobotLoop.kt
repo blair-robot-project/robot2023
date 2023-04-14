@@ -77,14 +77,14 @@ class RobotLoop : TimedRobot() {
   override fun robotPeriodic() {
     CommandScheduler.getInstance().run()
 
-//    Logger.updateEntries()
+    Logger.updateEntries()
 
     robot.field.robotPose = robot.drive.pose
   }
 
   override fun autonomousInit() {
-    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 2.35
-    VisionConstants.MAX_DISTANCE_MULTI_TAG = 3.65
+    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 1.75
+    VisionConstants.MAX_DISTANCE_MULTI_TAG = 3.25
 
     robot.arm.controller.reset()
 
@@ -103,7 +103,7 @@ class RobotLoop : TimedRobot() {
   override fun autonomousPeriodic() {}
 
   override fun teleopInit() {
-    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 3.65
+    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 3.25
     VisionConstants.MAX_DISTANCE_MULTI_TAG = 4.25
 
     robot.arm.controller.reset()

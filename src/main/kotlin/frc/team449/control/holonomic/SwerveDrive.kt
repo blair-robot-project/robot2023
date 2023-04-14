@@ -120,6 +120,7 @@ open class SwerveDrive(
     for (module in modules)
       module.update()
 
+    // TODO: Test enabling vision
 //    if (cameras.isNotEmpty()) localize()
 
     this.poseEstimator.update(
