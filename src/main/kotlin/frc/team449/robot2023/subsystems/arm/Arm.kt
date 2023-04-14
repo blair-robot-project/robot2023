@@ -140,6 +140,13 @@ open class Arm(
     )
   }
 
+  fun setFrontStow() {
+    backStow = false
+  }
+  fun setBackStow() {
+    backStow = true
+  }
+
   fun chooseTraj(endpoint: ArmState): ArmTrajectory? {
     val startPoint = getClosestState(this.desiredState)
     if (endpoint == startPoint) {
@@ -150,8 +157,6 @@ open class Arm(
     if (startPoint == ArmConstants.CUBE && endpoint == ArmConstants.CONE) return ArmPaths.cubeCone
     if (startPoint == ArmConstants.HIGH && endpoint == ArmConstants.MID) return ArmPaths.highMid
     if (startPoint == ArmConstants.MID && endpoint == ArmConstants.HIGH) return ArmPaths.midHigh
-    if (startPoint == ArmConstants.STOW && endpoint == ArmConstants.BACK) backStow = true
-    if (startPoint == ArmConstants.BACK && endpoint == ArmConstants.STOW) backStow = false
 
     return if (backStow) {
       if (startPoint == ArmConstants.BACK) {
@@ -210,7 +215,6 @@ open class Arm(
         }
       }
     }
-
   }
 
   companion object {

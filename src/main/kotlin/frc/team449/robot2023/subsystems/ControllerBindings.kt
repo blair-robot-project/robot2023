@@ -116,7 +116,19 @@ class ControllerBindings(
     )
 
     JoystickButton(mechanismController, XboxController.Button.kStart.value).onTrue(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }.withInterruptBehavior(kCancelIncoming)
+      ArmFollower(robot.arm) {
+        robot.arm.chooseTraj(ArmConstants.STOW)
+      }.withInterruptBehavior(kCancelIncoming).andThen(
+        InstantCommand(robot.arm::setBackStow)
+      )
+    )
+
+    JoystickButton(mechanismController, XboxController.Button.kBack.value).onTrue(
+      ArmFollower(robot.arm) {
+        robot.arm.chooseTraj(ArmConstants.BACK)
+      }.withInterruptBehavior(kCancelIncoming).andThen(
+        InstantCommand(robot.arm::setFrontStow)
+      )
     )
 
 //    JoystickButton(mechanismController, XboxController.Button.kA.value).onTrue(
@@ -162,7 +174,8 @@ class ControllerBindings(
         .andThen(InstantCommand(robot.endEffector::intake))
         .andThen(InstantCommand(robot.endEffector::pistonOn))
     ).onFalse(
-      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.STOW) }
+      ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.BACK) }
+        .andThen(InstantCommand(robot.arm::setBackStow))
     )
 
 //    JoystickButton(driveController, XboxController.Button.kA.value).onTrue(
