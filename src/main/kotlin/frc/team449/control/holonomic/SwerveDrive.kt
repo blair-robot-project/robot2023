@@ -1,8 +1,6 @@
 package frc.team449.control.holonomic
 
-import edu.wpi.first.math.MatBuilder
 import edu.wpi.first.math.MathUtil
-import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
@@ -58,8 +56,8 @@ open class SwerveDrive(
     ahrs.heading,
     getPositions(),
     RobotConstants.INITIAL_POSE,
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .025), // dead reckoning
-    MatBuilder(Nat.N3(), Nat.N1()).fill(.035, .035, .75) // vision
+    VisionConstants.ENCODER_TRUST,
+    VisionConstants.VISION_TRUST
   )
 
   private var lastTime = Timer.getFPGATimestamp()
@@ -122,7 +120,7 @@ open class SwerveDrive(
     for (module in modules)
       module.update()
 
-    if (cameras.isNotEmpty()) localize()
+//    if (cameras.isNotEmpty()) localize()
 
     this.poseEstimator.update(
       ahrs.heading,
@@ -169,10 +167,10 @@ open class SwerveDrive(
           numTargets < 2 && tagDistance <= VisionConstants.MAX_DISTANCE_SINGLE_TAG ||
           numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_MULTI_TAG
         ) {
-//          poseEstimator.addVisionMeasurement(
-//            presentResult.estimatedPose.toPose2d(),
-//            presentResult.timestampSeconds
-//          )
+          poseEstimator.addVisionMeasurement(
+            presentResult.estimatedPose.toPose2d(),
+            presentResult.timestampSeconds
+          )
         }
       }
     }

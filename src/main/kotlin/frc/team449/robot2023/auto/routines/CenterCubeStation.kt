@@ -12,7 +12,10 @@ import frc.team449.robot2023.constants.vision.VisionConstants
 import frc.team449.robot2023.subsystems.arm.ArmPaths
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
 
-class CenterCubeStation(robot: Robot) : RoutineStructure {
+class CenterCubeStation(
+  robot: Robot,
+  isRed: Boolean
+) : RoutineStructure {
 
   override val routine =
     HolonomicRoutine(
@@ -28,5 +31,6 @@ class CenterCubeStation(robot: Robot) : RoutineStructure {
       timeout = 0.0
     )
 
-  override val trajectory: MutableList<PathPlannerTrajectory> = Paths.CENTER.CUBEBALANCE
+  override val trajectory: MutableList<PathPlannerTrajectory> =
+    if (isRed) AutoUtil.transformForAlliance(Paths.CENTER.CUBEBALANCE) { true } else Paths.CENTER.CUBEBALANCE
 }

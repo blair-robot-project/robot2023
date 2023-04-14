@@ -48,7 +48,7 @@ def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 dependencies {
   testImplementation 'junit:junit:4.13.2'
 
-  compileOnly 'org.jetbrains:annotations:23.1.0'
+  compileOnly 'org.jetbrains:annotations:24.0.1'
 
   implementation 'com.github.Oblarg:Oblog:5.1.0'
 

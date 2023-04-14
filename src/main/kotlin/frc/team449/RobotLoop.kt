@@ -27,8 +27,9 @@ class RobotLoop : TimedRobot() {
 
   private val robot = Robot()
   private val positionChooser: PositionChooser = PositionChooser()
-  private val routineChooser: RoutineChooser = RoutineChooser(robot, positionChooser)
+  private val routineChooser: RoutineChooser = RoutineChooser(robot)
   private var autoCommand: Command? = null
+  private var routineMap = hashMapOf<String, Command>()
 
   override fun robotInit() {
     // Yes this should be a print statement, it's useful to know that robotInit started.
@@ -45,6 +46,11 @@ class RobotLoop : TimedRobot() {
     println("Parsing Trajectories : ${Timer.getFPGATimestamp()}")
     ArmPaths.parseTrajectories()
     println("DONE Parsing Trajectories : ${Timer.getFPGATimestamp()}")
+
+    println("Generating Auto Routines : ${Timer.getFPGATimestamp()}")
+    routineMap = routineChooser.routineMap()
+    println("DONE Generating Auto Routines : ${Timer.getFPGATimestamp()}")
+
     PathPlannerServer.startServer(5811)
 
     ArmCalibration(robot.arm).ignoringDisable(true).schedule()
@@ -71,7 +77,7 @@ class RobotLoop : TimedRobot() {
   override fun robotPeriodic() {
     CommandScheduler.getInstance().run()
 
-    Logger.updateEntries()
+//    Logger.updateEntries()
 
     robot.field.robotPose = robot.drive.pose
   }
@@ -87,11 +93,10 @@ class RobotLoop : TimedRobot() {
     /** At the start of auto we poll the alliance color given by the FMS */
     RobotConstants.ALLIANCE_COLOR = DriverStation.getAlliance()
 
-    routineChooser.updateOptions(positionChooser.selected)
+    routineChooser.updateOptions(positionChooser.selected, RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red)
 
     /** Every time auto starts, we update the chosen auto command */
-    val cmd = routineChooser.selected.createCommand(robot)
-    this.autoCommand = cmd
+    this.autoCommand = routineMap[routineChooser.selected]
     CommandScheduler.getInstance().schedule(this.autoCommand)
   }
 
