@@ -5,11 +5,9 @@ import com.pathplanner.lib.auto.BaseAutoBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.*
 import frc.team449.control.holonomic.HolonomicDrive
 import frc.team449.robot2023.auto.AutoConstants
-import frc.team449.robot2023.auto.AutoUtil
 import io.github.oblarg.oblog.annotations.Config
 import kotlin.math.abs
 
@@ -85,11 +83,9 @@ class HolonomicRoutine(
   fun createRoutine(pathGroup: MutableList<PathPlannerTrajectory>): Command {
     val commands = SequentialCommandGroup()
 
-    val correctedTrajGroup = AutoUtil.transformForAlliance(pathGroup) { DriverStation.getAlliance() == DriverStation.Alliance.Red }
+    commands.addCommands(resetPose(pathGroup[0]))
 
-    commands.addCommands(resetPose(correctedTrajGroup[0]))
-
-    for (traj in correctedTrajGroup) {
+    for (traj in pathGroup) {
       commands.addCommands(
         SequentialCommandGroup(
           stopEventGroup(traj.startStopEvent),
@@ -101,7 +97,7 @@ class HolonomicRoutine(
       )
     }
 
-    commands.addCommands(stopEventGroup(correctedTrajGroup[correctedTrajGroup.size - 1].endStopEvent))
+    commands.addCommands(stopEventGroup(pathGroup[pathGroup.size - 1].endStopEvent))
 
     return commands
   }

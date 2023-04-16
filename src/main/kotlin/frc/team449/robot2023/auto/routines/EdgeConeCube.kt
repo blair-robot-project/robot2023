@@ -16,7 +16,8 @@ import frc.team449.robot2023.subsystems.arm.control.ArmState
 
 class EdgeConeCube(
   robot: Robot,
-  position: PositionChooser.Positions
+  position: PositionChooser.Positions,
+  isRed: Boolean
 ) : RoutineStructure {
 
   override val routine =
@@ -49,8 +50,8 @@ class EdgeConeCube(
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
     if (position == PositionChooser.Positions.FARCONE) {
-      Paths.FAR.CONECUBE
+      if (isRed) AutoUtil.transformForAlliance(Paths.FAR.CONECUBE) { true } else Paths.FAR.CONECUBE
     } else {
-      Paths.WALL.CONECUBE
+      if (isRed) AutoUtil.transformForAlliance(Paths.WALL.CONECUBE) { true } else Paths.WALL.CONECUBE
     }
 }

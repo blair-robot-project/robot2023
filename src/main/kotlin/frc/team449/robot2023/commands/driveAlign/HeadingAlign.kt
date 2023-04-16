@@ -1,10 +1,14 @@
 package frc.team449.robot2023.commands.driveAlign
 
-import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.DriveSubsystem
+import frc.team449.control.OI
+import frc.team449.robot2023.auto.AutoConstants
+import frc.team449.robot2023.constants.RobotConstants
 
 /**
  * @param drive The holonomic drive you want to align with
@@ -13,8 +17,14 @@ import frc.team449.control.DriveSubsystem
  */
 class HeadingAlign(
   private val drive: DriveSubsystem,
+  private val oi: OI,
   private val point: Translation2d,
-  private val headingPID: PIDController = PIDController(1.5, 0.0, 0.0)
+  private val headingPID: ProfiledPIDController = ProfiledPIDController(
+    AutoConstants.DEFAULT_ROTATION_KP,
+    0.0,
+    0.0,
+    TrapezoidProfile.Constraints(RobotConstants.MAX_ROT_SPEED, RobotConstants.RATE_LIMIT)
+  )
 ) : CommandBase() {
 
   init {
@@ -29,19 +39,19 @@ class HeadingAlign(
   override fun execute() {
     fieldToRobot = drive.pose.translation
     robotToPoint = point - fieldToRobot
-    headingPID.setpoint = robotToPoint.angle.radians
+    headingPID.goal = TrapezoidProfile.State(robotToPoint.angle.radians, 0.0)
 
     drive.set(
       ChassisSpeeds(
-        0.0,
-        0.0,
+        oi.get().vxMetersPerSecond,
+        oi.get().vyMetersPerSecond,
         headingPID.calculate(drive.heading.radians)
       )
     )
   }
 
   override fun isFinished(): Boolean {
-    return headingPID.atSetpoint()
+    return false
   }
 
   override fun end(interrupted: Boolean) {

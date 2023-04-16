@@ -3,6 +3,8 @@ package frc.team449.robot2023.constants.vision
 import edu.wpi.first.apriltag.AprilTag
 import edu.wpi.first.apriltag.AprilTagFieldLayout
 import edu.wpi.first.apriltag.AprilTagFields
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Nat
 import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
@@ -33,8 +35,8 @@ VisionConstants {
     Rotation3d(0.0, Units.degreesToRadians(12.0), Units.degreesToRadians(180.0))
   )
 
-  var MAX_DISTANCE_SINGLE_TAG = 2.15
-  var MAX_DISTANCE_MULTI_TAG = 3.65
+  var MAX_DISTANCE_SINGLE_TAG = 1.65
+  var MAX_DISTANCE_MULTI_TAG = 3.5
 
   /** List of cameras that we want to use */
   val ESTIMATORS: List<VisionEstimator> = listOf(
@@ -44,4 +46,7 @@ VisionConstants {
       robotToCamera
     )
   )
+
+  val ENCODER_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .025)
+  val VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.035, .035, .75)
 }

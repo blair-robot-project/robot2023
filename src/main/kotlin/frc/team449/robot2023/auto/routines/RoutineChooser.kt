@@ -1,115 +1,144 @@
 package frc.team449.robot2023.auto.routines
 
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
-import frc.team449.control.auto.RoutineStructure
+import edu.wpi.first.wpilibj2.command.Command
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.auto.PositionChooser
 
-class RoutineChooser(private val robot: Robot, position: PositionChooser) : SendableChooser<RoutineStructure>() {
+class RoutineChooser(private val robot: Robot) : SendableChooser<String>() {
 
-  init {
-    updateOptions(position.selected)
+  fun routineMap(): HashMap<String, Command> {
+    return hashMapOf(
+      "RedFarConeCube" to EdgeConeCube(robot, PositionChooser.Positions.FARCONE, true).createCommand(robot),
+      "RedWallConeCube" to EdgeConeCube(robot, PositionChooser.Positions.WALLCONE, true).createCommand(robot),
+      "RedFarCubeCone" to EdgeCubeCone(robot, PositionChooser.Positions.FARCUBE, true).createCommand(robot),
+      "RedWallCubeCone" to EdgeCubeCone(robot, PositionChooser.Positions.WALLCUBE, true).createCommand(robot),
+      "RedCenterCubeBalance" to CenterCubeStation(robot, true).createCommand(robot),
+      "RedFarConeCubeCube" to EdgeConeCubeCube(robot, PositionChooser.Positions.FARCONE, true).createCommand(robot),
+      "RedWallConeCubeCube" to EdgeConeCubeCube(robot, PositionChooser.Positions.WALLCONE, true).createCommand(robot),
+      "BlueFarConeCube" to EdgeConeCube(robot, PositionChooser.Positions.FARCONE, false).createCommand(robot),
+      "BlueWallConeCube" to EdgeConeCube(robot, PositionChooser.Positions.WALLCONE, false).createCommand(robot),
+      "BlueFarCubeCone" to EdgeCubeCone(robot, PositionChooser.Positions.FARCUBE, false).createCommand(robot),
+      "BlueWallCubeCone" to EdgeCubeCone(robot, PositionChooser.Positions.WALLCUBE, false).createCommand(robot),
+      "BlueCenterCubeBalance" to CenterCubeStation(robot, false).createCommand(robot),
+      "BlueFarConeCubeCube" to EdgeConeCubeCube(robot, PositionChooser.Positions.FARCONE, false).createCommand(robot),
+      "BlueWallConeCubeCube" to EdgeConeCubeCube(robot, PositionChooser.Positions.WALLCONE, false).createCommand(robot),
+      "DropCone" to DropCone(robot).createCommand(robot)
+    )
   }
 
-  // TODO: Update all routines to make use of on the move event following :D
-  fun updateOptions(position: PositionChooser.Positions) {
+  init {
+    updateOptions(PositionChooser.Positions.CENTER, DriverStation.getAlliance() == DriverStation.Alliance.Red)
+  }
+
+  fun updateOptions(position: PositionChooser.Positions, isRed: Boolean) {
     /** Add auto options here */
-    this.setDefaultOption("Drop Piece", DropCone(robot))
+    this.setDefaultOption("Drop Piece", "DropCone")
 
     this.addOption(
-      "1.5 Piece (Edges only)",
-      when (position) {
-        PositionChooser.Positions.FARCONE, PositionChooser.Positions.WALLCONE -> {
-          EdgeCone(robot, position)
-        }
+      "2 Piece (Edges only)",
+      if (isRed) {
+        when (position) {
+          PositionChooser.Positions.FARCONE -> {
+            "RedFarConeCube"
+          }
 
-        PositionChooser.Positions.FARCUBE, PositionChooser.Positions.WALLCUBE -> {
-          EdgeCube(robot, position)
-        }
+          PositionChooser.Positions.WALLCONE -> {
+            "RedWallConeCube"
+          }
 
-        else -> {
-          DropCone(robot)
-        }
-      }
-    )
+          PositionChooser.Positions.FARCUBE -> {
+            "RedFarCubeCone"
+          }
 
-    this.addOption(
-      "2.5 Piece (Edges only)",
-      when (position) {
-        PositionChooser.Positions.FARCONE, PositionChooser.Positions.WALLCONE -> {
-          EdgeConeCube(robot, position)
-        }
+          PositionChooser.Positions.WALLCUBE -> {
+            "RedWallCubeCone"
+          }
 
-        PositionChooser.Positions.FARCUBE, PositionChooser.Positions.WALLCUBE -> {
-          EdgeCubeCone(robot, position)
+          else -> {
+            "DropCone"
+          }
         }
+      } else {
+        when (position) {
+          PositionChooser.Positions.FARCONE -> {
+            "BlueFarConeCube"
+          }
 
-        else -> {
-          DropCone(robot)
+          PositionChooser.Positions.WALLCONE -> {
+            "BlueWallConeCube"
+          }
+
+          PositionChooser.Positions.FARCUBE -> {
+            "BlueFarCubeCone"
+          }
+
+          PositionChooser.Positions.WALLCUBE -> {
+            "BlueWallCubeCone"
+          }
+
+          else -> {
+            "DropCone"
+          }
         }
       }
     )
 
     this.addOption(
       "1 Piece and Balance",
-      when (position) {
-        PositionChooser.Positions.FARCONE, PositionChooser.Positions.WALLCONE -> {
-          EdgeConeStation(robot, position)
-        }
+      if (isRed) {
+        when (position) {
+          PositionChooser.Positions.CENTER -> {
+            "RedCenterCubeBalance"
+          }
 
-        PositionChooser.Positions.FARCUBE, PositionChooser.Positions.WALLCUBE -> {
-          EdgeCubeStation(robot, position)
+          else -> {
+            "DropCone"
+          }
         }
+      } else {
+        when (position) {
+          PositionChooser.Positions.CENTER -> {
+            "BlueCenterCubeBalance"
+          }
 
-        else -> {
-          CenterCubeStation(robot)
-        }
-      }
-    )
-
-    this.addOption(
-      "2.5 Piece and Balance (Edges only)",
-      when (position) {
-        PositionChooser.Positions.FARCONE, PositionChooser.Positions.WALLCONE -> {
-          EdgeConeCubeStation(robot, position)
-        }
-
-        PositionChooser.Positions.FARCUBE, PositionChooser.Positions.WALLCUBE -> {
-          EdgeCubeConeStation(robot, position)
-        }
-
-        else -> {
-          DropCone(robot)
-        }
-      }
-    )
-
-    this.addOption(
-      "High Link (Edges only)",
-      when (position) {
-        PositionChooser.Positions.FARCONE, PositionChooser.Positions.WALLCONE -> {
-          EdgeConeCubeCone(robot, position)
-        }
-
-        PositionChooser.Positions.FARCUBE, PositionChooser.Positions.WALLCUBE -> {
-          EdgeCubeConeCone(robot, position)
-        }
-
-        else -> {
-          DropCone(robot)
+          else -> {
+            "DropCone"
+          }
         }
       }
     )
 
     this.addOption(
       "3 Piece (Starting Edge Cone Only)",
-      when (position) {
-        PositionChooser.Positions.FARCONE, PositionChooser.Positions.WALLCONE -> {
-          EdgeConeCubeCube(robot, position)
-        }
+      if (isRed) {
+        when (position) {
+          PositionChooser.Positions.FARCONE -> {
+            "RedFarConeCubeCube"
+          }
 
-        else -> {
-          DropCone(robot)
+          PositionChooser.Positions.WALLCONE -> {
+            "RedWallConeCubeCube"
+          }
+
+          else -> {
+            "DropCone"
+          }
+        }
+      } else {
+        when (position) {
+          PositionChooser.Positions.FARCONE -> {
+            "BlueFarConeCubeCube"
+          }
+
+          PositionChooser.Positions.WALLCONE -> {
+            "BlueWallConeCubeCube"
+          }
+
+          else -> {
+            "DropCone"
+          }
         }
       }
     )
