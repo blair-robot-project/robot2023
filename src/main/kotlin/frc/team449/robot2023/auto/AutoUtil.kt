@@ -25,7 +25,7 @@ object AutoUtil {
     for ((index, _) in correctedTrajList.withIndex()) {
       for (s in correctedTrajList[index].states) {
         s as PathPlannerTrajectory.PathPlannerState
-        s.poseMeters = Pose2d(s.poseMeters.x, 5.47878 - s.poseMeters.y, -s.poseMeters.rotation)
+        s.poseMeters = Pose2d(s.poseMeters.x, AutoConstants.Y_DISTANCE_BARRIER - s.poseMeters.y, -s.poseMeters.rotation)
         s.holonomicAngularVelocityRadPerSec *= -1.0
         s.holonomicRotation *= -1.0
       }
@@ -50,7 +50,11 @@ object AutoUtil {
 
         for (s in correctedPathGroup[index].states) {
           s as PathPlannerTrajectory.PathPlannerState
-          s.poseMeters = Pose2d(16.4846 - s.poseMeters.x, 8.02 - s.poseMeters.y, (s.poseMeters.rotation.plus(Rotation2d(PI))))
+          s.poseMeters = Pose2d(
+            AutoConstants.FIELD_LENGTH - s.poseMeters.x,
+            AutoConstants.FIELD_WIDTH - s.poseMeters.y,
+            s.poseMeters.rotation.plus(Rotation2d(PI))
+          )
           s.holonomicRotation = s.holonomicRotation.plus(Rotation2d(PI))
         }
       }
@@ -68,23 +72,23 @@ object AutoUtil {
             robot.arm.moveToState(
               ArmState(
                 currState.theta,
-                currState.beta + Rotation2d.fromDegrees(0.3),
+                currState.beta + Rotation2d.fromDegrees(AutoConstants.CONE_DROP_SWEEP_SPEED),
                 currState.thetaVel,
                 currState.betaVel
               )
             )
           }
         )
-      ).withTimeout(0.825),
+      ).withTimeout(AutoConstants.CONE_DROP_SWEEP_TIME),
       InstantCommand(robot.endEffector::pistonRev)
     )
   }
 
   fun dropCube(robot: Robot): Command {
     return SequentialCommandGroup(
-      WaitCommand(0.075),
+      WaitCommand(AutoConstants.CUBE_DROP_WAIT_BEFORE),
       InstantCommand(robot.endEffector::autoReverse),
-      WaitCommand(0.275)
+      WaitCommand(AutoConstants.CUBE_DROP_WAIT_AFTER)
     )
   }
 

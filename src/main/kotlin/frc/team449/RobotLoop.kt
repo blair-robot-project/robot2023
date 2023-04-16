@@ -83,8 +83,8 @@ class RobotLoop : TimedRobot() {
   }
 
   override fun autonomousInit() {
-    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 1.75
-    VisionConstants.MAX_DISTANCE_MULTI_TAG = 3.25
+    VisionConstants.MAX_DISTANCE_SINGLE_TAG = VisionConstants.AUTO_MAX_DISTANCE_SINGLE_TAG
+    VisionConstants.MAX_DISTANCE_MULTI_TAG = VisionConstants.AUTO_MAX_DISTANCE_MULTI_TAG
 
     robot.arm.controller.reset()
 
@@ -103,8 +103,8 @@ class RobotLoop : TimedRobot() {
   override fun autonomousPeriodic() {}
 
   override fun teleopInit() {
-    VisionConstants.MAX_DISTANCE_SINGLE_TAG = 3.25
-    VisionConstants.MAX_DISTANCE_MULTI_TAG = 4.25
+    VisionConstants.MAX_DISTANCE_SINGLE_TAG = VisionConstants.TELEOP_MAX_DISTANCE_SINGLE_TAG
+    VisionConstants.MAX_DISTANCE_MULTI_TAG = VisionConstants.TELEOP_MAX_DISTANCE_MULTI_TAG
 
     robot.arm.controller.reset()
     if (autoCommand != null) {
