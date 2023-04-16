@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.RobotBase.isReal
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.team449.control.VisionEstimator
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.drives.SwerveConstants
 import frc.team449.robot2023.constants.vision.VisionConstants
@@ -24,7 +25,6 @@ import frc.team449.system.encoder.AbsoluteEncoder
 import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 import io.github.oblarg.oblog.annotations.Log
-import org.photonvision.PhotonPoseEstimator
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -39,17 +39,13 @@ open class SwerveDrive(
   private val ahrs: AHRS,
   override var maxLinearSpeed: Double,
   override var maxRotSpeed: Double,
-  private val cameras: List<PhotonPoseEstimator> = mutableListOf()
+  private val cameras: List<VisionEstimator> = mutableListOf()
 ) : SubsystemBase(), HolonomicDrive {
 
   private val kinematics = SwerveDriveKinematics(
     *this.modules
       .map { it.location }.toTypedArray()
   )
-
-  fun getModules(): List<SwerveModule> {
-    return modules
-  }
 
   private var currentSpeeds = ChassisSpeeds()
 
@@ -122,7 +118,7 @@ open class SwerveDrive(
     for (module in modules)
       module.update()
 
-    if (cameras.isNotEmpty()) localize()
+//    if (cameras.isNotEmpty()) localize()
 
     this.poseEstimator.update(
       ahrs.heading,
@@ -148,7 +144,7 @@ open class SwerveDrive(
 
   private fun localize() = try {
     for (camera in cameras) {
-      val result = camera.update()
+      val result = camera.estimatedPose(pose.rotation)
       if (result.isPresent) {
         val presentResult = result.get()
         val numTargets = presentResult.targetsUsed.size
@@ -169,10 +165,10 @@ open class SwerveDrive(
           numTargets < 2 && tagDistance <= VisionConstants.MAX_DISTANCE_SINGLE_TAG ||
           numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_MULTI_TAG
         ) {
-//          poseEstimator.addVisionMeasurement(
-//            presentResult.estimatedPose.toPose2d(),
-//            presentResult.timestampSeconds
-//          )
+          poseEstimator.addVisionMeasurement(
+            presentResult.estimatedPose.toPose2d(),
+            presentResult.timestampSeconds
+          )
         }
       }
     }

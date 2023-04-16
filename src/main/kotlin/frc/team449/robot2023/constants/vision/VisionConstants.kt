@@ -8,8 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.util.Units
-import org.photonvision.PhotonCamera
-import org.photonvision.PhotonPoseEstimator
+import frc.team449.control.VisionEstimator
 
 /** Constants that have anything to do with vision */
 object
@@ -38,11 +37,10 @@ VisionConstants {
   var MAX_DISTANCE_MULTI_TAG = 3.65
 
   /** List of cameras that we want to use */
-  val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
-    PhotonPoseEstimator(
+  val ESTIMATORS: List<VisionEstimator> = listOf(
+    VisionEstimator(
       TAG_LAYOUT,
-      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
-      PhotonCamera("Spinel"),
+      "Spinel",
       robotToCamera
     )
   )
