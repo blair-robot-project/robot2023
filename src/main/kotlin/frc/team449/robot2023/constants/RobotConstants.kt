@@ -13,7 +13,7 @@ object RobotConstants {
   const val PDH_CAN = 49
 
   /** Controller Configurations */
-  const val RATE_LIMIT = 2 * PI
+  const val RATE_LIMIT = 3.5 * PI
   const val TRANSLATION_DEADBAND = .125
   const val ROTATION_DEADBAND = .125
 
@@ -27,7 +27,7 @@ object RobotConstants {
 
   /** PID controller for Orthogonal turning */
   val ORTHOGONAL_CONTROLLER = ProfiledPIDController(
-    1.0,
+    2.25,
     0.0,
     0.0,
     TrapezoidProfile.Constraints(

@@ -1,9 +1,9 @@
 package frc.team449.robot2023.commands.driveAlign
 
-import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.DriveSubsystem
 import frc.team449.control.OI
@@ -19,18 +19,17 @@ class HeadingAlign(
   private val drive: DriveSubsystem,
   private val oi: OI,
   private val point: Translation2d,
-  private val headingPID: ProfiledPIDController = ProfiledPIDController(
-    AutoConstants.DEFAULT_ROTATION_KP,
+  private val headingPID: PIDController = PIDController(
+    AutoConstants.ORBIT_KP,
     0.0,
-    0.0,
-    TrapezoidProfile.Constraints(RobotConstants.MAX_ROT_SPEED, RobotConstants.RATE_LIMIT)
+    0.0
   )
 ) : CommandBase() {
 
   init {
     addRequirements(drive)
     headingPID.enableContinuousInput(-Math.PI, Math.PI)
-    headingPID.setTolerance(0.075)
+    headingPID.setTolerance(0.015)
   }
 
   private var fieldToRobot = Translation2d()
@@ -39,19 +38,15 @@ class HeadingAlign(
   override fun execute() {
     fieldToRobot = drive.pose.translation
     robotToPoint = point - fieldToRobot
-    headingPID.goal = TrapezoidProfile.State(robotToPoint.angle.radians, 0.0)
+    headingPID.setpoint = robotToPoint.angle.radians
 
     drive.set(
       ChassisSpeeds(
         oi.get().vxMetersPerSecond,
         oi.get().vyMetersPerSecond,
-        headingPID.calculate(drive.heading.radians)
+        MathUtil.clamp(headingPID.calculate(drive.heading.radians), -RobotConstants.MAX_ROT_SPEED, RobotConstants.MAX_ROT_SPEED)
       )
     )
-  }
-
-  override fun isFinished(): Boolean {
-    return false
   }
 
   override fun end(interrupted: Boolean) {
