@@ -15,7 +15,7 @@ import frc.team449.robot2023.constants.RobotConstants
  * @param point The point in 2d space you want the drivetrain to face towards
  * @param headingPID The non-Profiled PID controller you want to use for fixing rotational error
  */
-class HeadingAlign(
+class OrbitAlign(
   private val drive: DriveSubsystem,
   private val oi: OI,
   private val point: Translation2d,

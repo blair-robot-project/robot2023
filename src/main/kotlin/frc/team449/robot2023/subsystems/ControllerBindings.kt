@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.team449.robot2023.Robot
 import frc.team449.robot2023.commands.arm.ArmSweep
 import frc.team449.robot2023.commands.autoBalance.AutoBalance
+import frc.team449.robot2023.commands.driveAlign.DoubleAlign
 import frc.team449.robot2023.constants.RobotConstants
 import frc.team449.robot2023.constants.subsystem.ArmConstants
 import frc.team449.robot2023.subsystems.arm.control.ArmFollower
@@ -206,78 +207,12 @@ class ControllerBindings(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })
     )
 
-//    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
-//      ConditionalCommand(
-//        InstantCommand({
-//          val command = HolonomicFollower(
-//            robot.drive,
-//            PathPlanner.generatePath(
-//              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-//              PathPoint(robot.drive.pose.translation, Translation2d(0.75, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-//              PathPoint(Translation2d(0.75, 6.13), Rotation2d(PI), Rotation2d())
-//            )
-//          ).withInterruptBehavior(kCancelSelf).until {
-//            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
-//          }
-//
-//          command.schedule()
-//        }),
-//        InstantCommand({
-//          val command = HolonomicFollower(
-//            robot.drive,
-//            PathPlanner.generatePath(
-//              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-//              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.75, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-//              PathPoint(Translation2d(16.54 - 0.75, 7.465), Rotation2d(), Rotation2d(PI))
-//            )
-//          ).until {
-//            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
-//          }
-//          command.schedule()
-//        })
-//      ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }
-//    )
-//
-//    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
-//      ConditionalCommand(
-//        InstantCommand({
-//          val command = HolonomicFollower(
-//            robot.drive,
-//            PathPlanner.generatePath(
-//              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-//              PathPoint(robot.drive.pose.translation, Translation2d(0.75, 7.465).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-//              PathPoint(Translation2d(0.75, 7.465), Rotation2d(PI), Rotation2d())
-//            )
-//
-//          ).withInterruptBehavior(kCancelSelf).until {
-//            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
-//          }
-//
-//          command.schedule()
-//        }),
-//        InstantCommand({
-//          val command = HolonomicFollower(
-//            robot.drive,
-//            PathPlanner.generatePath(
-//              PathConstraints(RobotConstants.MAX_LINEAR_SPEED, RobotConstants.DOUBLE_ALIGN_ACCEL),
-//              PathPoint(robot.drive.pose.translation, Translation2d(16.54 - 0.75, 6.13).minus(robot.drive.pose.translation).angle, robot.drive.pose.rotation),
-//              PathPoint(Translation2d(16.54 - 0.75, 6.13), Rotation2d(0.0), Rotation2d(PI))
-//            )
-//          ).until {
-//            abs(driveController.leftY) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.leftX) >= RobotConstants.TRANSLATION_DEADBAND ||
-//              abs(driveController.rightX) >= RobotConstants.ROTATION_DEADBAND
-//          }
-//
-//          command.schedule()
-//        })
-//      ) { RobotConstants.ALLIANCE_COLOR == DriverStation.Alliance.Red }
-//    )
+    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
+      InstantCommand({ DoubleAlign().rightDoubleAlign(robot, driveController).schedule() })
+    )
+
+    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
+      InstantCommand({ DoubleAlign().leftDoubleAlign(robot, driveController).schedule() })
+    )
   }
 }

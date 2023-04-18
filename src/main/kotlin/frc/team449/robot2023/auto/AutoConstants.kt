@@ -1,5 +1,6 @@
 package frc.team449.robot2023.auto
 
+import edu.wpi.first.math.geometry.Translation2d
 import kotlin.math.PI
 
 object AutoConstants {
@@ -9,6 +10,8 @@ object AutoConstants {
   const val DEFAULT_ROTATION_KP = 1.4
 
   const val ORBIT_KP = 2 * PI
+  val RED_WALL_DOUBLE = Translation2d(0.75, 6.13)
+  val RED_FAR_DOUBLE = Translation2d(0.75, 7.465)
 
   /** Auto Balance PD Gains */
   const val AUTO_BAL_KP = 0.6
