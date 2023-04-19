@@ -50,6 +50,17 @@ class ControllerBindings(
   }
 
   fun bindButtons() {
+    // TODO: LED stuff if we get there
+//    Trigger { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kReverse }.onTrue(
+//      CubeAnimation(robot.light)
+//    ).onFalse(
+//      ConeAnimation(robot.light)
+//    )
+//
+//    Trigger { !robot.infrared.get() }.onTrue(
+//      PickupBlink().blinkGreen(robot)
+//    )
+
     JoystickButton(driveController, XboxController.Button.kRightBumper.value).onTrue(
       ConditionalCommand(
         robot.endEffector.runOnce(robot.endEffector::intake),

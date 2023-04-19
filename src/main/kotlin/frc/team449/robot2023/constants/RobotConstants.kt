@@ -37,4 +37,6 @@ object RobotConstants {
   )
 
   var ALLIANCE_COLOR: DriverStation.Alliance = DriverStation.getAlliance()
+
+  val IR_CHANNEL = 15
 }
