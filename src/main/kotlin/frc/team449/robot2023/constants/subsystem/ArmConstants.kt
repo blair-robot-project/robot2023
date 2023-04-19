@@ -16,8 +16,8 @@ object ArmConstants {
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
   const val FIRST_ENCODER_OFFSET = 0.25 + (0.25 - 0.138433) + (0.25 - 0.255332) + (0.25 - 0.247635) + (0.25 - 0.252205) +
-    (0.25 - 0.251082) + (0.25 - 0.251513)
-  const val SECOND_ENCODER_OFFSET = -0.021277 - 0.243989 - 0.003766 - 0.001928 + 0.002880 - 0.001357
+    (0.25 - 0.251082) + (0.25 - 0.251513) + (0.25 - 0.243709)
+  const val SECOND_ENCODER_OFFSET = -0.021277 - 0.243989 - 0.003766 - 0.001928 + 0.002880 - 0.001357 - 0.002176
   val FIRST_JOINT_QUAD_ENCODER = Encoder(4, 5)
   val SECOND_JOINT_QUAD_ENCODER = Encoder(1, 2)
 
@@ -106,8 +106,8 @@ object ArmConstants {
   )
 
   val BACK = ArmState(
-    Rotation2d.fromDegrees(20.00),
-    Rotation2d.fromDegrees(140.00)
+    Rotation2d.fromDegrees(40.61),
+    Rotation2d.fromDegrees(100.77)
   )
 
   val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH, BACK)
