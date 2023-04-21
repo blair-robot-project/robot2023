@@ -7,6 +7,7 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command
@@ -46,6 +47,11 @@ class DoubleAlign {
     val ySpeedMin: Double
     val ySpeedMax: Double
 
+    val fieldRelSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+      robot.drive.desiredSpeeds,
+      robot.drive.heading
+    )
+
     if (isRed) {
       alliancePoint = Translation2d(point.x, point.y)
       endHeading = Rotation2d()
@@ -84,12 +90,12 @@ class DoubleAlign {
           robot.drive.pose.rotation,
           sqrt(
             MathUtil.clamp(
-              robot.drive.desiredSpeeds.vxMetersPerSecond,
+              fieldRelSpeeds.vxMetersPerSecond,
               xSpeedMin,
               xSpeedMax
             ).pow(2) +
               MathUtil.clamp(
-                robot.drive.desiredSpeeds.vyMetersPerSecond,
+                fieldRelSpeeds.vyMetersPerSecond,
                 ySpeedMin,
                 ySpeedMax
               ).pow(2)

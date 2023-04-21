@@ -37,10 +37,16 @@ class GroundIntake(
     }
   }
 
+  fun teleopCube(): Command {
+    return this.runOnce {
+      topMotor.setVoltage(5.75)
+      bottomMotor.set(5.75)
+    }
+  }
+
   fun outtake(): Command {
     return this.runOnce {
-      topMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
-      bottomMotor.setVoltage(GroundIntakeConstants.INTAKE_VOLTAGE)
+      bottomMotor.setVoltage(-GroundIntakeConstants.INTAKE_VOLTAGE)
     }
   }
 

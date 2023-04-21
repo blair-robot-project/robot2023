@@ -129,7 +129,7 @@ open class Arm(
     return closestState
   }
 
-  private fun distanceBetweenStates(state1: ArmState, state2: ArmState): Double {
+  fun distanceBetweenStates(state1: ArmState, state2: ArmState): Double {
     val coordinate1 = kinematics.toCartesian(state1)
     val coordinate2 = kinematics.toCartesian(state2)
     return sqrt(
@@ -158,6 +158,10 @@ open class Arm(
           ArmPaths.backStow
         ArmConstants.MID ->
           ArmPaths.backMid
+        ArmConstants.CONE ->
+          ArmPaths.backCone
+        ArmConstants.CUBE ->
+          ArmPaths.backCube
         else ->
           ArmPaths.backHigh
       }
@@ -171,21 +175,14 @@ open class Arm(
           ArmPaths.stowBack
         ArmConstants.MID ->
           ArmPaths.stowMid
+        ArmConstants.CONE ->
+          ArmPaths.stowCone
+        ArmConstants.CUBE ->
+          ArmPaths.stowCube
         else ->
           ArmPaths.stowHigh
       }
-    } else if (endpoint == ArmConstants.BACK) {
-      when (startPoint) {
-        ArmConstants.SINGLE ->
-          ArmPaths.singleBack
-        ArmConstants.DOUBLE ->
-          ArmPaths.doubleBack
-        ArmConstants.MID ->
-          ArmPaths.midBack
-        else ->
-          ArmPaths.highBack
-      }
-    } else {
+    } else if (endpoint == ArmConstants.STOW) {
       when (startPoint) {
         ArmConstants.SINGLE ->
           ArmPaths.singleStow
@@ -193,8 +190,27 @@ open class Arm(
           ArmPaths.doubleStow
         ArmConstants.MID ->
           ArmPaths.midStow
+        ArmConstants.CUBE ->
+          ArmPaths.cubeStow
+        ArmConstants.CONE ->
+          ArmPaths.coneStow
         else ->
           ArmPaths.highStow
+      }
+    } else {
+      when (startPoint) {
+        ArmConstants.SINGLE ->
+          ArmPaths.singleBack
+        ArmConstants.DOUBLE ->
+          ArmPaths.doubleBack
+        ArmConstants.MID ->
+          ArmPaths.midBack
+        ArmConstants.CONE ->
+          ArmPaths.coneBack
+        ArmConstants.CUBE ->
+          ArmPaths.cubeBack
+        else ->
+          ArmPaths.highBack
       }
     }
   }

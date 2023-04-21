@@ -41,7 +41,11 @@ class ControllerBindings(
       ConditionalCommand(
         SequentialCommandGroup(
           ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
-          WaitCommand(0.2), // wait for the arm to go to the cube position before deploying the intake
+          WaitUntilCommand {
+            robot.arm.distanceBetweenStates(robot.arm.state, ArmConstants.CUBE) <= 0.05 &&
+              robot.arm.state.betaVel <= 0.05
+            robot.arm.state.thetaVel <= 0.05
+          },
           robot.groundIntake.deploy()
         ),
         InstantCommand()
@@ -65,7 +69,7 @@ class ControllerBindings(
       ConditionalCommand(
         robot.endEffector.runOnce(robot.endEffector::intake),
         SequentialCommandGroup(
-          robot.groundIntake.intakeCube(),
+          robot.groundIntake.teleopCube(),
           robot.endEffector.runOnce(robot.endEffector::intake)
         )
       ) { robot.endEffector.chooserPiston.get() == DoubleSolenoid.Value.kForward }
@@ -79,9 +83,14 @@ class ControllerBindings(
     Trigger { driveController.rightTriggerAxis > 0.8 }.onTrue(
       ConditionalCommand(
         SequentialCommandGroup(
-          robot.groundIntake.deploy(),
           ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
-          robot.groundIntake.intakeCube()
+          robot.groundIntake.teleopCube(),
+          WaitUntilCommand {
+            robot.arm.distanceBetweenStates(robot.arm.state, ArmConstants.CUBE) <= 0.05 &&
+              robot.arm.state.betaVel <= 0.025
+            robot.arm.state.thetaVel <= 0.025
+          },
+          robot.groundIntake.deploy()
         ),
         SequentialCommandGroup(
           robot.groundIntake.deploy(),
@@ -97,9 +106,13 @@ class ControllerBindings(
     )
 
     JoystickButton(driveController, XboxController.Button.kLeftBumper.value).onTrue(
-      robot.endEffector.runOnce(robot.endEffector::intakeReverse)
+      robot.endEffector.runOnce(robot.endEffector::intakeReverse).andThen(
+        robot.groundIntake.outtake()
+      )
     ).onFalse(
-      robot.endEffector.runOnce(robot.endEffector::stop)
+      robot.endEffector.runOnce(robot.endEffector::stop).andThen(
+        robot.groundIntake.runOnce(robot.groundIntake::stop)
+      )
     )
 
     // drive speed overdrive trigger
@@ -127,13 +140,13 @@ class ControllerBindings(
       ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.SINGLE) }.withInterruptBehavior(kCancelIncoming)
     )
 
-    JoystickButton(mechanismController, XboxController.Button.kStart.value).onTrue(
+    JoystickButton(mechanismController, XboxController.Button.kBack.value).onTrue(
       ArmFollower(robot.arm) {
         robot.arm.chooseTraj(ArmConstants.STOW)
       }.withInterruptBehavior(kCancelIncoming)
     )
 
-    JoystickButton(mechanismController, XboxController.Button.kBack.value).onTrue(
+    JoystickButton(mechanismController, XboxController.Button.kStart.value).onTrue(
       ArmFollower(robot.arm) {
         robot.arm.chooseTraj(ArmConstants.BACK)
       }.withInterruptBehavior(kCancelIncoming)
@@ -218,11 +231,11 @@ class ControllerBindings(
       InstantCommand({ robot.drive.heading = Rotation2d(0.0) })
     )
 
-    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
+    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
       InstantCommand({ DoubleAlign().rightDoubleAlign(robot, driveController).schedule() })
     )
 
-    JoystickButton(driveController, XboxController.Button.kB.value).onTrue(
+    JoystickButton(driveController, XboxController.Button.kX.value).onTrue(
       InstantCommand({ DoubleAlign().leftDoubleAlign(robot, driveController).schedule() })
     )
   }

@@ -44,7 +44,9 @@ class EdgeConeCube(
           })
         ),
         "retractCube" to AutoUtil.retractAndStow(robot),
-        "highCube" to ArmFollower(robot.arm) { ArmPaths.stowHigh }.andThen(AutoUtil.dropCube(robot))
+        "highCube" to ArmFollower(robot.arm) { ArmPaths.stowHigh }
+          .andThen(WaitCommand(0.1))
+          .andThen(AutoUtil.dropCube(robot))
       )
     )
 

@@ -42,7 +42,7 @@ class EdgeConeCubeCube(
         "stopCubeIntake" to AutoUtil.retractGroundIntake(robot),
         "dropCube2" to AutoUtil.dropCube(robot)
       ),
-      timeout = 0.35
+      timeout = 0.25
     )
 
   override val trajectory: MutableList<PathPlannerTrajectory> =

@@ -54,6 +54,12 @@ object ArmPaths {
   val backSingle = ArmTrajectory("backSingle.json")
   val singleBack = ArmTrajectory("singleBack.json")
 
+  val backCube = ArmTrajectory("backCube.json")
+  val cubeBack = ArmTrajectory("cubeBack.json")
+
+  val backCone = ArmTrajectory("backCone.json")
+  val coneBack = ArmTrajectory("coneBack.json")
+
   /** Auto Specific trajectories */
 
   val coneHigh = ArmTrajectory("coneHigh.json")
@@ -93,7 +99,11 @@ object ArmPaths {
     backMid,
     midBack,
     backSingle,
-    singleBack
+    singleBack,
+    coneBack,
+    backCone,
+    cubeBack,
+    backCube
   )
 
   fun parseTrajectories() {

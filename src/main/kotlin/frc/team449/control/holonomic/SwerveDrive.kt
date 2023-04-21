@@ -164,8 +164,10 @@ open class SwerveDrive(
           numTargets < 2 && tagDistance <= VisionConstants.MAX_DISTANCE_SINGLE_TAG ||
           numTargets >= 2 && tagDistance <= VisionConstants.MAX_DISTANCE_MULTI_TAG
         ) {
+          val visionPose = presentResult.estimatedPose.toPose2d()
+
           poseEstimator.addVisionMeasurement(
-            presentResult.estimatedPose.toPose2d(),
+            Pose2d(visionPose.x, visionPose.y, this.heading),
             presentResult.timestampSeconds
           )
         }

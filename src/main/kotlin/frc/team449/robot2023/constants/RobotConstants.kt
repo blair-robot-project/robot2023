@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.DriverStation
+import frc.team449.robot2023.constants.drives.SwerveConstants
 import kotlin.math.PI
 
 object RobotConstants {
@@ -18,9 +19,9 @@ object RobotConstants {
   const val ROTATION_DEADBAND = .125
 
   /** Drive configuration */
-  const val MAX_LINEAR_SPEED = 4.25 // m/s
+  const val MAX_LINEAR_SPEED = SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED // m/s
   const val MAX_ROT_SPEED = PI // rad/s
-  const val MAX_ACCEL = 12.0 // m/s/s
+  const val MAX_ACCEL = 13.75 // m/s/s
   val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
 
   const val DOUBLE_ALIGN_ACCEL = 4.5
