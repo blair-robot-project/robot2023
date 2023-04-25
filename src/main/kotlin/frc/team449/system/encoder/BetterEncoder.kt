@@ -5,6 +5,7 @@ import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.util.sendable.SendableBuilder
 import edu.wpi.first.util.sendable.SendableRegistry
 import edu.wpi.first.wpilibj.*
+import frc.team449.robot2023.constants.RobotConstants
 
 class BetterEncoder(
   val name: String,
@@ -13,7 +14,9 @@ class BetterEncoder(
   private val microsecondsCycleTime: Double,
   val inverted: Boolean,
   private val sensorMin: Double,
-  private val sensorMax: Double
+  private val sensorMax: Double,
+  private val unitMin: Double,
+  private val unitMax: Double
 ) : Sendable {
 
   private val simDevice = SimDevice.create("DutyCycle:DutyCycleEncoder", dutyCycle.sourceChannel)
@@ -22,17 +25,10 @@ class BetterEncoder(
   private val simAbsolutePosition = simDevice?.createDouble("absPosition", SimDevice.Direction.kInput, 0.0)
   private val simIsConnected = simDevice?.createBoolean("connected", SimDevice.Direction.kInput, true)
 
-  private val counter = if (simDevice == null) Counter() else null
-  private val analogTrigger = if (simDevice == null) AnalogTrigger(dutyCycle) else null
-
   private var prevPos = Double.NaN
   private var prevTime = Double.NaN
 
   init {
-    analogTrigger?.setLimitsDutyCycle(0.25, 0.75)
-    counter?.setUpSource(analogTrigger, AnalogTriggerOutput.AnalogTriggerType.kRisingPulse)
-    counter?.setDownSource(analogTrigger, AnalogTriggerOutput.AnalogTriggerType.kFallingPulse)
-
     SendableRegistry.addLW(this, "DutyCycle Encoder", dutyCycle.sourceChannel)
   }
 
@@ -44,7 +40,7 @@ class BetterEncoder(
     val microsecondsTotal = microsecondsCycleTime
     var position = microsecondsHigh / microsecondsTotal
 
-    // Maps the position onto your desired ranges
+    // Maps the output from 0 to 1
     if (position < sensorMin) {
       position = sensorMin
     } else if (position > sensorMax) {
@@ -53,11 +49,15 @@ class BetterEncoder(
       position = (position - sensorMin) / (sensorMax - sensorMin)
     }
 
+    // Scales the units
+    position = position * (unitMax - unitMin) + unitMin
+
     // Accounts for offset
+    val range = unitMax - unitMin
     position = if (inverted) {
-      1 - (position - offset) % 1
+      range - (position - offset) % range
     } else {
-      position - offset % 1
+      (position - offset) % range
     }
 
     return position
@@ -90,5 +90,28 @@ class BetterEncoder(
 
   override fun initSendable(builder: SendableBuilder) {
     builder.setSmartDashboardType("Encoder")
+  }
+
+  companion object {
+    fun create(
+      name: String,
+      channel: Int,
+      offset: Double,
+      inverted: Boolean,
+      unitMin: Double,
+      unitMax: Double
+    ): BetterEncoder {
+      return BetterEncoder(
+        name,
+        DutyCycle(DigitalInput(channel)),
+        offset,
+        RobotConstants.CYCLE_TIME,
+        inverted,
+        RobotConstants.SENSOR_MIN,
+        RobotConstants.SENSOR_MAX,
+        unitMin,
+        unitMax
+      )
+    }
   }
 }

@@ -37,4 +37,9 @@ object RobotConstants {
   )
 
   var ALLIANCE_COLOR: DriverStation.Alliance = DriverStation.getAlliance()
+
+  const val CYCLE_TIME = 4096.0
+
+  const val SENSOR_MIN = 1 / 4096.0
+  const val SENSOR_MAX = 4096 / 4096.0
 }
