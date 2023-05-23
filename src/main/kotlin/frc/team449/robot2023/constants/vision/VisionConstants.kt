@@ -10,7 +10,8 @@ import edu.wpi.first.math.geometry.Rotation3d
 import edu.wpi.first.math.geometry.Transform3d
 import edu.wpi.first.math.geometry.Translation3d
 import edu.wpi.first.math.util.Units
-import frc.team449.control.VisionEstimator
+import org.photonvision.PhotonCamera
+import org.photonvision.PhotonPoseEstimator
 
 /** Constants that have anything to do with vision */
 object
@@ -38,21 +39,22 @@ VisionConstants {
   var MAX_DISTANCE_SINGLE_TAG = 2.0
   var MAX_DISTANCE_MULTI_TAG = 4.0
 
-  const val AUTO_MAX_DISTANCE_SINGLE_TAG = 1.85
-  const val AUTO_MAX_DISTANCE_MULTI_TAG = 3.35
+  const val AUTO_MAX_DISTANCE_SINGLE_TAG = 0.0
+  const val AUTO_MAX_DISTANCE_MULTI_TAG = 5.0
 
   const val TELEOP_MAX_DISTANCE_SINGLE_TAG = 3.25
   const val TELEOP_MAX_DISTANCE_MULTI_TAG = 4.5
 
   /** List of cameras that we want to use */
-  val ESTIMATORS: List<VisionEstimator> = listOf(
-    VisionEstimator(
+  val ESTIMATORS: List<PhotonPoseEstimator> = listOf(
+    PhotonPoseEstimator(
       TAG_LAYOUT,
-      "Spinel",
+      PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP,
+      PhotonCamera("Spinel"),
       robotToCamera
     )
   )
 
-  val ENCODER_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, .025)
-  val VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.035, .035, .75)
+  val ENCODER_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.05, .05, .025)
+  val VISION_TRUST = MatBuilder(Nat.N3(), Nat.N1()).fill(.075, .075, 1.0)
 }

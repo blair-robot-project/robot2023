@@ -84,13 +84,15 @@ class ControllerBindings(
       ConditionalCommand(
         SequentialCommandGroup(
           ArmFollower(robot.arm) { robot.arm.chooseTraj(ArmConstants.CUBE) },
-          robot.groundIntake.teleopCube(),
           WaitUntilCommand {
-            robot.arm.distanceBetweenStates(robot.arm.state, ArmConstants.CUBE) <= 0.05 &&
-              robot.arm.state.betaVel <= 0.025
-            robot.arm.state.thetaVel <= 0.025
+            robot.arm.distanceBetweenStates(robot.arm.state, ArmConstants.CUBE) <= 0.0175 &&
+              robot.arm.state.betaVel <= 0.025 &&
+              robot.arm.state.thetaVel <= 0.025
           },
-          robot.groundIntake.deploy()
+          robot.groundIntake.deploy(),
+          robot.groundIntake.teleopCube()
+        ).alongWith(
+          RepeatCommand(InstantCommand(robot.arm::holdArm))
         ),
         SequentialCommandGroup(
           robot.groundIntake.deploy(),

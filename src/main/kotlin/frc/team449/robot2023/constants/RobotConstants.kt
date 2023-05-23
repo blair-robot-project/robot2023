@@ -14,7 +14,7 @@ object RobotConstants {
   const val PDH_CAN = 49
 
   /** Controller Configurations */
-  const val RATE_LIMIT = 3.5 * PI
+  const val RATE_LIMIT = 5 * PI
   const val TRANSLATION_DEADBAND = .125
   const val ROTATION_DEADBAND = .125
 

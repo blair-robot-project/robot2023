@@ -2,6 +2,7 @@ package frc.team449.robot2023.auto.routines
 
 import com.pathplanner.lib.PathPlannerTrajectory
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.PrintCommand
 import frc.team449.control.auto.HolonomicRoutine
 import frc.team449.control.auto.RoutineStructure
 import frc.team449.robot2023.Robot
@@ -26,7 +27,7 @@ class CenterCubeStation(
           VisionConstants.MAX_DISTANCE_MULTI_TAG = 0.0
         }).andThen(AutoUtil.stowDropCube(robot)),
         "stowArm" to ArmFollower(robot.arm) { ArmPaths.highStow },
-        "balanceStation" to AutoBalance.create(robot.drive)
+        "balanceStation" to AutoBalance.create(robot.drive).alongWith(PrintCommand("Running the auto balance"))
       ),
       timeout = 0.0
     )
