@@ -37,6 +37,29 @@ object ArmPaths {
   val cubeCone = ArmTrajectory("cubeCone.json")
   val coneCube = ArmTrajectory("coneCube.json")
 
+  /** Backstow Trajectories */
+
+  val backHigh = ArmTrajectory("backHigh.json")
+  val highBack = ArmTrajectory("highBack.json")
+
+  val backDouble = ArmTrajectory("backDouble.json")
+  val doubleBack = ArmTrajectory("doubleBack.json")
+
+  val backMid = ArmTrajectory("backMid.json")
+  val midBack = ArmTrajectory("midBack.json")
+
+  val backStow = ArmTrajectory("backStow.json")
+  val stowBack = ArmTrajectory("stowBack.json")
+
+  val backSingle = ArmTrajectory("backSingle.json")
+  val singleBack = ArmTrajectory("singleBack.json")
+
+  val backCube = ArmTrajectory("backCube.json")
+  val cubeBack = ArmTrajectory("cubeBack.json")
+
+  val backCone = ArmTrajectory("backCone.json")
+  val coneBack = ArmTrajectory("coneBack.json")
+
   /** Auto Specific trajectories */
 
   val coneHigh = ArmTrajectory("coneHigh.json")
@@ -44,30 +67,47 @@ object ArmPaths {
   val cubeMid = ArmTrajectory("cubeMid.json")
   val cubeHigh = ArmTrajectory("cubeHigh.json")
   val highCube = ArmTrajectory("highCube.json")
+
+  val trajectories = listOf(
+    stowSingle,
+    singleStow,
+    stowDouble,
+    doubleStow,
+    stowCone,
+    coneStow,
+    stowCube,
+    cubeStow,
+    stowMid,
+    midStow,
+    stowHigh,
+    highStow,
+    coneHigh,
+    highCone,
+    cubeHigh,
+    highCube,
+    midHigh,
+    highMid,
+    cubeCone,
+    coneCube,
+    cubeMid,
+    backStow,
+    stowBack,
+    backDouble,
+    doubleBack,
+    backHigh,
+    highBack,
+    backMid,
+    midBack,
+    backSingle,
+    singleBack,
+    coneBack,
+    backCone,
+    cubeBack,
+    backCube
+  )
+
   fun parseTrajectories() {
-    listOf(
-      stowSingle,
-      singleStow,
-      stowDouble,
-      doubleStow,
-      stowCone,
-      coneStow,
-      stowCube,
-      cubeStow,
-      stowMid,
-      midStow,
-      stowHigh,
-      highStow,
-      coneHigh,
-      highCone,
-      cubeHigh,
-      highCube,
-      midHigh,
-      highMid,
-      cubeCone,
-      coneCube,
-      cubeMid
-    ).forEach {
+    trajectories.forEach {
       it.parse()
     }
   }

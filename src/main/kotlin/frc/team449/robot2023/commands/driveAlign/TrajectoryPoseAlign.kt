@@ -36,10 +36,6 @@ class TrajectoryPoseAlign(
 ) {
 
   fun generateCommand(): Command {
-    // Make the start and end poses point at each other
-    val startPointRotation = currPose.get().translation.minus(targetPose.translation).angle
-    val endPointRotation = targetPose.translation.minus(currPose.get().translation).angle
-
     // Generate a PathPlanner trajectory on the fly
     val traj = PathPlanner.generatePath(
       maxSpeeds,

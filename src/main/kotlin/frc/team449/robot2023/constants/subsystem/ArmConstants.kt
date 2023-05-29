@@ -15,9 +15,12 @@ object ArmConstants {
   // Encoder constants
   const val FIRST_ENCODER_CHAN = 3
   const val SECOND_ENCODER_CHAN = 0
-  const val FIRST_ENCODER_OFFSET = 0.25 + (0.25 - 0.138433) + (0.25 - 0.255332) + (0.25 - 0.247635) + (0.25 - 0.252205) +
-    (0.25 - 0.251082) + (0.25 - 0.251513)
-  const val SECOND_ENCODER_OFFSET = -0.021277 - 0.243989 - 0.003766 - 0.001928 + 0.002880 - 0.001357
+  const val FIRST_ENCODER_OFFSET = (0.25 + 0.101364) + (0.25 - 0.254440) + (0.25 - 0.243684) + (0.25 - 0.251001) + (0.104702 - 0.103164) +
+    (0.104702 - 0.096773) + (0.104702 - 0.110550) + (0.104702 - 0.105399) + (0.104702 - 0.109143) + (0.104702 - 0.106454) +
+    (0.104702 - 0.104911) + (0.104702 - 0.095459) + (0.104702 - 0.107754)
+  const val SECOND_ENCODER_OFFSET = -0.4292740 + 0.010235 + 0.005832 + (0.442945 - 0.449004) + (0.442945 - 0.445615) +
+    (0.442945 - 0.425262) + (0.442945 - 0.459368) + (0.442945 - 0.445663) + (0.442945 - 0.443166) + (0.442945 - 0.445957) +
+    (0.442945 - 0.440851) + (0.442945 - 0.432587)
   val FIRST_JOINT_QUAD_ENCODER = Encoder(4, 5)
   val SECOND_JOINT_QUAD_ENCODER = Encoder(1, 2)
 
@@ -32,7 +35,7 @@ object ArmConstants {
 
   // Length of segments
   val LENGTH_1 = Units.inchesToMeters(32.0)
-  val LENGTH_2 = Units.inchesToMeters(34.0)
+  val LENGTH_2 = Units.inchesToMeters(36.0)
 
   // Mass of segments
   const val MASS_1 = 6.944561
@@ -77,7 +80,7 @@ object ArmConstants {
 
   val DOUBLE = ArmState(
     Rotation2d.fromDegrees(59.75),
-    Rotation2d.fromDegrees(115.75)
+    Rotation2d.fromDegrees(113.95)
   )
 
   val STOW = ArmState(
@@ -92,7 +95,7 @@ object ArmConstants {
 
   val CUBE = ArmState(
     Rotation2d.fromDegrees(74.15),
-    Rotation2d.fromDegrees(-136.17)
+    Rotation2d.fromDegrees(-130.17)
   )
 
   val MID = ArmState(
@@ -105,5 +108,10 @@ object ArmConstants {
     Rotation2d.fromDegrees(0.00)
   )
 
-  val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH)
+  val BACK = ArmState(
+    Rotation2d.fromDegrees(40.61),
+    Rotation2d.fromDegrees(100.77)
+  )
+
+  val STATES = listOf(SINGLE, DOUBLE, STOW, CONE, CUBE, MID, HIGH, BACK)
 }

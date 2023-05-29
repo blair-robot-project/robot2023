@@ -10,7 +10,8 @@ import frc.team449.robot2023.auto.PositionChooser
 
 class EdgeCone(
   robot: Robot,
-  position: PositionChooser.Positions
+  position: PositionChooser.Positions,
+  isRed: Boolean
 ) : RoutineStructure {
 
   override val routine =
@@ -25,8 +26,8 @@ class EdgeCone(
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
     if (position == PositionChooser.Positions.FARCONE) {
-      Paths.FAR.CONE
+      if (isRed) AutoUtil.transformForAlliance(Paths.FAR.CONE) { true } else Paths.FAR.CONE
     } else {
-      Paths.WALL.CONE
+      if (isRed) AutoUtil.transformForAlliance(Paths.WALL.CONE) { true } else Paths.WALL.CONE
     }
 }

@@ -55,7 +55,7 @@ class OrthogonalHolonomicOI(
 
   init {
     controller.enableContinuousInput(-PI, PI)
-    controller.setTolerance(0.035) // ~2 degrees of tolerance
+    controller.setTolerance(0.0075) // ~0.429 degrees of tolerance on each side
     controller.goal = TrapezoidProfile.State(drive.heading.radians, 0.0)
   }
 

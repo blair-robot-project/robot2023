@@ -11,7 +11,8 @@ import frc.team449.robot2023.commands.autoBalance.AutoBalance
 
 class EdgeConeStation(
   robot: Robot,
-  position: PositionChooser.Positions
+  position: PositionChooser.Positions,
+  isRed: Boolean
 ) : RoutineStructure {
 
   override val routine =
@@ -27,8 +28,8 @@ class EdgeConeStation(
 
   override val trajectory: MutableList<PathPlannerTrajectory> =
     if (position == PositionChooser.Positions.FARCONE) {
-      Paths.FAR.CONESTATION
+      if (isRed) AutoUtil.transformForAlliance(Paths.FAR.CONESTATION) { true } else Paths.FAR.CONESTATION
     } else {
-      Paths.WALL.CONESTATION
+      if (isRed) AutoUtil.transformForAlliance(Paths.WALL.CONESTATION) { true } else Paths.WALL.CONESTATION
     }
 }

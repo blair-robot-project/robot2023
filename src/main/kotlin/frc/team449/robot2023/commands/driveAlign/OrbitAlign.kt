@@ -1,26 +1,35 @@
 package frc.team449.robot2023.commands.driveAlign
 
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.team449.control.DriveSubsystem
+import frc.team449.control.OI
+import frc.team449.robot2023.auto.AutoConstants
+import frc.team449.robot2023.constants.RobotConstants
 
 /**
  * @param drive The holonomic drive you want to align with
  * @param point The point in 2d space you want the drivetrain to face towards
  * @param headingPID The non-Profiled PID controller you want to use for fixing rotational error
  */
-class HeadingAlign(
+class OrbitAlign(
   private val drive: DriveSubsystem,
+  private val oi: OI,
   private val point: Translation2d,
-  private val headingPID: PIDController = PIDController(1.5, 0.0, 0.0)
+  private val headingPID: PIDController = PIDController(
+    AutoConstants.ORBIT_KP,
+    0.0,
+    0.0
+  )
 ) : CommandBase() {
 
   init {
     addRequirements(drive)
     headingPID.enableContinuousInput(-Math.PI, Math.PI)
-    headingPID.setTolerance(0.075)
+    headingPID.setTolerance(0.015)
   }
 
   private var fieldToRobot = Translation2d()
@@ -33,15 +42,11 @@ class HeadingAlign(
 
     drive.set(
       ChassisSpeeds(
-        0.0,
-        0.0,
-        headingPID.calculate(drive.heading.radians)
+        oi.get().vxMetersPerSecond,
+        oi.get().vyMetersPerSecond,
+        MathUtil.clamp(headingPID.calculate(drive.heading.radians), -RobotConstants.MAX_ROT_SPEED, RobotConstants.MAX_ROT_SPEED)
       )
     )
-  }
-
-  override fun isFinished(): Boolean {
-    return headingPID.atSetpoint()
   }
 
   override fun end(interrupted: Boolean) {

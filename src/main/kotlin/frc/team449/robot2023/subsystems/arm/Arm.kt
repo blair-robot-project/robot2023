@@ -129,7 +129,7 @@ open class Arm(
     return closestState
   }
 
-  private fun distanceBetweenStates(state1: ArmState, state2: ArmState): Double {
+  fun distanceBetweenStates(state1: ArmState, state2: ArmState): Double {
     val coordinate1 = kinematics.toCartesian(state1)
     val coordinate2 = kinematics.toCartesian(state2)
     return sqrt(
@@ -148,45 +148,69 @@ open class Arm(
     if (startPoint == ArmConstants.HIGH && endpoint == ArmConstants.MID) return ArmPaths.highMid
     if (startPoint == ArmConstants.MID && endpoint == ArmConstants.HIGH) return ArmPaths.midHigh
 
-    return if (startPoint == ArmConstants.STOW) {
+    return if (startPoint == ArmConstants.BACK) {
+      when (endpoint) {
+        ArmConstants.SINGLE ->
+          ArmPaths.backSingle
+        ArmConstants.DOUBLE ->
+          ArmPaths.backDouble
+        ArmConstants.STOW ->
+          ArmPaths.backStow
+        ArmConstants.MID ->
+          ArmPaths.backMid
+        ArmConstants.CONE ->
+          ArmPaths.backCone
+        ArmConstants.CUBE ->
+          ArmPaths.backCube
+        else ->
+          ArmPaths.backHigh
+      }
+    } else if (startPoint == ArmConstants.STOW) {
       when (endpoint) {
         ArmConstants.SINGLE ->
           ArmPaths.stowSingle
-
         ArmConstants.DOUBLE ->
           ArmPaths.stowDouble
-
-        ArmConstants.CONE ->
-          ArmPaths.stowCone
-
-        ArmConstants.CUBE ->
-          ArmPaths.stowCube
-
+        ArmConstants.BACK ->
+          ArmPaths.stowBack
         ArmConstants.MID ->
           ArmPaths.stowMid
-
+        ArmConstants.CONE ->
+          ArmPaths.stowCone
+        ArmConstants.CUBE ->
+          ArmPaths.stowCube
         else ->
           ArmPaths.stowHigh
+      }
+    } else if (endpoint == ArmConstants.STOW) {
+      when (startPoint) {
+        ArmConstants.SINGLE ->
+          ArmPaths.singleStow
+        ArmConstants.DOUBLE ->
+          ArmPaths.doubleStow
+        ArmConstants.MID ->
+          ArmPaths.midStow
+        ArmConstants.CUBE ->
+          ArmPaths.cubeStow
+        ArmConstants.CONE ->
+          ArmPaths.coneStow
+        else ->
+          ArmPaths.highStow
       }
     } else {
       when (startPoint) {
         ArmConstants.SINGLE ->
-          ArmPaths.singleStow
-
+          ArmPaths.singleBack
         ArmConstants.DOUBLE ->
-          ArmPaths.doubleStow
-
-        ArmConstants.CONE ->
-          ArmPaths.coneStow
-
-        ArmConstants.CUBE ->
-          ArmPaths.cubeStow
-
+          ArmPaths.doubleBack
         ArmConstants.MID ->
-          ArmPaths.midStow
-
+          ArmPaths.midBack
+        ArmConstants.CONE ->
+          ArmPaths.coneBack
+        ArmConstants.CUBE ->
+          ArmPaths.cubeBack
         else ->
-          ArmPaths.highStow
+          ArmPaths.highBack
       }
     }
   }

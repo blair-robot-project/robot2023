@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj.DriverStation
+import frc.team449.robot2023.constants.drives.SwerveConstants
 import kotlin.math.PI
 
 object RobotConstants {
@@ -13,21 +14,21 @@ object RobotConstants {
   const val PDH_CAN = 49
 
   /** Controller Configurations */
-  const val RATE_LIMIT = 2 * PI
+  const val RATE_LIMIT = 5 * PI
   const val TRANSLATION_DEADBAND = .125
   const val ROTATION_DEADBAND = .125
 
   /** Drive configuration */
-  const val MAX_LINEAR_SPEED = 4.25 // m/s
+  const val MAX_LINEAR_SPEED = SwerveConstants.MAX_ATTAINABLE_MK4I_SPEED // m/s
   const val MAX_ROT_SPEED = PI // rad/s
-  const val MAX_ACCEL = 12.0 // m/s/s
+  const val MAX_ACCEL = 13.75 // m/s/s
   val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
 
-  const val DOUBLE_ALIGN_ACCEL = 3.65
+  const val DOUBLE_ALIGN_ACCEL = 4.5
 
   /** PID controller for Orthogonal turning */
   val ORTHOGONAL_CONTROLLER = ProfiledPIDController(
-    1.0,
+    2.25,
     0.0,
     0.0,
     TrapezoidProfile.Constraints(
@@ -37,4 +38,6 @@ object RobotConstants {
   )
 
   var ALLIANCE_COLOR: DriverStation.Alliance = DriverStation.getAlliance()
+
+  val IR_CHANNEL = 15
 }

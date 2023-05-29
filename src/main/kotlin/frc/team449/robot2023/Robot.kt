@@ -44,4 +44,8 @@ class Robot : RobotBase() {
   val endEffector = createEndEffector()
 
   val groundIntake = createGroundIntake()
+
+//  val light = Light.createLight()
+//
+//  val infrared = DigitalInput(RobotConstants.IR_CHANNEL)
 }

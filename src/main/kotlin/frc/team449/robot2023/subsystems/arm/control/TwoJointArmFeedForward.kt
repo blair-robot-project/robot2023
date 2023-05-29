@@ -128,7 +128,8 @@ class TwoJointArmFeedForward(
     /** return u = Km ^ -1 * [D * accel + C * vel + Tg + Kb * vel] */
     return if (singleJointCharacterized) {
       B.solve(dTimesAccel + cTimesVel + Tg + kbTimesVel) + Ks
-    } /** return u = b^-1(tg) + b^-1(M + C + Kb) + kS */
+    }
+    /** return u = b^-1(tg) + b^-1(M + C + Kb) + kS */
     else {
       tau + B.solve(dTimesAccel + cTimesVel + kbTimesVel) + Ks
     }
